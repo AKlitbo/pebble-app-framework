@@ -1,0 +1,290 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/core/health/hrv_run.h File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v6.3.0" selected>v6.3.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('hrv__run_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">hrv_run.h File Reference<div class="ingroups"><a class="el" href="group__lib__core.html">Core Helpers</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Turns the beat gaps the watch reports into heart rate variability, as RMSSD in ms.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
+</div>
+<p><a href="hrv__run_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:HrvRun" id="r_HrvRun"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHrvRun.html">HrvRun</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One run of beats being added up. Start it with hrv_run_reset.  <a href="structHrvRun.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gaaefdc36c44d4b4bb7d75b49971dafa75" id="r_gaaefdc36c44d4b4bb7d75b49971dafa75"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_PPI_MIN_MS</b>&#160;&#160;&#160;300</td></tr>
+<tr class="memdesc:gaaefdc36c44d4b4bb7d75b49971dafa75"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shortest gap kept, a heart rate of 200. <br /></td></tr>
+<tr class="memitem:ga25c5320ce0b3cb8d6318006c39554d9c" id="r_ga25c5320ce0b3cb8d6318006c39554d9c"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_PPI_MAX_MS</b>&#160;&#160;&#160;2000</td></tr>
+<tr class="memdesc:ga25c5320ce0b3cb8d6318006c39554d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The longest gap kept, a heart rate of 30. <br /></td></tr>
+<tr class="memitem:gaefbe63307314a051f668d64f02af5d87" id="r_gaefbe63307314a051f668d64f02af5d87"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_JUMP_PCT</b>&#160;&#160;&#160;20</td></tr>
+<tr class="memdesc:gaefbe63307314a051f668d64f02af5d87"><td class="mdescLeft">&#160;</td><td class="mdescRight">A gap further than this percent from the one before it is dropped. <br /></td></tr>
+<tr class="memitem:ga59b2e0772453c9dc6f043dccff16db65" id="r_ga59b2e0772453c9dc6f043dccff16db65"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_QUIET_SEC</b>&#160;&#160;&#160;15</td></tr>
+<tr class="memdesc:ga59b2e0772453c9dc6f043dccff16db65"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pause this long with no gap ends the run. <br /></td></tr>
+<tr class="memitem:gaf327b41b60f9c86f55e411ee317d2545" id="r_gaf327b41b60f9c86f55e411ee317d2545"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_DIFFS_MIN</b>&#160;&#160;&#160;20</td></tr>
+<tr class="memdesc:gaf327b41b60f9c86f55e411ee317d2545"><td class="mdescLeft">&#160;</td><td class="mdescRight">Differences a run needs before its answer means anything. <br /></td></tr>
+<tr class="memitem:ga524644e6318004787bb4db9ecf847255" id="r_ga524644e6318004787bb4db9ecf847255"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_DIFFS_FULL</b>&#160;&#160;&#160;60</td></tr>
+<tr class="memdesc:ga524644e6318004787bb4db9ecf847255"><td class="mdescLeft">&#160;</td><td class="mdescRight">A run this long is finished, and the next gap starts a new one. <br /></td></tr>
+<tr class="memitem:ga9506f432151279855933339ae78cfb91" id="r_ga9506f432151279855933339ae78cfb91"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_STALE_PERIODS</b>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:ga9506f432151279855933339ae78cfb91"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reading is stale once this many sample periods pass without a new one. <br /></td></tr>
+<tr class="memitem:ga606ade592998e531ca1b4ee8336c1d51" id="r_ga606ade592998e531ca1b4ee8336c1d51"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_STALE_MIN_SEC</b>&#160;&#160;&#160;1800</td></tr>
+<tr class="memdesc:ga606ade592998e531ca1b4ee8336c1d51"><td class="mdescLeft">&#160;</td><td class="mdescRight">A reading is never stale sooner than this, however short the period. <br /></td></tr>
+<tr class="memitem:gae821813667772afcba017bb0a1765c89" id="r_gae821813667772afcba017bb0a1765c89"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_HOLD_PERIOD_SEC</b>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gae821813667772afcba017bb0a1765c89"><td class="mdescLeft">&#160;</td><td class="mdescRight">The period asked for while a burst is measured, which keeps the sensor on. <br /></td></tr>
+<tr class="memitem:ga5cce8c8e009bc553503dee841fa01bc3" id="r_ga5cce8c8e009bc553503dee841fa01bc3"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_HOLD_MAX_SEC</b>&#160;&#160;&#160;90</td></tr>
+<tr class="memdesc:ga5cce8c8e009bc553503dee841fa01bc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The longest the sensor is held on for one burst. <br /></td></tr>
+<tr class="memitem:ga353a8f23c99dd39c3dbfa02708208d29" id="r_ga353a8f23c99dd39c3dbfa02708208d29"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_SETTLE_GAPS</b>&#160;&#160;&#160;10</td></tr>
+<tr class="memdesc:ga353a8f23c99dd39c3dbfa02708208d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gaps left out at the start of each burst while the sensor settles, when a face sets none. <br /></td></tr>
+<tr class="memitem:gacd7ae320dd9f133f840d906727165648" id="r_gacd7ae320dd9f133f840d906727165648"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_SETTLE_GAPS_MAX</b>&#160;&#160;&#160;20</td></tr>
+<tr class="memdesc:gacd7ae320dd9f133f840d906727165648"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most gaps a face can have left out, which still leaves a slow heart time for a run. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga820f7ded1182d953adac970b65798571" id="r_ga820f7ded1182d953adac970b65798571"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga820f7ded1182d953adac970b65798571">hrv_run_reset</a> (<a class="el" href="structHrvRun.html">HrvRun</a> *run)</td></tr>
+<tr class="memdesc:ga820f7ded1182d953adac970b65798571"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empties a run, so the next gap starts it.  <br /></td></tr>
+<tr class="memitem:gae74b9acde0c1bb0a850ee1b2f8763e58" id="r_gae74b9acde0c1bb0a850ee1b2f8763e58"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gae74b9acde0c1bb0a850ee1b2f8763e58">hrv_run_push</a> (<a class="el" href="structHrvRun.html">HrvRun</a> *run, uint16_t ppi_ms, uint32_t now_sec)</td></tr>
+<tr class="memdesc:gae74b9acde0c1bb0a850ee1b2f8763e58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds one gap from the watch.  <br /></td></tr>
+<tr class="memitem:ga5a9fade553546533a99efde079418e37" id="r_ga5a9fade553546533a99efde079418e37"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga5a9fade553546533a99efde079418e37">hrv_run_quiet</a> (const <a class="el" href="structHrvRun.html">HrvRun</a> *run, uint32_t now_sec)</td></tr>
+<tr class="memdesc:ga5a9fade553546533a99efde079418e37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a run has gone quiet, so it is finished and waiting to be read.  <br /></td></tr>
+<tr class="memitem:ga2f4bc4b0a4b9727d00dbd5a5a4571a81" id="r_ga2f4bc4b0a4b9727d00dbd5a5a4571a81"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga2f4bc4b0a4b9727d00dbd5a5a4571a81">hrv_run_finish</a> (<a class="el" href="structHrvRun.html">HrvRun</a> *run)</td></tr>
+<tr class="memdesc:ga2f4bc4b0a4b9727d00dbd5a5a4571a81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends a run and empties it. How many differences it held stays in finished_diffs, so a caller can say how much of the burst went into the reading.  <br /></td></tr>
+<tr class="memitem:ga694e9c38004c250485939cbf5c33ea1f" id="r_ga694e9c38004c250485939cbf5c33ea1f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga694e9c38004c250485939cbf5c33ea1f">hrv_reading_stale</a> (uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</td></tr>
+<tr class="memdesc:ga694e9c38004c250485939cbf5c33ea1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a reading is too old to show.  <br /></td></tr>
+<tr class="memitem:ga63af7759a1aab1ce49fad20c956816f2" id="r_ga63af7759a1aab1ce49fad20c956816f2"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga63af7759a1aab1ce49fad20c956816f2">hrv_should_ask</a> (bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</td></tr>
+<tr class="memdesc:ga63af7759a1aab1ce49fad20c956816f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to ask the watch for beat gaps again.  <br /></td></tr>
+<tr class="memitem:ga10fae5233f760fb6787caa3e0876836c" id="r_ga10fae5233f760fb6787caa3e0876836c"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga10fae5233f760fb6787caa3e0876836c">hrv_hold_over</a> (uint32_t held_since, uint32_t now_sec)</td></tr>
+<tr class="memdesc:ga10fae5233f760fb6787caa3e0876836c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the sensor has been held on for a burst as long as it may be.  <br /></td></tr>
+<tr class="memitem:ga3ec53ad7f3196535760825f02dc2611f" id="r_ga3ec53ad7f3196535760825f02dc2611f"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3ec53ad7f3196535760825f02dc2611f">hrv_settle_gaps</a> (uint16_t asked)</td></tr>
+<tr class="memdesc:ga3ec53ad7f3196535760825f02dc2611f"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many gaps to leave out at the start of a burst, from the count a face asked for.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Turns the beat gaps the watch reports into heart rate variability, as RMSSD in ms. </p>
+<p>The watch hands over one gap between two heartbeats at a time. One gap is just the heart rate said another way, so the number worth showing is how much each gap differs from the one before it, taken over a run of clean beats. That is RMSSD, the square root of the mean of the squared differences. Plain C with no SDK, so its specs run on a PC.</p>
+<p>Apps never see the sensor's own quality grade, so the rules for which beats count are here. A gap outside a heart rate of 30 to 200 is dropped, and so is one that jumps too far from the one before, which is what a missed or doubled beat looks like. A dropped gap also breaks the chain, so the next difference is only taken between the two good gaps after it, which really are neighbours. </p>
+</div></div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>health</b></li><li class="navelem"><a href="hrv__run_8h.html">hrv_run.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

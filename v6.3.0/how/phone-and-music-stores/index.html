@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Phone and Music Stores · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v6.3.0" selected>v6.3.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/plugin-sources/">Pebble App Plugins</a></li>
+<li><a href="../../how/plugin-apps/">Plugin Apps</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+<li class="current"><a href="../../how/phone-and-music-stores/" aria-current="page">The Phone and Music Stores</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Phone and Music Stores</h1>
+          
+          <div class="readme"><p>The phone store holds the phone&#39;s own battery, and the music store holds what the phone is playing. Both come from Pebble app plugins on the phone, which the phone code reads and passes on. Neither has any other source, so a face only gets them with plugins turned on in the Pebble app.</p>
+<p>They live in <a href="../../c/phone__store_8h.html"><code>phone_store.h</code></a> and <a href="../../c/music__store_8h.html"><code>music_store.h</code></a>, with their <code>.c</code> files beside them. The phone side is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/32be203c3cd3ec363c9d9670e7f10373f93a3f06/src/ts/phone/feature.ts"><code>ts/phone/feature.ts</code></a> and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/32be203c3cd3ec363c9d9670e7f10373f93a3f06/src/ts/music/feature.ts"><code>ts/music/feature.ts</code></a>, and the plugin code behind them is in <code>src/ts/plugin-sources/</code>.</p>
+<h2 id="setting-them-up">Setting Them Up</h2>
+<p>On the phone, the face sets <code>PLUGIN_PHONE</code> or <code>PLUGIN_MUSIC</code> in its appinfo&#39;s <code>defines</code> and lists the feature in <code>startPebbleApp</code>:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">"defines"</span><span style="color:var(--code-foreground)">: {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "PLUGIN_PHONE"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "PLUGIN_MUSIC"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> 1</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">startPebbleApp</span><span style="color:var(--code-foreground)">({ clayConfig</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> features</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [phone</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> music] });</span></span></code></pre>
+<p>Each define brings the keys its store needs, <code>PHONE_BATTERY</code> and <code>PHONE_REQUEST</code> for the battery, and <code>MUSIC_TITLE</code>, <code>MUSIC_ARTIST</code>, <code>MUSIC_PLAYING</code>, and <code>MUSIC_REQUEST</code> for now playing, and the build adds them to the face&#39;s message keys. A sandbox whose keys change that way builds clean on its own. The build refuses any of those keys without the define, since only the plugin fills them.</p>
+<p>On the watch, the face starts each store live, beside a live system store:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">system_store_init</span><span style="color:var(--code-foreground)">((SystemConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .vibe </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> vibe_bt_transition}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">phone_store_init</span><span style="color:var(--code-foreground)">((PhoneConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">music_store_init</span><span style="color:var(--code-foreground)">((MusicConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">phone_store_subscribe</span><span style="color:var(--code-foreground)">(redraw);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">music_store_subscribe</span><span style="color:var(--code-foreground)">(redraw);</span></span></code></pre>
+<p><strong>Live Only While Shown.</strong> A plugin sends on every change, so a subscription nobody reads wakes the watch for each one. Start each store live only while the face shows its reading, such as when a phone battery panel is on the wearer&#39;s layout, and start it again with <code>live</code> false when the layout drops the last one. A store started live asks the phone with <code>PHONE_REQUEST</code> or <code>MUSIC_REQUEST</code> set to 1, and the phone subscribes. A store started not live sends the same key set to 0, through <code>appmessage_release_phone</code> or <code>appmessage_release_music</code>, and the phone ends its subscription. The phone keeps the last answer under a <code>pf-wanted-</code> key in <code>localStorage</code>, so after its own restart it subscribes again unless the watch last said it shows no such reading. A phone that has never heard an answer, as after an install or an upgrade, subscribes at ready rather than waiting on an ask that may run out of tries while the phone code starts, and a store started not live ends that subscription with its 0 a moment after launch. A face that always starts both stores live behaves as before, at the cost of a wake on every change.</p>
+<p><strong>Built Only with the Keys.</strong> Each store&#39;s code is built only for a face that declares all of its keys. A face that declares part of a set fails to build, with the missing key named. A face with none of them gets the public calls as stubs, so the battery reads -1, the track reads as nothing playing, and nothing runs.</p>
+<h2 id="the-phones-battery">The Phone&#39;s Battery</h2>
+<p><code>phone_store_battery</code> gives the level from 0 to 100, or -1 when there is none. <code>readout_phone_battery</code> writes it as <code>84%</code>, or <code>--</code> with no reading.</p>
+<p><strong>No Plugin.</strong> While nothing on the phone serves the battery, the phone sends -2 in place of a level. That is a plugin list with no Phone plugin in it, such as with plugins off in the Pebble app, a subscription that found no plugin or that the phone ended, and a Pebble app from before plugins. The level still reads as -1 and the readout as <code>--</code>, and <code>phone_store_no_plugin</code> turns true, so a face can say why in place of the dashes, such as <code>PLUGINS OFF</code> on a phone battery panel. A level arriving or the phone dropping turns it false again. -1 is left for a reading still on its way, such as before the plugin&#39;s first update. The two values are <code>PHONE_NO_LEVEL</code> and <code>WIRE_NO_PLUGIN</code> in <code>wire_caps.g.h</code>, generated from <code>WIRE_CAPS</code> in <code>ts/pkjs/wire.ts</code>, so the two sides read the same numbers.</p>
+<p>The phone sends the whole percent only when it changes, so a Wi-Fi switch with the battery where it was wakes nothing. On iOS the level only moves in steps of 5, and the store shows it as it comes.</p>
+<h2 id="what-is-playing">What Is Playing</h2>
+<p><code>music_store_title</code> and <code>music_store_artist</code> give the two lines, each up to 32 characters and empty for none. <code>music_store_playing</code> says whether the track plays, and <code>music_store_has_track</code> says whether there is a title or an artist to show, paused or not.</p>
+<p><strong>The Text Is ASCII.</strong> The phone folds both lines to ASCII before sending, as <a href="../../how/message-formats/#text-on-the-way-over">The Message Formats</a> covers, since the watch fonts carry nothing else. A line in a script with no ASCII form, such as a Japanese title, arrives empty rather than as a row of question marks, so the panel shows its empty state. A line of plain ASCII punctuation, such as <code>!!!</code>, arrives as written.</p>
+<p><strong>Where It Comes From.</strong> The Pebble app has a music plugin built in on Android. iOS has none built in, and no store plugin serves it yet, so an iPhone shows nothing playing until one is published. The phone code reads from whichever plugin serves it, so a face needs no update when one appears.</p>
+<p><strong>No Plugin.</strong> While nothing on the phone serves now playing, for the same reasons as the battery, the phone sends both lines empty and <code>MUSIC_PLAYING</code> as -2. The store reads as nothing playing, and <code>music_store_no_plugin</code> turns true until a track or a clear arrives or the phone drops, so a face can show its own words in place of its empty state.</p>
+<h2 id="album-art">Album Art</h2>
+<p>A face that shows the track&#39;s art starts the phone feature with the largest size its panel draws, and adds a <code>music_store_deinit()</code> to its own deinit:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">startPebbleApp</span><span style="color:var(--code-foreground)">({ clayConfig</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> features</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-constant)">music</span><span style="color:var(--code-token-function)">.withArtwork</span><span style="color:var(--code-foreground)">({ w</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> 40</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> h</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> 40</span><span style="color:var(--code-foreground)"> })] });</span></span></code></pre>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-foreground)"> GBitmap </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">art </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> music_store_artwork</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (art)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    graphics_context_set_compositing_mode(ctx</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> GCompOpSet)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    graphics_draw_bitmap_in_rect(ctx</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> art</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> frame)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>A size that is not two numbers from 1 up logs a warning and asks for no art. <code>music.withArtwork</code> brings the <code>MUSIC_ARTWORK</code> key, which the build adds to the face&#39;s keys and refuses without <code>PLUGIN_MUSIC</code>. The phone then asks the music plugin for <code>artwork</code> at that size, and sends it as the watch&#39;s own 4-bit palettized bitmap. The built-in plugin on Android draws it, at the size asked for or smaller. An iPhone has no plugin that draws one, so it sends none. A face that starts the plain <code>music</code> feature asks for no art, declares no art key, and carries none of the art code on the watch.</p>
+<p><strong>When It Goes.</strong> The art rides a message of its own, sent only when it changes, so a pause or a new track from the same album sends no bitmap. The plugin often sends the track first and the art a moment later, and the art then follows on its own. A track with no art, a phone with no plugin, art bigger than the face asked for, or art that does not read clean all clear the watch&#39;s art, so a cover never stays beside a song it does not belong to. Art the watch turns away, such as one too big for its inbox, is cleared in the same way and not sent again until the art changes.</p>
+<p><strong>On the Watch.</strong> <code>music_store_artwork</code> gives the art as a <code>GBitmap</code> in <code>GBitmapFormat4BitPalette</code>, or NULL with none. The store owns it, and frees it when the art changes, clears, or the phone drops, and in <code>music_store_deinit</code>. So a face reads it again on each redraw rather than keeping the pointer. Colours the phone left out of the palette are see-through.</p>
+<p><strong>The Size Limit.</strong> Each side is held from 1 to 100 pixels. The art&#39;s message holds <code>3 + colours + ceil(w / 2) * h</code> bytes, with up to 16 colours, and about 8 bytes more for the message around it. That is about 420 bytes for a 28 square, as a 1x4 panel might draw, 830 for a 40 square, and 2,080 for a 64 square, as a 2x2 might. The face&#39;s inbox has to hold that as well as its settings save, so a face asking for a 64 square passes at least 2,080 to <code>appmessage_open</code>, as <a href="../../how/talking-to-the-phone/#opening-the-connection">Opening the Connection</a> covers. The bitmap takes the same pixel bytes off the heap, plus 16 for its palette.</p>
+<h2 id="not-saved-and-cleared-when-the-phone-drops">Not Saved, and Cleared When the Phone Drops</h2>
+<p>Neither store saves to flash. A battery level or a song from an hour ago is worse than none, so a relaunch starts empty and asks. The album art goes with the track.</p>
+<p>Each store adds itself to the system store&#39;s link listeners (see <a href="../../how/system-store/#the-phone-connection">The System Store</a>). When the phone drops, the battery goes back to -1 and the track clears, since the watch can no longer know either, and neither store reports no plugin. When the phone comes back, each store asks again with <code>appmessage_request_phone</code> or <code>appmessage_request_music</code>. Each also asks once a moment after launch. Neither costs a provider call, so neither waits on a poll interval or the stores&#39; cadence.</p>
+<h2 id="on-the-settings-page">On the Settings Page</h2>
+<p>Neither kind has a choice to make, so the settings page has no select for either. What it does have is notes, always shown. With nothing on the phone serving the kind, the note says to turn plugins on in the Pebble app under Settings, Plugins, or update the Pebble app. With plugins off the phone lists no plugins at all, and the supported plugins panel opens on a line saying the same, so the kind adds no note of its own and the wearer reads the instruction once. Now playing also gets a note when the wearer has not allowed Music for the face, and either gets one for a plugin whose readings the face cannot use.</p>
+<p>The notes go straight after a row the face marks with <code>pluginSourceRows: &#39;music&#39;</code> or <code>&#39;phone&#39;</code>, or else at the foot of the page above the supported plugins panel, which lists the plugins each kind can read from.</p>
+<h2 id="seeding">Seeding</h2>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">phone_store_init</span><span style="color:var(--code-foreground)">((PhoneConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">(PhoneSeed){.battery </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 72</span><span style="color:var(--code-foreground)">});</span><span style="color:var(--code-token-comment)">  // -2 seeds no plugin</span></span>
+<span class="line"><span style="color:var(--code-token-function)">music_store_init</span><span style="color:var(--code-foreground)">((MusicConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">(MusicSeed){.title </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> "Clocks"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .artist </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> "Coldplay"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .playing </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">});</span></span></code></pre>
+<p>A store that is not live keeps its seed and takes nothing from the phone. It never asks, and a moment after it starts it tells the phone the face no longer shows the reading, so the phone ends its subscription. That holds for a store the face started live and then again with <code>live</code> false. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/health-store/"><span>Previous</span>The Health Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/moon/"><span>Next</span>The Moon</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v6.3.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Settings on the Watch · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v6.3.0" selected>v6.3.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/plugin-sources/">Pebble App Plugins</a></li>
+<li><a href="../../how/plugin-apps/">Plugin Apps</a></li>
+<li class="current"><a href="../../how/settings-on-the-watch/" aria-current="page">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+<li><a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Settings on the Watch</h1>
+          
+          <div class="readme"><p>The settings code keeps every setting a face offers in flash on the watch, and takes care of everything around that: the defaults on a first launch, reading an older version&#39;s saved settings after an update, repairing a damaged value before the face draws it, taking new values from the phone, and sending the watch&#39;s copy back so the settings page opens filled in. A face describes its settings once, as a table, and never writes load, save, or message code for a single setting.</p>
+<p>It lives in <a href="../../c/settings_8h.html"><code>settings.h</code></a> and <a href="../../c/settings_8c.html"><code>settings.c</code></a> under <code>src/c/pebble/system/settings/</code>, with the shared settings in <a href="../../c/settings__catalog_8h.html"><code>settings_catalog.h</code></a> and their named values in <a href="../../c/setting__values_8h.html"><code>setting_values.h</code></a>. <a href="../../how/life-of-a-setting/">The Life of a Setting</a> follows one setting from the page to the screen. This page stays on the watch and goes into the machinery underneath.</p>
+<h2 id="describing-the-settings">Describing the Settings</h2>
+<p>A face keeps its settings in a plain struct whose first byte is a version number. A table of fields says where each setting sits in that struct, and a schema hands the struct, the table, the version, and a persist key to <code>settings_init</code>. A common setting takes one line, and a face&#39;s own takes one entry:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-foreground)"> SettingField s_fields</span><span style="color:var(--code-token-keyword)">[]</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    KNOWN_THEME(offsetof(FaceSettings</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> theme)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> THEME_COUNT)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // this face's own setting, a choice of the layouts its settings page offers</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    { .id </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> SETTING_COUNT</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .message_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">MESSAGE_KEY_APPEARANCE_LAYOUT</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      .type </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> SETTING_ENUM_U8</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .offset </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> offsetof(FaceSettings</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> layout)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      .enum_count </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> SETTINGS_COUNT(APPEARANCE_LAYOUT)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      .default_num </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> SETTINGS_DEFAULT(APPEARANCE_LAYOUT)</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span></code></pre>
+<p><strong>A Field.</strong> Each entry names its message key, its type, and its offset in the struct. The type is a toggle, a choice from a list, text in a fixed buffer, or a colour, and it decides both how the value travels and how it is checked. A choice carries how many options it has and which one is the default. Text carries its buffer size and its default string. Flags mark the side effects: a change to the date or time format re-renders the clock, and a change to the temperature unit asks for fresh weather.</p>
+<p><strong>The Shared Entries.</strong> The <code>KNOWN_*</code> macros fill in a common setting whole, with its message key, type, limits, default, and side effects. A face gives the offset. A list the framework owns takes its count from <code>setting_values.h</code>, where each list ends in one, such as <code>TIME_FORMAT_COUNT</code>, since the watch can only draw the values its own enum names. The wind units are the core&#39;s <code>WindUnit</code> from <code>units/wind.h</code>, which <code>setting_values.h</code> includes, so <code>KNOWN_WIND_UNIT</code> takes <code>WIND_UNIT_COUNT</code> from there. Its default is the page&#39;s, and km/h on a page with no wind unit row. A face reads it with <code>settings_u8(SETTING_WIND_UNIT)</code> and hands it to <code>wind_from_kmh</code>. The theme and the header font are the face&#39;s own lists, so <code>KNOWN_THEME</code> and <code>KNOWN_HEADER_FONT</code> take their counts from the face&#39;s settings page, and the face passes the size of its own table beside the offset, such as <code>THEME_COUNT</code>. The build stops when the page and the table disagree, as <a href="#counts-from-the-settings-page">Counts from the Settings Page</a> covers. Every shared entry takes its default from the page, as <a href="#defaults-from-the-settings-page">Defaults from the Settings Page</a> covers, so <code>KNOWN_DATE_FORMAT</code> takes the offset alone.</p>
+<p>A shared entry lets the framework&#39;s own code find the setting. The date and time readouts read the formats, the steps readout reads its mode, and the Bluetooth vibration reads the pattern the wearer picked, all with no plumbing from the face:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">uint8_t</span><span style="color:var(--code-foreground)"> time_format </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> settings_u8</span><span style="color:var(--code-foreground)">(SETTING_TIME_FORMAT);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">format </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> settings_str</span><span style="color:var(--code-foreground)">(SETTING_DATE_FORMAT);</span></span></code></pre>
+<p><code>settings_init</code> builds a lookup from each shared id to its field once, so a read is an array index and a pointer offset. A read of a setting the face never declared gives 0 or an empty string. A shared entry names its message key directly, so a face that uses <code>KNOWN_THEME</code> without declaring <code>APPEARANCE_THEME</code> in its message keys fails to build at that line rather than on the watch.</p>
+<p><strong>A Face&#39;s Own Settings.</strong> A setting only one face has goes in the same table with an id of <code>SETTING_COUNT</code> or more. The framework still fills in its default, cleans it, saves it, and carries it to and from the phone. It just has no typed read, so the face reads it straight off its own struct. A choice of the face&#39;s own takes its count from the page with <code>SETTINGS_COUNT(KEY)</code> when the page offers it, with <code>SETTINGS_COUNT_CHECKED(KEY, table_count)</code> when the C draws it from a table of its own, or from the face&#39;s own enum when the C decides the list. Any field of the face&#39;s own can take its default from the page with <code>SETTINGS_DEFAULT(KEY)</code>.</p>
+<h3 id="counts-from-the-settings-page">Counts from the Settings Page</h3>
+<p>A choice&#39;s count is how many values the watch takes, and the list it counts is the settings page&#39;s options, since those are what the wearer can pick. So <code>paf build</code> reads the count off the page rather than having the face write it twice. Between the phone build and <code>pebble build</code> it loads the face&#39;s compiled page the way the phone builds it, with the face&#39;s features started, their page hooks run, and the page narrowed to its <code>providers</code> list. It loads the page once for each platform in the appinfo&#39;s <code>targetPlatforms</code>, or for every platform the SDK has when the appinfo lists none, since the SDK then builds them all. Then it writes <code>page/settings_page.h</code> into each sandbox:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-comment)">// written by paf build from my-face's settings page. never edit or commit it</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">// format: 2</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">// sandbox fingerprint: 3f9a…</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">// counted on: emery gabbro</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#pragma</span><span style="color:var(--code-token-function)"> once</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> SETTINGS_COUNT_APPEARANCE_THEME</span><span style="color:var(--code-token-constant)"> 9</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> SETTINGS_COUNT_APPEARANCE_THEME_MODE</span><span style="color:var(--code-token-constant)"> 3</span></span></code></pre>
+<p><strong>Which Controls Count.</strong> Every <code>select</code>, <code>radiogroup</code>, and <code>themePreview</code> on the page, sections included, whose option values are all whole numbers from 0 to 254, as numbers or as text holding only digits. A control with a text value, such as the date format or a provider, gets no count, and neither does one with a value past 254, since <code>enum_count</code> is a byte.</p>
+<p><strong>The Highest Value Plus One.</strong> The count is not the number of options. A face that lists its themes 0, 3, 4, 7, 8, 1, 5, 2, 6 gets 9, and one that retires theme 2 from the middle of its list still gets a count that takes the last theme, so the number stays reserved.</p>
+<p><strong>The Largest Count Wins.</strong> One pbw holds every platform the face targets, so the watch&#39;s table has to take the most any of them offers. A key with two controls, such as a rectangle-only and a round-only picker kept apart by Clay&#39;s <code>capabilities</code>, counts as the larger of the two. So does a page whose hooks offer one platform more choices than another. A key where any control has a text value gets no count at all. A key with an index, such as <code>SLOT_MODE[1]</code>, counts under <code>SLOT_MODE</code>.</p>
+<p><strong>A Fresh Phone.</strong> Each load is on a phone with no plugins and nothing saved, and the phone&#39;s globals go back as they were after it, so each face in <code>paf build all</code> starts clean. A face must not add a whole number option only when plugins are on or something is saved, since the build never sees it. The framework&#39;s own page hooks add only text options, such as the plugin choice on a provider picker.</p>
+<p><strong>Using It.</strong> <code>SETTINGS_COUNT(APPEARANCE_THEME)</code> is the count, as a number the compiler knows. A key the page has no count for stops the build at that line, with <code>SETTINGS_COUNT_APPEARANCE_NIGHT_THEME</code> undeclared. <code>SETTINGS_COUNT_CHECKED(key, table_count)</code> is the same count, checked against how many entries the face&#39;s own table holds, which is what <code>KNOWN_THEME</code> and <code>KNOWN_HEADER_FONT</code> use. A theme added to the page and not to the C would be picked and draw nothing, and one added to the C and not the page could never be picked, so either stops the build with a message naming both counts. A face&#39;s own field that shares the theme table writes:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">.enum_count </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> SETTINGS_COUNT_CHECKED</span><span style="color:var(--code-foreground)">(APPEARANCE_NIGHT_THEME</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> THEME_COUNT)</span><span style="color:var(--code-token-punctuation)">,</span></span></code></pre>
+<p><strong>A Face with No Page.</strong> A face with no <code>src/pkjs/index.ts</code>, or whose <code>index.ts</code> never calls <code>startPebbleApp</code>, or that passes an empty page, gets the header with no counts in it, since <code>settings_catalog.h</code> includes it either way.</p>
+<p><strong>Written for This Sandbox.</strong> The header carries a fingerprint of the sandbox&#39;s <code>package.json</code> and everything under its <code>emit/</code>, and the waf build works it out again and compares. A sandbox without the header, one whose phone code was compiled again after it was written, or a header written by another version of <code>paf build</code>, which the header&#39;s <code>// format:</code> line names, stops the waf build with a line saying to build the face with <code>paf build</code>, so the C never takes its counts from a page the face no longer ships. The header also names the platforms the page was counted on, and the waf build stops on a platform it builds that the list lacks, such as one a newer SDK adds for a face with no <code>targetPlatforms</code>.</p>
+<p><strong>What Running the Page Costs.</strong> The build runs the face&#39;s compiled <code>index.js</code> under node, with <code>startPebbleApp</code> swapped for a stand-in that records what the face hands it, and the phone&#39;s globals stubbed: a <code>Pebble</code> with a few calls, a <code>localStorage</code>, and the <code>message_keys</code> map. A face whose top-level code, or whose feature as it starts, reaches for anything else stops the build, which names the feature. Nothing calls <code>ready</code>, so no feature fetches. waf tracks the header by its contents, so a change to it rebuilds only the files that include it, with no <code>--clean</code>. The fingerprint changes with any change to the phone code, so those files compile again then too.</p>
+<p><strong>The Schema.</strong> The schema names the persist key, the version, and the table. <code>SETTINGS_BLOB</code> sets the struct, its size, and the size it had in the first release that saved it:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-foreground)"> SettingsSchema s_schema </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    .key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> FACE_SETTINGS_KEY</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    .version </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> FACE_SETTINGS_VERSION</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    SETTINGS_BLOB(s_settings</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 25</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    .fields </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> s_fields</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    .field_count </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> ARRAY_LENGTH(s_fields)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span></code></pre>
+<p>The 25 is that first size, written as a number. The Smallest Blob under <a href="#loading-at-launch">Loading at Launch</a> covers what it does and how to find it.</p>
+<h3 id="defaults-from-the-settings-page">Defaults from the Settings Page</h3>
+<p>A fresh watch holds each setting at its default until the phone sends a save, and a watch that never got one sends those defaults back for the page to open on. So the watch&#39;s default has to be the one the page opens with. <code>paf build</code> writes each one from the page into <code>page/settings_page.h</code>, after the counts:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> SETTINGS_DEFAULT_APPEARANCE_THEME</span><span style="color:var(--code-token-constant)"> 0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> SETTINGS_DEFAULT_CLOCK_DATE_FORMAT</span><span style="color:var(--code-token-string-expression)"> "%b </span><span style="color:var(--code-token-constant)">%d</span><span style="color:var(--code-token-string-expression)">"</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> SETTINGS_DEFAULT_CONNECTION_BLUETOOTH_ICON</span><span style="color:var(--code-token-constant)"> 1</span></span></code></pre>
+<p><strong>Which Controls Give One.</strong> Every control with a message key on the page that opens, sections included and after the features&#39; page hooks, whose value the watch can hold. The value is the one the phone reads, so a toggle&#39;s <code>true</code> and a hidden store&#39;s <code>&quot;1&quot;</code> are both 1, and digit text is its number. A key a <code>KNOWN_*</code> entry keeps takes the C type of that entry&#39;s field. A face&#39;s own key is a number when one of its controls is a toggle, a colour, or a choice whose options are all whole numbers, and text otherwise, in the page&#39;s own spelling. A colour written as hex text, such as <code>0xFF0000</code>, is its number. Text is a C string, with every byte outside plain ASCII written as an escape, so an accented letter reaches the watch as the same UTF-8. A slider, a list, and a key with an index, such as <code>SLOT_MODE[1]</code>, get none.</p>
+<p><strong>A Control with No Default.</strong> Clay sets a control with no <code>defaultValue</code> to empty text, so the header gives what that opens it on. A toggle opens off, so its default is 0. A text input opens empty, so its default is empty text. A colour reads empty text as 0, which is black. A select, a radio group, or a theme picker picks its option for empty text when it has one. Without one it opens with nothing picked and saves empty text, which the watch leaves alone, so it gives no default and a shared entry keeps the framework&#39;s own.</p>
+<p><strong>A Face&#39;s Own Key That Differs by Platform.</strong> A face&#39;s own key whose round and rectangular pages open on different values gets no <code>SETTINGS_DEFAULT_&lt;KEY&gt;</code>, and the build log names it. A field that reads that default stops at compile with it undeclared, and one that writes its own default builds as it did.</p>
+<p><strong>Using It.</strong> Every <code>KNOWN_*</code> entry takes its default from the header, so the face writes no default for a shared setting. A shared setting the page does not show keeps the framework&#39;s own default, such as the Bluetooth icon showing, since there is no page for it to disagree with. A face&#39;s own field writes <code>.default_num = SETTINGS_DEFAULT(KEY)</code> or <code>.default_str = SETTINGS_DEFAULT(KEY)</code>. A key the page gives no default stops the build at that line, with <code>SETTINGS_DEFAULT_&lt;KEY&gt;</code> undeclared.</p>
+<p><strong>Written Rather than Checked.</strong> The build writes the page&#39;s default rather than comparing the watch&#39;s against it. A date format is text, and C cannot compare two strings while it compiles, so a check could never catch a date format that drifted from the page. A written default also leaves no second copy to keep in step.</p>
+<p><strong>What Stops the Build.</strong> The build checks the page before it writes the header, and stops with a line naming the face and the key on:</p>
+<ul>
+<li>a select, radio group, or theme picker whose default is not one of its own options, since the page cannot show it and the wearer cannot pick it</li>
+<li>a key whose controls open on two values the phone reads differently on one platform, or a key a <code>KNOWN_*</code> entry keeps that opens on two values across the platforms, since the watch keeps one default for a key on every platform</li>
+<li>a default for a key a <code>KNOWN_*</code> entry keeps that is the wrong kind for its field, text for a number or a number for text</li>
+<li>a text default for a <code>KNOWN_*</code> entry whose UTF-8 does not fit its buffer with the end of the text, such as a date format over 15 bytes, which a fresh watch would cut short</li>
+<li>a default for a <code>KNOWN_*</code> entry with a count of the framework&#39;s own, such as a vibe or the time format, that is past that count, since the watch holds no more choices than that whatever the page lists</li>
+<li>an option on one of those entries that is at or past the framework&#39;s count, since a wearer who picks it gets the default back</li>
+<li>a default on a counted key that is not a whole number below its count, which the watch would put back to the default and save again on every launch</li>
+</ul>
+<p>The checks on a <code>KNOWN_*</code> entry go by message key, so a face&#39;s own field on a shared key, such as its own field on <code>CONNECTION_VIBE_CONNECT</code>, is held to the framework&#39;s count too.</p>
+<p>Controls on one key that <code>capabilities</code> keep apart, so a watch only ever shows one of them, count as one platform for the defaults. The build reads both on the same platform, so they need the same default.</p>
+<h2 id="keeping-a-plugin-source">Keeping a Plugin Source</h2>
+<p>A face built with <code>PLUGIN_WEATHER</code>, <code>PLUGIN_STOCKS</code>, or <code>PLUGIN_CALENDAR</code> offers the wearer the Pebble app&#39;s plugin as a source, as <a href="../../how/plugin-sources/">Pebble App Plugins</a> covers. The phone sends that choice in every save, and the framework keeps it on the watch in a schema of its own, so a reset of the Pebble app does not drop the wearer&#39;s pick back to the default. The phone fills its settings back in from what the watch sends, and the watch sends this choice with the rest. The face writes no field, version bump, or default for it.</p>
+<p><strong>Which Kinds It Keeps.</strong> The watch keeps a kind&#39;s choice when the face&#39;s define is on and it declares the kind&#39;s select key, <code>WEATHER_PROVIDER</code>, <code>STOCK_PROVIDER</code>, or <code>CALENDAR_SOURCE</code>. Each is a text field on that key, and nothing on the watch reads it. A face whose <code>providers</code> list for the kind is <code>[&quot;plugin&quot;]</code> has no choice to keep, since the feature reads from the plugin whatever is saved. The build refuses the select key beside that list, so the watch keeps nothing for it.</p>
+<p><strong>Its Own Key.</strong> <code>settings_init</code> chains the framework&#39;s schema on after the face&#39;s last one, and saves it under <code>SETTINGS_PLUGIN_SOURCE_KEY</code>, which is 249. Loading, cleaning, saving, taking values from the phone, and sending them back all walk it with the face&#39;s own, through one helper in <a href="../../c/settings__chain_8h.html"><code>settings_chain.h</code></a>. Every face leaves 249 free for its settings and for its stores alike, whether or not it has a plugin define today, since a face that turns one on in a later release would otherwise land the choice on whatever it kept there. A face settings schema on 249 is caught: <code>settings_init</code> logs an error and leaves the framework&#39;s schema out, so the face&#39;s settings keep working and the choice is not kept. A store on 249 is not caught, since the framework never sees the keys a face hands its stores, and the store and the choice then overwrite each other.</p>
+<p><strong>A Face&#39;s Own Field on the Key.</strong> A face that still keeps its own field on <code>WEATHER_PROVIDER</code>, <code>STOCK_PROVIDER</code>, or <code>CALENDAR_SOURCE</code> while the framework keeps that kind gets an error logged at launch. Both copies take every save, so nothing breaks, but the watch sends the key twice. Take the face&#39;s field out.</p>
+<p><strong>A Face with No Settings of Its Own Still Calls settings_init.</strong> The choice is only kept once <code>settings_init</code> has run. A face with no settings of its own, such as one whose only setting is the weather source, calls <code>settings_init(NULL)</code> at launch, before <code>appmessage_open</code>, and gets the framework&#39;s schema alone. A face that never calls it keeps nothing, and a reset of the Pebble app drops the wearer&#39;s pick. The outbox is sized from the settings reply when <code>appmessage_open</code> runs, so a call after it leaves every settings reply empty, and a reinstall restores nothing. The build cannot see whether the face calls it. The choice only reaches the phone in the settings reply, so the build adds <code>SETTINGS_REQUEST</code> and <code>SETTINGS_FRESH</code> for a face that keeps one.</p>
+<p><strong>Saved Only When It Changes.</strong> <code>settings_save</code> writes every schema on every save, but it skips the framework&#39;s schema while the choices match what flash holds. So a save of the face&#39;s own settings costs no extra write. With nothing on flash yet it writes even the defaults, or the key would stay empty and the watch would count as fresh on every launch.</p>
+<p><strong>The Default Comes from the Build.</strong> The default has to be the page&#39;s own, so a watch that never got a save sends back the choice the phone would make anyway. The build writes it from the face&#39;s <code>providers</code> list, as <code>PLUGIN_SOURCE_WEATHER_DEFAULT</code>, <code>PLUGIN_SOURCE_STOCK_DEFAULT</code>, and <code>PLUGIN_SOURCE_CALENDAR_DEFAULT</code>. It is the first custom provider the kind&#39;s list names, wherever <code>plugin</code> sits, or with no list the page&#39;s own default, <code>openmeteo</code>, <code>finnhub</code>, or <code>ical</code>. The manifest build puts them in the target&#39;s <code>package.json</code> as <code>textDefines</code>, and the waf build hands each to the C as a string. A face cannot set any of these names in its own <code>defines</code>. With a list, the page defaults to the list&#39;s first custom provider too, whatever the face&#39;s own select said. The build checks the default against the face&#39;s own picker, before the list narrows it, and stops when the picker does not offer it. It also stops when the page opens on another source than the watch starts on, which a face&#39;s own select can do when the face lists no providers. Both match a provider without regard to case, as the phone does, so a picker whose option saves <code>OpenMeteo</code> offers <code>openmeteo</code>. So a face whose weather select defaults to anything but <code>openmeteo</code>, or whose stock select defaults to anything but <code>finnhub</code>, lists its providers with that one first.</p>
+<p><strong>Turning a Define On Later.</strong> The framework&#39;s schema has nothing saved on the first launch after an update that turns a define on. So the watch counts as fresh, and the phone restores everything once, which fills the choice in with what the wearer picked rather than the default. The struct always holds every kind, so turning another one on in a later release reads the same saved blob, and the new kind starts on its default.</p>
+<p><strong>A Blob from Before the Stock Choice.</strong> The stock choice sits after the first 21 bytes, in version 2 of the struct. A blob saved at version 1 is those 21 bytes alone, so the watch reads the weather and calendar choices from it, keeps the stock choice on its default, and saves the blob again at version 2. Nothing is lost, and the watch does not count as fresh.</p>
+<h2 id="loading-at-launch">Loading at Launch</h2>
+<p><code>settings_init</code> loads every schema the face hands it. Each one starts from its defaults, and only then is the saved copy read over the top:</p>
+<pre class="mermaid">flowchart TD
+  start[&quot;settings_init, for each schema&quot;] --&gt; defaults[&quot;fill in every default&quot;]
+  defaults --&gt; exists{&quot;is a blob saved under the key?&quot;}
+  exists -- no --&gt; fresh[&quot;keep the defaults, and count as fresh&quot;]
+  exists -- yes --&gt; size{&quot;no smaller than the first size and no bigger than today?&quot;}
+  size -- no --&gt; reset[&quot;back to defaults, delete the key, and count as fresh&quot;]
+  size -- yes --&gt; version{&quot;version byte from 1 to today&#39;s?&quot;}
+  version -- no --&gt; reset
+  version -- yes --&gt; clean[&quot;clean every field&quot;]
+  clean --&gt; resave{&quot;an older version, or anything repaired?&quot;}
+  resave -- yes --&gt; save[&quot;save it back with today&#39;s version&quot;]
+  resave -- no --&gt; done[&quot;use it as it is&quot;]</pre>
+<p><strong>Growing at the End.</strong> A saved blob from an older version is shorter than today&#39;s struct. The read fills in what was saved, and the fields added since keep the defaults that were filled in a moment before. So a new version adds its fields to the end of the struct and bumps the version number, and nothing else has to happen. The cost is that a field can never be moved, removed, or given a new type, since the loader has no step that rewrites one version&#39;s layout into another.</p>
+<p><strong>The Smallest Blob.</strong> The first size a schema&#39;s <code>SETTINGS_BLOB</code> gives is the size of the struct in the first release that saved it, and it never changes after that. A blob smaller than it cannot be a saved copy of this face&#39;s settings, because every field past its end would be read from the wrong place. The struct&#39;s <code>sizeof</code> would rise with the first appended field and turn away every save from before it, so the macro takes the number itself, or a macro holding one. <code>sizeof</code>, <code>SETTINGS_BLOB_SIZE</code>, a sum such as <code>1 + LAYOUT_LEN</code>, brackets, and a cast written in place stop the build, and so does 0 or a size bigger than the struct. A constant worked out from <code>sizeof</code> somewhere else, such as an enum, still gets through, so write the number. A schema that sets <code>.first_size</code> by hand, as one does that only renamed <code>.min_versioned_size</code> when it moved from 5.0.0, still builds, but none of these checks run on it, so write <code>SETTINGS_BLOB</code>.</p>
+<p><strong>Finding the First Size.</strong> It is the struct&#39;s <code>sizeof</code> as the struct stood in the blob&#39;s first release. Build that release and print it, or add up the fields when every one is a byte wide, so the struct has no padding. To check a number, add <code>_Static_assert(sizeof(s_settings) == 25, &quot;&quot;);</code> for a moment to a build of the struct as that release had it, and take it out once it passes. A face moving from 5.0.0 whose struct has grown no field since its first release can check it against the struct it has now. A number too big turns away the saves from every release whose struct was smaller than it, so those watches drop their settings once and count as fresh. A number too small loads a blob shorter than any release saved, such as a save from before the face versioned its settings that its <code>migrate</code> hook does not take, and reads its bytes into the wrong fields. Only the cleaning pass below catches the values that land out of range.</p>
+<p><strong>Going Back to an Older Build.</strong> A blob bigger than today&#39;s struct was written by a newer build, and this one cannot read it. The same goes for a version byte of 0 or one from the future. The settings fall back to defaults and the loader deletes the key rather than writing it, so the watch counts as fresh and the phone puts its settings back (see <a href="#the-fresh-state">The Fresh State</a>). Deleting the key rather than saving the defaults means a relaunch before the phone answers still boots fresh and asks again.</p>
+<h2 id="cleaning-each-value">Cleaning Each Value</h2>
+<p>Flash can come back damaged, and a damaged byte in a theme number would otherwise send the face looking for a theme that does not exist. So every field is checked after a load:</p>
+<ul>
+<li><strong>A toggle</strong> holding anything other than 0 or 1 goes back to its default.</li>
+<li><strong>A choice</strong> at or past the number of options goes back to its default.</li>
+<li><strong>Text</strong> has to end inside its buffer, hold no control bytes, and say something, unless its default is itself empty. Every byte from 0x20 up counts as text, so a city spelled with an accent keeps its UTF-8 bytes across a reboot rather than reading as damage.</li>
+<li><strong>A colour</strong> has to be opaque. Every colour the watch paints has both alpha bits set, so a byte without them came from damage rather than from the colour picker.</li>
+</ul>
+<p>Anything repaired is saved back once, so the same repair does not run on every launch. The text check is <code>cstring_setting_is_clean</code>, in <a href="../../c/cstring__fit_8h.html"><code>cstring_fit.h</code></a>.</p>
+<h2 id="settings-across-several-keys">Settings across Several Keys</h2>
+<p>A persist key holds at most 256 bytes, and the watch saves only the first 256 bytes of a longer write. <code>SETTINGS_BLOB</code> stops the build for a struct over that. <code>settings_init</code> logs an error at launch for a schema written without the macro whose struct is over it, and <code>settings_save</code> logs one for a struct that is not written whole. A face with more than 256 bytes of settings chains a second schema on through <code>companion</code>, with its own key, version, and <code>SETTINGS_BLOB</code>. Loading, saving, taking values from the phone, and sending them back all walk the whole chain, and a shared setting can live in any link. <code>settings_save</code> writes every link whenever it saves. Saves only follow a message that changed a setting, so a few extra writes then cost less than a checksum per link. A link that a new build adds has nothing saved on its first launch, so the watch counts as fresh and the phone restores everything once, filling the new link with the wearer&#39;s values rather than defaults.</p>
+<h2 id="taking-values-from-the-phone">Taking Values from the Phone</h2>
+<p><code>settings_apply_inbox</code> walks the face&#39;s table and looks each key up in the incoming message. It only decodes. It hands back what moved and leaves saving and redrawing to the AppMessage layer, which <a href="../../how/talking-to-the-phone/#what-happens-to-a-message">Talking to the Phone</a> covers. A key in the message that is not in the table is ignored. Each type has its own checks on the way in.</p>
+<p><strong>A Toggle or a Choice.</strong> Each one reads through <code>tuple_number_or</code>, which takes the value whether the phone sent it as a number or as text holding only digits. Clay sends a select as text and a toggle as a number, and a face&#39;s own component can send either, so the type never decides whether a setting lands. Text holding anything but digits, such as an empty select, a word, <code>&quot;-1&quot;</code>, or <code>&quot;3a&quot;</code>, leaves the setting as it was, and so does a value of any other type. A choice past the end of its list becomes the default, so a theme of <code>&quot;12&quot;</code> on a face with 9 themes reads as the default theme. Digits too big for an <code>int32_t</code> count as past the end too, so they reset a choice the same way. A text setting takes only text and leaves a number alone.</p>
+<p><strong>A Colour.</strong> A <code>SETTING_COLOR</code> stays on <code>tuple_int_or</code>, so it is read as an int only, and anything else leaves it as it was. Text could be hex such as <code>FF0000</code>, and reading that as decimal would land on the wrong colour.</p>
+<p><strong>Empty Text Keeps the Old Value.</strong> An empty string only counts as a value for a field whose default is empty, such as a picker whose None is <code>&quot;&quot;</code>. For any other field it leaves the setting alone, so a page that sends a blank date format cannot wipe the one the watch holds.</p>
+<p><strong>Text Is Compared at the Size It Will Be Stored.</strong> A string longer than its buffer is cut to fit, and the check for &quot;already holds this value&quot; compares only the part that fits. The date format has 16 bytes, room for 15 characters. A 20 character pattern is cut to 15 when it lands, and the next save sends the same 20 again. Compared whole, that would count as a change on every save, the settings would go to flash again, and the face would be told its date layout changed when nothing did. <code>cstring_fit_same</code> measures the incoming text the way the copy cuts it, so the second save reads as unchanged.</p>
+<p><strong>Colours Round to the Watch&#39;s Palette.</strong> The phone sends a colour as <code>0xRRGGBB</code>. Each channel rounds to the nearest of the four levels the watch can show, and the result is stored as one <code>GColor</code> byte. A grey of <code>0x808080</code> sits nearest 170 on each channel, so it is stored as <code>GColorLightGray</code> and goes back to the phone as <code>0xAAAAAA</code>.</p>
+<p><strong>What Moved, Not What Arrived.</strong> The page sends every setting on every save. A field that already holds the incoming value is skipped and flags nothing, so the three flags that come back say what really changed: anything at all, a date or time format, or the temperature unit.</p>
+<h2 id="sending-the-watchs-copy-back">Sending the Watch&#39;s Copy Back</h2>
+<p>On launch the phone can ask for the watch&#39;s whole copy, and does when it holds no settings of its own, so the page opens filled in. <code>settings_serialize</code> writes every field in the form the page reads it: a toggle as 0 or 1, a choice as text such as <code>&quot;3&quot;</code> since Clay reads a select back as text, text as it is, and a colour as <code>0xRRGGBB</code>. <code>settings_serialized_size_max</code> gives the worst case the outbox is sized from, and serializing stops at the first field that does not fit. <a href="../../how/talking-to-the-phone/#opening-the-connection">Talking to the Phone</a> covers the sizing and why a reply that does not fit goes out empty.</p>
+<h2 id="the-fresh-state">The Fresh State</h2>
+<p><code>settings_was_fresh</code> is true when any schema in the chain had nothing saved at launch, or had a blob it could not read and reset. Either way some settings are on their defaults because flash was wiped, by a reinstall, a reset, or a step back to an older build. The phone holds the wearer&#39;s real settings, so the watch tells it with <code>SETTINGS_FRESH</code>, and the phone sends them back. A face with settings declares <code>SETTINGS_FRESH</code> beside <code>SETTINGS_REQUEST</code>, and the build stops on either without the other. Without the flag the phone could not tell a wiped watch from one with settings, and would copy the watch&#39;s defaults over the wearer&#39;s. A face that declares neither is never restored, and saves whatever the page sends it. <a href="../../how/life-of-a-setting/#after-a-reinstall">The Life of a Setting</a> shows that exchange.</p>
+<p>While the watch is fresh, it only saves a message that came from the settings page, either the wearer&#39;s own save or the phone&#39;s restore. Anything else it takes stays in memory. The phone sends the current time zone on every launch, and that carries a setting too. Saving it would create the key, the watch would stop counting as fresh, and the phone would never restore the rest. Once a message from the page lands, <code>settings_mark_restored</code> ends the fresh state and saving goes back to normal.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/plugin-apps/"><span>Previous</span>Plugin Apps</a>
+<a class="page-step page-step-next" rel="next" href="../../how/talking-to-the-phone/"><span>Next</span>Talking to the Phone</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v6.3.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

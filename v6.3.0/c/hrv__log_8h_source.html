@@ -1,0 +1,343 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/core/health/hrv_log.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v6.3.0" selected>v6.3.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('hrv__log_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">hrv_log.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="hrv__log_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="group__lib__core.html#gaef8d372067c4fa13a781401cef30d6dd">   22</a></span><span class="preprocessor">#define HRV_LOG_SLOTS 24        </span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga24d8afb395355e1268c709cbcb6ac136">   23</a></span><span class="preprocessor">#define HRV_LOG_HOURS 24        </span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="group__lib__core.html#gae62e193a45f5e99b5c7f083ae69f3079">   24</a></span><span class="preprocessor">#define HRV_LOG_MS_MAX 255      </span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga46a85f845d87d94530bb5f06187f2458">   25</a></span><span class="preprocessor">#define HRV_LOG_NIGHT_GAP_MIN 720 </span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga300b215938ab954e0d365a5a447ba108">   26</a></span><span class="preprocessor">#define HRV_LOG_NAP_FROM_MIN 720   </span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga3c96ec630f977cb0eab583f999c74c29">   27</a></span><span class="preprocessor">#define HRV_LOG_NAP_UNTIL_MIN 1260 </span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="group__lib__core.html#gad46f32990b5080141609508a2f406f7c">   28</a></span><span class="preprocessor">#define HRV_WALK_STEPS_DEFAULT 10 </span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
+<div class="foldopen" id="foldopen00033" data-start="{" data-end="};">
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">   33</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>{</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b">   35</a></span>    <a class="code hl_enumvalue" href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b">HRV_STATE_STILL</a>,   </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f">   36</a></span>    <a class="code hl_enumvalue" href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f">HRV_STATE_BUSY</a>,    </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c">   37</a></span>    <a class="code hl_enumvalue" href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c">HRV_STATE_WALKING</a>, </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    HRV_STATE_COUNT</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>} <a class="code hl_enumeration" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a>;</div>
+</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span></div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="};">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">   44</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>{</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc">   46</a></span>    <a class="code hl_enumvalue" href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc">HRV_COUNT_NOT_WALKING</a>, </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8">   47</a></span>    <a class="code hl_enumvalue" href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8">HRV_COUNT_STILL</a>,       </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f">   48</a></span>    <a class="code hl_enumvalue" href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f">HRV_COUNT_ANY</a>,         </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>} <a class="code hl_enumeration" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a>;</div>
+</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga29d5cfdac8f3395b7cb700ab9408c1d6">   51</a></span><span class="preprocessor">#define HRV_RECENT 6  </span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span></div>
+<div class="foldopen" id="foldopen00058" data-start="{" data-end="};">
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structHrvBurst.html">   58</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>{</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="structHrvBurst.html#a0b575b957833471898c947e909993977">   60</a></span>    uint32_t <a class="code hl_variable" href="structHrvBurst.html#a0b575b957833471898c947e909993977">at_sec</a>;  </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structHrvBurst.html#a6df7af8a3ad719c38288e1fa90284cc7">   61</a></span>    int16_t <a class="code hl_variable" href="structHrvBurst.html#a6df7af8a3ad719c38288e1fa90284cc7">ms</a>;       </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structHrvBurst.html#a7f41783d828f1c3a38b165b18d9359a3">   62</a></span>    int16_t <a class="code hl_variable" href="structHrvBurst.html#a7f41783d828f1c3a38b165b18d9359a3">score</a>;    </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="structHrvBurst.html#a5348549429b22c79d0609ea689c271a3">   63</a></span>    int16_t <a class="code hl_variable" href="structHrvBurst.html#a5348549429b22c79d0609ea689c271a3">steps</a>;    </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structHrvBurst.html#a58ee6dd37207c2516a9f4d30b907c13a">   64</a></span>    uint8_t <a class="code hl_variable" href="structHrvBurst.html#a58ee6dd37207c2516a9f4d30b907c13a">state</a>;    </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="structHrvBurst.html#ad59f10883d3d332aef745fcf2436ddb8">   65</a></span>    uint8_t <a class="code hl_variable" href="structHrvBurst.html#ad59f10883d3d332aef745fcf2436ddb8">kept</a>;     </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="structHrvBurst.html#a85f277ac10b1ac6c9ee0b90907759f15">   66</a></span>    uint8_t <a class="code hl_variable" href="structHrvBurst.html#a85f277ac10b1ac6c9ee0b90907759f15">gaps</a>;     </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="structHrvBurst.html#a4d29b6ad9315ce792bb2c02fc5ca8c2d">   67</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structHrvBurst.html#a4d29b6ad9315ce792bb2c02fc5ca8c2d">counted</a>;     </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>} <a class="code hl_struct" href="structHrvBurst.html">HrvBurst</a>;</div>
+</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span></div>
+<div class="foldopen" id="foldopen00076" data-start="{" data-end="};">
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structHrvLog.html">   76</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>{</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="structHrvLog.html#a898e4d69bd130a381d7e5b2a27704d93">   78</a></span>    uint32_t <a class="code hl_variable" href="structHrvLog.html#a898e4d69bd130a381d7e5b2a27704d93">at_min</a>[<a class="code hl_define" href="group__lib__core.html#gaef8d372067c4fa13a781401cef30d6dd">HRV_LOG_SLOTS</a>];      </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="structHrvLog.html#a132744d928d35ad4e74aff4a8c128ce1">   79</a></span>    uint32_t <a class="code hl_variable" href="structHrvLog.html#a132744d928d35ad4e74aff4a8c128ce1">state_at_min</a>[HRV_STATE_COUNT]; </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="structHrvLog.html#a3d1963f976288c425e3091b7ea680ae1">   80</a></span>    uint32_t <a class="code hl_variable" href="structHrvLog.html#a3d1963f976288c425e3091b7ea680ae1">night_last_min</a>;             </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="structHrvLog.html#a55a17799c1b88a50a3c0ae498d46bbe7">   81</a></span>    int32_t <a class="code hl_variable" href="structHrvLog.html#a55a17799c1b88a50a3c0ae498d46bbe7">today</a>;                       </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="structHrvLog.html#a6c4b08a197ab3fa859726fbce53e9e32">   82</a></span>    uint16_t <a class="code hl_variable" href="structHrvLog.html#a6c4b08a197ab3fa859726fbce53e9e32">hour_sum</a>[<a class="code hl_define" href="group__lib__core.html#ga24d8afb395355e1268c709cbcb6ac136">HRV_LOG_HOURS</a>];    </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="structHrvLog.html#a8358c0a25ef95a20bb12a3c777f632bf">   83</a></span>    uint16_t <a class="code hl_variable" href="structHrvLog.html#a8358c0a25ef95a20bb12a3c777f632bf">night_sum</a>;                  </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structHrvLog.html#aa95148fd04e627a8fe481a0ddd983721">   84</a></span>    uint8_t <a class="code hl_variable" href="structHrvLog.html#aa95148fd04e627a8fe481a0ddd983721">ms</a>[<a class="code hl_define" href="group__lib__core.html#gaef8d372067c4fa13a781401cef30d6dd">HRV_LOG_SLOTS</a>];           </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structHrvLog.html#a9f7a5f58d53427cce901584c8e4ae8af">   85</a></span>    uint8_t <a class="code hl_variable" href="structHrvLog.html#a9f7a5f58d53427cce901584c8e4ae8af">flags</a>[<a class="code hl_define" href="group__lib__core.html#gaef8d372067c4fa13a781401cef30d6dd">HRV_LOG_SLOTS</a>];        </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="structHrvLog.html#a9997f5a57d71177899bb1d516cbf3bc9">   86</a></span>    uint8_t <a class="code hl_variable" href="structHrvLog.html#a9997f5a57d71177899bb1d516cbf3bc9">hour_count</a>[<a class="code hl_define" href="group__lib__core.html#ga24d8afb395355e1268c709cbcb6ac136">HRV_LOG_HOURS</a>];   </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="structHrvLog.html#a9988535882d653682cec76de29ac25e5">   87</a></span>    uint8_t <a class="code hl_variable" href="structHrvLog.html#a9988535882d653682cec76de29ac25e5">state_ms</a>[HRV_STATE_COUNT];   </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="structHrvLog.html#a7b458c2b7c1198060bdee317fc595b8e">   88</a></span>    uint8_t <a class="code hl_variable" href="structHrvLog.html#a7b458c2b7c1198060bdee317fc595b8e">night_count</a>;                 </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structHrvLog.html#aa75f1f8b1b62fa4fa8255bcd675a84ca">   89</a></span>    uint8_t <a class="code hl_variable" href="structHrvLog.html#aa75f1f8b1b62fa4fa8255bcd675a84ca">head</a>;                        </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>} <a class="code hl_struct" href="structHrvLog.html">HrvLog</a>;</div>
+</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga63f3ed0e45cc4da29578aad101c2c414">   92</a></span><span class="preprocessor">#define HRV_LOG_ASLEEP 0x80   </span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga24a559688bccfd57843cf956f5b5766b">   93</a></span><span class="preprocessor">#define HRV_LOG_STATE_MASK 0x0F </span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__core.html#ga50ef6e3a945c258e4fc83bb1929a83da">hrv_log_reset</a>(<a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><a class="code hl_enumeration" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> <a class="code hl_function" href="group__lib__core.html#gaf48d364de1b0985d9d0206b1023922a7">hrv_log_state_of</a>(<span class="keywordtype">int</span> motion_score, <span class="keywordtype">int</span> steps, uint16_t still_mg, uint16_t walk_steps);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga248f18e06ef62e0e1d10e772f767a5b9">hrv_log_counts</a>(<a class="code hl_enumeration" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> state, <a class="code hl_enumeration" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__core.html#gae0bb96d786cefdddabe9708b30b409c5">hrv_log_add</a>(<a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log, <span class="keywordtype">int</span> ms, uint32_t now_min, int32_t day, <span class="keywordtype">int</span> minute_of_day, <a class="code hl_enumeration" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> state, <span class="keywordtype">bool</span> asleep);</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span></div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga9f583fc30f55e7e82457e3fef5bbeb7b">hrv_log_roll_day</a>(<a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log, int32_t day);</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__core.html#gaa5780e28f269349f66933da35d0ba821">hrv_log_count</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log);</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span></div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#gac6bf1a23fcf5966f02387bc150c8a9fd">hrv_log_get</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log, <span class="keywordtype">int</span> back, <span class="keywordtype">int</span> *ms, uint32_t *at_min, uint8_t *flags);</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span></div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__core.html#ga3f51dbfb1a7c497a93a39bf61faa7ee5">hrv_log_hour_avg</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log, <span class="keywordtype">int</span> hour);</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span></div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__core.html#ga2361e1061a377a432e5ef300f78e6b4c">hrv_log_today</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log, <span class="keywordtype">int</span> *low_ms, <span class="keywordtype">int</span> *avg_ms, <span class="keywordtype">int</span> *high_ms);</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span></div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__core.html#ga0ea30c8342186116f4422246ff53b6ca">hrv_log_night_avg</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log);</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span></div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga484d26e50432a4d931eb57316576def6">hrv_log_last</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHrvLog.html">HrvLog</a> *log, <a class="code hl_enumeration" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> state, <span class="keywordtype">int</span> *ms, uint32_t *at_min);</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span></div>
+<div class="ttc" id="agroup__lib__core_html_ga0ea30c8342186116f4422246ff53b6ca"><div class="ttname"><a href="group__lib__core.html#ga0ea30c8342186116f4422246ff53b6ca">hrv_log_night_avg</a></div><div class="ttdeci">int hrv_log_night_avg(const HrvLog *log)</div><div class="ttdoc">The average of the readings taken asleep in the latest night.</div><div class="ttdef"><b>Definition</b> hrv_log.c:194</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga2361e1061a377a432e5ef300f78e6b4c"><div class="ttname"><a href="group__lib__core.html#ga2361e1061a377a432e5ef300f78e6b4c">hrv_log_today</a></div><div class="ttdeci">void hrv_log_today(const HrvLog *log, int *low_ms, int *avg_ms, int *high_ms)</div><div class="ttdoc">Today&#39;s resting readings summed up.</div><div class="ttdef"><b>Definition</b> hrv_log.c:162</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga248f18e06ef62e0e1d10e772f767a5b9"><div class="ttname"><a href="group__lib__core.html#ga248f18e06ef62e0e1d10e772f767a5b9">hrv_log_counts</a></div><div class="ttdeci">bool hrv_log_counts(HrvState state, HrvCount count)</div><div class="ttdoc">Whether a burst in one state counts for the main reading.</div><div class="ttdef"><b>Definition</b> hrv_log.c:31</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga24d8afb395355e1268c709cbcb6ac136"><div class="ttname"><a href="group__lib__core.html#ga24d8afb395355e1268c709cbcb6ac136">HRV_LOG_HOURS</a></div><div class="ttdeci">#define HRV_LOG_HOURS</div><div class="ttdoc">Today&#39;s readings by the hour from midnight.</div><div class="ttdef"><b>Definition</b> hrv_log.h:23</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga3f51dbfb1a7c497a93a39bf61faa7ee5"><div class="ttname"><a href="group__lib__core.html#ga3f51dbfb1a7c497a93a39bf61faa7ee5">hrv_log_hour_avg</a></div><div class="ttdeci">int hrv_log_hour_avg(const HrvLog *log, int hour)</div><div class="ttdoc">Today&#39;s average of the resting readings in one hour.</div><div class="ttdef"><b>Definition</b> hrv_log.c:151</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga484d26e50432a4d931eb57316576def6"><div class="ttname"><a href="group__lib__core.html#ga484d26e50432a4d931eb57316576def6">hrv_log_last</a></div><div class="ttdeci">bool hrv_log_last(const HrvLog *log, HrvState state, int *ms, uint32_t *at_min)</div><div class="ttdoc">The latest reading of one kind.</div><div class="ttdef"><b>Definition</b> hrv_log.c:204</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga50ef6e3a945c258e4fc83bb1929a83da"><div class="ttname"><a href="group__lib__core.html#ga50ef6e3a945c258e4fc83bb1929a83da">hrv_log_reset</a></div><div class="ttdeci">void hrv_log_reset(HrvLog *log)</div><div class="ttdoc">Empties the log.</div><div class="ttdef"><b>Definition</b> hrv_log.c:11</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga7e84a97be9f69040bef94b003e32be1a"><div class="ttname"><a href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a></div><div class="ttdeci">HrvCount</div><div class="ttdoc">Which bursts count for the main reading. The first is the one a face gets when it sets none.</div><div class="ttdef"><b>Definition</b> hrv_log.h:45</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga9f583fc30f55e7e82457e3fef5bbeb7b"><div class="ttname"><a href="group__lib__core.html#ga9f583fc30f55e7e82457e3fef5bbeb7b">hrv_log_roll_day</a></div><div class="ttdeci">bool hrv_log_roll_day(HrvLog *log, int32_t day)</div><div class="ttdoc">Moves the hours on to a new day without a reading, so a day chart drawn after midnight does not show ...</div><div class="ttdef"><b>Definition</b> hrv_log.c:44</div></div>
+<div class="ttc" id="agroup__lib__core_html_gaa5780e28f269349f66933da35d0ba821"><div class="ttname"><a href="group__lib__core.html#gaa5780e28f269349f66933da35d0ba821">hrv_log_count</a></div><div class="ttdeci">int hrv_log_count(const HrvLog *log)</div><div class="ttdoc">How many readings the history holds, up to HRV_LOG_SLOTS.</div><div class="ttdef"><b>Definition</b> hrv_log.c:118</div></div>
+<div class="ttc" id="agroup__lib__core_html_gac6bf1a23fcf5966f02387bc150c8a9fd"><div class="ttname"><a href="group__lib__core.html#gac6bf1a23fcf5966f02387bc150c8a9fd">hrv_log_get</a></div><div class="ttdeci">bool hrv_log_get(const HrvLog *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</div><div class="ttdoc">One reading from the history, newest first.</div><div class="ttdef"><b>Definition</b> hrv_log.c:132</div></div>
+<div class="ttc" id="agroup__lib__core_html_gae0bb96d786cefdddabe9708b30b409c5"><div class="ttname"><a href="group__lib__core.html#gae0bb96d786cefdddabe9708b30b409c5">hrv_log_add</a></div><div class="ttdeci">void hrv_log_add(HrvLog *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, HrvState state, bool asleep)</div><div class="ttdoc">Files one finished reading.</div><div class="ttdef"><b>Definition</b> hrv_log.c:57</div></div>
+<div class="ttc" id="agroup__lib__core_html_gae63b8153c70e7611881a2e05bec214a7"><div class="ttname"><a href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a></div><div class="ttdeci">HrvState</div><div class="ttdoc">What the wearer was doing through a reading&#39;s burst.</div><div class="ttdef"><b>Definition</b> hrv_log.h:34</div></div>
+<div class="ttc" id="agroup__lib__core_html_gaef8d372067c4fa13a781401cef30d6dd"><div class="ttname"><a href="group__lib__core.html#gaef8d372067c4fa13a781401cef30d6dd">HRV_LOG_SLOTS</a></div><div class="ttdeci">#define HRV_LOG_SLOTS</div><div class="ttdoc">How many of the latest readings the history keeps.</div><div class="ttdef"><b>Definition</b> hrv_log.h:22</div></div>
+<div class="ttc" id="agroup__lib__core_html_gaf48d364de1b0985d9d0206b1023922a7"><div class="ttname"><a href="group__lib__core.html#gaf48d364de1b0985d9d0206b1023922a7">hrv_log_state_of</a></div><div class="ttdeci">HrvState hrv_log_state_of(int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</div><div class="ttdoc">Works out what a burst was from its steps and its movement score.</div><div class="ttdef"><b>Definition</b> hrv_log.c:16</div></div>
+<div class="ttc" id="agroup__lib__core_html_gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8"><div class="ttname"><a href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8">HRV_COUNT_STILL</a></div><div class="ttdeci">@ HRV_COUNT_STILL</div><div class="ttdoc">Only still bursts count.</div><div class="ttdef"><b>Definition</b> hrv_log.h:47</div></div>
+<div class="ttc" id="agroup__lib__core_html_gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc"><div class="ttname"><a href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc">HRV_COUNT_NOT_WALKING</a></div><div class="ttdeci">@ HRV_COUNT_NOT_WALKING</div><div class="ttdoc">Still and busy bursts count, walking ones do not.</div><div class="ttdef"><b>Definition</b> hrv_log.h:46</div></div>
+<div class="ttc" id="agroup__lib__core_html_gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f"><div class="ttname"><a href="group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f">HRV_COUNT_ANY</a></div><div class="ttdeci">@ HRV_COUNT_ANY</div><div class="ttdoc">Every burst counts.</div><div class="ttdef"><b>Definition</b> hrv_log.h:48</div></div>
+<div class="ttc" id="agroup__lib__core_html_ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c"><div class="ttname"><a href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c">HRV_STATE_WALKING</a></div><div class="ttdeci">@ HRV_STATE_WALKING</div><div class="ttdoc">The face&#39;s walking step count or more through the burst.</div><div class="ttdef"><b>Definition</b> hrv_log.h:37</div></div>
+<div class="ttc" id="agroup__lib__core_html_ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b"><div class="ttname"><a href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b">HRV_STATE_STILL</a></div><div class="ttdeci">@ HRV_STATE_STILL</div><div class="ttdoc">The wrist moved no more than the face&#39;s still limit, and no walk.</div><div class="ttdef"><b>Definition</b> hrv_log.h:35</div></div>
+<div class="ttc" id="agroup__lib__core_html_ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f"><div class="ttname"><a href="group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f">HRV_STATE_BUSY</a></div><div class="ttdeci">@ HRV_STATE_BUSY</div><div class="ttdoc">The wrist moved more, such as eating or a mouse and keyboard, but no walk.</div><div class="ttdef"><b>Definition</b> hrv_log.h:36</div></div>
+<div class="ttc" id="astructHrvBurst_html"><div class="ttname"><a href="structHrvBurst.html">HrvBurst</a></div><div class="ttdoc">One burst as a tuning panel shows it: what the wearer did and what came of it.</div><div class="ttdef"><b>Definition</b> hrv_log.h:59</div></div>
+<div class="ttc" id="astructHrvBurst_html_a0b575b957833471898c947e909993977"><div class="ttname"><a href="structHrvBurst.html#a0b575b957833471898c947e909993977">HrvBurst::at_sec</a></div><div class="ttdeci">uint32_t at_sec</div><div class="ttdoc">When the burst ended, in seconds, or 0 for an empty slot.</div><div class="ttdef"><b>Definition</b> hrv_log.h:60</div></div>
+<div class="ttc" id="astructHrvBurst_html_a4d29b6ad9315ce792bb2c02fc5ca8c2d"><div class="ttname"><a href="structHrvBurst.html#a4d29b6ad9315ce792bb2c02fc5ca8c2d">HrvBurst::counted</a></div><div class="ttdeci">bool counted</div><div class="ttdoc">Whether it became the main reading.</div><div class="ttdef"><b>Definition</b> hrv_log.h:67</div></div>
+<div class="ttc" id="astructHrvBurst_html_a5348549429b22c79d0609ea689c271a3"><div class="ttname"><a href="structHrvBurst.html#a5348549429b22c79d0609ea689c271a3">HrvBurst::steps</a></div><div class="ttdeci">int16_t steps</div><div class="ttdoc">Its steps, or -1 when not known.</div><div class="ttdef"><b>Definition</b> hrv_log.h:63</div></div>
+<div class="ttc" id="astructHrvBurst_html_a58ee6dd37207c2516a9f4d30b907c13a"><div class="ttname"><a href="structHrvBurst.html#a58ee6dd37207c2516a9f4d30b907c13a">HrvBurst::state</a></div><div class="ttdeci">uint8_t state</div><div class="ttdoc">Its HrvState.</div><div class="ttdef"><b>Definition</b> hrv_log.h:64</div></div>
+<div class="ttc" id="astructHrvBurst_html_a6df7af8a3ad719c38288e1fa90284cc7"><div class="ttname"><a href="structHrvBurst.html#a6df7af8a3ad719c38288e1fa90284cc7">HrvBurst::ms</a></div><div class="ttdeci">int16_t ms</div><div class="ttdoc">Its reading in ms, or -1 when it was dropped or gave none.</div><div class="ttdef"><b>Definition</b> hrv_log.h:61</div></div>
+<div class="ttc" id="astructHrvBurst_html_a7f41783d828f1c3a38b165b18d9359a3"><div class="ttname"><a href="structHrvBurst.html#a7f41783d828f1c3a38b165b18d9359a3">HrvBurst::score</a></div><div class="ttdeci">int16_t score</div><div class="ttdoc">Its movement score, or -1 when there was none.</div><div class="ttdef"><b>Definition</b> hrv_log.h:62</div></div>
+<div class="ttc" id="astructHrvBurst_html_a85f277ac10b1ac6c9ee0b90907759f15"><div class="ttname"><a href="structHrvBurst.html#a85f277ac10b1ac6c9ee0b90907759f15">HrvBurst::gaps</a></div><div class="ttdeci">uint8_t gaps</div><div class="ttdoc">How many gaps it heard after the settle.</div><div class="ttdef"><b>Definition</b> hrv_log.h:66</div></div>
+<div class="ttc" id="astructHrvBurst_html_ad59f10883d3d332aef745fcf2436ddb8"><div class="ttname"><a href="structHrvBurst.html#ad59f10883d3d332aef745fcf2436ddb8">HrvBurst::kept</a></div><div class="ttdeci">uint8_t kept</div><div class="ttdoc">How many beat to beat differences went into its reading.</div><div class="ttdef"><b>Definition</b> hrv_log.h:65</div></div>
+<div class="ttc" id="astructHrvLog_html"><div class="ttname"><a href="structHrvLog.html">HrvLog</a></div><div class="ttdoc">The readings kept, in the shape that goes to flash. Start it with hrv_log_reset.</div><div class="ttdef"><b>Definition</b> hrv_log.h:77</div></div>
+<div class="ttc" id="astructHrvLog_html_a132744d928d35ad4e74aff4a8c128ce1"><div class="ttname"><a href="structHrvLog.html#a132744d928d35ad4e74aff4a8c128ce1">HrvLog::state_at_min</a></div><div class="ttdeci">uint32_t state_at_min[HRV_STATE_COUNT]</div><div class="ttdoc">When the latest reading of each kind was taken, or 0 for none.</div><div class="ttdef"><b>Definition</b> hrv_log.h:79</div></div>
+<div class="ttc" id="astructHrvLog_html_a3d1963f976288c425e3091b7ea680ae1"><div class="ttname"><a href="structHrvLog.html#a3d1963f976288c425e3091b7ea680ae1">HrvLog::night_last_min</a></div><div class="ttdeci">uint32_t night_last_min</div><div class="ttdoc">When the last reading taken asleep came, or 0 for none.</div><div class="ttdef"><b>Definition</b> hrv_log.h:80</div></div>
+<div class="ttc" id="astructHrvLog_html_a55a17799c1b88a50a3c0ae498d46bbe7"><div class="ttname"><a href="structHrvLog.html#a55a17799c1b88a50a3c0ae498d46bbe7">HrvLog::today</a></div><div class="ttdeci">int32_t today</div><div class="ttdoc">The day the hourly totals belong to.</div><div class="ttdef"><b>Definition</b> hrv_log.h:81</div></div>
+<div class="ttc" id="astructHrvLog_html_a6c4b08a197ab3fa859726fbce53e9e32"><div class="ttname"><a href="structHrvLog.html#a6c4b08a197ab3fa859726fbce53e9e32">HrvLog::hour_sum</a></div><div class="ttdeci">uint16_t hour_sum[HRV_LOG_HOURS]</div><div class="ttdoc">Today&#39;s resting readings added up by the hour.</div><div class="ttdef"><b>Definition</b> hrv_log.h:82</div></div>
+<div class="ttc" id="astructHrvLog_html_a7b458c2b7c1198060bdee317fc595b8e"><div class="ttname"><a href="structHrvLog.html#a7b458c2b7c1198060bdee317fc595b8e">HrvLog::night_count</a></div><div class="ttdeci">uint8_t night_count</div><div class="ttdoc">How many readings went into the night&#39;s total.</div><div class="ttdef"><b>Definition</b> hrv_log.h:88</div></div>
+<div class="ttc" id="astructHrvLog_html_a8358c0a25ef95a20bb12a3c777f632bf"><div class="ttname"><a href="structHrvLog.html#a8358c0a25ef95a20bb12a3c777f632bf">HrvLog::night_sum</a></div><div class="ttdeci">uint16_t night_sum</div><div class="ttdoc">The readings taken asleep this night, added up.</div><div class="ttdef"><b>Definition</b> hrv_log.h:83</div></div>
+<div class="ttc" id="astructHrvLog_html_a898e4d69bd130a381d7e5b2a27704d93"><div class="ttname"><a href="structHrvLog.html#a898e4d69bd130a381d7e5b2a27704d93">HrvLog::at_min</a></div><div class="ttdeci">uint32_t at_min[HRV_LOG_SLOTS]</div><div class="ttdoc">When each kept reading was taken, in minutes, or 0 for an empty slot.</div><div class="ttdef"><b>Definition</b> hrv_log.h:78</div></div>
+<div class="ttc" id="astructHrvLog_html_a9988535882d653682cec76de29ac25e5"><div class="ttname"><a href="structHrvLog.html#a9988535882d653682cec76de29ac25e5">HrvLog::state_ms</a></div><div class="ttdeci">uint8_t state_ms[HRV_STATE_COUNT]</div><div class="ttdoc">The latest reading of each kind in ms.</div><div class="ttdef"><b>Definition</b> hrv_log.h:87</div></div>
+<div class="ttc" id="astructHrvLog_html_a9997f5a57d71177899bb1d516cbf3bc9"><div class="ttname"><a href="structHrvLog.html#a9997f5a57d71177899bb1d516cbf3bc9">HrvLog::hour_count</a></div><div class="ttdeci">uint8_t hour_count[HRV_LOG_HOURS]</div><div class="ttdoc">How many readings went into each hour&#39;s total.</div><div class="ttdef"><b>Definition</b> hrv_log.h:86</div></div>
+<div class="ttc" id="astructHrvLog_html_a9f7a5f58d53427cce901584c8e4ae8af"><div class="ttname"><a href="structHrvLog.html#a9f7a5f58d53427cce901584c8e4ae8af">HrvLog::flags</a></div><div class="ttdeci">uint8_t flags[HRV_LOG_SLOTS]</div><div class="ttdoc">Each kept reading&#39;s HrvState, plus HRV_LOG_ASLEEP.</div><div class="ttdef"><b>Definition</b> hrv_log.h:85</div></div>
+<div class="ttc" id="astructHrvLog_html_aa75f1f8b1b62fa4fa8255bcd675a84ca"><div class="ttname"><a href="structHrvLog.html#aa75f1f8b1b62fa4fa8255bcd675a84ca">HrvLog::head</a></div><div class="ttdeci">uint8_t head</div><div class="ttdoc">The slot the next reading goes in.</div><div class="ttdef"><b>Definition</b> hrv_log.h:89</div></div>
+<div class="ttc" id="astructHrvLog_html_aa95148fd04e627a8fe481a0ddd983721"><div class="ttname"><a href="structHrvLog.html#aa95148fd04e627a8fe481a0ddd983721">HrvLog::ms</a></div><div class="ttdeci">uint8_t ms[HRV_LOG_SLOTS]</div><div class="ttdoc">Each kept reading in ms.</div><div class="ttdef"><b>Definition</b> hrv_log.h:84</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>health</b></li><li class="navelem"><a href="hrv__log_8h.html">hrv_log.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/pebble/io/outbox_queue.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v6.3.0" selected>v6.3.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('outbox__queue_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">outbox_queue.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="outbox__queue_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="appmessage__features_8h.html">io/appmessage/appmessage_features.h</a>&quot;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">// a kind is held once at most, so the queue and the failed set never need more slots than there are</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// kinds. the weather, stock, calendar, settings, and fresh reply kinds fit in the 6 every face has,</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">// with one to spare. phone battery and now playing each add a slot, only on a face that compiles them</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">// in, so a face with every kind can have all of them fail at once and keep each one for the retry.</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">// sizing to the kinds a face has keeps every other face&#39;s outbox the size it was</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#if defined(APPMESSAGE_HAS_PHONE)</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#define OUTBOX_PHONE_SLOTS 1 </span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="group__lib__io.html#gadaf079e1656e97a39ec7774e22eb9703">   33</a></span><span class="preprocessor">#define OUTBOX_PHONE_SLOTS 0 </span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#if defined(APPMESSAGE_HAS_MUSIC)</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#define OUTBOX_MUSIC_SLOTS 1 </span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga96bed56e5b3532f2e5e466e3270c88c3">   38</a></span><span class="preprocessor">#define OUTBOX_MUSIC_SLOTS 0 </span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">   42</a></span><span class="preprocessor">#define OUTBOX_QUEUE_MAX (6 + OUTBOX_PHONE_SLOTS + OUTBOX_MUSIC_SLOTS)</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span></div>
+<div class="foldopen" id="foldopen00047" data-start="{" data-end="};">
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">   47</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>{</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">   49</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a>,     </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49">   50</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49">OUTBOX_WEATHER</a>,  </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c">   51</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c">OUTBOX_SETTINGS</a>, </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010">   52</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010">OUTBOX_FRESH</a>,    </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">   53</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">OUTBOX_STOCK</a>,    </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">   54</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">OUTBOX_CALENDAR</a>, </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2">   55</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2">OUTBOX_PHONE</a>,    </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f">   56</a></span>    <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f">OUTBOX_MUSIC</a>     </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>} <a class="code hl_enumeration" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a>;</div>
+</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span></div>
+<div class="foldopen" id="foldopen00062" data-start="{" data-end="};">
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structOutboxJob.html">   62</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>{</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">   64</a></span>    <a class="code hl_enumeration" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> <a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a>;         </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">   65</a></span>    <span class="keywordtype">int</span>        <a class="code hl_variable" href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">retries_left</a>; </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>} <a class="code hl_struct" href="structOutboxJob.html">OutboxJob</a>;</div>
+</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span></div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="};">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="structOutboxQueue.html">   73</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>{</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">   75</a></span>    <a class="code hl_struct" href="structOutboxJob.html">OutboxJob</a> <a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[<a class="code hl_define" href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">OUTBOX_QUEUE_MAX</a>];  </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">   76</a></span>    <span class="keywordtype">int</span>       <a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>;                </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">   77</a></span>    <a class="code hl_struct" href="structOutboxJob.html">OutboxJob</a> <a class="code hl_variable" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">failed</a>[<a class="code hl_define" href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">OUTBOX_QUEUE_MAX</a>]; </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">   78</a></span>    <span class="keywordtype">int</span>       <a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a>;               </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">   79</a></span>    <a class="code hl_struct" href="structOutboxJob.html">OutboxJob</a> <a class="code hl_variable" href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">inflight</a>;                 </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>} <a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a>;</div>
+</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span></div>
+<div class="foldopen" id="foldopen00088" data-start="{" data-end="}">
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga2c94fc09107a6527a82ec145fd784a9d">   88</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__io.html#ga2c94fc09107a6527a82ec145fd784a9d">outbox_busy</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>{</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordflow">return</span> outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">inflight</a>.<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> != <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a>;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>}</div>
+</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span></div>
+<div class="foldopen" id="foldopen00103" data-start="{" data-end="}">
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga6f6fa750435ac4704bb55298be9b7e27">  103</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__io.html#ga6f6fa750435ac4704bb55298be9b7e27">outbox_pending</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="code hl_enumeration" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>{</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">if</span> (kind == <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a>)</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        <span class="comment">// the empty flight slot and every unused array entry read as OUTBOX_NONE, so without this</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        <span class="comment">// an idle outbox would answer that nothing is already pending</span></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    }</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keywordflow">if</span> (outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">inflight</a>.<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> == kind)</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    {</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    }</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>; i++)</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    {</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        <span class="keywordflow">if</span> (outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[i].<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> == kind)</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        {</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        }</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    }</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a>; i++)</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    {</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        <span class="keywordflow">if</span> (outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">failed</a>[i].<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> == kind)</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        {</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        }</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    }</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>}</div>
+</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span></div>
+<div class="foldopen" id="foldopen00144" data-start="{" data-end="}">
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga219aad77cbe9215d9c3cd1aacd33a457">  144</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__io.html#ga219aad77cbe9215d9c3cd1aacd33a457">outbox_push</a>(<a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="code hl_enumeration" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind, <span class="keywordtype">int</span> retries)</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>{</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="group__lib__io.html#ga6f6fa750435ac4704bb55298be9b7e27">outbox_pending</a>(outbox, kind) || outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a> &gt;= <a class="code hl_define" href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">OUTBOX_QUEUE_MAX</a>)</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    {</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    }</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>].<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> = kind;</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>].<a class="code hl_variable" href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">retries_left</a> = retries;</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>++;</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>}</div>
+</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span></div>
+<div class="foldopen" id="foldopen00162" data-start="{" data-end="}">
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno"><a class="line" href="group__lib__io.html#gaa5025f0a1f281cb9b6b3f74c2a7f7481">  162</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gaa5025f0a1f281cb9b6b3f74c2a7f7481">outbox_pop_front</a>(<a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>{</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>; i++)</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    {</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[i - 1] = outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[i];</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    }</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keywordflow">if</span> (outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a> &gt; 0)</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    {</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>--;</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    }</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>}</div>
+</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span></div>
+<div class="foldopen" id="foldopen00183" data-start="{" data-end="}">
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga821df0e180a04bb345ca338f3d6829e4">  183</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga821df0e180a04bb345ca338f3d6829e4">outbox_take_head</a>(<a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>{</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="keywordflow">if</span> (outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a> == 0)</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    {</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        <span class="keywordflow">return</span>;  <span class="comment">// outbox_clear leaves the array behind, so an empty queue still has one to read</span></div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    }</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">inflight</a> = outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[0];</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    <a class="code hl_function" href="group__lib__io.html#gaa5025f0a1f281cb9b6b3f74c2a7f7481">outbox_pop_front</a>(outbox);</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>}</div>
+</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span></div>
+<div class="foldopen" id="foldopen00200" data-start="{" data-end="}">
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="group__lib__io.html#gabf4958a2b2c2b9310e9c3dde7d76e18d">  200</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <a class="code hl_struct" href="structOutboxJob.html">OutboxJob</a> <a class="code hl_function" href="group__lib__io.html#gabf4958a2b2c2b9310e9c3dde7d76e18d">outbox_release</a>(<a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>{</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <a class="code hl_struct" href="structOutboxJob.html">OutboxJob</a> settled = outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">inflight</a>;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">inflight</a>.<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> = <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a>;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="keywordflow">return</span> settled;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>}</div>
+</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span></div>
+<div class="foldopen" id="foldopen00213" data-start="{" data-end="}">
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga1a93146eec16ce495449829a38274d31">  213</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga1a93146eec16ce495449829a38274d31">outbox_hold_failed</a>(<a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="code hl_struct" href="structOutboxJob.html">OutboxJob</a> job)</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>{</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="comment">// a failure reported once the slot is already free comes with no job, and holding it would</span></div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    <span class="comment">// queue a send for nothing ahead of the real requests</span></div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    <span class="keywordflow">if</span> (job.<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> == <a class="code hl_enumvalue" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a> || job.<a class="code hl_variable" href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">retries_left</a> &lt;= 0)</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    {</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    }</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    <span class="keywordflow">if</span> (outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a> &lt; <a class="code hl_define" href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">OUTBOX_QUEUE_MAX</a>)</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    {</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">failed</a>[outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a>].<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a> = job.<a class="code hl_variable" href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">kind</a>;</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">failed</a>[outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a>].<a class="code hl_variable" href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">retries_left</a> = job.<a class="code hl_variable" href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">retries_left</a> - 1;</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a>++;</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    }</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>}</div>
+</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span></div>
+<div class="foldopen" id="foldopen00236" data-start="{" data-end="}">
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga66fb285ede9868f85fbaa10fe36ebbba">  236</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__io.html#ga66fb285ede9868f85fbaa10fe36ebbba">outbox_retry_pass</a>(<a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>{</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    <span class="keywordtype">int</span> moved = 0;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <span class="keywordflow">while</span> (outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a> &gt; 0 &amp;&amp; outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a> &lt; <a class="code hl_define" href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">OUTBOX_QUEUE_MAX</a>)</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    {</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">queue</a>[outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a>++] = outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">failed</a>[0];</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a>; i++)</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        {</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">failed</a>[i - 1] = outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">failed</a>[i];</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        }</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a>--;</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        moved++;</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    }</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    <span class="keywordflow">return</span> moved;</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>}</div>
+</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span></div>
+<div class="foldopen" id="foldopen00262" data-start="{" data-end="}">
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga7a65d4b95956b231936a0de61759fca9">  262</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga7a65d4b95956b231936a0de61759fca9">outbox_clear</a>(<a class="code hl_struct" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>{</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">queue_len</a> = 0;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    outbox-&gt;<a class="code hl_variable" href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">failed_len</a> = 0;</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>}</div>
+</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span></div>
+<div class="ttc" id="aappmessage__features_8h_html"><div class="ttname"><a href="appmessage__features_8h.html">appmessage_features.h</a></div><div class="ttdoc">Which of the phone&#39;s optional features a face has, worked out from the message keys it declares....</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga1a93146eec16ce495449829a38274d31"><div class="ttname"><a href="group__lib__io.html#ga1a93146eec16ce495449829a38274d31">outbox_hold_failed</a></div><div class="ttdeci">static void outbox_hold_failed(OutboxQueue *outbox, OutboxJob job)</div><div class="ttdoc">Hold a nacked job for the next pass, if it still has retries.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:213</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga219aad77cbe9215d9c3cd1aacd33a457"><div class="ttname"><a href="group__lib__io.html#ga219aad77cbe9215d9c3cd1aacd33a457">outbox_push</a></div><div class="ttdeci">static bool outbox_push(OutboxQueue *outbox, OutboxKind kind, int retries)</div><div class="ttdoc">Add a job to the work queue unless its kind is already pending.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:144</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga247b62ae1a0fa87cef6e3e8b7f738f17"><div class="ttname"><a href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a></div><div class="ttdeci">OutboxKind</div><div class="ttdoc">What an outbox job sends.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:48</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga2c94fc09107a6527a82ec145fd784a9d"><div class="ttname"><a href="group__lib__io.html#ga2c94fc09107a6527a82ec145fd784a9d">outbox_busy</a></div><div class="ttdeci">static bool outbox_busy(const OutboxQueue *outbox)</div><div class="ttdoc">Whether anything is in flight, which is what says the outbox is busy.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:88</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga66fb285ede9868f85fbaa10fe36ebbba"><div class="ttname"><a href="group__lib__io.html#ga66fb285ede9868f85fbaa10fe36ebbba">outbox_retry_pass</a></div><div class="ttdeci">static int outbox_retry_pass(OutboxQueue *outbox)</div><div class="ttdoc">Move the whole failed set back into the work queue for another pass.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:236</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga6f6fa750435ac4704bb55298be9b7e27"><div class="ttname"><a href="group__lib__io.html#ga6f6fa750435ac4704bb55298be9b7e27">outbox_pending</a></div><div class="ttdeci">static bool outbox_pending(const OutboxQueue *outbox, OutboxKind kind)</div><div class="ttdoc">Whether this kind is already somewhere in the outbox.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:103</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga7a65d4b95956b231936a0de61759fca9"><div class="ttname"><a href="group__lib__io.html#ga7a65d4b95956b231936a0de61759fca9">outbox_clear</a></div><div class="ttdeci">static void outbox_clear(OutboxQueue *outbox)</div><div class="ttdoc">Forget everything waiting, for a phone that is no longer there.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:262</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga821df0e180a04bb345ca338f3d6829e4"><div class="ttname"><a href="group__lib__io.html#ga821df0e180a04bb345ca338f3d6829e4">outbox_take_head</a></div><div class="ttdeci">static void outbox_take_head(OutboxQueue *outbox)</div><div class="ttdoc">Take the head of the queue as the job now in flight.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:183</div></div>
+<div class="ttc" id="agroup__lib__io_html_gaa5025f0a1f281cb9b6b3f74c2a7f7481"><div class="ttname"><a href="group__lib__io.html#gaa5025f0a1f281cb9b6b3f74c2a7f7481">outbox_pop_front</a></div><div class="ttdeci">static void outbox_pop_front(OutboxQueue *outbox)</div><div class="ttdoc">Drop the front job off the work queue, shifting the rest forward.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:162</div></div>
+<div class="ttc" id="agroup__lib__io_html_gabf4958a2b2c2b9310e9c3dde7d76e18d"><div class="ttname"><a href="group__lib__io.html#gabf4958a2b2c2b9310e9c3dde7d76e18d">outbox_release</a></div><div class="ttdeci">static OutboxJob outbox_release(OutboxQueue *outbox)</div><div class="ttdoc">Mark whatever was in flight as settled, whichever way it went.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:200</div></div>
+<div class="ttc" id="agroup__lib__io_html_gacb075235dabec7bf871cfc5698a42526"><div class="ttname"><a href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">OUTBOX_QUEUE_MAX</a></div><div class="ttdeci">#define OUTBOX_QUEUE_MAX</div><div class="ttdoc">Most jobs the work queue or the failed set holds at once.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:42</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">OUTBOX_STOCK</a></div><div class="ttdeci">@ OUTBOX_STOCK</div><div class="ttdoc">A stock request.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:53</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">OUTBOX_CALENDAR</a></div><div class="ttdeci">@ OUTBOX_CALENDAR</div><div class="ttdoc">A calendar request.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:54</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010">OUTBOX_FRESH</a></div><div class="ttdeci">@ OUTBOX_FRESH</div><div class="ttdoc">The short settings reply, only whether the watch booted with nothing saved.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:52</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f">OUTBOX_MUSIC</a></div><div class="ttdeci">@ OUTBOX_MUSIC</div><div class="ttdoc">A now playing request.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:56</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c">OUTBOX_SETTINGS</a></div><div class="ttdeci">@ OUTBOX_SETTINGS</div><div class="ttdoc">The settings reply.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:51</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a></div><div class="ttdeci">@ OUTBOX_NONE</div><div class="ttdoc">The zero value, so a default-initialized job slot reads as nothing rather than a real request.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:49</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49">OUTBOX_WEATHER</a></div><div class="ttdeci">@ OUTBOX_WEATHER</div><div class="ttdoc">A weather request.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:50</div></div>
+<div class="ttc" id="agroup__lib__io_html_gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2"><div class="ttname"><a href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2">OUTBOX_PHONE</a></div><div class="ttdeci">@ OUTBOX_PHONE</div><div class="ttdoc">A phone battery request.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:55</div></div>
+<div class="ttc" id="astructOutboxJob_html"><div class="ttname"><a href="structOutboxJob.html">OutboxJob</a></div><div class="ttdoc">One job waiting to go out, or already in flight.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:63</div></div>
+<div class="ttc" id="astructOutboxJob_html_aa20c6b821810cd0c7e429d39ab384177"><div class="ttname"><a href="structOutboxJob.html#aa20c6b821810cd0c7e429d39ab384177">OutboxJob::kind</a></div><div class="ttdeci">OutboxKind kind</div><div class="ttdoc">What this job sends.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:64</div></div>
+<div class="ttc" id="astructOutboxJob_html_ad67e53a2715d5da68bcfc499b76ac9f1"><div class="ttname"><a href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">OutboxJob::retries_left</a></div><div class="ttdeci">int retries_left</div><div class="ttdoc">Retry passes left after a failed send.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:65</div></div>
+<div class="ttc" id="astructOutboxQueue_html"><div class="ttname"><a href="structOutboxQueue.html">OutboxQueue</a></div><div class="ttdoc">Everything the outbox is holding: what is waiting, what nacked, and what is out.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:74</div></div>
+<div class="ttc" id="astructOutboxQueue_html_a141b8e118c59b9bc0ca098764a31e621"><div class="ttname"><a href="structOutboxQueue.html#a141b8e118c59b9bc0ca098764a31e621">OutboxQueue::queue</a></div><div class="ttdeci">OutboxJob queue[OUTBOX_QUEUE_MAX]</div><div class="ttdoc">This pass&#39;s work queue, oldest first.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:75</div></div>
+<div class="ttc" id="astructOutboxQueue_html_a862c21cc48afbee03d844a6d56a404f0"><div class="ttname"><a href="structOutboxQueue.html#a862c21cc48afbee03d844a6d56a404f0">OutboxQueue::inflight</a></div><div class="ttdeci">OutboxJob inflight</div><div class="ttdoc">The job in flight, OUTBOX_NONE when nothing is out.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:79</div></div>
+<div class="ttc" id="astructOutboxQueue_html_a8e19a14422d45c421b65bb40f9c1241f"><div class="ttname"><a href="structOutboxQueue.html#a8e19a14422d45c421b65bb40f9c1241f">OutboxQueue::failed_len</a></div><div class="ttdeci">int failed_len</div><div class="ttdoc">How many jobs are in the failed set.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:78</div></div>
+<div class="ttc" id="astructOutboxQueue_html_a92e6621d86ce15a0c8b267ccfbd104ad"><div class="ttname"><a href="structOutboxQueue.html#a92e6621d86ce15a0c8b267ccfbd104ad">OutboxQueue::failed</a></div><div class="ttdeci">OutboxJob failed[OUTBOX_QUEUE_MAX]</div><div class="ttdoc">Requests that nacked this pass, held for the next.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:77</div></div>
+<div class="ttc" id="astructOutboxQueue_html_ab70b090f98cb6d8312839fab6df2e760"><div class="ttname"><a href="structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760">OutboxQueue::queue_len</a></div><div class="ttdeci">int queue_len</div><div class="ttdoc">How many jobs are in the queue.</div><div class="ttdef"><b>Definition</b> outbox_queue.h:76</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><a href="outbox__queue_8h.html">outbox_queue.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
