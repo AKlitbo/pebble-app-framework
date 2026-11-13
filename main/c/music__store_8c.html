@@ -201,6 +201,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('music__store_8
 <code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="appmessage__features_8h_source.html">io/appmessage/appmessage_features.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="music__art_8h_source.html">wire/music_art.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="music__track_8h_source.html">wire/music_track.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
@@ -221,6 +222,13 @@ bool&#160;</td><td class="memItemRight"><b>music_store_playing</b> (void)</td></
 <tr class="memdesc:gad2b234359cbfa7449cab2a1b25de11e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">True while the track plays, and false while it is paused or nothing is playing. <br /></td></tr>
 <tr class="memitem:gad7118955d71e3c934fd9d7f87114ae5f" id="r_gad7118955d71e3c934fd9d7f87114ae5f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gad7118955d71e3c934fd9d7f87114ae5f">music_store_has_track</a> (void)</td></tr>
 <tr class="memdesc:gad7118955d71e3c934fd9d7f87114ae5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether there is a track to show, paused or playing.  <br /></td></tr>
+<tr class="memitem:gaac7e61acc9529516c7d7b342cfc211aa" id="r_gaac7e61acc9529516c7d7b342cfc211aa"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaac7e61acc9529516c7d7b342cfc211aa">music_store_no_plugin</a> (void)</td></tr>
+<tr class="memdesc:gaac7e61acc9529516c7d7b342cfc211aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone said no plugin on it serves now playing.  <br /></td></tr>
+<tr class="memitem:ga034835a1c256e58325d4ea40da4ce6fa" id="r_ga034835a1c256e58325d4ea40da4ce6fa"><td class="memItemLeft">const GBitmap *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga034835a1c256e58325d4ea40da4ce6fa">music_store_artwork</a> (void)</td></tr>
+<tr class="memdesc:ga034835a1c256e58325d4ea40da4ce6fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">The track's album art, as a 4-bit palettized bitmap.  <br /></td></tr>
+<tr class="memitem:ga4ece2fb25928441a71f85738d46847e2" id="r_ga4ece2fb25928441a71f85738d46847e2"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>music_store_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga4ece2fb25928441a71f85738d46847e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the album art the store holds. Call it from the face's deinit. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The active music store: holds what the phone is playing, owns the appmessage now playing channel, and asks the phone again at launch and whenever the link comes back. </p>

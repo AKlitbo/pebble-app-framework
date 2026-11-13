@@ -257,6 +257,12 @@ void&#160;</td><td class="memItemRight"><b>appmessage_on_phone_battery</b> (<a c
 <tr class="memitem:ga757a519d948bf39e5414b62761c20593" id="r_ga757a519d948bf39e5414b62761c20593"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_on_music</b> (<a class="el" href="group__lib__io.html#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a> cb)</td></tr>
 <tr class="memdesc:ga757a519d948bf39e5414b62761c20593"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the phone is playing. Does nothing on a face without the music keys. <br /></td></tr>
+<tr class="memitem:ga19d4f00dc65f9c0b71a0335f87d10068" id="r_ga19d4f00dc65f9c0b71a0335f87d10068"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_music_no_plugin</b> (<a class="el" href="group__lib__io.html#gad9e878bfeda433149797d8e0547f4c6e">MusicNoPluginHandler</a> cb)</td></tr>
+<tr class="memdesc:ga19d4f00dc65f9c0b71a0335f87d10068"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether no plugin serves now playing, just before each music message. Does nothing on a face without the music keys. <br /></td></tr>
+<tr class="memitem:ga4ae46c9fecd1398f3fcf16d666ba2c4f" id="r_ga4ae46c9fecd1398f3fcf16d666ba2c4f"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_music_art</b> (<a class="el" href="group__lib__io.html#ga3abd6ef7d9cd8ce0d218fd9e848ea8f7">MusicArtHandler</a> cb)</td></tr>
+<tr class="memdesc:ga4ae46c9fecd1398f3fcf16d666ba2c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Album art. Does nothing on a face without the album art key. <br /></td></tr>
 <tr class="memitem:gaf7a398e20625029f2e376405e9132660" id="r_gaf7a398e20625029f2e376405e9132660"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_set_custom_colors_provider</b> (<a class="el" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a> cb)</td></tr>
 <tr class="memdesc:gaf7a398e20625029f2e376405e9132660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbound: rebuilds the combined string. <br /></td></tr>
@@ -287,9 +293,15 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
 <tr class="memitem:ga65ada3fd289956eb8297c91927fad985" id="r_ga65ada3fd289956eb8297c91927fad985"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_request_phone</b> (void)</td></tr>
 <tr class="memdesc:ga65ada3fd289956eb8297c91927fad985"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for its battery level. The phone battery store calls this at launch and when the phone comes back. Does nothing on a face that does not declare PHONE_BATTERY and PHONE_REQUEST. <br /></td></tr>
+<tr class="memitem:ga10253f63237c35a8ab75a86fea4f8554" id="r_ga10253f63237c35a8ab75a86fea4f8554"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_release_phone</b> (void)</td></tr>
+<tr class="memdesc:ga10253f63237c35a8ab75a86fea4f8554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells the phone the face no longer shows the phone's battery, so it ends its subscription and stops waking the watch on every change in the level. The phone battery store calls this when a face starts it not live. Goes out as PHONE_REQUEST 0, and does nothing on a face without the keys. <br /></td></tr>
 <tr class="memitem:ga9c7f2e2781d3b6f639b9ce19a5628a1f" id="r_ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</td></tr>
 <tr class="memdesc:ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone what it is playing. The now playing store calls this at launch and when the phone comes back. Does nothing on a face that does not declare the four music keys. <br /></td></tr>
+<tr class="memitem:ga7c1c49ecbcf5bf2f810e31d8ec5c45ed" id="r_ga7c1c49ecbcf5bf2f810e31d8ec5c45ed"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_release_music</b> (void)</td></tr>
+<tr class="memdesc:ga7c1c49ecbcf5bf2f810e31d8ec5c45ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells the phone the face no longer shows what is playing, so it ends its subscription and stops waking the watch on every change of track. The now playing store calls this when a face starts it not live. Goes out as MUSIC_REQUEST 0, and does nothing on a face without the keys. <br /></td></tr>
 <tr class="memitem:a0d534305af0a10edbc3c427bae3e975c" id="r_a0d534305af0a10edbc3c427bae3e975c"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0d534305af0a10edbc3c427bae3e975c">inbox_received_callback</a> (DictionaryIterator *iterator, void *context)</td></tr>
 <tr class="memdesc:a0d534305af0a10edbc3c427bae3e975c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply an inbox message: weather, coords, and any changed settings.  <br /></td></tr>
 <tr class="memitem:a84466f8e93f6160cfe1de858608d07ce" id="r_a84466f8e93f6160cfe1de858608d07ce"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a84466f8e93f6160cfe1de858608d07ce">inbox_dropped_callback</a> (AppMessageResult reason, void *context)</td></tr>

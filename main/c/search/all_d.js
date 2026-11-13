@@ -16,7 +16,8 @@ var searchData=
   ['note_5fburst_13',['note_burst',['../health__hrv_8c.html#aa5502a859e4315cf11b57e1dbf94a892',1,'health_hrv.c']]],
   ['notify_5fif_5fmoved_14',['notify_if_moved',['../health__store_8c.html#a1cf17fd9b8be04e83da4326f31779975',1,'health_store.c']]],
   ['now_15',['now',['../structWeatherClock.html#a9fdd4c975baaa069590ed44b86c207a1',1,'WeatherClock']]],
-  ['number_5fformat_2ec_16',['number_format.c',['../number__format_8c.html',1,'']]],
-  ['number_5fformat_2eh_17',['number_format.h',['../number__format_8h.html',1,'']]],
-  ['number_5fgroup_18',['number_group',['../group__lib__core.html#ga3633a279bf5254234b2a8549d98e80de',1,'number_group(char *buffer, size_t size, int value):&#160;number_format.c'],['../group__lib__core.html#ga3633a279bf5254234b2a8549d98e80de',1,'number_group(char *buffer, size_t size, int value):&#160;number_format.c']]]
+  ['number_16',['number',['../structDevSetting.html#a469e593a7d2f7b6c8dbecd14fb2cfe5a',1,'DevSetting']]],
+  ['number_5fformat_2ec_17',['number_format.c',['../number__format_8c.html',1,'']]],
+  ['number_5fformat_2eh_18',['number_format.h',['../number__format_8h.html',1,'']]],
+  ['number_5fgroup_19',['number_group',['../group__lib__core.html#ga3633a279bf5254234b2a8549d98e80de',1,'number_group(char *buffer, size_t size, int value):&#160;number_format.c'],['../group__lib__core.html#ga3633a279bf5254234b2a8549d98e80de',1,'number_group(char *buffer, size_t size, int value):&#160;number_format.c']]]
 ];

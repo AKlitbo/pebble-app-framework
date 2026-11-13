@@ -2530,6 +2530,13 @@
     <path>src/c/core/units/</path>
     <filename>wind_8c.html</filename>
     <includes id="wind_8h" name="wind.h" local="yes" import="no" module="no" objc="no">units/wind.h</includes>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>scale_rounded</name>
+      <anchorfile>wind_8c.html</anchorfile>
+      <anchor>af752909064f37a4631da7c2c904b0de0</anchor>
+      <arglist>(int kmh, int per_thousand)</arglist>
+    </member>
     <member kind="function">
       <type>int</type>
       <name>wind_from_kmh</name>
@@ -2834,11 +2841,11 @@
       <anchor>a9a52c6548cc6d6a82999ec4c65bef6ad</anchor>
       <arglist>(int numerator, int denominator)</arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static int</type>
-      <name>convert_temp</name>
-      <anchorfile>weather__reading_8c.html</anchorfile>
-      <anchor>a330fe5a1f08af20a13441fb826bbb00b</anchor>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_reading_convert_temp</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga92142e4b7daf9d7aa1a88b8aa76b3740</anchor>
       <arglist>(int value, bool to_fahrenheit)</arglist>
     </member>
     <member kind="function">
@@ -2891,6 +2898,13 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga2b36f0d71ccc983475ea5fa5e919e585</anchor>
       <arglist>(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_reading_convert_temp</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga92142e4b7daf9d7aa1a88b8aa76b3740</anchor>
+      <arglist>(int value, bool to_fahrenheit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -3213,6 +3227,54 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>music_art.c</name>
+    <path>src/c/core/wire/</path>
+    <filename>music__art_8c.html</filename>
+    <includes id="music__art_8h" name="music_art.h" local="yes" import="no" module="no" objc="no">wire/music_art.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_art_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae8a9666ccb603e39635bae61e6cd080c</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, MusicArt *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_art_copy_rows</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8c793bbaf1382342911f99e2397d68c1</anchor>
+      <arglist>(const MusicArt *art, uint8_t *dst, uint16_t dst_row_bytes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_art.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>music__art_8h.html</filename>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <class kind="struct">MusicArt</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>MUSIC_ART_HEADER</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4fb48501601d13737b2a9af40864f780</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_art_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae8a9666ccb603e39635bae61e6cd080c</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, MusicArt *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_art_copy_rows</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8c793bbaf1382342911f99e2397d68c1</anchor>
+      <arglist>(const MusicArt *art, uint8_t *dst, uint16_t dst_row_bytes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>music_track.c</name>
     <path>src/c/core/wire/</path>
     <filename>music__track_8c.html</filename>
@@ -3258,13 +3320,7 @@
     <name>phone_level.h</name>
     <path>src/c/core/wire/</path>
     <filename>phone__level_8h.html</filename>
-    <member kind="define">
-      <type>#define</type>
-      <name>PHONE_NO_LEVEL</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga605dd03e235d86fb34bc9fae7d950149</anchor>
-      <arglist></arglist>
-    </member>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
     <member kind="function" static="yes">
       <type>static int</type>
       <name>phone_level_read</name>
@@ -3392,6 +3448,34 @@
       <name>MUSIC_TEXT_LEN</name>
       <anchorfile>wire__caps_8g_8h.html</anchorfile>
       <anchor>a0445da8de1c72fc7e895abc5ce5cfb00</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MUSIC_ART_SIDE_MAX</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>ae5d1eda6f2e27af238bd652e49130de7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MUSIC_ART_COLOURS_MAX</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a129140ea732c92dc4f1fb958c0bd6487</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PHONE_NO_LEVEL</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a605dd03e235d86fb34bc9fae7d950149</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WIRE_NO_PLUGIN</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a2b02ee63879a504a231624dafcf53417</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -3557,6 +3641,20 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_on_music_no_plugin</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga19d4f00dc65f9c0b71a0335f87d10068</anchor>
+      <arglist>(MusicNoPluginHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music_art</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga4ae46c9fecd1398f3fcf16d666ba2c4f</anchor>
+      <arglist>(MusicArtHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_set_custom_colors_provider</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
@@ -3641,9 +3739,23 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_release_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga10253f63237c35a8ab75a86fea4f8554</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_request_music</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_release_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7c1c49ecbcf5bf2f810e31d8ec5c45ed</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
@@ -3808,6 +3920,20 @@
     </member>
     <member kind="typedef">
       <type>void(*)</type>
+      <name>MusicNoPluginHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gad9e878bfeda433149797d8e0547f4c6e</anchor>
+      <arglist>(bool no_plugin)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MusicArtHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3abd6ef7d9cd8ce0d218fd9e848ea8f7</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
       <name>CustomColorsHandler</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga6daf051587a0083e33af5e4d0847f931</anchor>
@@ -3885,6 +4011,20 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_on_music_no_plugin</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga19d4f00dc65f9c0b71a0335f87d10068</anchor>
+      <arglist>(MusicNoPluginHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music_art</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga4ae46c9fecd1398f3fcf16d666ba2c4f</anchor>
+      <arglist>(MusicArtHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_on_custom_colors</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
@@ -3941,9 +4081,23 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_release_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga10253f63237c35a8ab75a86fea4f8554</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_request_music</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_release_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7c1c49ecbcf5bf2f810e31d8ec5c45ed</anchor>
       <arglist>(void)</arglist>
     </member>
   </compound>
@@ -6000,6 +6154,7 @@
     <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
     <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
     <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <includes id="music__art_8h" name="music_art.h" local="yes" import="no" module="no" objc="no">wire/music_art.h</includes>
     <includes id="music__track_8h" name="music_track.h" local="yes" import="no" module="no" objc="no">wire/music_track.h</includes>
     <member kind="function">
       <type>void</type>
@@ -6041,6 +6196,27 @@
       <name>music_store_has_track</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_no_plugin</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaac7e61acc9529516c7d7b342cfc211aa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const GBitmap *</type>
+      <name>music_store_artwork</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga034835a1c256e58325d4ea40da4ce6fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ece2fb25928441a71f85738d46847e2</anchor>
       <arglist>(void)</arglist>
     </member>
   </compound>
@@ -6092,6 +6268,27 @@
       <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
       <arglist>(void)</arglist>
     </member>
+    <member kind="function">
+      <type>const GBitmap *</type>
+      <name>music_store_artwork</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga034835a1c256e58325d4ea40da4ce6fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ece2fb25928441a71f85738d46847e2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_no_plugin</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaac7e61acc9529516c7d7b342cfc211aa</anchor>
+      <arglist>(void)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>phone_store.c</name>
@@ -6122,6 +6319,13 @@
       <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
       <arglist>(void)</arglist>
     </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>phone_store_no_plugin</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga21a92fab0b359a3cde171f06177da305</anchor>
+      <arglist>(void)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>phone_store.h</name>
@@ -6149,6 +6353,13 @@
       <name>phone_store_battery</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>phone_store_no_plugin</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga21a92fab0b359a3cde171f06177da305</anchor>
       <arglist>(void)</arglist>
     </member>
   </compound>
@@ -9615,9 +9826,103 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>dev_config.c</name>
+    <path>src/plugins/dev/c/dev/</path>
+    <filename>dev__config_8c.html</filename>
+    <includes id="dev__config_8h" name="dev_config.h" local="yes" import="no" module="no" objc="no">dev/dev_config.h</includes>
+  </compound>
+  <compound kind="file">
+    <name>dev_config.h</name>
+    <path>src/plugins/dev/c/dev/</path>
+    <filename>dev__config_8h.html</filename>
+    <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <class kind="struct">DevSetting</class>
+    <class kind="struct">DevStep</class>
+    <class kind="struct">DevPanel</class>
+    <class kind="struct">DevHourReading</class>
+    <class kind="struct">DevHrvReading</class>
+    <class kind="struct">DevEvent</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>DevValueType</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga679ad3447bb9eba149cf367cd9c0eff1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_VALUE_NUMBER</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gga679ad3447bb9eba149cf367cd9c0eff1ae7e38b85e1b38d1f4d4099ae55c0af04</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_VALUE_TEXT</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>DevStore</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga72f9ed7498486290682f9f71e83a35c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_show_panel</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gad48bb03bf89822c657c3afd02edebe70</anchor>
+      <arglist>(int panel, int size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_show_layout</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga4e8d69cd43d2406d1ebbc9d2ae56bc58</anchor>
+      <arglist>(const char *layout)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_config_apply_settings</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gaf30f694e40ab6afd85e1968d4760430a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_config_pin</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga44e8f0128ee27bae8fedcbc7d767e60e</anchor>
+      <arglist>(struct tm *when)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_config_seed</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gaca1272da503307b016c82d6507b5097d</anchor>
+      <arglist>(DevStore store)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint16_t</type>
+      <name>dev_config_walk_count</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga4f6abc3104307260df803e409c3832d5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_config_walk_show</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga69106cf7c82db20167ad3950ddafd238</anchor>
+      <arglist>(uint16_t step)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>dev_hooks.h</name>
     <path>src/plugins/dev/c/dev/</path>
     <filename>dev__hooks_8h.html</filename>
+    <includes id="dev__config_8h" name="dev_config.h" local="yes" import="no" module="no" objc="no">dev/dev_config.h</includes>
     <member kind="function" static="yes">
       <type>static bool</type>
       <name>dev_seed_stores</name>
@@ -9652,6 +9957,7 @@
     <path>src/plugins/dev/c/dev/</path>
     <filename>dev__walk_8c.html</filename>
     <includes id="dev__walk_8h" name="dev_walk.h" local="yes" import="no" module="no" objc="no">dev/dev_walk.h</includes>
+    <includes id="dev__config_8h" name="dev_config.h" local="yes" import="no" module="no" objc="no">dev/dev_config.h</includes>
     <includes id="time__store_8h" name="time_store.h" local="yes" import="no" module="no" objc="no">io/stores/time_store.h</includes>
     <includes id="weather__store_8h" name="weather_store.h" local="yes" import="no" module="no" objc="no">io/stores/weather_store.h</includes>
     <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
@@ -9671,6 +9977,13 @@
       <name>seed_shot</name>
       <anchorfile>dev__walk_8c.html</anchorfile>
       <anchor>a0d50aab0fcb61728053f2ac0cb2aee53</anchor>
+      <arglist>(const DevShot *shot)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>seed_shot_weather</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a45325cb7346999702ac804338e18b8a9</anchor>
       <arglist>(const DevShot *shot)</arglist>
     </member>
     <member kind="function" static="yes">
@@ -9744,6 +10057,13 @@
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
+      <type>static uint16_t</type>
+      <name>s_step</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a4cbf4152740f8faa22cb79da35576c8b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
       <type>static int</type>
       <name>s_hour</name>
       <anchorfile>dev__walk_8c.html</anchorfile>
@@ -9779,6 +10099,12 @@
       <name>DEV_WALK_THEMES</name>
       <anchorfile>group__lib__dev.html</anchorfile>
       <anchor>ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_WALK_CONFIG</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ggabd7169bdf3c69ae6ffe751b975f1fadda9c175b36d1c3314bf674499dc4fe7176</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -10219,6 +10545,152 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>DevEvent</name>
+    <filename>structDevEvent.html</filename>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>title</name>
+      <anchorfile>structDevEvent.html</anchorfile>
+      <anchor>af5e1419132bd816da719aa078b5d9b5f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>location</name>
+      <anchorfile>structDevEvent.html</anchorfile>
+      <anchor>af0f3090d7297fded73d2e18b2f590dc4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>all_day</name>
+      <anchorfile>structDevEvent.html</anchorfile>
+      <anchor>aaea3a3cd92aefecf98d0cb8bed55f34b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int32_t</type>
+      <name>in_minutes</name>
+      <anchorfile>structDevEvent.html</anchorfile>
+      <anchor>ada6cd3b717cc6cab6c4bf651e9e8257e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int32_t</type>
+      <name>minutes</name>
+      <anchorfile>structDevEvent.html</anchorfile>
+      <anchor>a730b2a0c5274081df9e7b714190f5161</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int32_t</type>
+      <name>in_days</name>
+      <anchorfile>structDevEvent.html</anchorfile>
+      <anchor>a17aca433948ba72facd6ed775dbd2708</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevHourReading</name>
+    <filename>structDevHourReading.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>hour</name>
+      <anchorfile>structDevHourReading.html</anchorfile>
+      <anchor>a481f1d804904fd7e85b1b4270d9d6279</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>bpm</name>
+      <anchorfile>structDevHourReading.html</anchorfile>
+      <anchor>a41b83546cbfe7a884d68041dffd78c6c</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevHrvReading</name>
+    <filename>structDevHrvReading.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>minute</name>
+      <anchorfile>structDevHrvReading.html</anchorfile>
+      <anchor>a7c6e17512be67f4926b3b6cd041ff564</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>ms</name>
+      <anchorfile>structDevHrvReading.html</anchorfile>
+      <anchor>a18cccd3789ecf1672e5babceeaa591cb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>HrvState</type>
+      <name>state</name>
+      <anchorfile>structDevHrvReading.html</anchorfile>
+      <anchor>a055160f46fe8f55622e7e9fc36b029ac</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>asleep</name>
+      <anchorfile>structDevHrvReading.html</anchorfile>
+      <anchor>a1399eb8035a3bf586ffdc75451a51357</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevPanel</name>
+    <filename>structDevPanel.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>panel</name>
+      <anchorfile>structDevPanel.html</anchorfile>
+      <anchor>a587563eedf0ff3c5ffb8a86c4af52f0c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>size</name>
+      <anchorfile>structDevPanel.html</anchorfile>
+      <anchor>a5d5f57f75dd5b642190b1ffe9b4b9dce</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevSetting</name>
+    <filename>structDevSetting.html</filename>
+    <member kind="variable">
+      <type>const uint32_t *</type>
+      <name>key</name>
+      <anchorfile>structDevSetting.html</anchorfile>
+      <anchor>a35e9170c3b0d38cf2438e4713263bdcc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>DevValueType</type>
+      <name>type</name>
+      <anchorfile>structDevSetting.html</anchorfile>
+      <anchor>a2dd05a5ca53bdb72928c78a4b4427089</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int32_t</type>
+      <name>number</name>
+      <anchorfile>structDevSetting.html</anchorfile>
+      <anchor>a469e593a7d2f7b6c8dbecd14fb2cfe5a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>text</name>
+      <anchorfile>structDevSetting.html</anchorfile>
+      <anchor>a5d8e1eead7f62f455af73dbfe6d28603</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>DevShot</name>
     <filename>structDevShot.html</filename>
     <member kind="variable">
@@ -10268,6 +10740,31 @@
       <name>quiet_icon</name>
       <anchorfile>structDevShot.html</anchorfile>
       <anchor>a7fcd16cb2a5cb8d4c948f589352e0e70</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevStep</name>
+    <filename>structDevStep.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>first</name>
+      <anchorfile>structDevStep.html</anchorfile>
+      <anchor>a862b0f4735d2b015bbb8b28d8e6333f0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>count</name>
+      <anchorfile>structDevStep.html</anchorfile>
+      <anchor>a925706210d3c6d478c94c1abadbb8d08</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>layout</name>
+      <anchorfile>structDevStep.html</anchorfile>
+      <anchor>a2151d57fec4baa9aa9e7f0700af79ec1</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -11125,6 +11622,52 @@
       <name>lon</name>
       <anchorfile>structLocationSeed.html</anchorfile>
       <anchor>a525f72325d8cad6c0317e6b0d4ce469f</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>MusicArt</name>
+    <filename>structMusicArt.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>width</name>
+      <anchorfile>structMusicArt.html</anchorfile>
+      <anchor>a7989477c3ddaf45f2d4dff57b21f1dda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>height</name>
+      <anchorfile>structMusicArt.html</anchorfile>
+      <anchor>ab8b474ef20a9e57f30e36a63e58fae9c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>colours</name>
+      <anchorfile>structMusicArt.html</anchorfile>
+      <anchor>aac21bd644af45e30cb42b8b98441e6d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>palette</name>
+      <anchorfile>structMusicArt.html</anchorfile>
+      <anchor>a1fbfc7823dfa2bab6bb54bdd3642e705</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>pixels</name>
+      <anchorfile>structMusicArt.html</anchorfile>
+      <anchor>a8c3a1a6dbd621b0dca06a72648ec5d92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>row_bytes</name>
+      <anchorfile>structMusicArt.html</anchorfile>
+      <anchor>afcaf1424fb91baea23748f9e36fc0c30</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -12512,6 +13055,8 @@
     <file path="src/c/core/wire/">calendar_wire.h</file>
     <file path="src/c/core/wire/">coords.c</file>
     <file path="src/c/core/wire/">coords.h</file>
+    <file path="src/c/core/wire/">music_art.c</file>
+    <file path="src/c/core/wire/">music_art.h</file>
     <file path="src/c/core/wire/">music_track.c</file>
     <file path="src/c/core/wire/">music_track.h</file>
     <file path="src/c/core/wire/">phone_level.h</file>
@@ -12539,6 +13084,7 @@
     <class kind="struct">WeatherClock</class>
     <class kind="struct">CalendarEvent</class>
     <class kind="struct">CalendarStrip</class>
+    <class kind="struct">MusicArt</class>
     <class kind="struct">MusicTrack</class>
     <class kind="struct">StockSlot</class>
     <class kind="struct">StockStrip</class>
@@ -12828,9 +13374,9 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>PHONE_NO_LEVEL</name>
+      <name>MUSIC_ART_HEADER</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga605dd03e235d86fb34bc9fae7d950149</anchor>
+      <anchor>ga4fb48501601d13737b2a9af40864f780</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -14016,6 +14562,13 @@
       <arglist>(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock)</arglist>
     </member>
     <member kind="function">
+      <type>int</type>
+      <name>weather_reading_convert_temp</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga92142e4b7daf9d7aa1a88b8aa76b3740</anchor>
+      <arglist>(int value, bool to_fahrenheit)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>weather_reading_convert</name>
       <anchorfile>group__lib__core.html</anchorfile>
@@ -14063,6 +14616,20 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga11b6bfbd1863803faf31b81bdea9ef1f</anchor>
       <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_art_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae8a9666ccb603e39635bae61e6cd080c</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, MusicArt *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_art_copy_rows</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8c793bbaf1382342911f99e2397d68c1</anchor>
+      <arglist>(const MusicArt *art, uint8_t *dst, uint16_t dst_row_bytes)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -14227,6 +14794,20 @@
     </member>
     <member kind="typedef">
       <type>void(*)</type>
+      <name>MusicNoPluginHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gad9e878bfeda433149797d8e0547f4c6e</anchor>
+      <arglist>(bool no_plugin)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MusicArtHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3abd6ef7d9cd8ce0d218fd9e848ea8f7</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
       <name>CustomColorsHandler</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga6daf051587a0083e33af5e4d0847f931</anchor>
@@ -14359,6 +14940,20 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_on_music_no_plugin</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga19d4f00dc65f9c0b71a0335f87d10068</anchor>
+      <arglist>(MusicNoPluginHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music_art</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga4ae46c9fecd1398f3fcf16d666ba2c4f</anchor>
+      <arglist>(MusicArtHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_on_custom_colors</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
@@ -14415,9 +15010,23 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_release_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga10253f63237c35a8ab75a86fea4f8554</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_request_music</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_release_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7c1c49ecbcf5bf2f810e31d8ec5c45ed</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
@@ -15127,6 +15736,27 @@
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
+      <type>const GBitmap *</type>
+      <name>music_store_artwork</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga034835a1c256e58325d4ea40da4ce6fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ece2fb25928441a71f85738d46847e2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_no_plugin</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaac7e61acc9529516c7d7b342cfc211aa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>phone_store_init</name>
       <anchorfile>group__lib__stores.html</anchorfile>
@@ -15145,6 +15775,13 @@
       <name>phone_store_battery</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>phone_store_no_plugin</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga21a92fab0b359a3cde171f06177da305</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -16720,10 +17357,44 @@
     <name>lib_dev</name>
     <title>Dev Harness</title>
     <filename>group__lib__dev.html</filename>
+    <file path="src/plugins/dev/c/dev/">dev_config.c</file>
+    <file path="src/plugins/dev/c/dev/">dev_config.h</file>
     <file path="src/plugins/dev/c/dev/">dev_hooks.h</file>
     <file path="src/plugins/dev/c/dev/">dev_walk.c</file>
     <file path="src/plugins/dev/c/dev/">dev_walk.h</file>
+    <class kind="struct">DevSetting</class>
+    <class kind="struct">DevStep</class>
+    <class kind="struct">DevPanel</class>
+    <class kind="struct">DevHourReading</class>
+    <class kind="struct">DevHrvReading</class>
+    <class kind="struct">DevEvent</class>
     <class kind="struct">[struct].s_fixed</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>DevValueType</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga679ad3447bb9eba149cf367cd9c0eff1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_VALUE_NUMBER</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gga679ad3447bb9eba149cf367cd9c0eff1ae7e38b85e1b38d1f4d4099ae55c0af04</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_VALUE_TEXT</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>DevStore</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga72f9ed7498486290682f9f71e83a35c2</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="enumeration">
       <type></type>
       <name>DevWalkMode</name>
@@ -16742,6 +17413,61 @@
       <anchorfile>group__lib__dev.html</anchorfile>
       <anchor>ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_WALK_CONFIG</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ggabd7169bdf3c69ae6ffe751b975f1fadda9c175b36d1c3314bf674499dc4fe7176</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_show_panel</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gad48bb03bf89822c657c3afd02edebe70</anchor>
+      <arglist>(int panel, int size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_show_layout</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga4e8d69cd43d2406d1ebbc9d2ae56bc58</anchor>
+      <arglist>(const char *layout)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_config_apply_settings</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gaf30f694e40ab6afd85e1968d4760430a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_config_pin</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga44e8f0128ee27bae8fedcbc7d767e60e</anchor>
+      <arglist>(struct tm *when)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_config_seed</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gaca1272da503307b016c82d6507b5097d</anchor>
+      <arglist>(DevStore store)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint16_t</type>
+      <name>dev_config_walk_count</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga4f6abc3104307260df803e409c3832d5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_config_walk_show</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga69106cf7c82db20167ad3950ddafd238</anchor>
+      <arglist>(uint16_t step)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static bool</type>

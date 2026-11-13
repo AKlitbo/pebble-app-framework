@@ -64,16 +64,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.61% </span>
+                <span class="strong">68.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/13</span>
+                <span class='fraction'>13/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.28% </span>
+                <span class="strong">62.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/14</span>
+                <span class='fraction'>10/16</span>
             </div>
         
             
@@ -85,9 +85,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.61% </span>
+                <span class="strong">68.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/13</span>
+                <span class='fraction'>13/19</span>
             </div>
         
             
@@ -102,7 +102,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -215,7 +215,35 @@
 <a name='L109'></a><a href='#L109'>109</a>
 <a name='L110'></a><a href='#L110'>110</a>
 <a name='L111'></a><a href='#L111'>111</a>
-<a name='L112'></a><a href='#L112'>112</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -319,11 +347,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
@@ -332,13 +370,16 @@
  * It draws one note in a tinted box with a coloured left edge, the look of the location picker's own
  * notes. A note has a `tone`. `warning`, the default, carries a round "!" badge and the orange accent,
  * for something the wearer has to fix. `info` drops the badge and takes a calmer grey, for a plain
- * fact such as where the weather comes from.
+ * fact such as where the weather comes from. `plain` drops the box altogether and draws the words as
+ * Clay draws a select's description, with no separator above, so a select's own words can sit in a row
+ * of their own under it and hide while its plugin is picked.
  *
  * A face can restyle it from its own component CSS through these names, which stay as they are:
  *   .component-plugin-note   the row, which a visibleWhen hides and shows
  *   .pf-note                 the callout inside it
  *   .pf-note-warning         a warning callout, whose :before is the badge
  *   .pf-note-info            an info callout
+ *   .pf-note-plain           the row of a plain note, whose words sit in Clay's own .description
  *   .pf-note-text            the words
  *   --pf-note-accent         the warning's border, badge, and tint, #ff4700 unless set
  *   --pf-note-info-accent    the info's border and tint, #8a8a8a unless set
@@ -383,6 +424,12 @@ export default {
     '.pf-note { ' + CALLOUT_BOX + ' margin: 0; }',
     '.pf-note-warning:before { ' + CALLOUT_BADGE + ' }',
     '.pf-note-info { padding-left: 0.6rem; background: rgba(138, 138, 138, 0.12); background: color-mix(in srgb, var(--pf-note-info-accent, #8a8a8a) 12%, transparent); border-left-color: var(--pf-note-info-accent, #8a8a8a); }',
+    // a plain note reads as the description of the select above it, so it takes none of a row's own
+    // padding and none of the separator a section draws between rows
+    // the section in the selector outweighs Clay's own .section &gt; .component padding whichever sheet
+    // loads last, since the Pebble Android app can load the component styles first
+    '.section &gt; .component.component-plugin-note.pf-note-plain { padding: 0; margin-top: 0; }',
+    '.section &gt; .component.component-plugin-note.pf-note-plain:after { display: none !important; }',
   ].join(''),
 &nbsp;
   manipulator: {
@@ -423,7 +470,8 @@ export default {
   },
 &nbsp;
   /**
-   * Gives the callout its tone's class, warning unless the row says info.
+   * Gives the callout its tone's class, warning unless the row says info or plain. A plain note swaps
+   * the callout for Clay's own description look.
    *
    * A `function` expression, never shorthand method syntax. Clay serializes a registered component
    * by writing `key:` followed by the function's own toString, and a shorthand method stringifies
@@ -431,10 +479,19 @@ export default {
    */
   initialize: function (this: PluginNoteContext): void {
     const note = this.$element[0].querySelector('.pf-note');
+    const tone = this.config &amp;&amp; this.config.tone;
 &nbsp;
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (note) {
-      note.classList.add(this.config &amp;&amp; this.config.tone === 'info' ? 'pf-note-info' : 'pf-note-warning');
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!note) {
+<span class="cstat-no" title="statement not covered" >      return;</span>
     }
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (tone === 'plain') {
+<span class="cstat-no" title="statement not covered" >      this.$element[0].classList.add('pf-note-plain');</span>
+<span class="cstat-no" title="statement not covered" >      note.className = 'description';</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+&nbsp;
+    note.classList.add(tone === 'info' ? 'pf-note-info' : 'pf-note-warning');
   },
 };
 &nbsp;</pre></td></tr></table></pre>
@@ -444,7 +501,7 @@ export default {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-12T22:47:48.328Z
+                at 2026-11-13T21:32:36.913Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

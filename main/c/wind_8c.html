@@ -201,6 +201,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('wind_8c.html',
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:af752909064f37a4631da7c2c904b0de0" id="r_af752909064f37a4631da7c2c904b0de0"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#af752909064f37a4631da7c2c904b0de0">scale_rounded</a> (int kmh, int per_thousand)</td></tr>
+<tr class="memdesc:af752909064f37a4631da7c2c904b0de0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scales a speed by a factor in thousandths and rounds to the nearest whole number.  <br /></td></tr>
 <tr class="memitem:ga56c983dede8e0be266f38d389a62c371" id="r_ga56c983dede8e0be266f38d389a62c371"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga56c983dede8e0be266f38d389a62c371">wind_from_kmh</a> (int kmh, <a class="el" href="group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1">WindUnit</a> unit)</td></tr>
 <tr class="memdesc:ga56c983dede8e0be266f38d389a62c371"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a km/h wind speed into the chosen unit.  <br /></td></tr>
 <tr class="memitem:gafd0dc1755ed3d4dd661c56e5c498e84d" id="r_gafd0dc1755ed3d4dd661c56e5c498e84d"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gafd0dc1755ed3d4dd661c56e5c498e84d">wind_unit_label</a> (<a class="el" href="group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1">WindUnit</a> unit)</td></tr>
@@ -208,7 +210,48 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Pure wind-speed conversions and unit labels, no SDK behind them. </p>
-</div></div><!-- contents -->
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="af752909064f37a4631da7c2c904b0de0" name="af752909064f37a4631da7c2c904b0de0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af752909064f37a4631da7c2c904b0de0">&#9670;&#160;</a></span>scale_rounded()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int scale_rounded </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>kmh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>per_thousand</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Scales a speed by a factor in thousandths and rounds to the nearest whole number. </p>
+<p>A half rounds away from zero, so a negative speed rounds the same way as its positive.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">kmh</td><td>The speed in km/h. </td></tr>
+    <tr><td class="paramname">per_thousand</td><td>How many thousandths of the unit one km/h is. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The speed in the unit, rounded. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>

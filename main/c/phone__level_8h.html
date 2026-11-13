@@ -198,15 +198,10 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('phone__level_8
 <p>Reads the phone's battery level as the phone sends it.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="wire__caps_8g_8h_source.html">wire/wire_caps.g.h</a>&quot;</code><br />
 </div>
 <p><a href="phone__level_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:ga605dd03e235d86fb34bc9fae7d950149" id="r_ga605dd03e235d86fb34bc9fae7d950149"><td class="memItemLeft">
-#define&#160;</td><td class="memItemRight"><b>PHONE_NO_LEVEL</b>&#160;&#160;&#160;(-1)</td></tr>
-<tr class="memdesc:ga605dd03e235d86fb34bc9fae7d950149"><td class="mdescLeft">&#160;</td><td class="mdescRight">The level for no reading, on the wire and in the store. <br /></td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga77ee9672eb59f523d0871ebda12fd0a3" id="r_ga77ee9672eb59f523d0871ebda12fd0a3"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga77ee9672eb59f523d0871ebda12fd0a3">phone_level_read</a> (int32_t sent)</td></tr>
@@ -214,7 +209,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Reads the phone's battery level as the phone sends it. </p>
-<p>The phone sends <span class="tt">PHONE_BATTERY</span> as a whole percent, or -1 when it has no reading. The number comes off a phone, so it is not trusted: anything below 0 is no reading and anything past 100 is full, which keeps a battery readout or a bar from drawing past either end.</p>
+<p>The phone sends <span class="tt">PHONE_BATTERY</span> as a whole percent, -1 when it has no reading yet, or -2 while no plugin on the phone serves the battery. The number comes off a phone, so it is not trusted: any other negative is no reading and anything past 100 is full, which keeps a battery readout or a bar from drawing past either end.</p>
 <p>The sender on the other side is ts/plugin-sources/phone.ts, through the phone battery feature. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->

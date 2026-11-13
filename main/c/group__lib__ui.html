@@ -1053,7 +1053,7 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
 </div><div class="memdoc">
 
 <p>Format the phone's battery as a percent, such as "84%", or "--" when there is no reading. </p>
-<p>A face built without the phone battery keys always gets "--".</p>
+<p>A face built without the phone battery keys always gets "--", and so does one whose phone reports no plugin serving the battery. A face that wants to say so checks <a class="el" href="group__lib__stores.html#ga21a92fab0b359a3cde171f06177da305" title="Whether the phone said no plugin on it serves the battery.">phone_store_no_plugin()</a> and writes its own words, such as "PLUGINS OFF".</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
@@ -1175,7 +1175,7 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
 </div><div class="memdoc">
 
 <p>Format the temperature with its unit letter, or "--" when there is no reading. </p>
-<p>A face built with <span class="tt">PLUGIN_WEATHER</span> and no <span class="tt">WEATHER_TEMPERATURE_UNIT</span> key gets the number alone, such as "73". Its weather comes in the unit the wearer picked in the Pebble app, from the plugin and from a fetch alike, and the watch never hears which unit that is, so a letter could be wrong.</p>
+<p>A face built with <span class="tt">PLUGIN_WEATHER</span> and no <span class="tt">WEATHER_TEMPERATURE_UNIT</span> key gets the number alone, such as "73". Its plugin weather comes in the plugin's own unit and a fetch in the unit the wearer picked in the Pebble app, and with no unit key the watch never hears which unit that is, so a letter could be wrong.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>

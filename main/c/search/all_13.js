@@ -9,7 +9,7 @@ var searchData=
   ['temp_5fmax_6',['temp_max',['../structWeatherMessage.html#a217ead73acf2ca31c797d0e536dfff33',1,'WeatherMessage::temp_max'],['../structWeatherState.html#a7608d767f3af291200139974bef30df5',1,'WeatherState::temp_max'],['../structWeatherDayCol.html#ad3f35b86fa0243cf336df447a5823c64',1,'WeatherDayCol::temp_max'],['../structWeatherSeed.html#a61eddb007829da41b47f94582d5c43a6',1,'WeatherSeed::temp_max']]],
   ['temp_5fmin_7',['temp_min',['../structWeatherMessage.html#a16a30cff51ac31165840714b5bac5227',1,'WeatherMessage::temp_min'],['../structWeatherState.html#a1317a6f4ed770efe3bdf6352dbe7d1a2',1,'WeatherState::temp_min'],['../structWeatherDayCol.html#a07060351177da6c12bd309d7c76e79ab',1,'WeatherDayCol::temp_min'],['../structWeatherSeed.html#a961fe24ad83d628b251f98ad0e96b32d',1,'WeatherSeed::temp_min']]],
   ['temp_5for_5fnone_8',['temp_or_none',['../weather__reading_8c.html#af4636375c66617c9a9bf6b7e28eed0f2',1,'weather_reading.c']]],
-  ['text_9',['text',['../structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180',1,'EngineSlot']]],
+  ['text_9',['text',['../structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180',1,'EngineSlot::text'],['../structDevSetting.html#a5d8e1eead7f62f455af73dbfe6d28603',1,'DevSetting::text']]],
   ['text_5fcase_2ec_10',['text_case.c',['../text__case_8c.html',1,'']]],
   ['text_5fcase_2eh_11',['text_case.h',['../text__case_8h.html',1,'']]],
   ['text_5fto_5fupper_12',['text_to_upper',['../group__lib__core.html#ga0f128dcb6dbe22caba62e2b47c1da00a',1,'text_to_upper(char *s):&#160;text_case.c'],['../group__lib__core.html#ga0f128dcb6dbe22caba62e2b47c1da00a',1,'text_to_upper(char *s):&#160;text_case.c']]],
@@ -61,7 +61,7 @@ var searchData=
   ['timer_58',['timer',['../structStoreFetch.html#a4850747c6e69fbb4bfbd859aa8ca8d14',1,'StoreFetch']]],
   ['tint_59',['tint',['../structIconEntry.html#aff9ed05ce2b092a889acb2cfdb5a3149',1,'IconEntry']]],
   ['tinted_60',['tinted',['../structIconEntry.html#a7b9da71f47b947747679cd8eb52290bb',1,'IconEntry']]],
-  ['title_61',['title',['../structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa',1,'CalendarEvent::title'],['../structMusicTrack.html#a583668c50deecc86873ee1e656d27055',1,'MusicTrack::title'],['../structMusicSeed.html#a3af3b5747a6be4137b9539836a1ee61a',1,'MusicSeed::title']]],
+  ['title_61',['title',['../structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa',1,'CalendarEvent::title'],['../structMusicTrack.html#a583668c50deecc86873ee1e656d27055',1,'MusicTrack::title'],['../structMusicSeed.html#a3af3b5747a6be4137b9539836a1ee61a',1,'MusicSeed::title'],['../structDevEvent.html#af5e1419132bd816da719aa078b5d9b5f',1,'DevEvent::title']]],
   ['to_62',['to',['../structTimeBandSpan.html#a0520d74d4aa34d60477daf1e2845e6e7',1,'TimeBandSpan']]],
   ['today_63',['today',['../structHrvLog.html#a55a17799c1b88a50a3c0ae498d46bbe7',1,'HrvLog']]],
   ['token_5fat_64',['token_at',['../beats_8c.html#af9f96a0956b8fe8f3c08e08739e8a28d',1,'beats.c']]],
@@ -71,5 +71,5 @@ var searchData=
   ['tuple_5fread_2ec_68',['tuple_read.c',['../tuple__read_8c.html',1,'']]],
   ['tuple_5fread_2eh_69',['tuple_read.h',['../tuple__read_8h.html',1,'']]],
   ['tuple_5fstr_5for_70',['tuple_str_or',['../group__lib__io.html#ga86dd1adef099205e5eb8c1d52b03ce96',1,'tuple_str_or(const Tuple *tuple, const char *fallback):&#160;tuple_read.c'],['../group__lib__io.html#ga86dd1adef099205e5eb8c1d52b03ce96',1,'tuple_str_or(const Tuple *tuple, const char *fallback):&#160;tuple_read.c']]],
-  ['type_71',['type',['../structSettingField.html#ae67eb62444a3ef84ce77260694c533c1',1,'SettingField']]]
+  ['type_71',['type',['../structSettingField.html#ae67eb62444a3ef84ce77260694c533c1',1,'SettingField::type'],['../structDevSetting.html#a2dd05a5ca53bdb72928c78a4b4427089',1,'DevSetting::type']]]
 ];

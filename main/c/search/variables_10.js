@@ -6,5 +6,6 @@ var searchData=
   ['rect_5ffallback3_3',['rect_fallback3',['../structZone.html#a9991f1fe88fcf46da0b4e4e1fbdc8aab',1,'Zone']]],
   ['request_4',['request',['../structStoreFetch.html#a6faa1b9a94dd4e7faf5bb6ff5de4087d',1,'StoreFetch']]],
   ['res_5',['res',['../structIconEntry.html#afbac9a3396568064669ee57bbeb0b533',1,'IconEntry']]],
-  ['retries_5fleft_6',['retries_left',['../structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1',1,'OutboxJob']]]
+  ['retries_5fleft_6',['retries_left',['../structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1',1,'OutboxJob']]],
+  ['row_5fbytes_7',['row_bytes',['../structMusicArt.html#afcaf1424fb91baea23748f9e36fc0c30',1,'MusicArt']]]
 ];

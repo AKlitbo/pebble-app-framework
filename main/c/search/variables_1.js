@@ -8,5 +8,6 @@ var searchData=
   ['blob_5',['blob',['../structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b',1,'SettingsSchema']]],
   ['blob_5fsize_6',['blob_size',['../structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb',1,'SettingsSchema']]],
   ['bluetooth_7',['bluetooth',['../structSystemSeed.html#aace126b5167d9b3e1b8b6caa82717dee',1,'SystemSeed::bluetooth'],['../structDevShot.html#a36e1570c506bfeec9d9e8f527a4d1123',1,'DevShot::bluetooth']]],
-  ['bmp_8',['bmp',['../structIconEntry.html#afe492534dca5b03d015294388fe33d3e',1,'IconEntry']]]
+  ['bmp_8',['bmp',['../structIconEntry.html#afe492534dca5b03d015294388fe33d3e',1,'IconEntry']]],
+  ['bpm_9',['bpm',['../structDevHourReading.html#a41b83546cbfe7a884d68041dffd78c6c',1,'DevHourReading']]]
 ];

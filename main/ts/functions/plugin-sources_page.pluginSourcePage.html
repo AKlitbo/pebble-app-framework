@@ -61,10 +61,12 @@
 the feature brings one and the page has none.</li>
 <li>It drops the select when the face declares no message key for it, and logs why. Clay would
 otherwise put a setting the watch cannot map into the save.</li>
-<li>It adds the Preferred Source option when a plugin on the phone serves the item. When none does
+<li>It adds the Preferred Source option when a plugin on the phone serves the item, and opens the
+select on it when the feature says the choice was never saved. When none does
 and the plugin is the saved choice, the option stays as Preferred Source (Plugins Off), so a save
 keeps the choice and the plugin answers again once the wearer turns plugins back on. A kind with
-a <code>notInstalledLabel</code> takes that label instead while the phone lists other plugins.
+a <code>notInstalledLabel</code> takes that label instead while the phone lists other plugins, and offers
+the option then even with nothing saved, so a wearer learns a plugin can feed it.
 A plugin list the phone will not give offers the option as usual.</li>
 <li>It drops a select left with one option, which is no choice at all.</li>
 <li>With no select left on the page, it takes the select's marks off every row, drops the lead line
@@ -84,6 +86,8 @@ lists other plugins.</li>
 </ol>
 <p>Once the select has passed step 2, a feature that asks for it also gets the supported plugins
 panel at the foot of the page, whatever steps 3 to 7 made of the select.</p>
+<p>Before any of that, every kind records where its plugins stand in the plugin kinds store at the top
+of the page, as <code>PLUGIN_KINDS_CLASS</code> describes, so a face's own components can read it.</p>
 <p>A kind with no source choice passes no select key, and none of the steps above apply. It gets its
 notes alone, always shown: where its data comes from, then the one saying to turn plugins on while
 nothing on the phone serves the kind, or else the warnings the saved state calls for. A panel
@@ -102,7 +106,7 @@ the face marks with <code>pluginSourceRows</code> for the kind, or at the foot o
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The page, changed.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/page.ts#L518">plugin-sources/page.ts:518</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/32be203c3cd3ec363c9d9670e7f10373f93a3f06/src/ts/plugin-sources/page.ts#L625">plugin-sources/page.ts:625</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

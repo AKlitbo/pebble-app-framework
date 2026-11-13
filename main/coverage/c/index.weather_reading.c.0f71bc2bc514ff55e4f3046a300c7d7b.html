@@ -115,13 +115,6 @@
     <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Blocks</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l124">convert_temp (src/c/core/weather/weather_reading.c:124)</a>    </div>
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="33">called 33 times</div>
-    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
-    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
-    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
-  </div>
-  <div class="Box-row Box-row--focus-gray py-2 d-flex">
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l41">day_minute_or_none (src/c/core/weather/weather_reading.c:41)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="4">called 4 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
@@ -157,10 +150,17 @@
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">95.6%</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l135">weather_reading_convert (src/c/core/weather/weather_reading.c:135)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l134">weather_reading_convert (src/c/core/weather/weather_reading.c:134)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="6">called 6 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">75.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l123">weather_reading_convert_temp (src/c/core/weather/weather_reading.c:123)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="33">called 33 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
   </div>
 </div>  </details>
@@ -1162,25 +1162,18 @@
         <td class="lineno"><a id="l123" href="#l123">123</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount"></td>
-        <td class="src "><span class="cm">/** One temperature in the other unit, or no data left as it is. */</span></td>
+        <td class="linecount coveredLine show_coveredLine">33</td>
+        <td class="src  coveredLine show_coveredLine"><span class="kt">int</span><span class="w"> </span><span class="nf">weather_reading_convert_temp</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l124" href="#l124">124</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount coveredLine show_coveredLine">33</td>
-        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">convert_temp</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">)</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l125" href="#l125">125</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l126" href="#l126">126</a></td>
+        <td class="lineno"><a id="l125" href="#l125">125</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">2/2</summary>
@@ -1194,35 +1187,35 @@
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">WEATHER_NO_TEMP</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l127" href="#l127">127</a></td>
+        <td class="lineno"><a id="l126" href="#l126">126</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l128" href="#l128">128</a></td>
+        <td class="lineno"><a id="l127" href="#l127">127</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">1</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l129" href="#l129">129</a></td>
+        <td class="lineno"><a id="l128" href="#l128">128</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l130" href="#l130">130</a></td>
+        <td class="lineno"><a id="l129" href="#l129">129</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l131" href="#l131">131</a></td>
+        <td class="lineno"><a id="l130" href="#l130">130</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">2/2</summary>
@@ -1236,84 +1229,84 @@
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">converted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">div_nearest</span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">32</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">div_nearest</span><span class="p">((</span><span class="n">value</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">32</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l132" href="#l132">132</a></td>
+        <td class="lineno"><a id="l131" href="#l131">131</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">32</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">clamp_int</span><span class="p">(</span><span class="n">converted</span><span class="p">,</span><span class="w"> </span><span class="n">TEMP_LOWEST</span><span class="p">,</span><span class="w"> </span><span class="n">TEMP_HIGHEST</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l133" href="#l133">133</a></td>
+        <td class="lineno"><a id="l132" href="#l132">132</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l134" href="#l134">134</a></td>
+        <td class="lineno"><a id="l133" href="#l133">133</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l135" href="#l135">135</a></td>
+        <td class="lineno"><a id="l134" href="#l134">134</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">6</td>
         <td class="src  coveredLine show_coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">weather_reading_convert</span><span class="p">(</span><span class="n">WeatherState</span><span class="w"> </span><span class="o">*</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l136" href="#l136">136</a></td>
+        <td class="lineno"><a id="l135" href="#l135">135</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
+        <td class="lineno"><a id="l136" href="#l136">136</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">6</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
         <td class="lineno"><a id="l137" href="#l137">137</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">6</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_max</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l138" href="#l138">138</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">6</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_max</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_min</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l139" href="#l139">139</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">6</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">temp_min</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">feels_like</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">feels_like</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l140" href="#l140">140</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">6</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">feels_like</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">feels_like</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">dew_point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">dew_point</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l141" href="#l141">141</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount coveredLine show_coveredLine">6</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">dew_point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">dew_point</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l142" href="#l142">142</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l143" href="#l143">143</a></td>
+        <td class="lineno"><a id="l142" href="#l142">142</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">3/4</summary>
@@ -1329,35 +1322,35 @@
         <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">hourly</span><span class="p">.</span><span class="n">count</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">WEATHER_FORECAST_COLS</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l144" href="#l144">144</a></td>
+        <td class="lineno"><a id="l143" href="#l143">143</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l145" href="#l145">145</a></td>
+        <td class="lineno"><a id="l144" href="#l144">144</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">1</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">hourly</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">hourly</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">hourly</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">hourly</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l146" href="#l146">146</a></td>
+        <td class="lineno"><a id="l145" href="#l145">145</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l147" href="#l147">147</a></td>
+        <td class="lineno"><a id="l146" href="#l146">146</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l148" href="#l148">148</a></td>
+        <td class="lineno"><a id="l147" href="#l147">147</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">3/4</summary>
@@ -1373,42 +1366,42 @@
         <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">count</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">WEATHER_FORECAST_COLS</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l149" href="#l149">149</a></td>
+        <td class="lineno"><a id="l148" href="#l148">148</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
+        <td class="lineno"><a id="l149" href="#l149">149</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_max</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
         <td class="lineno"><a id="l150" href="#l150">150</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">1</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_max</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">weather_reading_convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_min</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l151" href="#l151">151</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount coveredLine show_coveredLine">1</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int16_t</span><span class="p">)</span><span class="n">convert_temp</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">daily</span><span class="p">.</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">temp_min</span><span class="p">,</span><span class="w"> </span><span class="n">to_fahrenheit</span><span class="p">);</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l152" href="#l152">152</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l153" href="#l153">153</a></td>
+        <td class="lineno"><a id="l152" href="#l152">152</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">6</td>
         <td class="src  coveredLine show_coveredLine"><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l154" href="#l154">154</a></td>
+        <td class="lineno"><a id="l153" href="#l153">153</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
@@ -1421,7 +1414,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-11-12 22:48:47
+          at 2026-11-13 21:33:40
         </footer>
       </div>
     </div>

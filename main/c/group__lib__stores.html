@@ -524,6 +524,13 @@ bool&#160;</td><td class="memItemRight"><b>music_store_playing</b> (void)</td></
 <tr class="memdesc:gad2b234359cbfa7449cab2a1b25de11e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">True while the track plays, and false while it is paused or nothing is playing. <br /></td></tr>
 <tr class="memitem:gad7118955d71e3c934fd9d7f87114ae5f" id="r_gad7118955d71e3c934fd9d7f87114ae5f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gad7118955d71e3c934fd9d7f87114ae5f">music_store_has_track</a> (void)</td></tr>
 <tr class="memdesc:gad7118955d71e3c934fd9d7f87114ae5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether there is a track to show, paused or playing.  <br /></td></tr>
+<tr class="memitem:ga034835a1c256e58325d4ea40da4ce6fa" id="r_ga034835a1c256e58325d4ea40da4ce6fa"><td class="memItemLeft">const GBitmap *&#160;</td><td class="memItemRight"><a class="el" href="#ga034835a1c256e58325d4ea40da4ce6fa">music_store_artwork</a> (void)</td></tr>
+<tr class="memdesc:ga034835a1c256e58325d4ea40da4ce6fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">The track's album art, as a 4-bit palettized bitmap.  <br /></td></tr>
+<tr class="memitem:ga4ece2fb25928441a71f85738d46847e2" id="r_ga4ece2fb25928441a71f85738d46847e2"><td class="memItemLeft"><a id="ga4ece2fb25928441a71f85738d46847e2" name="ga4ece2fb25928441a71f85738d46847e2"></a>
+void&#160;</td><td class="memItemRight"><b>music_store_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga4ece2fb25928441a71f85738d46847e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees the album art the store holds. Call it from the face's deinit. <br /></td></tr>
+<tr class="memitem:gaac7e61acc9529516c7d7b342cfc211aa" id="r_gaac7e61acc9529516c7d7b342cfc211aa"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gaac7e61acc9529516c7d7b342cfc211aa">music_store_no_plugin</a> (void)</td></tr>
+<tr class="memdesc:gaac7e61acc9529516c7d7b342cfc211aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone said no plugin on it serves now playing.  <br /></td></tr>
 <tr class="memitem:gadd2ca01419697d7f37ae4fe64ac8efb7" id="r_gadd2ca01419697d7f37ae4fe64ac8efb7"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gadd2ca01419697d7f37ae4fe64ac8efb7">phone_store_init</a> (<a class="el" href="structPhoneConfig.html">PhoneConfig</a> cfg, const <a class="el" href="structPhoneSeed.html">PhoneSeed</a> *seed)</td></tr>
 <tr class="memdesc:gadd2ca01419697d7f37ae4fe64ac8efb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:ga9782ad57861fed3323134ef011ea1826" id="r_ga9782ad57861fed3323134ef011ea1826"><td class="memItemLeft"><a id="ga9782ad57861fed3323134ef011ea1826" name="ga9782ad57861fed3323134ef011ea1826"></a>
@@ -531,6 +538,8 @@ void&#160;</td><td class="memItemRight"><b>phone_store_subscribe</b> (void(*cb)(
 <tr class="memdesc:ga9782ad57861fed3323134ef011ea1826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the level changes (the screen redraw). <br /></td></tr>
 <tr class="memitem:ga939563949a26e3d5c4a9d3990e60d518" id="r_ga939563949a26e3d5c4a9d3990e60d518"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga939563949a26e3d5c4a9d3990e60d518">phone_store_battery</a> (void)</td></tr>
 <tr class="memdesc:ga939563949a26e3d5c4a9d3990e60d518"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone's battery level.  <br /></td></tr>
+<tr class="memitem:ga21a92fab0b359a3cde171f06177da305" id="r_ga21a92fab0b359a3cde171f06177da305"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga21a92fab0b359a3cde171f06177da305">phone_store_no_plugin</a> (void)</td></tr>
+<tr class="memdesc:ga21a92fab0b359a3cde171f06177da305"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone said no plugin on it serves the battery.  <br /></td></tr>
 <tr class="memitem:gaec0631f8c075d9a6c76e2f6f386f3970" id="r_gaec0631f8c075d9a6c76e2f6f386f3970"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaec0631f8c075d9a6c76e2f6f386f3970">stock_store_init</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg, const <a class="el" href="structStockSeed.html">StockSeed</a> *seed)</td></tr>
 <tr class="memdesc:gaec0631f8c075d9a6c76e2f6f386f3970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:gaf5880da69fee6e18843b989032e67836" id="r_gaf5880da69fee6e18843b989032e67836"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaf5880da69fee6e18843b989032e67836">stock_store_reconfigure</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg)</td></tr>
@@ -813,7 +822,7 @@ Store tags</h2></td></tr>
 <div class="line">.dew_point = <a class="code hl_define" href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>,                                \</div>
 <div class="line">.forecast_hourly = NULL, .forecast_daily = NULL })</div>
 <div class="ttc" id="astructWeatherSeed_html"><div class="ttname"><a href="structWeatherSeed.html">WeatherSeed</a></div><div class="ttdoc">Optional prefill: shown until the first real reading lands, or pinned when live = false.</div><div class="ttdef"><b>Definition</b> weather_store.h:36</div></div>
-<div class="ttc" id="awire__caps_8g_8h_html_ad0b45ae6054fd351cb661c9732c85f49"><div class="ttname"><a href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a></div><div class="ttdeci">#define WEATHER_NO_TEMP</div><div class="ttdoc">A column with no reading, so the watch draws a placeholder.</div><div class="ttdef"><b>Definition</b> wire_caps.g.h:30</div></div>
+<div class="ttc" id="awire__caps_8g_8h_html_ad0b45ae6054fd351cb661c9732c85f49"><div class="ttname"><a href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a></div><div class="ttdeci">#define WEATHER_NO_TEMP</div><div class="ttdoc">A column with no reading, so the watch draws a placeholder.</div><div class="ttdef"><b>Definition</b> wire_caps.g.h:35</div></div>
 </div><!-- fragment --><p>A <a class="el" href="structWeatherSeed.html" title="Optional prefill: shown until the first real reading lands, or pinned when live = false.">WeatherSeed</a> with every optional reading already set to its no-data value. Spread it and override only what you have, so a partial seed still reads as "--" instead of a bogus 0. Copy it from a named static const, which the linker drops with the dev code in a release build. Written straight into a local, it leaves an unnamed copy in .data that every build keeps. </p><div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> s_empty = <a class="code hl_define" href="#gae0d84f2727ec304e5376009e5f7dcd18">WEATHER_SEED_EMPTY</a>;</div>
 <div class="line"><a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> seed = s_empty;</div>
 <div class="line">seed.<a class="code hl_variable" href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">temp</a> = 23;</div>
@@ -1748,6 +1757,27 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="ga034835a1c256e58325d4ea40da4ce6fa" name="ga034835a1c256e58325d4ea40da4ce6fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga034835a1c256e58325d4ea40da4ce6fa">&#9670;&#160;</a></span>music_store_artwork()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const GBitmap * music_store_artwork </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The track's album art, as a 4-bit palettized bitmap. </p>
+<p>The store owns it. It stays valid until the store calls the face back with a change, so a face reads it again on every redraw rather than keeping it.</p>
+<dl class="section return"><dt>Returns</dt><dd>The art, or NULL for none, such as a track with no art, an iPhone, the phone away, or a face built without the album art key. </dd></dl>
+
+</div>
+</div>
 <a id="gad7118955d71e3c934fd9d7f87114ae5f" name="gad7118955d71e3c934fd9d7f87114ae5f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gad7118955d71e3c934fd9d7f87114ae5f">&#9670;&#160;</a></span>music_store_has_track()</h2>
 
@@ -1799,6 +1829,27 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="gaac7e61acc9529516c7d7b342cfc211aa" name="gaac7e61acc9529516c7d7b342cfc211aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaac7e61acc9529516c7d7b342cfc211aa">&#9670;&#160;</a></span>music_store_no_plugin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool music_store_no_plugin </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the phone said no plugin on it serves now playing. </p>
+<p>It holds from the phone's word until a track or a clear arrives or the phone drops.</p>
+<dl class="section return"><dt>Returns</dt><dd>True while the phone reports no plugin. False otherwise, and on a face built without the music keys. </dd></dl>
+
+</div>
+</div>
 <a id="ga939563949a26e3d5c4a9d3990e60d518" name="ga939563949a26e3d5c4a9d3990e60d518"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga939563949a26e3d5c4a9d3990e60d518">&#9670;&#160;</a></span>phone_store_battery()</h2>
 
@@ -1847,6 +1898,27 @@ Store tags</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="ga21a92fab0b359a3cde171f06177da305" name="ga21a92fab0b359a3cde171f06177da305"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga21a92fab0b359a3cde171f06177da305">&#9670;&#160;</a></span>phone_store_no_plugin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool phone_store_no_plugin </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the phone said no plugin on it serves the battery. </p>
+<p>It holds from the phone's word until a level arrives or the phone drops. The phone sends it while plugins are off in the Pebble app, while the Pebble app is from before plugins, or while it lists no Phone plugin.</p>
+<dl class="section return"><dt>Returns</dt><dd>True while the phone reports no plugin. False with a level, with no reading yet, with the phone away, or on a face built without the phone keys. </dd></dl>
 
 </div>
 </div>

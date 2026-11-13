@@ -366,6 +366,10 @@ Files</h2></td></tr>
 <tr class="memdesc:coords_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Telling a real fix from the phone's way of saying it has none. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fwire_2Fcoords_2Eh" id="r_src_2Fc_2Fcore_2Fwire_2Fcoords_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="coords_8h.html">src/c/core/wire/coords.h</a></td></tr>
 <tr class="memdesc:coords_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Telling a real fix from the phone's way of saying it has none. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fwire_2Fmusic_5Fart_2Ec" id="r_src_2Fc_2Fcore_2Fwire_2Fmusic_5Fart_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="music__art_8c.html">src/c/core/wire/music_art.c</a></td></tr>
+<tr class="memdesc:music__art_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checking the now playing art the phone sent, and laying its rows into a bitmap. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fwire_2Fmusic_5Fart_2Eh" id="r_src_2Fc_2Fcore_2Fwire_2Fmusic_5Fart_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="music__art_8h.html">src/c/core/wire/music_art.h</a></td></tr>
+<tr class="memdesc:music__art_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Now playing art as the phone packs it, and the reader that checks it. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fwire_2Fmusic_5Ftrack_2Ec" id="r_src_2Fc_2Fcore_2Fwire_2Fmusic_5Ftrack_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="music__track_8c.html">src/c/core/wire/music_track.c</a></td></tr>
 <tr class="memdesc:music__track_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Taking in the track the phone sent. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fwire_2Fmusic_5Ftrack_2Eh" id="r_src_2Fc_2Fcore_2Fwire_2Fmusic_5Ftrack_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="music__track_8h.html">src/c/core/wire/music_track.h</a></td></tr>
@@ -423,6 +427,8 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One event. start and end are absolute epochs so the readouts stay fresh against the watch's own clock. The phone fills end with a sensible default when the feed omits DTEND.  <a href="structCalendarEvent.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CalendarStrip" id="r_CalendarStrip"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structCalendarStrip.html">CalendarStrip</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda strip. count is 0 until a reading lands.  <a href="structCalendarStrip.html#details">More...</a><br /></td></tr>
+<tr class="memitem:MusicArt" id="r_MusicArt"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structMusicArt.html">MusicArt</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Art read off the wire. It points into the bytes it was read from, so it lives only as long as they do.  <a href="structMusicArt.html#details">More...</a><br /></td></tr>
 <tr class="memitem:MusicTrack" id="r_MusicTrack"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structMusicTrack.html">MusicTrack</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One track. Zeroed is nothing playing.  <a href="structMusicTrack.html#details">More...</a><br /></td></tr>
 <tr class="memitem:StockSlot" id="r_StockSlot"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structStockSlot.html">StockSlot</a></td></tr>
@@ -557,9 +563,9 @@ Macros</h2></td></tr>
 <tr class="memitem:gae204af4aba228d010c1299270dc0a7d7" id="r_gae204af4aba228d010c1299270dc0a7d7"><td class="memItemLeft"><a id="gae204af4aba228d010c1299270dc0a7d7" name="gae204af4aba228d010c1299270dc0a7d7"></a>
 #define&#160;</td><td class="memItemRight"><b>WX_COND_NIGHT_LEN</b>&#160;&#160;&#160;6</td></tr>
 <tr class="memdesc:gae204af4aba228d010c1299270dc0a7d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The night ending's length, without its terminator. <br /></td></tr>
-<tr class="memitem:ga605dd03e235d86fb34bc9fae7d950149" id="r_ga605dd03e235d86fb34bc9fae7d950149"><td class="memItemLeft"><a id="ga605dd03e235d86fb34bc9fae7d950149" name="ga605dd03e235d86fb34bc9fae7d950149"></a>
-#define&#160;</td><td class="memItemRight"><b>PHONE_NO_LEVEL</b>&#160;&#160;&#160;(-1)</td></tr>
-<tr class="memdesc:ga605dd03e235d86fb34bc9fae7d950149"><td class="mdescLeft">&#160;</td><td class="mdescRight">The level for no reading, on the wire and in the store. <br /></td></tr>
+<tr class="memitem:ga4fb48501601d13737b2a9af40864f780" id="r_ga4fb48501601d13737b2a9af40864f780"><td class="memItemLeft"><a id="ga4fb48501601d13737b2a9af40864f780" name="ga4fb48501601d13737b2a9af40864f780"></a>
+#define&#160;</td><td class="memItemRight"><b>MUSIC_ART_HEADER</b>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:ga4fb48501601d13737b2a9af40864f780"><td class="mdescLeft">&#160;</td><td class="mdescRight">The bytes in front of the palette: the width, the height, and how many colours follow. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -892,6 +898,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga794ee07e02945524a05f36a787b60717"><td class="mdescLeft">&#160;</td><td class="mdescRight">The band's short name in capitals, at most six letters, such as "MOD" or "V.HIGH".  <br /></td></tr>
 <tr class="memitem:ga2b36f0d71ccc983475ea5fa5e919e585" id="r_ga2b36f0d71ccc983475ea5fa5e919e585"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga2b36f0d71ccc983475ea5fa5e919e585">weather_reading_apply</a> (<a class="el" href="structWeatherState.html">WeatherState</a> *state, const <a class="el" href="structWeatherMessage.html">WeatherMessage</a> *msg, const <a class="el" href="structWeatherClock.html">WeatherClock</a> *clock)</td></tr>
 <tr class="memdesc:ga2b36f0d71ccc983475ea5fa5e919e585"><td class="mdescLeft">&#160;</td><td class="mdescRight">Put a message's readings into the kept weather.  <br /></td></tr>
+<tr class="memitem:ga92142e4b7daf9d7aa1a88b8aa76b3740" id="r_ga92142e4b7daf9d7aa1a88b8aa76b3740"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga92142e4b7daf9d7aa1a88b8aa76b3740">weather_reading_convert_temp</a> (int value, bool to_fahrenheit)</td></tr>
+<tr class="memdesc:ga92142e4b7daf9d7aa1a88b8aa76b3740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts one temperature to the other unit, rounded to the nearest degree and held to the range the weather keeps. No data stays no data.  <br /></td></tr>
 <tr class="memitem:ga6fcabd81132c73ba225beaf6f035fe5c" id="r_ga6fcabd81132c73ba225beaf6f035fe5c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga6fcabd81132c73ba225beaf6f035fe5c">weather_reading_convert</a> (<a class="el" href="structWeatherState.html">WeatherState</a> *state, bool to_fahrenheit)</td></tr>
 <tr class="memdesc:ga6fcabd81132c73ba225beaf6f035fe5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert every temperature in the kept weather to the other unit.  <br /></td></tr>
 <tr class="memitem:gaf6fadf25dfa1b520911598ccade94119" id="r_gaf6fadf25dfa1b520911598ccade94119"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gaf6fadf25dfa1b520911598ccade94119">wind_bearing</a> (const char *dir)</td></tr>
@@ -906,6 +914,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:gafd03d47d8eb87604abcd082423036833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpacks an agenda off the wire.  <br /></td></tr>
 <tr class="memitem:ga11b6bfbd1863803faf31b81bdea9ef1f" id="r_ga11b6bfbd1863803faf31b81bdea9ef1f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga11b6bfbd1863803faf31b81bdea9ef1f">coords_look_real</a> (const char *lat, const char *lon)</td></tr>
 <tr class="memdesc:ga11b6bfbd1863803faf31b81bdea9ef1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a pair of coordinates is a place rather than the phone shrugging.  <br /></td></tr>
+<tr class="memitem:gae8a9666ccb603e39635bae61e6cd080c" id="r_gae8a9666ccb603e39635bae61e6cd080c"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gae8a9666ccb603e39635bae61e6cd080c">music_art_read</a> (const uint8_t *buf, uint16_t len, <a class="el" href="structMusicArt.html">MusicArt</a> *out)</td></tr>
+<tr class="memdesc:gae8a9666ccb603e39635bae61e6cd080c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads art off the wire.  <br /></td></tr>
+<tr class="memitem:ga8c793bbaf1382342911f99e2397d68c1" id="r_ga8c793bbaf1382342911f99e2397d68c1"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga8c793bbaf1382342911f99e2397d68c1">music_art_copy_rows</a> (const <a class="el" href="structMusicArt.html">MusicArt</a> *art, uint8_t *dst, uint16_t dst_row_bytes)</td></tr>
+<tr class="memdesc:ga8c793bbaf1382342911f99e2397d68c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies the art's rows into a bitmap's own rows.  <br /></td></tr>
 <tr class="memitem:gacfcf657cc8e3fec58597ccf478164315" id="r_gacfcf657cc8e3fec58597ccf478164315"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gacfcf657cc8e3fec58597ccf478164315">music_track_set</a> (<a class="el" href="structMusicTrack.html">MusicTrack</a> *track, const char *title, const char *artist, bool playing)</td></tr>
 <tr class="memdesc:gacfcf657cc8e3fec58597ccf478164315"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes in the track the phone sent, and says whether anything changed.  <br /></td></tr>
 <tr class="memitem:ga742467746b72e45dfda1d5862875bf76" id="r_ga742467746b72e45dfda1d5862875bf76"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga742467746b72e45dfda1d5862875bf76">music_track_has</a> (const <a class="el" href="structMusicTrack.html">MusicTrack</a> *track)</td></tr>
@@ -4065,6 +4077,80 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga8c793bbaf1382342911f99e2397d68c1" name="ga8c793bbaf1382342911f99e2397d68c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8c793bbaf1382342911f99e2397d68c1">&#9670;&#160;</a></span>music_art_copy_rows()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void music_art_copy_rows </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structMusicArt.html">MusicArt</a> *</td>          <td class="paramname"><span class="paramname"><em>art</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>dst_row_bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copies the art's rows into a bitmap's own rows. </p>
+<p>A bitmap can pad each row past what the art needs, so each row goes to its own start.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">art</td><td>The art read off the wire. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dst</td><td>The bitmap's first row. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">dst_row_bytes</td><td>How far apart the bitmap's rows sit, at least art-&gt;row_bytes. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gae8a9666ccb603e39635bae61e6cd080c" name="gae8a9666ccb603e39635bae61e6cd080c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae8a9666ccb603e39635bae61e6cd080c">&#9670;&#160;</a></span>music_art_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool music_art_read </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>buf</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structMusicArt.html">MusicArt</a> *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads art off the wire. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">buf</td><td>The raw wire bytes. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">len</td><td>How many bytes there are. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Receives the art. Untouched unless this returns true. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True for art the watch can draw. False for no art, and for a run that is short, long, or past either cap, which the store clears to as well. </dd></dl>
+
+</div>
+</div>
 <a id="ga742467746b72e45dfda1d5862875bf76" name="ga742467746b72e45dfda1d5862875bf76"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga742467746b72e45dfda1d5862875bf76">&#9670;&#160;</a></span>music_track_has()</h2>
 
@@ -4299,7 +4385,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The level from 0 to 100, or PHONE_NO_LEVEL for none. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The level from 0 to 100, WIRE_NO_PLUGIN while no plugin serves the battery, or PHONE_NO_LEVEL for no reading. </dd></dl>
 
 </div>
 </div>
@@ -5631,6 +5717,37 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga92142e4b7daf9d7aa1a88b8aa76b3740" name="ga92142e4b7daf9d7aa1a88b8aa76b3740"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga92142e4b7daf9d7aa1a88b8aa76b3740">&#9670;&#160;</a></span>weather_reading_convert_temp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int weather_reading_convert_temp </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>to_fahrenheit</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts one temperature to the other unit, rounded to the nearest degree and held to the range the weather keeps. No data stays no data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>The temperature, or WEATHER_NO_TEMP for none. </td></tr>
+    <tr><td class="paramname">to_fahrenheit</td><td>True to go from Celsius to Fahrenheit, false for the other way. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The temperature in the other unit, or WEATHER_NO_TEMP. </dd></dl>
+
+</div>
+</div>
 <a id="gadccedafdeb6e437c664e8426bfd9812b" name="gadccedafdeb6e437c664e8426bfd9812b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gadccedafdeb6e437c664e8426bfd9812b">&#9670;&#160;</a></span>weekday_short()</h2>
 
@@ -5704,7 +5821,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Convert a km/h wind speed into the chosen unit. </p>
-<p>Integer maths, truncated. An unknown unit falls back to km/h.</p>
+<p>Integer maths, rounded to the nearest whole number. The phone sends a plugin's wind as whole km/h, so rounding brings a speed such as 10 mph back to 10 rather than 9. An unknown unit falls back to km/h.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">kmh</td><td>The wind speed in km/h. </td></tr>

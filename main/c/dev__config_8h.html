@@ -1,0 +1,280 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/plugins/dev/c/dev/dev_config.h File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__config_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">dev_config.h File Reference<div class="ingroups"><a class="el" href="group__lib__plugins.html">Plugins</a> &raquo; <a class="el" href="group__lib__dev.html">Dev Harness</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>What a dev build takes from the unit's paf.dev.config.json beyond the walk and the clock: the date, the settings it applies at launch, the readings it seeds in place of the fixture, and the steps of a walk the file lays out as a list.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &lt;pebble.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="hrv__log_8h_source.html">health/hrv_log.h</a>&quot;</code><br />
+</div>
+<p><a href="dev__config_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:DevSetting" id="r_DevSetting"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevSetting.html">DevSetting</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One setting the config applies, by its message key.  <a href="structDevSetting.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevStep" id="r_DevStep"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevStep.html">DevStep</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One screen of a walk the config lays out as steps.  <a href="structDevStep.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevPanel" id="r_DevPanel"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevPanel.html">DevPanel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One screen of a panel walk.  <a href="structDevPanel.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevHourReading" id="r_DevHourReading"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevHourReading.html">DevHourReading</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One heart rate reading for the day's chart.  <a href="structDevHourReading.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevHrvReading" id="r_DevHrvReading"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevHrvReading.html">DevHrvReading</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One HRV reading for the log, placed by its minute of the day.  <a href="structDevHrvReading.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevEvent" id="r_DevEvent"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevEvent.html">DevEvent</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One agenda event, placed against the watch's clock when the stores are seeded.  <a href="structDevEvent.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga679ad3447bb9eba149cf367cd9c0eff1" id="r_ga679ad3447bb9eba149cf367cd9c0eff1"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga679ad3447bb9eba149cf367cd9c0eff1">DevValueType</a> { <a class="el" href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1ae7e38b85e1b38d1f4d4099ae55c0af04">DEV_VALUE_NUMBER</a>
+, <a class="el" href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4">DEV_VALUE_TEXT</a>
+ }</td></tr>
+<tr class="memdesc:ga679ad3447bb9eba149cf367cd9c0eff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">How a setting's value travels, the way the settings page sends it.  <a href="group__lib__dev.html#ga679ad3447bb9eba149cf367cd9c0eff1">More...</a><br /></td></tr>
+<tr class="memitem:ga72f9ed7498486290682f9f71e83a35c2" id="r_ga72f9ed7498486290682f9f71e83a35c2"><td class="memItemLeft"><a id="ga72f9ed7498486290682f9f71e83a35c2" name="ga72f9ed7498486290682f9f71e83a35c2"></a>enum &#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> { <br />
+&#160;&#160;<b>DEV_STORE_WEATHER</b>
+, <b>DEV_STORE_HEALTH</b>
+, <b>DEV_STORE_SYSTEM</b>
+, <b>DEV_STORE_PHONE</b>
+, <br />
+&#160;&#160;<b>DEV_STORE_MUSIC</b>
+, <b>DEV_STORE_STOCKS</b>
+, <b>DEV_STORE_CALENDAR</b>
+, <b>DEV_STORE_LOCATION</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga72f9ed7498486290682f9f71e83a35c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The stores a dev build seeds, for asking whether the config seeds one. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gad48bb03bf89822c657c3afd02edebe70" id="r_gad48bb03bf89822c657c3afd02edebe70"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gad48bb03bf89822c657c3afd02edebe70">dev_show_panel</a> (int panel, int size)</td></tr>
+<tr class="memdesc:gad48bb03bf89822c657c3afd02edebe70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows one panel on its own at one size, for a walk that lists panels. The face defines it, and the dev plugin calls it on each step of the walk, then runs the face's theme hook and rebuilds.  <br /></td></tr>
+<tr class="memitem:ga4e8d69cd43d2406d1ebbc9d2ae56bc58" id="r_ga4e8d69cd43d2406d1ebbc9d2ae56bc58"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga4e8d69cd43d2406d1ebbc9d2ae56bc58">dev_show_layout</a> (const char *layout)</td></tr>
+<tr class="memdesc:ga4e8d69cd43d2406d1ebbc9d2ae56bc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows one whole layout, for a walk that lists layouts. The face defines it, and the dev plugin calls it on each step that has a layout, after the step's settings, then runs the face's theme hook and rebuilds.  <br /></td></tr>
+<tr class="memitem:gaf30f694e40ab6afd85e1968d4760430a" id="r_gaf30f694e40ab6afd85e1968d4760430a"><td class="memItemLeft">
+static void&#160;</td><td class="memItemRight"><b>dev_config_apply_settings</b> (void)</td></tr>
+<tr class="memdesc:gaf30f694e40ab6afd85e1968d4760430a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing with dev mode off. <br /></td></tr>
+<tr class="memitem:ga44e8f0128ee27bae8fedcbc7d767e60e" id="r_ga44e8f0128ee27bae8fedcbc7d767e60e"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga44e8f0128ee27bae8fedcbc7d767e60e">dev_config_pin</a> (struct tm *when)</td></tr>
+<tr class="memdesc:ga44e8f0128ee27bae8fedcbc7d767e60e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Leaves the time alone with dev mode off.  <br /></td></tr>
+<tr class="memitem:gaca1272da503307b016c82d6507b5097d" id="r_gaca1272da503307b016c82d6507b5097d"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gaca1272da503307b016c82d6507b5097d">dev_config_seed</a> (<a class="el" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> store)</td></tr>
+<tr class="memdesc:gaca1272da503307b016c82d6507b5097d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seeds nothing with dev mode off.  <br /></td></tr>
+<tr class="memitem:ga4f6abc3104307260df803e409c3832d5" id="r_ga4f6abc3104307260df803e409c3832d5"><td class="memItemLeft">static uint16_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga4f6abc3104307260df803e409c3832d5">dev_config_walk_count</a> (void)</td></tr>
+<tr class="memdesc:ga4f6abc3104307260df803e409c3832d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Has no walk with dev mode off.  <br /></td></tr>
+<tr class="memitem:ga69106cf7c82db20167ad3950ddafd238" id="r_ga69106cf7c82db20167ad3950ddafd238"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga69106cf7c82db20167ad3950ddafd238">dev_config_walk_show</a> (uint16_t step)</td></tr>
+<tr class="memdesc:ga69106cf7c82db20167ad3950ddafd238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing with dev mode off.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>What a dev build takes from the unit's paf.dev.config.json beyond the walk and the clock: the date, the settings it applies at launch, the readings it seeds in place of the fixture, and the steps of a walk the file lays out as a list. </p>
+<p>paf build &ndash;dev writes the face's share of the file into a header the build puts beside the settings page's, and <a class="el" href="dev__config_8c.html" title="The part of the dev harness the unit&#39;s paf.dev.config.json lays out: the settings applied at launch,...">dev_config.c</a> is the only file that includes it. The theme walk in <a class="el" href="dev__walk_8c.html" title="The shared dev harness. It seeds the stores from a fixed fixture, or from the unit&#39;s paf....">dev_walk.c</a> asks here before it seeds each store, and runs a listed walk through here, so a face reaches all of it through the hooks in <a class="el" href="dev__hooks_8h.html" title="The calls a face makes to run the dev harness, and the switches they read. The build sets the switche...">dev_hooks.h</a>. With dev mode off every call here is an empty inline, and <a class="el" href="dev__config_8c.html" title="The part of the dev harness the unit&#39;s paf.dev.config.json lays out: the settings applied at launch,...">dev_config.c</a> compiles to nothing.</p>
+<p>A face whose walk lists panels defines dev_show_panel, and one whose walk lists layouts defines dev_show_layout. A dev build whose walk needs one the face lacks stops at the link, naming it. </p>
+</div></div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>plugins</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><a href="dev__config_8h.html">dev_config.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

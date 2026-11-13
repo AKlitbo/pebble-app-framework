@@ -4,6 +4,8 @@ var dir_79e18834c76ec8be8edbbd8c85c2326f =
     [ "calendar_wire.h", "calendar__wire_8h.html", "calendar__wire_8h" ],
     [ "coords.c", "coords_8c.html", "coords_8c" ],
     [ "coords.h", "coords_8h.html", "coords_8h" ],
+    [ "music_art.c", "music__art_8c.html", "music__art_8c" ],
+    [ "music_art.h", "music__art_8h.html", "music__art_8h" ],
     [ "music_track.c", "music__track_8c.html", "music__track_8c" ],
     [ "music_track.h", "music__track_8h.html", "music__track_8h" ],
     [ "phone_level.h", "phone__level_8h.html", "phone__level_8h" ],

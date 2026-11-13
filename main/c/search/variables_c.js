@@ -6,5 +6,6 @@ var searchData=
   ['night_5fcount_3',['night_count',['../structHrvLog.html#a7b458c2b7c1198060bdee317fc595b8e',1,'HrvLog']]],
   ['night_5flast_5fmin_4',['night_last_min',['../structHrvLog.html#a3d1963f976288c425e3091b7ea680ae1',1,'HrvLog']]],
   ['night_5fsum_5',['night_sum',['../structHrvLog.html#a8358c0a25ef95a20bb12a3c777f632bf',1,'HrvLog']]],
-  ['now_6',['now',['../structWeatherClock.html#a9fdd4c975baaa069590ed44b86c207a1',1,'WeatherClock']]]
+  ['now_6',['now',['../structWeatherClock.html#a9fdd4c975baaa069590ed44b86c207a1',1,'WeatherClock']]],
+  ['number_7',['number',['../structDevSetting.html#a469e593a7d2f7b6c8dbecd14fb2cfe5a',1,'DevSetting']]]
 ];

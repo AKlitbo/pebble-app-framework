@@ -223,11 +223,11 @@ thumbnails: every face is current</code></pre>
 <p>For a stale face, run its generators again with <code>paf gen &lt;face&gt; all</code>.</p>
 <h2 id="paf-tool">paf tool</h2>
 <pre><code>paf tool &lt;face&gt; &lt;name&gt; [args]</code></pre>
-<p>Runs a tool a listed plugin offers, with the face first and every argument after the name passed on exactly as typed, <code>-h</code> and <code>--</code> included. The <code>dev</code> plugin offers <code>clay-preview</code> and <code>tap-walk</code>:</p>
+<p>Runs a tool a listed plugin offers, with the face first and every argument after the name passed on exactly as typed, <code>-h</code> and <code>--</code> included. The <code>dev</code> plugin offers <code>clay-preview</code>, <code>tap-walk</code>, and <code>thumbnails</code>:</p>
 <pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> tool</span><span style="color:var(--code-token-string)"> gridlock</span><span style="color:var(--code-token-string)"> clay-preview</span></span></code></pre>
 <p>An unknown name lists the tools the unit has:</p>
 <pre><code>$ paf tool lcars-stardate nope
-paf: no tool called nope. What the unit lists offers clay-preview and tap-walk, and no plugin the unit leaves out offers it either</code></pre>
+paf: no tool called nope. What the unit lists offers clay-preview, tap-walk, and thumbnails, and no plugin the unit leaves out offers it either</code></pre>
 <h2 id="paf-run">paf run</h2>
 <pre><code>paf run &lt;unit|face&gt; &lt;script&gt; [args]</code></pre>
 <p>Runs one of the unit&#39;s own npm scripts, after readying the unit. Any arguments go after a <code>--</code>, and a <code>--</code> typed first is dropped, so these are the same:</p>

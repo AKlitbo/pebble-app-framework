@@ -254,6 +254,10 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:gab43d16e4f4337a52a7e9d4befa90b848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with the phone's battery level.  <br /></td></tr>
 <tr class="memitem:ga91efba350e00e340bfd106ee9aff0238" id="r_ga91efba350e00e340bfd106ee9aff0238"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a>(const char *title, const char *artist, bool playing)</td></tr>
 <tr class="memdesc:ga91efba350e00e340bfd106ee9aff0238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with what the phone is playing.  <br /></td></tr>
+<tr class="memitem:gad9e878bfeda433149797d8e0547f4c6e" id="r_gad9e878bfeda433149797d8e0547f4c6e"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#gad9e878bfeda433149797d8e0547f4c6e">MusicNoPluginHandler</a>(bool no_plugin)</td></tr>
+<tr class="memdesc:gad9e878bfeda433149797d8e0547f4c6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with whether the phone says no plugin on it serves now playing, which it sends as WIRE_NO_PLUGIN in place of playing.  <br /></td></tr>
+<tr class="memitem:ga3abd6ef7d9cd8ce0d218fd9e848ea8f7" id="r_ga3abd6ef7d9cd8ce0d218fd9e848ea8f7"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga3abd6ef7d9cd8ce0d218fd9e848ea8f7">MusicArtHandler</a>(const uint8_t *buf, uint16_t len)</td></tr>
+<tr class="memdesc:ga3abd6ef7d9cd8ce0d218fd9e848ea8f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with the album art the phone sent, as raw wire bytes.  <br /></td></tr>
 <tr class="memitem:ga6daf051587a0083e33af5e4d0847f931" id="r_ga6daf051587a0083e33af5e4d0847f931"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a>(const char *combined)</td></tr>
 <tr class="memdesc:ga6daf051587a0083e33af5e4d0847f931"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called inbound with the combined custom-colours string, for the face to split and store.  <br /></td></tr>
 <tr class="memitem:ga6efc27e8b660e10498f1678ddecc05dc" id="r_ga6efc27e8b660e10498f1678ddecc05dc"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a>(char *out, size_t n)</td></tr>
@@ -303,6 +307,12 @@ void&#160;</td><td class="memItemRight"><b>appmessage_on_phone_battery</b> (<a c
 <tr class="memitem:ga757a519d948bf39e5414b62761c20593" id="r_ga757a519d948bf39e5414b62761c20593"><td class="memItemLeft"><a id="ga757a519d948bf39e5414b62761c20593" name="ga757a519d948bf39e5414b62761c20593"></a>
 void&#160;</td><td class="memItemRight"><b>appmessage_on_music</b> (<a class="el" href="#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a> cb)</td></tr>
 <tr class="memdesc:ga757a519d948bf39e5414b62761c20593"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the phone is playing. Does nothing on a face without the music keys. <br /></td></tr>
+<tr class="memitem:ga19d4f00dc65f9c0b71a0335f87d10068" id="r_ga19d4f00dc65f9c0b71a0335f87d10068"><td class="memItemLeft"><a id="ga19d4f00dc65f9c0b71a0335f87d10068" name="ga19d4f00dc65f9c0b71a0335f87d10068"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_on_music_no_plugin</b> (<a class="el" href="#gad9e878bfeda433149797d8e0547f4c6e">MusicNoPluginHandler</a> cb)</td></tr>
+<tr class="memdesc:ga19d4f00dc65f9c0b71a0335f87d10068"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether no plugin serves now playing, just before each music message. Does nothing on a face without the music keys. <br /></td></tr>
+<tr class="memitem:ga4ae46c9fecd1398f3fcf16d666ba2c4f" id="r_ga4ae46c9fecd1398f3fcf16d666ba2c4f"><td class="memItemLeft"><a id="ga4ae46c9fecd1398f3fcf16d666ba2c4f" name="ga4ae46c9fecd1398f3fcf16d666ba2c4f"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_on_music_art</b> (<a class="el" href="#ga3abd6ef7d9cd8ce0d218fd9e848ea8f7">MusicArtHandler</a> cb)</td></tr>
+<tr class="memdesc:ga4ae46c9fecd1398f3fcf16d666ba2c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Album art. Does nothing on a face without the album art key. <br /></td></tr>
 <tr class="memitem:gacd479537bb794bc2cc1f07b4db3fb830" id="r_gacd479537bb794bc2cc1f07b4db3fb830"><td class="memItemLeft"><a id="gacd479537bb794bc2cc1f07b4db3fb830" name="gacd479537bb794bc2cc1f07b4db3fb830"></a>
 void&#160;</td><td class="memItemRight"><b>appmessage_on_custom_colors</b> (<a class="el" href="#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a> cb)</td></tr>
 <tr class="memdesc:gacd479537bb794bc2cc1f07b4db3fb830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inbound: splits and stores the combined string. <br /></td></tr>
@@ -325,9 +335,15 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
 <tr class="memitem:ga65ada3fd289956eb8297c91927fad985" id="r_ga65ada3fd289956eb8297c91927fad985"><td class="memItemLeft"><a id="ga65ada3fd289956eb8297c91927fad985" name="ga65ada3fd289956eb8297c91927fad985"></a>
 void&#160;</td><td class="memItemRight"><b>appmessage_request_phone</b> (void)</td></tr>
 <tr class="memdesc:ga65ada3fd289956eb8297c91927fad985"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for its battery level. The phone battery store calls this at launch and when the phone comes back. Does nothing on a face that does not declare PHONE_BATTERY and PHONE_REQUEST. <br /></td></tr>
+<tr class="memitem:ga10253f63237c35a8ab75a86fea4f8554" id="r_ga10253f63237c35a8ab75a86fea4f8554"><td class="memItemLeft"><a id="ga10253f63237c35a8ab75a86fea4f8554" name="ga10253f63237c35a8ab75a86fea4f8554"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_release_phone</b> (void)</td></tr>
+<tr class="memdesc:ga10253f63237c35a8ab75a86fea4f8554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells the phone the face no longer shows the phone's battery, so it ends its subscription and stops waking the watch on every change in the level. The phone battery store calls this when a face starts it not live. Goes out as PHONE_REQUEST 0, and does nothing on a face without the keys. <br /></td></tr>
 <tr class="memitem:ga9c7f2e2781d3b6f639b9ce19a5628a1f" id="r_ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="memItemLeft"><a id="ga9c7f2e2781d3b6f639b9ce19a5628a1f" name="ga9c7f2e2781d3b6f639b9ce19a5628a1f"></a>
 void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</td></tr>
 <tr class="memdesc:ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone what it is playing. The now playing store calls this at launch and when the phone comes back. Does nothing on a face that does not declare the four music keys. <br /></td></tr>
+<tr class="memitem:ga7c1c49ecbcf5bf2f810e31d8ec5c45ed" id="r_ga7c1c49ecbcf5bf2f810e31d8ec5c45ed"><td class="memItemLeft"><a id="ga7c1c49ecbcf5bf2f810e31d8ec5c45ed" name="ga7c1c49ecbcf5bf2f810e31d8ec5c45ed"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_release_music</b> (void)</td></tr>
+<tr class="memdesc:ga7c1c49ecbcf5bf2f810e31d8ec5c45ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells the phone the face no longer shows what is playing, so it ends its subscription and stops waking the watch on every change of track. The now playing store calls this when a face starts it not live. Goes out as MUSIC_REQUEST 0, and does nothing on a face without the keys. <br /></td></tr>
 <tr class="memitem:ga2c94fc09107a6527a82ec145fd784a9d" id="r_ga2c94fc09107a6527a82ec145fd784a9d"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga2c94fc09107a6527a82ec145fd784a9d">outbox_busy</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
 <tr class="memdesc:ga2c94fc09107a6527a82ec145fd784a9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether anything is in flight, which is what says the outbox is busy.  <br /></td></tr>
 <tr class="memitem:ga6f6fa750435ac4704bb55298be9b7e27" id="r_ga6f6fa750435ac4704bb55298be9b7e27"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga6f6fa750435ac4704bb55298be9b7e27">outbox_pending</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="el" href="#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
@@ -465,6 +481,30 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</
 
 </div>
 </div>
+<a id="ga3abd6ef7d9cd8ce0d218fd9e848ea8f7" name="ga3abd6ef7d9cd8ce0d218fd9e848ea8f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3abd6ef7d9cd8ce0d218fd9e848ea8f7">&#9670;&#160;</a></span>MusicArtHandler</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) MusicArtHandler(const uint8_t *buf, uint16_t len)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called with the album art the phone sent, as raw wire bytes. </p>
+<p>The bytes are read straight off the inbox, so they only live for this call. <a class="el" href="music__art_8h.html" title="Now playing art as the phone packs it, and the reader that checks it.">wire/music_art.h</a> reads them.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>The art as the phone packed it. </td></tr>
+    <tr><td class="paramname">len</td><td>How many bytes there are. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga91efba350e00e340bfd106ee9aff0238" name="ga91efba350e00e340bfd106ee9aff0238"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga91efba350e00e340bfd106ee9aff0238">&#9670;&#160;</a></span>MusicHandler</h2>
 
@@ -490,6 +530,29 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</
 
 </div>
 </div>
+<a id="gad9e878bfeda433149797d8e0547f4c6e" name="gad9e878bfeda433149797d8e0547f4c6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad9e878bfeda433149797d8e0547f4c6e">&#9670;&#160;</a></span>MusicNoPluginHandler</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) MusicNoPluginHandler(bool no_plugin)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called with whether the phone says no plugin on it serves now playing, which it sends as WIRE_NO_PLUGIN in place of playing. </p>
+<p>It is called for every now playing message, just before the music handler for the same message, so a store can take both in together.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">no_plugin</td><td>True while no plugin on the phone serves now playing. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="gab43d16e4f4337a52a7e9d4befa90b848" name="gab43d16e4f4337a52a7e9d4befa90b848"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gab43d16e4f4337a52a7e9d4befa90b848">&#9670;&#160;</a></span>PhoneBatteryHandler</h2>
 
@@ -505,7 +568,7 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</
 <p>Called with the phone's battery level. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">level</td><td>The level from 0 to 100, or -1 when the phone has no reading. </td></tr>
+    <tr><td class="paramname">level</td><td>The level from 0 to 100, PHONE_NO_LEVEL when the phone has no reading yet, or WIRE_NO_PLUGIN while no plugin on the phone serves it. </td></tr>
   </table>
   </dd>
 </dl>

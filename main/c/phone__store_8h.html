@@ -218,10 +218,13 @@ void&#160;</td><td class="memItemRight"><b>phone_store_subscribe</b> (void(*cb)(
 <tr class="memdesc:ga9782ad57861fed3323134ef011ea1826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the level changes (the screen redraw). <br /></td></tr>
 <tr class="memitem:ga939563949a26e3d5c4a9d3990e60d518" id="r_ga939563949a26e3d5c4a9d3990e60d518"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga939563949a26e3d5c4a9d3990e60d518">phone_store_battery</a> (void)</td></tr>
 <tr class="memdesc:ga939563949a26e3d5c4a9d3990e60d518"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone's battery level.  <br /></td></tr>
+<tr class="memitem:ga21a92fab0b359a3cde171f06177da305" id="r_ga21a92fab0b359a3cde171f06177da305"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga21a92fab0b359a3cde171f06177da305">phone_store_no_plugin</a> (void)</td></tr>
+<tr class="memdesc:ga21a92fab0b359a3cde171f06177da305"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone said no plugin on it serves the battery.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Active phone store: the phone's own battery, as a Pebble app plugin on the phone reports it. </p>
 <p>It is kept apart from the system store, which holds the watch's own battery and its link to the phone. The level is not saved to flash, since a phone battery an hour old is worse than none. It clears when the phone drops, since the watch can no longer know it, and the store asks the phone again when the link comes back and once at launch.</p>
+<p>The phone also says when no plugin on it serves the battery, such as with plugins off in the Pebble app. The level then reads as none, and <a class="el" href="group__lib__stores.html#ga21a92fab0b359a3cde171f06177da305" title="Whether the phone said no plugin on it serves the battery.">phone_store_no_plugin()</a> says why, so a face can show its own words, such as "PLUGINS OFF", in place of the "--" that <a class="el" href="group__lib__ui.html#ga89ae84ee592aa9854c2e5047545b145d" title="Format the phone&#39;s battery as a percent, such as &quot;84%&quot;, or &quot;--&quot; when there is no reading.">readout_phone_battery()</a> writes.</p>
 <p>It is built only for a face that declares PHONE_BATTERY and PHONE_REQUEST, which the build allows only with <span class="tt">PLUGIN_PHONE</span> in the appinfo's defines. On any other face it does nothing and the level reads as none. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->

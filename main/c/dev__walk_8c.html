@@ -195,9 +195,10 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__walk_8c.h
 </div><!--header-->
 <div class="contents">
 
-<p>The shared dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build.  
+<p>The shared dev harness. It seeds the stores from a fixed fixture, or from the unit's paf.dev.config.json for a store the config seeds, and drives the theme walk or a walk the config lays out. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="dev__walk_8h_source.html">dev/dev_walk.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="dev__config_8h_source.html">dev/dev_config.h</a>&quot;</code><br />
 <code>#include &lt;time.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="time__store_8h_source.html">io/stores/time_store.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="weather__store_8h_source.html">io/stores/weather_store.h</a>&quot;</code><br />
@@ -222,6 +223,8 @@ Data Structures</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a0d50aab0fcb61728053f2ac0cb2aee53" id="r_a0d50aab0fcb61728053f2ac0cb2aee53"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0d50aab0fcb61728053f2ac0cb2aee53">seed_shot</a> (const <a class="el" href="structDevShot.html">DevShot</a> *shot)</td></tr>
 <tr class="memdesc:a0d50aab0fcb61728053f2ac0cb2aee53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seed the clock, weather, health, and system stores from one shot. A face without weather gets an empty weather store, so it never boots the harness with a reading it cannot show.  <br /></td></tr>
+<tr class="memitem:a45325cb7346999702ac804338e18b8a9" id="r_a45325cb7346999702ac804338e18b8a9"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a45325cb7346999702ac804338e18b8a9">seed_shot_weather</a> (const <a class="el" href="structDevShot.html">DevShot</a> *shot)</td></tr>
+<tr class="memdesc:a45325cb7346999702ac804338e18b8a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seed the weather store from one shot.  <br /></td></tr>
 <tr class="memitem:a626e6bc16739d5be4d8e8ff0e4233ecb" id="r_a626e6bc16739d5be4d8e8ff0e4233ecb"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a626e6bc16739d5be4d8e8ff0e4233ecb">apply_shot</a> (uint8_t index)</td></tr>
 <tr class="memdesc:a626e6bc16739d5be4d8e8ff0e4233ecb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the walk onto one shot, Quiet Time mark included.  <br /></td></tr>
 <tr class="memitem:a562c18803644a3ae69effdc57b5ccf91" id="r_a562c18803644a3ae69effdc57b5ccf91"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a562c18803644a3ae69effdc57b5ccf91">tap_handler</a> (AccelAxisType axis, int32_t direction)</td></tr>
@@ -229,7 +232,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gad7d36031f9102cac1d91f9d66079d9ed" id="r_gad7d36031f9102cac1d91f9d66079d9ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a> (int hour, int min)</td></tr>
 <tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. The stock and calendar stores start empty with <span class="tt">live</span> false for a face that declares <span class="tt">STOCK_STRIP</span> or <span class="tt">CALENDAR_STRIP</span>, so a settings save cannot start them fetching. The phone battery and now playing stores start empty with <span class="tt">live</span> false for a face that declares their keys, since the seeded system store tells them nothing about the link. Call it after <span class="tt"><a class="el" href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from their saved blobs, applying defaults first.">settings_init</a></span>, so the weather seed takes the wearer's temperature unit, in place of those stores' live inits, and before any store init of the face's own, then seed the face's own data after it.  <br /></td></tr>
 <tr class="memitem:ga881065800617954a0fd094063774f0d9" id="r_ga881065800617954a0fd094063774f0d9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga881065800617954a0fd094063774f0d9">dev_walk_init</a> (<a class="el" href="group__lib__dev.html#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> mode, void(*apply_theme)(void))</td></tr>
-<tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. A theme walk forces the first theme and subscribes the accelerometer tap. Either mode then paints. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
+<tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. A theme walk forces the first theme and subscribes the accelerometer tap, and a walk the config lays out shows its first step and subscribes it. Every mode then paints. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
 <tr class="memitem:ga1ff4ca8046b48b20d4d60258901384c1" id="r_ga1ff4ca8046b48b20d4d60258901384c1"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
 <tr class="memdesc:ga1ff4ca8046b48b20d4d60258901384c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drop the tap subscription. Call from deinit. <br /></td></tr>
@@ -249,6 +252,9 @@ static void(*)&#160;</td><td class="memItemRight"><b>s_apply_theme</b> (void)</t
 <tr class="memitem:afcaa9a965b7eaadd0552070c0b7eeb82" id="r_afcaa9a965b7eaadd0552070c0b7eeb82"><td class="memItemLeft"><a id="afcaa9a965b7eaadd0552070c0b7eeb82" name="afcaa9a965b7eaadd0552070c0b7eeb82"></a>
 static uint8_t&#160;</td><td class="memItemRight"><b>s_theme</b></td></tr>
 <tr class="memdesc:afcaa9a965b7eaadd0552070c0b7eeb82"><td class="mdescLeft">&#160;</td><td class="mdescRight">The theme the walk is on. <br /></td></tr>
+<tr class="memitem:a4cbf4152740f8faa22cb79da35576c8b" id="r_a4cbf4152740f8faa22cb79da35576c8b"><td class="memItemLeft"><a id="a4cbf4152740f8faa22cb79da35576c8b" name="a4cbf4152740f8faa22cb79da35576c8b"></a>
+static uint16_t&#160;</td><td class="memItemRight"><b>s_step</b></td></tr>
+<tr class="memdesc:a4cbf4152740f8faa22cb79da35576c8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The step a walk the config lays out is on. <br /></td></tr>
 <tr class="memitem:ab37f9bc781877575967ffb6110c32529" id="r_ab37f9bc781877575967ffb6110c32529"><td class="memItemLeft"><a id="ab37f9bc781877575967ffb6110c32529" name="ab37f9bc781877575967ffb6110c32529"></a>
 static int&#160;</td><td class="memItemRight"><b>s_hour</b></td></tr>
 <tr class="memdesc:ab37f9bc781877575967ffb6110c32529"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hour the face pinned the clock to. <br /></td></tr>
@@ -257,7 +263,7 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 <tr class="memdesc:ab5090bdb6421b46ebdbb010b88a0dae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minute the face pinned the clock to. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The shared dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. </p>
+<div class="textblock"><p>The shared dev harness. It seeds the stores from a fixed fixture, or from the unit's paf.dev.config.json for a store the config seeds, and drives the theme walk or a walk the config lays out. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="a626e6bc16739d5be4d8e8ff0e4233ecb" name="a626e6bc16739d5be4d8e8ff0e4233ecb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a626e6bc16739d5be4d8e8ff0e4233ecb">&#9670;&#160;</a></span>apply_shot()</h2>
@@ -317,6 +323,40 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 
 <p>Seed the clock, weather, health, and system stores from one shot. A face without weather gets an empty weather store, so it never boots the harness with a reading it cannot show. </p>
 <p>Every store here starts with live off, which lets go of any channel, service, or link listener a live start took and takes none of its own, so seeding again on a tap re-seeds rather than stacking handlers. The weather seed is in the wearer's unit as the settings hold it at the time.</p>
+<p>A store the unit's paf.dev.config.json seeds takes the config's readings rather than the shot's, on every shot, so the theme walk only moves the stores the config leaves to the fixture. The clock takes the config's date too when it pins one.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">shot</td><td>The shot to seed from. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a45325cb7346999702ac804338e18b8a9" name="a45325cb7346999702ac804338e18b8a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45325cb7346999702ac804338e18b8a9">&#9670;&#160;</a></span>seed_shot_weather()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void seed_shot_weather </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structDevShot.html">DevShot</a> *</td>          <td class="paramname"><span class="paramname"><em>shot</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Seed the weather store from one shot. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shot</td><td>The shot to seed from. </td></tr>

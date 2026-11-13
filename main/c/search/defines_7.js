@@ -5,5 +5,7 @@ var searchData=
   ['ms_5fper_5fbeat_2',['MS_PER_BEAT',['../beats_8h.html#a0d6afbe4b8f974a909bafc6794fc6a55',1,'beats.h']]],
   ['ms_5fper_5fday_3',['MS_PER_DAY',['../beats_8h.html#a252dcc38a8013d69f8a9448187565604',1,'beats.h']]],
   ['ms_5fper_5fsec_4',['MS_PER_SEC',['../beats_8h.html#a98c842b52ffe344288b6e38b12417baa',1,'beats.h']]],
-  ['music_5ftext_5flen_5',['MUSIC_TEXT_LEN',['../wire__caps_8g_8h.html#a0445da8de1c72fc7e895abc5ce5cfb00',1,'wire_caps.g.h']]]
+  ['music_5fart_5fcolours_5fmax_5',['MUSIC_ART_COLOURS_MAX',['../wire__caps_8g_8h.html#a129140ea732c92dc4f1fb958c0bd6487',1,'wire_caps.g.h']]],
+  ['music_5fart_5fside_5fmax_6',['MUSIC_ART_SIDE_MAX',['../wire__caps_8g_8h.html#ae5d1eda6f2e27af238bd652e49130de7',1,'wire_caps.g.h']]],
+  ['music_5ftext_5flen_7',['MUSIC_TEXT_LEN',['../wire__caps_8g_8h.html#a0445da8de1c72fc7e895abc5ce5cfb00',1,'wire_caps.g.h']]]
 ];

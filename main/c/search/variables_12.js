@@ -5,12 +5,12 @@ var searchData=
   ['temp_2',['temp',['../structWeatherMessage.html#a975df3054641eddb181006370fe704be',1,'WeatherMessage::temp'],['../structWeatherState.html#ae41f90ba55b0a7b7f53812816ee435d0',1,'WeatherState::temp'],['../structWeatherHourCol.html#a1775eddd69fb1c024595af53454d0e22',1,'WeatherHourCol::temp'],['../structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6',1,'WeatherSeed::temp'],['../structDevShot.html#ab2b6ce3f1accb9c6755384132c4e8249',1,'DevShot::temp']]],
   ['temp_5fmax_3',['temp_max',['../structWeatherMessage.html#a217ead73acf2ca31c797d0e536dfff33',1,'WeatherMessage::temp_max'],['../structWeatherState.html#a7608d767f3af291200139974bef30df5',1,'WeatherState::temp_max'],['../structWeatherDayCol.html#ad3f35b86fa0243cf336df447a5823c64',1,'WeatherDayCol::temp_max'],['../structWeatherSeed.html#a61eddb007829da41b47f94582d5c43a6',1,'WeatherSeed::temp_max']]],
   ['temp_5fmin_4',['temp_min',['../structWeatherMessage.html#a16a30cff51ac31165840714b5bac5227',1,'WeatherMessage::temp_min'],['../structWeatherState.html#a1317a6f4ed770efe3bdf6352dbe7d1a2',1,'WeatherState::temp_min'],['../structWeatherDayCol.html#a07060351177da6c12bd309d7c76e79ab',1,'WeatherDayCol::temp_min'],['../structWeatherSeed.html#a961fe24ad83d628b251f98ad0e96b32d',1,'WeatherSeed::temp_min']]],
-  ['text_5',['text',['../structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180',1,'EngineSlot']]],
+  ['text_5',['text',['../structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180',1,'EngineSlot::text'],['../structDevSetting.html#a5d8e1eead7f62f455af73dbfe6d28603',1,'DevSetting::text']]],
   ['timer_6',['timer',['../structStoreFetch.html#a4850747c6e69fbb4bfbd859aa8ca8d14',1,'StoreFetch']]],
   ['tint_7',['tint',['../structIconEntry.html#aff9ed05ce2b092a889acb2cfdb5a3149',1,'IconEntry']]],
   ['tinted_8',['tinted',['../structIconEntry.html#a7b9da71f47b947747679cd8eb52290bb',1,'IconEntry']]],
-  ['title_9',['title',['../structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa',1,'CalendarEvent::title'],['../structMusicTrack.html#a583668c50deecc86873ee1e656d27055',1,'MusicTrack::title'],['../structMusicSeed.html#a3af3b5747a6be4137b9539836a1ee61a',1,'MusicSeed::title']]],
+  ['title_9',['title',['../structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa',1,'CalendarEvent::title'],['../structMusicTrack.html#a583668c50deecc86873ee1e656d27055',1,'MusicTrack::title'],['../structMusicSeed.html#a3af3b5747a6be4137b9539836a1ee61a',1,'MusicSeed::title'],['../structDevEvent.html#af5e1419132bd816da719aa078b5d9b5f',1,'DevEvent::title']]],
   ['to_10',['to',['../structTimeBandSpan.html#a0520d74d4aa34d60477daf1e2845e6e7',1,'TimeBandSpan']]],
   ['today_11',['today',['../structHrvLog.html#a55a17799c1b88a50a3c0ae498d46bbe7',1,'HrvLog']]],
-  ['type_12',['type',['../structSettingField.html#ae67eb62444a3ef84ce77260694c533c1',1,'SettingField']]]
+  ['type_12',['type',['../structSettingField.html#ae67eb62444a3ef84ce77260694c533c1',1,'SettingField::type'],['../structDevSetting.html#a2dd05a5ca53bdb72928c78a4b4427089',1,'DevSetting::type']]]
 ];

@@ -18,13 +18,12 @@ var searchData=
   ['color_5fchannel_15',['color_channel',['../settings_8c.html#a6a4ffb328a62269e89060788a3940157',1,'settings.c']]],
   ['color_5ffrom_5fhex_16',['color_from_hex',['../settings_8c.html#a4e4f02059ce1a056a7ea9757a4c6129d',1,'settings.c']]],
   ['color_5fto_5fhex_17',['color_to_hex',['../settings_8c.html#a616476f1136e572530e52bedc804b1ad',1,'settings.c']]],
-  ['convert_5ftemp_18',['convert_temp',['../weather__reading_8c.html#a330fe5a1f08af20a13441fb826bbb00b',1,'weather_reading.c']]],
-  ['coords_5flook_5freal_19',['coords_look_real',['../group__lib__core.html#ga11b6bfbd1863803faf31b81bdea9ef1f',1,'coords_look_real(const char *lat, const char *lon):&#160;coords.c'],['../group__lib__core.html#ga11b6bfbd1863803faf31b81bdea9ef1f',1,'coords_look_real(const char *lat, const char *lon):&#160;coords.c']]],
-  ['copy_5fbounded_20',['copy_bounded',['../group__lib__core.html#ga2d2900400e9b136d9d176de8838c52a4',1,'copy_bounded(char *dst, uint8_t cap, const uint8_t *src, uint8_t len):&#160;cstring_fit.c'],['../group__lib__core.html#ga2d2900400e9b136d9d176de8838c52a4',1,'copy_bounded(char *dst, uint8_t cap, const uint8_t *src, uint8_t len):&#160;cstring_fit.c']]],
-  ['copy_5fpair_21',['copy_pair',['../location__store_8c.html#a7238543f70fce43dac381df674ccca7a',1,'location_store.c']]],
-  ['cstring_5ffit_22',['cstring_fit',['../group__lib__core.html#ga48dcd72e49fa122dc562f64605efdc75',1,'cstring_fit.h']]],
-  ['cstring_5ffit_5fsame_23',['cstring_fit_same',['../group__lib__core.html#ga13d8bf38f7877df6836f074354b4bcb9',1,'cstring_fit.h']]],
-  ['cstring_5fis_5fclean_24',['cstring_is_clean',['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;cstring_fit.c'],['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;cstring_fit.c']]],
-  ['cstring_5fsetting_5fis_5fclean_25',['cstring_setting_is_clean',['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;cstring_fit.c'],['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;cstring_fit.c']]],
-  ['current_5fhour_5fstart_26',['current_hour_start',['../vibe_8c.html#ac6e503c7200a4d17d92d72bf022b100a',1,'vibe.c']]]
+  ['coords_5flook_5freal_18',['coords_look_real',['../group__lib__core.html#ga11b6bfbd1863803faf31b81bdea9ef1f',1,'coords_look_real(const char *lat, const char *lon):&#160;coords.c'],['../group__lib__core.html#ga11b6bfbd1863803faf31b81bdea9ef1f',1,'coords_look_real(const char *lat, const char *lon):&#160;coords.c']]],
+  ['copy_5fbounded_19',['copy_bounded',['../group__lib__core.html#ga2d2900400e9b136d9d176de8838c52a4',1,'copy_bounded(char *dst, uint8_t cap, const uint8_t *src, uint8_t len):&#160;cstring_fit.c'],['../group__lib__core.html#ga2d2900400e9b136d9d176de8838c52a4',1,'copy_bounded(char *dst, uint8_t cap, const uint8_t *src, uint8_t len):&#160;cstring_fit.c']]],
+  ['copy_5fpair_20',['copy_pair',['../location__store_8c.html#a7238543f70fce43dac381df674ccca7a',1,'location_store.c']]],
+  ['cstring_5ffit_21',['cstring_fit',['../group__lib__core.html#ga48dcd72e49fa122dc562f64605efdc75',1,'cstring_fit.h']]],
+  ['cstring_5ffit_5fsame_22',['cstring_fit_same',['../group__lib__core.html#ga13d8bf38f7877df6836f074354b4bcb9',1,'cstring_fit.h']]],
+  ['cstring_5fis_5fclean_23',['cstring_is_clean',['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;cstring_fit.c'],['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;cstring_fit.c']]],
+  ['cstring_5fsetting_5fis_5fclean_24',['cstring_setting_is_clean',['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;cstring_fit.c'],['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;cstring_fit.c']]],
+  ['current_5fhour_5fstart_25',['current_hour_start',['../vibe_8c.html#ac6e503c7200a4d17d92d72bf022b100a',1,'vibe.c']]]
 ];
