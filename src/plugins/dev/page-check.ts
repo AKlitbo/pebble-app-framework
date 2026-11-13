@@ -266,6 +266,7 @@ export const OFF_TAG = 'Off';
 export const MET_NORWAY_LISTING = 'https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e5b788e';
 export const WEATHER_PLUS_LISTING = 'https://apps.repebble.com/weather_48e0d519c06b49e284612dc5';
 export const WEATHER_ENHANCED_LISTING = 'https://apps.repebble.com/weather-enhanced_f62c8e74dd3c4157abf09a49';
+export const PEBBLE_STOCKS_LISTING = 'https://apps.repebble.com/stocks_730a1d95229d42e9b66098cb';
 export const STOCKS_CRYPTO_LISTING = 'https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7';
 export const CALENDAR_ICAL_LISTING = 'https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660';
 
@@ -313,10 +314,10 @@ export const PHONE_NO_PLUGIN_TEXT = 'Phone battery comes from the Phone plugin b
 // the stock notes, from STOCK_TEXTS in ts/plugin-sources/stocks.ts, copied for the same reason and
 // checked by the same spec
 export const STOCK_SOURCE_TEXT = 'Your watch shows the first 4 tickers your stock plugin sends, the ones set up in that plugin\'s own settings in the Pebble app.';
-export const STOCK_NO_PLUGIN_TEXT = 'This watchface needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, then pick it under Preferred Sources in the Pebble app.';
+export const STOCK_NO_PLUGIN_TEXT = 'This watchface needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under Plugins This Watchface Supports, then pick it under Preferred Sources in the Pebble app.';
 
 // the panel's stock plugins on a phone that lists the stock fixture plugin
-const PANEL_STOCKS = { label: 'Stocks', plugins: [{ name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }, { name: 'My Stocks', tag: 'Installed' }] };
+const PANEL_STOCKS = { label: 'Stocks', plugins: [{ name: 'Stocks', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }, { name: 'My Stocks', tag: 'Installed' }] };
 
 // where the Pebble app's music plugin runs, from the plugin directory in ts/plugin-sources/directory.ts
 export const ANDROID_ONLY = 'Android Only';
@@ -1076,7 +1077,7 @@ export const SCENARIOS: Scenario[] = [
       badged: [STOCK_NO_PLUGIN_TEXT],
       notesHidden: [PLUGINS_OFF_TEXT],
     },
-    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
+    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
   },
   {
     // a face whose quotes come from a plugin alone. the Data Source, the key, and the tickers come
@@ -1109,7 +1110,7 @@ export const SCENARIOS: Scenario[] = [
       badged: [STOCK_NO_PLUGIN_TEXT],
       notesHidden: [STOCK_SOURCE_TEXT, PLUGINS_OFF_TEXT],
     },
-    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
+    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
   },
   {
     // a face with no settings page of its own, taking its weather from a plugin alone. the page holds

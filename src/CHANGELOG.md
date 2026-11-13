@@ -18,6 +18,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Wearer-Visible Changes
 
+#### Added
+
+- The supported plugins panel now lists Pebble's own Stocks plugin beside Stocks + Crypto.
+- The stock Data Source now offers a stock plugin while plugins are on and none is installed, as Preferred Source (No Stock Plugin), with a note saying where to get one. It showed only for a choice saved before.
+
 #### Fixed
 
 - Fixed a watchface built to show the phone's battery or what is playing waking the watch on every change while no panel on the layout shows it.

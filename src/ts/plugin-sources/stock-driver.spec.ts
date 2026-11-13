@@ -419,6 +419,27 @@ describe('stock plugin page with no stock plugin', () => {
     expect(result.notes).toContain(escapeHtml(STOCK_TEXTS.noPlugin as string));
   });
 
+  /** The Pebble app has no stock plugin built in, so a wearer who never picked one would never learn a plugin can feed the quotes. */
+  test('offers the missing stock plugin with nothing saved while plugins are on', () => {
+    pebble.plugins = [WEATHER_ONLY];
+    const { hooks } = startFace();
+    const page = openedPage(hooks);
+
+    const result = rowOf(page, 'STOCK_PROVIDER')?.options?.find((option) => option.value === 'plugin')?.label;
+
+    expect(result).toBe(STOCK_TEXTS.notInstalledLabel);
+  });
+
+  /** With plugins off and nothing saved, a stock plugin option would only lead to a switch the panel already names. */
+  test('offers no stock plugin with nothing saved while plugins are off', () => {
+    pebble.plugins = [];
+    const { hooks } = startFace();
+
+    const result = rowOf(openedPage(hooks), 'STOCK_PROVIDER')?.options?.some((option) => option.value === 'plugin');
+
+    expect(result).toBe(false);
+  });
+
   /** With plugins off the option still has to say so, since turning them on is what brings the plugin back. */
   test('keeps Plugins Off on a saved choice while the phone lists nothing', () => {
     pebble.plugins = [];

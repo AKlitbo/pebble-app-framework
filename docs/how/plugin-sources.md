@@ -64,7 +64,7 @@ With no list or a mixed list, the weather's Data Source select gains **Pebble Ap
 
 The stocks' Data Source select gains Preferred Source the same way when a plugin on the phone serves `finance/stock`. Picking it reads the quotes from the stock plugin the wearer prefers, which keeps its own list of tickers. The select goes first in its section, under the heading, and while it is picked the lead line, the API key, Paid Plan, and the tickers hide, and a note under the select says the watch shows the first four tickers the plugin sends.
 
-The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the option a saved plugin choice keeps reads **Pebble App: Preferred Source (No Stock Plugin)**, and the note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel lists Stocks + Crypto under Stocks, with its store listing.
+The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the select offers **Pebble App: Preferred Source (No Stock Plugin)**, whether or not the wearer picked it before, so a wearer learns a plugin can feed the quotes. The note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel lists Pebble's Stocks and Stocks + Crypto under Stocks, with their store listings. With plugins off, the option shows only for a saved plugin choice, as Plugins Off.
 
 The calendar's page has no source select of its own, since without plugins it would hold one option. The calendar adds a **Calendar Source** select, with **iCal Link** and Preferred Source, under the leading heading and text rows of the section holding the iCal link. A phone with no plugin serving the events leaves it one option, so the select goes and the page shows the link as it would without the define.
 
@@ -156,6 +156,7 @@ These are the plugins the panel knows, by the kinds they serve. **What It Serves
 | `calendar/event` | [Calendar + iCal](https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660) | Null Syntax | The standard fields, with the events of up to two iCal links merged into the agenda | 1.1.0, 12 Nov 2026 |
 | `music/track` | Music (Android Only) | Pebble | The standard fields | Built In, 10 Nov 2026 |
 | `phone/phone_state` | Phone | Pebble | The standard fields | Built In, 10 Nov 2026 |
+| `finance/stock` | [Stocks](https://apps.repebble.com/stocks_730a1d95229d42e9b66098cb) | Pebble | Pebble's five stock fields, from Yahoo with no key | 1.0.4, 13 Nov 2026 |
 | `finance/stock` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Pebble's five stock fields, and the currency, the quote time, the source, and the market state | 1.0.1, 12 Nov 2026 |
 | `finance/crypto` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Crypto pairs | 1.0.1, 12 Nov 2026 |
 

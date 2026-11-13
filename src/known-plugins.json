@@ -51,6 +51,19 @@
     "verifiedOn": "2026-11-12"
   },
   {
+    "name": "Stocks",
+    "uuid": "2c4b7f10-9a3d-4e6b-8f21-5d0c7e9a1b34",
+    "storeId": "730a1d95229d42e9b66098cb",
+    "storeSlug": "stocks",
+    "serves": ["finance/stock"],
+    "maker": "Pebble",
+    "verifiedVersion": "1.0.4",
+    "verifiedOn": "2026-11-13",
+    "gives": {
+      "finance/stock": "Pebble's five stock fields, from Yahoo with no key"
+    }
+  },
+  {
     "name": "Weather+",
     "uuid": "7f7b6c10-93e0-4f4c-9237-7e8204c5a121",
     "storeId": "48e0d519c06b49e284612dc5",

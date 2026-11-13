@@ -367,12 +367,14 @@ function placeChoice(page: ClayConfigItem[], select: ClayConfigItem, inputs: Plu
   // nothing to serve the item keeps a saved plugin as plugins off
   const listed = inputs.plugins;
   const offersPlugin = listed === null || servesItem(listed, inputs.category, inputs.item);
-  const keptOff = listed !== null && !offersPlugin && inputs.saved === PLUGIN_VALUE;
   const options = select.options || [];
 
   // a phone that lists other plugins has them on, so a kind the Pebble app has no plugin of its own
-  // for is missing one rather than switched off
+  // for is missing one rather than switched off. such a kind offers its choice even with none saved,
+  // labelled as missing, so a wearer learns a plugin can feed it and the note says where to get one
   const pluginsOn = listed !== null && listed.length > 0;
+  const missingOffered = pluginsOn && !offersPlugin && Boolean(inputs.texts.notInstalledLabel);
+  const keptOff = listed !== null && !offersPlugin && (inputs.saved === PLUGIN_VALUE || missingOffered);
   const keptLabel = pluginsOn && inputs.texts.notInstalledLabel ? inputs.texts.notInstalledLabel : PLUGINS_OFF_LABEL;
   const keptText = pluginsOn && inputs.texts.noPlugin ? inputs.texts.noPlugin : PLUGINS_OFF_TEXT;
 
@@ -484,7 +486,8 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  * 3. It adds the Preferred Source option when a plugin on the phone serves the item. When none does
  *    and the plugin is the saved choice, the option stays as Preferred Source (Plugins Off), so a save
  *    keeps the choice and the plugin answers again once the wearer turns plugins back on. A kind with
- *    a `notInstalledLabel` takes that label instead while the phone lists other plugins.
+ *    a `notInstalledLabel` takes that label instead while the phone lists other plugins, and offers
+ *    the option then even with nothing saved, so a wearer learns a plugin can feed it.
  *    A plugin list the phone will not give offers the option as usual.
  * 4. It drops a select left with one option, which is no choice at all.
  * 5. With no select left on the page, it takes the select's marks off every row, drops the lead line

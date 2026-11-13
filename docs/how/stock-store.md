@@ -93,7 +93,7 @@ A face built with `PLUGIN_STOCKS` can also take its quotes from a Pebble app plu
 
 **What Reaches the Watch.** The phone sends each update as it comes, through the same sender a round uses, so an unchanged update wakes nothing. A watch ask resends the quotes the watch was last sent. With no update kept, the strip shows `NO PLUGIN` in its first slot while nothing on the phone serves the quotes, and `NO ACCESS` while the Pebble app refuses the subscription. A save back onto a provider forgets the strip kept for the gate and fetches past it, as any change of provider does.
 
-**No Stock Plugin Installed.** The Pebble app has no stock plugin of its own, so the wearer installs one from the Pebble app store. Until then a saved plugin choice reads **Pebble App: Preferred Source (No Stock Plugin)**, and the settings page says where to get one, as [Pebble App Plugins](plugin-sources.md#what-the-wearer-sees) covers.
+**No Stock Plugin Installed.** The Pebble app has no stock plugin of its own, so the wearer installs one from the Pebble app store. Until then the Data Source offers **Pebble App: Preferred Source (No Stock Plugin)** while plugins are on, and the settings page says where to get one, as [Pebble App Plugins](plugin-sources.md#what-the-wearer-sees) covers.
 
 **Launching with the Plugin Picked.** The cache below records the provider whose quotes it holds, and a launch with the plugin picked reads it as no provider's, so it starts empty. The first save back onto a provider then starts with no held quotes and no rate limit wait. That save's fetch goes past the gate anyway, and the ledger that keeps a counted provider inside its free plan is kept apart from the cache, so the cost is one round with no held quotes to reuse.
 
