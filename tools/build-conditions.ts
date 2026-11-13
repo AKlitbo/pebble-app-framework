@@ -262,6 +262,8 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
   entry('CAL_LOC_LEN', caps.CALENDAR_LOC_MAX + 1, `An event location, ${caps.CALENDAR_LOC_MAX} characters plus its terminator`);
   lines.push('');
   entry('MUSIC_TEXT_LEN', caps.MUSIC_TEXT_MAX + 1, `A now playing title or artist, ${caps.MUSIC_TEXT_MAX} characters plus its terminator`);
+  entry('MUSIC_ART_SIDE_MAX', caps.MUSIC_ART_SIDE_MAX, 'How wide or tall now playing art can be, in pixels');
+  entry('MUSIC_ART_COLOURS_MAX', caps.MUSIC_ART_COLOURS_MAX, 'How many colours now playing art\'s palette can hold');
   lines.push('');
   entry('PHONE_NO_LEVEL', caps.PHONE_NO_LEVEL, 'The phone\'s battery level for no reading');
   entry('WIRE_NO_PLUGIN', caps.NO_PLUGIN_MARKER, 'Sent in place of a plugin reading while nothing on the phone serves it');

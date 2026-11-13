@@ -30,7 +30,7 @@ import { NO_PLUGIN } from './subscription';
 import noteComponent from './note-component';
 import panelComponent from './panel-component';
 import kindsComponent from './kinds-component';
-import type { ReadingControls, SourceEnvelope } from './types';
+import type { ImageSize, ReadingControls, SourceEnvelope } from './types';
 import type { FeatureContext, FeatureHooks } from '../pkjs/feature';
 
 /**
@@ -78,10 +78,15 @@ export interface ReadingMapping<Reading> {
   item: string;
   /** The properties the kind reads, which the phone takes as a hint. */
   properties: string[];
+  /** The properties that carry images, asked for only when the face wants them at a size, such as `artwork`. */
+  imageProperties?: string[];
   /** The watch's ask for the reading, such as `MUSIC_REQUEST`, by name. */
   requestKey: string;
-  /** Turns one update into the reading the watch takes. */
-  fromUpdate(envelope: SourceEnvelope | null | undefined): Reading;
+  /**
+   * Turns one update into the reading the watch takes. It gets the image size the face asked for, or
+   * undefined when it asked for none.
+   */
+  fromUpdate(envelope: SourceEnvelope | null | undefined, imageSize?: ImageSize): Reading;
   /** The reading for nothing to show yet, which the watch clears its panel to. */
   empty: Reading;
   /**
@@ -107,6 +112,14 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
     const { category, item } = mapping;
     const noPlugin = mapping.noPlugin === undefined ? mapping.empty : mapping.noPlugin;
     const key = wantedKey(category, item);
+    const { imageSize } = controls;
+    const properties = imageSize ? [...mapping.properties, ...(mapping.imageProperties || [])] : mapping.properties;
+
+    /** Turns an update into the reading, at the image size the face asked for. */
+    function readingFrom(envelope: SourceEnvelope): Reading {
+      return mapping.fromUpdate(envelope, imageSize);
+    }
+
     let wanted = readWanted(key);
 
     // the kind has no other source, so the choice is whether the watch shows it, and there is no
@@ -114,11 +127,12 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
     const choice = followPluginChoice({
       category,
       item,
-      properties: mapping.properties,
+      properties,
+      iconPixelSize: imageSize,
       only: false,
       pickedIn: () => wanted,
       shutOut: () => {},
-      onUpdate: (envelope) => controls.send(mapping.fromUpdate(envelope)),
+      onUpdate: (envelope) => controls.send(readingFrom(envelope)),
       onError(error) {
         if (CLEARING_CODES.includes(error.code)) {
           controls.send(noPlugin);
@@ -140,7 +154,7 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
       const cleared = CLEARING_CODES.includes(subscription.state().lastError || '');
 
       if (latest && !cleared) {
-        controls.send(mapping.fromUpdate(latest));
+        controls.send(readingFrom(latest));
       } else if (cleared || !choice.couldAnswer()) {
         controls.send(noPlugin);
       } else {

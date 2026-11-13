@@ -428,3 +428,19 @@ describe('packCalendarStrip', () => {
     expect(result).toEqual([0]);
   });
 });
+
+describe('packMusicArt', () => {
+  /** The watch reads the header, then the palette, then the rows, so any other order draws noise. */
+  test('lays out the size, the colour count, the palette, and the rows in that order', () => {
+    const result = wire.packMusicArt({ width: 2, height: 2, palette: [0xc0, 0xff], pixels: [0x01, 0x10] });
+
+    expect(result).toEqual([2, 2, 2, 0xc0, 0xff, 0x01, 0x10]);
+  });
+
+  /** A bridge can drop a tuple holding nothing, so no art has to go as a header the watch reads as none. */
+  test.each([['null', null], ['nothing', undefined]])('packs %s as a width and height of 0', (_label, art) => {
+    const result = wire.packMusicArt(art);
+
+    expect(result).toEqual([0, 0, 0]);
+  });
+});

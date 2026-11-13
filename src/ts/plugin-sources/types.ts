@@ -68,14 +68,27 @@ export interface SeriesShape {
   timestamp?: TimestampSeries;
 }
 
+/**
+ * A colour bitmap in the watch's own 4-bit palettized layout, with both parts in base64. The pixels
+ * go two to a byte with the even x in the high nibble, and each row is padded to a whole byte. The
+ * palette is up to 16 GColor8 bytes. A plugin sends one only to a subscription that asks for images
+ * with `iconPixelSize`, at about that size.
+ */
+export interface ImageShape {
+  pixels?: string;
+  palette?: string;
+  width?: number;
+  height?: number;
+}
+
 /** The names of the shapes the readers know, the way an update and a manifest spell them. */
-export type ShapeName = 'shortText' | 'longText' | 'numericValue' | 'timestamp' | 'boolean' | 'series';
+export type ShapeName = 'shortText' | 'longText' | 'numericValue' | 'timestamp' | 'boolean' | 'series' | 'image';
 
 /**
  * One property of an instance, offered in any of its shapes.
  *
  * A plugin sends the shapes it has, so a temperature can come as text and as a number side by side.
- * The `icon` and `image` shapes are left out, since nothing here asks for bitmaps.
+ * The `icon` shape is left out, since nothing here asks for one.
  */
 export interface SourceProperty {
   shortText?: TextShape;
@@ -84,6 +97,13 @@ export interface SourceProperty {
   timestamp?: TimestampShape;
   boolean?: BooleanShape;
   series?: SeriesShape;
+  image?: ImageShape;
+}
+
+/** A size in pixels, which a subscription asks a plugin's images at. */
+export interface ImageSize {
+  w: number;
+  h: number;
 }
 
 /** One thing a plugin serves, such as one weather place or one calendar event. */
@@ -146,6 +166,11 @@ export interface SubscriptionOptions {
   item: string;
   /** The properties the feature reads, which the phone takes as a hint. */
   properties?: string[];
+  /**
+   * The size the feature wants images at, which asks the plugin for them. Left out, the phone asks
+   * for none, and a plugin draws none, since a bitmap costs it far more than text.
+   */
+  iconPixelSize?: ImageSize;
   /** Gets each update the plugin sends. */
   onUpdate(envelope: SourceEnvelope): void;
   /** Gets each error, and `noPlugin` on every start that finds nothing serving the item, but once across the retries after it. */
@@ -198,6 +223,8 @@ export interface ReadingControls<Reading> {
   send(reading: Reading): void;
   /** Forgets what the watch holds, so the next send goes even when it matches. */
   forget(): void;
+  /** The size the face wants the kind's images at, such as now playing art. Left out, it asks for none. */
+  imageSize?: ImageSize;
 }
 
 /**
@@ -324,6 +351,18 @@ export interface PhonePlugins {
   driver(context: FeatureContext, controls: ReadingControls<number>): FeatureHooks;
 }
 
+/**
+ * Now playing art, checked and ready to pack. The pixels are the watch's own 4-bit palettized bitmap,
+ * two to a byte with the even x in the high nibble and each row padded to a whole byte, and the
+ * palette holds one GColor8 byte for each colour.
+ */
+export interface MusicArtwork {
+  width: number;
+  height: number;
+  palette: number[];
+  pixels: number[];
+}
+
 /** What the phone is playing, as the watch takes it. Empty text and playing off is nothing playing. */
 export interface MusicTrack {
   /** The song's title in ASCII, or empty when there is none to show. */
@@ -334,6 +373,8 @@ export interface MusicTrack {
   playing: boolean;
   /** Whether no plugin on the phone serves now playing, which the watch hears as its own state. */
   noPlugin?: boolean;
+  /** The track's art, or null for none, which clears the watch's. Left out when the face asks for no art. */
+  art?: MusicArtwork | null;
 }
 
 /**

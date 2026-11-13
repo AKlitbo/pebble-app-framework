@@ -100,6 +100,17 @@ typedef void (*MusicHandler)(const char *title, const char *artist, bool playing
  */
 typedef void (*MusicNoPluginHandler)(bool no_plugin);
 
+/**
+ * @brief Called with the album art the phone sent, as raw wire bytes.
+ *
+ * The bytes are read straight off the inbox, so they only live for this call. wire/music_art.h reads
+ * them.
+ *
+ * @param buf The art as the phone packed it.
+ * @param len How many bytes there are.
+ */
+typedef void (*MusicArtHandler)(const uint8_t *buf, uint16_t len);
+
 // the custom-colours string can be too big for one persist key, so it rides its own handler
 // instead of the settings table. inbound the face splits it and stores it. outbound the
 // provider rebuilds it into the buffer appmessage hands over, so nobody keeps a worst-case
@@ -143,6 +154,7 @@ void appmessage_on_calendar_strip(CalendarStripHandler cb);      /**< @brief Pac
 void appmessage_on_phone_battery(PhoneBatteryHandler cb);        /**< @brief The phone's battery. Does nothing on a face without the phone keys */
 void appmessage_on_music(MusicHandler cb);                       /**< @brief What the phone is playing. Does nothing on a face without the music keys */
 void appmessage_on_music_no_plugin(MusicNoPluginHandler cb);     /**< @brief Whether no plugin serves now playing, just before each music message. Does nothing on a face without the music keys */
+void appmessage_on_music_art(MusicArtHandler cb);                /**< @brief Album art. Does nothing on a face without the album art key */
 void appmessage_on_custom_colors(CustomColorsHandler cb);        /**< @brief Inbound: splits and stores the combined string */
 void appmessage_set_custom_colors_provider(CustomColorsProvider cb); /**< @brief Outbound: rebuilds the combined string */
 /**

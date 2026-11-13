@@ -11,7 +11,7 @@
  * APPMESSAGE_HAS_WEATHER_EXTRAS, APPMESSAGE_HAS_WEATHER_FORECAST, and
  * APPMESSAGE_HAS_WEATHER_AIR are defined for each weather group the face declares whole.
  * APPMESSAGE_HAS_PHONE is defined when it shows the phone's battery, and APPMESSAGE_HAS_MUSIC when it
- * shows what the phone is playing.
+ * shows what the phone is playing. APPMESSAGE_HAS_MUSIC_ART is defined when it shows album art too.
  *
  * A face that declares part of a set stops the build here, with each missing key named. The manifest
  * build refuses the same sets before it writes any sandbox, naming the face, so these are what still
@@ -178,6 +178,14 @@
 #if !defined(HAS_MESSAGE_KEY_MUSIC_REQUEST)
 #error "now playing needs MUSIC_REQUEST in messageKeys. A face with now playing declares MUSIC_TITLE, MUSIC_ARTIST, MUSIC_PLAYING, and MUSIC_REQUEST"
 #endif
+#endif
+
+// album art rides its own key beside the four now playing keys, for a face that started the phone's
+// music feature with art. art with no track to go beside would never be asked for
+#if defined(APPMESSAGE_HAS_MUSIC) && defined(HAS_MESSAGE_KEY_MUSIC_ARTWORK)
+#define APPMESSAGE_HAS_MUSIC_ART 1 ///< the face declares the album art key beside the now playing keys
+#elif defined(HAS_MESSAGE_KEY_MUSIC_ARTWORK)
+#error "album art needs MUSIC_TITLE, MUSIC_ARTIST, MUSIC_PLAYING, and MUSIC_REQUEST in messageKeys beside MUSIC_ARTWORK"
 #endif
 
 // a face that keeps a plugin source choice needs the settings reply, since only that hands the

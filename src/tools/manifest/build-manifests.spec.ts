@@ -739,6 +739,13 @@ describe('checkPluginKeys for the kinds only a plugin fills', () => {
     expect(call).toThrow(/declares MUSIC_TITLE without PLUGIN_MUSIC/);
   });
 
+  /** Album art only comes from a music plugin, so the art key on its own would leave the watch waiting on a bitmap that never comes. */
+  test('refuses the album art key without PLUGIN_MUSIC', () => {
+    const call = () => checkPluginKeys({}, ['MUSIC_ARTWORK'], 'gridlock');
+
+    expect(call).toThrow(/declares MUSIC_ARTWORK without PLUGIN_MUSIC/);
+  });
+
   /** The weather keys work without plugins, so they are never refused for a missing PLUGIN_WEATHER. */
   test('passes the weather keys without PLUGIN_WEATHER', () => {
     const call = () => checkPluginKeys({}, ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK', 'CALENDAR_STRIP'], 'gridlock');

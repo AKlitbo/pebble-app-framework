@@ -23,6 +23,12 @@ export interface PluginKind {
   /** The message keys a face needs before the build takes the define, whatever its providers list says. */
   keys: string[];
   /**
+   * Keys a face adds for the kind only when it wants more from it, such as now playing's album art.
+   * The define does not ask for them, and a `pluginOnly` kind refuses them without the define as it
+   * does its other keys.
+   */
+  optionalKeys?: string[];
+  /**
    * The key of the select a plugin choice joins, needed beside the define unless the face's providers
    * list for the kind is plugin only. Clay saves a setting to the watch under its key's number, so a
    * select whose key the face never declared would put a key the phone cannot map into every settings
@@ -92,6 +98,7 @@ export const PLUGIN_KINDS: readonly PluginKind[] = [
     file: 'music',
     exportName: 'musicPlugins',
     keys: ['MUSIC_TITLE', 'MUSIC_ARTIST', 'MUSIC_PLAYING', 'MUSIC_REQUEST'],
+    optionalKeys: ['MUSIC_ARTWORK'],
     pluginOnly: true,
   },
   {

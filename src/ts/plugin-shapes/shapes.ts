@@ -10,7 +10,8 @@
  * plugin-sources taken out of its build, and a plugin app's code cannot reach into it.
  */
 
-import type { NumericValueShape, SeriesShape, SourceEnvelope, SourceInstance, SourceProperty } from '../plugin-sources/types';
+import type { ImageShape, NumericValueShape, SeriesShape, SourceEnvelope, SourceInstance, SourceProperty } from '../plugin-sources/types';
+import { WIRE_CAPS } from '../pkjs/wire';
 
 /** A number read off a `numericValue`, with its unit when the plugin gave one. */
 export interface NumericReading {
@@ -25,6 +26,19 @@ const SERIES_SHAPES = ['numericValue', 'shortText', 'longText', 'timestamp'];
 // but a moment outside it is bad data, and keeping well inside leaves room for the days and
 // offsets a mapper adds before it builds a Date, which would throw on a value past its range
 const MOMENT_MAX = 7258118400;
+
+/** A bitmap read off an `image`, with both parts decoded to bytes and checked against each other. */
+export interface ImageReading {
+  width: number;
+  height: number;
+  /** One GColor8 byte for each colour, 1 to `MUSIC_ART_COLOURS_MAX` of them. */
+  palette: number[];
+  /** Two 4-bit pixels to a byte, each row padded to a whole byte. */
+  pixels: number[];
+}
+
+// the base64 alphabet, each character at its own value
+const BASE64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 /** A finite number, or undefined for anything else, NaN and the infinities included. */
 function finite(value: unknown): number | undefined {
@@ -123,6 +137,75 @@ export function timestamp(property: SourceProperty | undefined): number | undefi
   }
 
   return moment(property.timestamp.value);
+}
+
+/**
+ * Decodes base64 to bytes, or undefined for text that is not base64. PebbleKit JS has no atob on
+ * every phone, so it is done here. Line breaks and the padding at the end are skipped.
+ *
+ * @param encoded The base64 text.
+ * @return The bytes, or undefined for anything that does not read as base64.
+ */
+export function base64Bytes(encoded: unknown): number[] | undefined {
+  if (typeof encoded !== 'string') {
+    return undefined;
+  }
+
+  const clean = encoded.replace(/[\r\n]/g, '').replace(/=+$/, '');
+
+  if (clean.length % 4 === 1 || /[^A-Za-z0-9+/]/.test(clean)) {
+    return undefined;
+  }
+
+  const bytes: number[] = [];
+  let bits = 0;
+  let held = 0;
+
+  for (const char of clean) {
+    held = (held << 6) | BASE64.indexOf(char);
+    bits += 6;
+
+    if (bits >= 8) {
+      bits -= 8;
+      bytes.push((held >> bits) & 0xff);
+    }
+  }
+
+  return bytes;
+}
+
+/**
+ * Reads a bitmap off a property's `image`, the watch's own 4-bit palettized layout.
+ *
+ * The width and the height have to be whole numbers from 1 up, the palette 1 to 16 bytes, all a 4-bit
+ * pixel can name, and the
+ * pixels exactly the rows the size calls for, each `ceil(width / 2)` bytes. Anything else is no image,
+ * since a bitmap built from a short run would draw whatever memory followed it.
+ *
+ * @param property The property, which may be missing or carry anything.
+ * @return The image, or undefined when there is none or it does not check out.
+ */
+export function image(property: SourceProperty | undefined): ImageReading | undefined {
+  const shape: ImageShape | undefined = property && typeof property === 'object' && property.image && typeof property.image === 'object' ? property.image : undefined;
+
+  if (!shape) {
+    return undefined;
+  }
+
+  const { width, height } = shape;
+
+  if (!Number.isInteger(width) || !Number.isInteger(height) || (width as number) < 1 || (height as number) < 1) {
+    return undefined;
+  }
+
+  const palette = base64Bytes(shape.palette);
+  const pixels = base64Bytes(shape.pixels);
+
+  if (!palette || !pixels || palette.length < 1 || palette.length > WIRE_CAPS.MUSIC_ART_COLOURS_MAX || pixels.length !== Math.ceil((width as number) / 2) * (height as number)) {
+    return undefined;
+  }
+
+  return { width: width as number, height: height as number, palette, pixels };
 }
 
 /**

@@ -25,6 +25,8 @@
 #define CAL_LOC_LEN 17 ///< An event location, 16 characters plus its terminator
 
 #define MUSIC_TEXT_LEN 33 ///< A now playing title or artist, 32 characters plus its terminator
+#define MUSIC_ART_SIDE_MAX 100 ///< How wide or tall now playing art can be, in pixels
+#define MUSIC_ART_COLOURS_MAX 16 ///< How many colours now playing art's palette can hold
 
 #define PHONE_NO_LEVEL (-1) ///< The phone's battery level for no reading
 #define WIRE_NO_PLUGIN (-2) ///< Sent in place of a plugin reading while nothing on the phone serves it

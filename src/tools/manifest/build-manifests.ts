@@ -215,7 +215,7 @@ export function checkPluginKeys(defines: Defines, messageKeys: unknown, face: st
   const kindsOn = pluginKindsOn(defines);
 
   for (const kind of PLUGIN_KINDS.filter((known) => known.pluginOnly && !kindsOn.includes(known))) {
-    const stray = kind.keys.filter((key) => declared.has(key));
+    const stray = [...kind.keys, ...(kind.optionalKeys || [])].filter((key) => declared.has(key));
 
     if (stray.length > 0) {
       throw new ToolError(`${face}'s appinfo declares ${stray.join(', ')} without ${kind.define}, and only that plugin fills them. Add "${kind.define}": 1 to its defines, or take the keys out of messageKeys`);

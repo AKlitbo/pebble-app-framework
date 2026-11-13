@@ -147,3 +147,53 @@ describe('MUSIC_STANDARD', () => {
     expect(result).toBe(false);
   });
 });
+
+describe('trackFromUpdate with album art', () => {
+  // a 2 by 2 picture in two colours, as the built-in plugin draws it at the size asked for
+  const ART = { image: { width: 2, height: 2, palette: 'wP8=', pixels: 'ARA=' } };
+
+  /** One update with art beside the track. */
+  function withArt(artwork: unknown): SourceEnvelope {
+    const envelope = update('Clocks', 'Coldplay');
+
+    (envelope.instances as Array<{ properties: Record<string, unknown> }>)[0].properties.artwork = artwork;
+    return envelope;
+  }
+
+  /** The art is the reason the face asked, so it has to come through as the plugin drew it. */
+  test('reads the art for a face that asked for it', () => {
+    const result = trackFromUpdate(withArt(ART), { w: 28, h: 28 });
+
+    expect(result.art).toEqual({ width: 2, height: 2, palette: [0xc0, 0xff], pixels: [0x01, 0x10] });
+  });
+
+  /** Art past the size the face asked for would overrun its panel and its inbox, so it reads as none. */
+  test('reads art bigger than the face asked for as none', () => {
+    const result = trackFromUpdate(withArt(ART), { w: 1, h: 28 });
+
+    expect(result.art).toBeNull();
+  });
+
+  /** An iPhone sends no art, and the watch has to clear the last track's art rather than keep it. */
+  test('reads a track with no art as none for a face that asked for it', () => {
+    const result = trackFromUpdate(update('Clocks', 'Coldplay'), { w: 28, h: 28 });
+
+    expect(result.art).toBeNull();
+  });
+
+  /** A pause or a progress tick sends the same art again, and decoding it each time would cost the phone for nothing. */
+  test('hands back the same art without decoding it again for an update carrying the same art', () => {
+    const first = trackFromUpdate(withArt(ART), { w: 28, h: 28 });
+
+    const result = trackFromUpdate(withArt({ image: { ...ART.image } }), { w: 28, h: 28 });
+
+    expect(result.art).toBe(first.art);
+  });
+
+  /** A face that asked for no art has no key to send it on, so the track carries none at all. */
+  test('leaves the art out for a face that asked for none', () => {
+    const result = trackFromUpdate(withArt(ART));
+
+    expect(result).not.toHaveProperty('art');
+  });
+});

@@ -37,6 +37,9 @@ static struct
     MusicHandler                on_music;               ///< What the phone is playing arrived
     MusicNoPluginHandler        on_music_no_plugin;     ///< Whether no plugin serves now playing, ahead of each music message
 #endif
+#if defined(APPMESSAGE_HAS_MUSIC_ART)
+    MusicArtHandler             on_music_art;           ///< The album art arrived
+#endif
     CustomColorsHandler         on_custom_colors;       ///< Custom colours arrived from the settings page
     CustomColorsProvider        custom_colors_provider; ///< Supplies the face's custom colours for the settings reply
 } s_handlers;
@@ -77,6 +80,15 @@ void appmessage_on_music_no_plugin(MusicNoPluginHandler cb)
 {
 #if defined(APPMESSAGE_HAS_MUSIC)
     s_handlers.on_music_no_plugin = cb;
+#else
+    (void)cb;
+#endif
+}
+
+void appmessage_on_music_art(MusicArtHandler cb)
+{
+#if defined(APPMESSAGE_HAS_MUSIC_ART)
+    s_handlers.on_music_art = cb;
 #else
     (void)cb;
 #endif
@@ -471,14 +483,14 @@ static void send_settings(void)
 }
 #endif
 
-// only a face with the stock or calendar strip calls this, and a face with neither would warn it
-// goes unused. the weather strips ride inside the weather message instead
-#if defined(HAS_MESSAGE_KEY_STOCK_STRIP) || defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
+// only a face with the stock strip, the calendar strip, or album art calls this, and a face with none
+// of them would warn it goes unused. the weather strips ride inside the weather message instead
+#if defined(HAS_MESSAGE_KEY_STOCK_STRIP) || defined(HAS_MESSAGE_KEY_CALENDAR_STRIP) || defined(APPMESSAGE_HAS_MUSIC_ART)
 /**
  * @brief Find a byte array tuple by key and hand its bytes to a handler.
  *
- * The stock and calendar strips both ride as packed byte arrays through a same-signature
- * handler, so one dispatcher covers them. The handler comes in as an argument
+ * The stock and calendar strips and the album art all ride as packed byte arrays through a
+ * same-signature handler, so one dispatcher covers them. The handler comes in as an argument
  * rather than a table, so it stays out of the binary's .data section.
  *
  * @param iter The dictionary iterator to search.
@@ -641,6 +653,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 #endif
 #if defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
     dispatch_bytes(iterator, MESSAGE_KEY_CALENDAR_STRIP, s_handlers.on_calendar_strip);
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC_ART)
+    dispatch_bytes(iterator, MESSAGE_KEY_MUSIC_ARTWORK, s_handlers.on_music_art);
 #endif
 
     // the phone's battery rides as one whole number. a width the helper cannot read is no reading

@@ -24,7 +24,7 @@ app.startPebbleApp({ clayConfig, features: [weather, calendar] });
 | `PLUGIN_WEATHER` | `weather/location` | `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, `WEATHER_OK` | `WEATHER_PROVIDER` | `Location`, which every weather face lists |
 | `PLUGIN_STOCKS` | `finance/stock` | `STOCK_STRIP`, `STOCK_REQUEST` | `STOCK_PROVIDER` | none |
 | `PLUGIN_CALENDAR` | `calendar/event` | `CALENDAR_STRIP` | `CALENDAR_SOURCE` | `Calendar` |
-| `PLUGIN_MUSIC` | `music/track` | `MUSIC_TITLE`, `MUSIC_ARTIST`, `MUSIC_PLAYING`, `MUSIC_REQUEST` | none | `ReadMusic` |
+| `PLUGIN_MUSIC` | `music/track` | `MUSIC_TITLE`, `MUSIC_ARTIST`, `MUSIC_PLAYING`, `MUSIC_REQUEST`, and `MUSIC_ARTWORK` with `music.withArtwork` | none | `ReadMusic` |
 | `PLUGIN_PHONE` | `phone/phone_state` | `PHONE_BATTERY`, `PHONE_REQUEST` | none | none |
 
 Each define decides its own kind and nothing else. It puts that kind's plugin code in the phone bundle, adds that kind's choice and notes to the settings page, and adds its permission to the manifest, as [What the Phone Lets It Reach](phone-side.md#what-the-phone-lets-it-reach) covers. A face can take plugin weather and keep its calendar on the iCal link alone, with no calendar choice on its page and no `Calendar` prompt, by setting `PLUGIN_WEATHER` alone. A define set to `0` is off, the same as one left out. The defines also reach the watch C as `-DPLUGIN_WEATHER=1` and so on. There the weather, stock, and calendar defines keep the wearer's choice on the watch, as [Keeping the Choice through a Reset](#keeping-the-choice-through-a-reset) covers, and `PLUGIN_WEATHER` on a face with no unit key drops the unit letter, as [Units from the Pebble App](#units-from-the-pebble-app) covers.

@@ -10,7 +10,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { firstProperties, flag, instancesOf, numeric, propertiesOf, seriesIndex, seriesValue, text, timestamp } from './shapes';
+import { base64Bytes, firstProperties, flag, image, instancesOf, numeric, propertiesOf, seriesIndex, seriesValue, text, timestamp } from './shapes';
 import type { SeriesShape, SourceEnvelope, SourceProperty } from '../plugin-sources/types';
 
 // an hourly series from 2026-07-10 00:00 UTC with four points, the shape the built-in weather sends
@@ -250,5 +250,67 @@ describe('reading instances off an update', () => {
     const result = propertiesOf(null);
 
     expect(result).toBeNull();
+  });
+});
+
+describe('base64Bytes', () => {
+  /** The phone's art comes as base64, and a wrong byte would put a wrong colour on the watch. */
+  test('decodes base64 with its padding', () => {
+    const result = base64Bytes('ARAi');
+
+    expect(result).toEqual([0x01, 0x10, 0x22]);
+  });
+
+  /** The padding at the end is only filler, so two bytes read back as two. */
+  test('decodes a run ending in padding to its own length', () => {
+    const result = base64Bytes('wP8=');
+
+    expect(result).toEqual([0xc0, 0xff]);
+  });
+
+  /** Text that is not base64 must not turn into bytes a bitmap would be built from. */
+  test.each([['a character outside the alphabet', 'AR*A'], ['a length no run can have', 'ARAiA'], ['something other than text', 12]])('reads %s as none', (_label, encoded) => {
+    const result = base64Bytes(encoded);
+
+    expect(result).toBeUndefined();
+  });
+});
+
+describe('image', () => {
+  // a 2 by 2 picture in two colours, one byte a row
+  const TWO_BY_TWO = { image: { width: 2, height: 2, palette: 'wP8=', pixels: 'ARA=' } };
+
+  /** The watch builds its bitmap straight from these bytes, so each part has to come through as sent. */
+  test('reads a bitmap whose parts agree', () => {
+    const result = image(TWO_BY_TWO);
+
+    expect(result).toEqual({ width: 2, height: 2, palette: [0xc0, 0xff], pixels: [0x01, 0x10] });
+  });
+
+  /** An odd width still fills a whole byte a row, so a 3 wide row takes two bytes. */
+  test('takes a row padded to a whole byte for an odd width', () => {
+    const result = image({ image: { width: 3, height: 1, palette: 'wP8=', pixels: 'EjA=' } });
+
+    expect(result?.pixels).toEqual([0x12, 0x30]);
+  });
+
+  /** A bitmap built from a short run would draw whatever memory followed it. */
+  test.each([
+    ['pixels short of the size', { width: 2, height: 3, palette: 'wP8=', pixels: 'ARA=' }],
+    ['a palette past 16 colours', { width: 2, height: 2, palette: 'AAAAAAAAAAAAAAAAAAAAAAAA', pixels: 'ARA=' }],
+    ['an empty palette', { width: 2, height: 2, palette: '', pixels: 'ARA=' }],
+    ['a width that is not a whole number', { width: 1.5, height: 2, palette: 'wP8=', pixels: 'ARA=' }],
+    ['a height of 0', { width: 2, height: 0, palette: 'wP8=', pixels: '' }],
+  ])('reads %s as no image', (_label, shape) => {
+    const result = image({ image: shape } as SourceProperty);
+
+    expect(result).toBeUndefined();
+  });
+
+  /** A property sent only as text has no picture, so it must not read as one. */
+  test('reads a property with no image as none', () => {
+    const result = image({ shortText: { text: 'art' } });
+
+    expect(result).toBeUndefined();
   });
 });

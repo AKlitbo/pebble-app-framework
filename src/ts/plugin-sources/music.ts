@@ -7,7 +7,9 @@
  * until one is published, and then works with no change here. A plugin that polls, as a Spotify one
  * may every 15 seconds, sends the same track again and again. Only the title, the artist, and
  * whether it plays are asked for and sent, never the progress, so the feature's deduped sender keeps
- * the watch asleep through those.
+ * the watch asleep through those. A face that asks for album art at a size gets the art too, which
+ * only the built-in plugin on Android draws. An iPhone, a track with no art, or art that does not check
+ * out reads as none, and the watch clears its own.
  *
  * The watch fonts carry ASCII alone, so both lines are folded to it and cut to the watch's length. A
  * title in a script with no ASCII form would arrive as a row of question marks, so a line that held
@@ -17,16 +19,19 @@
  * The page hook's wording lives here too, so a face built without `PLUGIN_MUSIC` carries none of it.
  */
 
-import { firstProperties, flag, text } from '../plugin-shapes/shapes';
+import { firstProperties, flag, image, text } from '../plugin-shapes/shapes';
 import { uuidKey } from './escape';
 import type { PluginSourceTexts } from './page';
 import { MUSIC_STANDARD } from './standard';
 import { createReadingDriver } from './reading-driver';
-import type { MusicPlugins, MusicTrack, SourceEnvelope, SourceProperty } from './types';
+import type { ImageSize, MusicArtwork, MusicPlugins, MusicTrack, SourceEnvelope, SourceProperty } from './types';
 import wire, { WIRE_CAPS } from '../pkjs/wire';
 
-/** The properties the music subscription asks for. No artwork is asked for, so no plugin draws any. */
+/** The properties the music subscription asks for. Artwork is asked for only by a face that wants art. */
 export const MUSIC_PROPERTIES = ['title', 'artist', 'playing'];
+
+/** The property that carries the album art, as an `image`. */
+export const ARTWORK_PROPERTY = 'artwork';
 
 /** The track the watch clears its panel to, with nothing playing. */
 export const NO_TRACK: MusicTrack = { title: '', artist: '', playing: false };
@@ -59,6 +64,39 @@ function watchLine(property: SourceProperty | undefined, fromBuiltIn: boolean): 
   return folded && !/[A-Za-z0-9]/.test(ascii) ? '' : ascii;
 }
 
+// the last art read and what it was read from, so an update carrying the same art again, as every
+// pause and every progress tick does, hands back the same art without decoding it again
+let lastArt: { from: unknown[]; art: MusicArtwork | null } | null = null;
+
+/** What art is read from: the size asked for and the image's own size and text, compared before any decoding. */
+function artSource(property: SourceProperty | undefined, size: ImageSize): unknown[] {
+  const shape = property && typeof property === 'object' && property.image && typeof property.image === 'object' ? property.image : null;
+
+  return shape ? [size.w, size.h, shape.width, shape.height, shape.palette, shape.pixels] : [size.w, size.h];
+}
+
+/**
+ * The album art the watch can take, or null for none.
+ *
+ * The art has to fit the size the face asked for and the watch's own cap, since the face sized its
+ * inbox and its panel for that. Art past either is read as none rather than cut, since a plugin that
+ * ignored the size would otherwise fill the inbox or overrun the panel. Art the same as the last is
+ * handed back as the same object, so the feature can tell it is unchanged without packing it.
+ */
+function watchArt(property: SourceProperty | undefined, size: ImageSize): MusicArtwork | null {
+  const from = artSource(property, size);
+
+  if (lastArt && lastArt.from.length === from.length && lastArt.from.every((part, index) => part === from[index])) {
+    return lastArt.art;
+  }
+
+  const art = image(property);
+  const fits = Boolean(art) && (art as MusicArtwork).width <= Math.min(size.w, WIRE_CAPS.MUSIC_ART_SIDE_MAX) && (art as MusicArtwork).height <= Math.min(size.h, WIRE_CAPS.MUSIC_ART_SIDE_MAX);
+
+  lastArt = { from, art: fits ? (art as MusicArtwork) : null };
+  return lastArt.art;
+}
+
 /**
  * Turns one music plugin update into the track the watch shows.
  *
@@ -66,22 +104,29 @@ function watchLine(property: SourceProperty | undefined, fromBuiltIn: boolean): 
  * 7 characters and the watch holds 32. An update with no instance is nothing playing.
  *
  * @param envelope The update, which may be missing or carry anything.
- * @return The track, or the empty one for nothing playing.
+ * @param artSize The size the face asked for album art at, or undefined for a face that wants none.
+ * @return The track, or the empty one for nothing playing. With an art size it carries the art, or
+ *   null for none.
  */
-export function trackFromUpdate(envelope: SourceEnvelope | null | undefined): MusicTrack {
+export function trackFromUpdate(envelope: SourceEnvelope | null | undefined, artSize?: ImageSize): MusicTrack {
   const properties = firstProperties(envelope);
 
   if (!properties) {
-    return { ...NO_TRACK };
+    return artSize ? { ...NO_TRACK, art: null } : { ...NO_TRACK };
   }
 
   const fromBuiltIn = uuidKey(envelope?.pluginUuid) === BUILT_IN_MUSIC_UUID;
-
-  return {
+  const track: MusicTrack = {
     title: watchLine(properties.title, fromBuiltIn),
     artist: watchLine(properties.artist, fromBuiltIn),
     playing: flag(properties.playing) === true,
   };
+
+  if (artSize) {
+    track.art = watchArt(properties[ARTWORK_PROPERTY], artSize);
+  }
+
+  return track;
 }
 
 /** The now playing page hook's notes. No store plugin serves music yet, so the no plugin note names none. */
@@ -100,6 +145,7 @@ export const musicPlugins: MusicPlugins = {
     category: 'music',
     item: 'track',
     properties: MUSIC_PROPERTIES,
+    imageProperties: [ARTWORK_PROPERTY],
     requestKey: 'MUSIC_REQUEST',
     fromUpdate: trackFromUpdate,
     empty: NO_TRACK,
@@ -109,4 +155,4 @@ export const musicPlugins: MusicPlugins = {
   }),
 };
 
-export default { trackFromUpdate, MUSIC_PROPERTIES, MUSIC_TEXTS, NO_PLUGIN_TRACK, NO_TRACK };
+export default { trackFromUpdate, ARTWORK_PROPERTY, MUSIC_PROPERTIES, MUSIC_TEXTS, NO_PLUGIN_TRACK, NO_TRACK };

@@ -54,9 +54,34 @@ The phone sends the whole percent only when it changes, so a Wi-Fi switch with t
 
 **No Plugin.** While nothing on the phone serves now playing, for the same reasons as the battery, the phone sends both lines empty and `MUSIC_PLAYING` as -2. The store reads as nothing playing, and `music_store_no_plugin` turns true until a track or a clear arrives or the phone drops, so a face can show its own words in place of its empty state.
 
+## Album Art
+
+A face that shows the track's art starts the phone feature with the largest size its panel draws, and adds a `music_store_deinit()` to its own deinit:
+
+```ts
+startPebbleApp({ clayConfig, features: [music.withArtwork({ w: 40, h: 40 })] });
+```
+
+```c
+const GBitmap *art = music_store_artwork();
+if (art)
+{
+    graphics_context_set_compositing_mode(ctx, GCompOpSet);
+    graphics_draw_bitmap_in_rect(ctx, art, frame);
+}
+```
+
+A size that is not two numbers from 1 up logs a warning and asks for no art. `music.withArtwork` brings the `MUSIC_ARTWORK` key, which the build adds to the face's keys and refuses without `PLUGIN_MUSIC`. The phone then asks the music plugin for `artwork` at that size, and sends it as the watch's own 4-bit palettized bitmap. The built-in plugin on Android draws it, at the size asked for or smaller. An iPhone has no plugin that draws one, so it sends none. A face that starts the plain `music` feature asks for no art, declares no art key, and carries none of the art code on the watch.
+
+**When It Goes.** The art rides a message of its own, sent only when it changes, so a pause or a new track from the same album sends no bitmap. The plugin often sends the track first and the art a moment later, and the art then follows on its own. A track with no art, a phone with no plugin, art bigger than the face asked for, or art that does not read clean all clear the watch's art, so a cover never stays beside a song it does not belong to. Art the watch turns away, such as one too big for its inbox, is cleared in the same way and not sent again until the art changes.
+
+**On the Watch.** `music_store_artwork` gives the art as a `GBitmap` in `GBitmapFormat4BitPalette`, or NULL with none. The store owns it, and frees it when the art changes, clears, or the phone drops, and in `music_store_deinit`. So a face reads it again on each redraw rather than keeping the pointer. Colours the phone left out of the palette are see-through.
+
+**The Size Limit.** Each side is held from 1 to 100 pixels. The art's message holds `3 + colours + ceil(w / 2) * h` bytes, with up to 16 colours, and about 8 bytes more for the message around it. That is about 420 bytes for a 28 square, as a 1x4 panel might draw, 830 for a 40 square, and 2,080 for a 64 square, as a 2x2 might. The face's inbox has to hold that as well as its settings save, so a face asking for a 64 square passes at least 2,080 to `appmessage_open`, as [Opening the Connection](talking-to-the-phone.md#opening-the-connection) covers. The bitmap takes the same pixel bytes off the heap, plus 16 for its palette.
+
 ## Not Saved, and Cleared When the Phone Drops
 
-Neither store saves to flash. A battery level or a song from an hour ago is worse than none, so a relaunch starts empty and asks.
+Neither store saves to flash. A battery level or a song from an hour ago is worse than none, so a relaunch starts empty and asks. The album art goes with the track.
 
 Each store adds itself to the system store's link listeners (see [The System Store](system-store.md#the-phone-connection)). When the phone drops, the battery goes back to -1 and the track clears, since the watch can no longer know either, and neither store reports no plugin. When the phone comes back, each store asks again with `appmessage_request_phone` or `appmessage_request_music`. Each also asks once a moment after launch. Neither costs a provider call, so neither waits on a poll interval or the stores' cadence.
 

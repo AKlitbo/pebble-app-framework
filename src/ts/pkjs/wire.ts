@@ -36,6 +36,10 @@ export const WIRE_CAPS = {
   CALENDAR_LOC_MAX: 16,
   /** How long a now playing title or artist can be, in characters. */
   MUSIC_TEXT_MAX: 32,
+  /** How wide or tall now playing art can be, in pixels, so the largest still fits a watch's inbox. */
+  MUSIC_ART_SIDE_MAX: 100,
+  /** How many colours now playing art's palette can hold, which is all a 4-bit pixel can name. */
+  MUSIC_ART_COLOURS_MAX: 16,
   /** A forecast column with no reading ships this marker so the watch draws a placeholder. */
   FORECAST_NO_TEMP: -1000,
   /** The phone's battery level for no reading, such as before the plugin's first update. */
@@ -306,11 +310,46 @@ function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
   return bytes;
 }
 
+/** The three bytes in front of now playing art: its width, its height, and how many colours its palette holds. */
+export const MUSIC_ART_HEADER = 3;
+
+/**
+ * Now playing art as the packer takes it, the same as `MusicArtwork` in plugin-sources/types.ts. It is
+ * written out here since the build's tools load this file, and that one reaches the phone's globals.
+ */
+export interface PackableArt {
+  width: number;
+  height: number;
+  palette: number[];
+  pixels: number[];
+}
+
+/**
+ * Packs now playing art for the watch, or the marker that clears it.
+ *
+ * The layout is [width][height][colours] then the palette, one GColor8 byte per colour, then the
+ * pixels as the watch's own 4-bit palettized bitmap holds them, two to a byte with the even x in the
+ * high nibble and each row padded to a whole byte. No art goes as a width and height of 0, rather
+ * than an empty array, since a bridge can drop a tuple with nothing in it. The art was checked when
+ * it was read, so this only lays it out.
+ *
+ * @param art The art, or null for none.
+ * @return The bytes for `MUSIC_ARTWORK`.
+ */
+function packMusicArt(art: PackableArt | null | undefined): number[] {
+  if (!art) {
+    return [0, 0, 0];
+  }
+
+  return [art.width, art.height, art.palette.length, ...art.palette, ...art.pixels];
+}
+
 export default {
   packForecastHourly,
   packForecastDaily,
   packStockStrip,
   packCalendarStrip,
+  packMusicArt,
   toAscii,
   STOCK_SLOTS_MAX,
 };

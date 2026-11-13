@@ -9,6 +9,11 @@
  * The text is ASCII, since the phone folds each line to it before sending. A line in a script with
  * no ASCII form arrives empty.
  *
+ * A face that started the phone's music feature as `music.withArtwork({ w, h })` also gets the album
+ * art, as a GBitmap from music_store_artwork(). The store holds one bitmap at a time, up to 100 by
+ * 100 pixels at 4 bits each, and frees it when the art changes, clears, or the phone drops, and in
+ * music_store_deinit().
+ *
  * The phone also says when no plugin on it serves now playing, such as with plugins off in the
  * Pebble app or on an iPhone. The store then reads as nothing playing, and music_store_no_plugin()
  * says why, so a face can show its own words in place of its empty state.
@@ -75,6 +80,22 @@ bool music_store_playing(void);
  *   built without the music keys.
  */
 bool music_store_has_track(void);
+
+/**
+ * @brief The track's album art, as a 4-bit palettized bitmap.
+ *
+ * The store owns it. It stays valid until the store calls the face back with a change, so a face
+ * reads it again on every redraw rather than keeping it.
+ *
+ * @return The art, or NULL for none, such as a track with no art, an iPhone, the phone away, or a
+ *   face built without the album art key.
+ */
+const GBitmap *music_store_artwork(void);
+
+/**
+ * @brief Frees the album art the store holds. Call it from the face's deinit.
+ */
+void music_store_deinit(void);
 
 /**
  * @brief Whether the phone said no plugin on it serves now playing.
