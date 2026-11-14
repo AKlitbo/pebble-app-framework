@@ -5,7 +5,8 @@
  * usesPermissions, once the wearer turns plugins on in the Pebble app. A request to a site it never
  * listed fails at once, and a location lookup it never listed is turned away. The list follows the
  * features a face's keys switch on, narrowed by the providers it lists, so a face never names a
- * provider's site by hand.
+ * provider's site by hand. Each entry the build writes carries the reason the wearer reads and
+ * `required: false`, since a face still tells the time with any of them turned down.
  */
 import { ToolError } from '../shared/tool-error.ts';
 import { keyNames } from './message-keys.ts';
@@ -14,9 +15,8 @@ import { FEATURE_KEYS, providerMode, providersOffered } from './providers.ts';
 import type { ProviderKind, ProviderLists } from './providers.ts';
 
 /**
- * One usesPermissions entry, as the Pebble app reads it: a bare name, or a name with its arguments. A
- * plugin app writes its own entries, which can also carry the reason shown to the wearer and whether the
- * permission is required.
+ * One usesPermissions entry, as the Pebble app reads it: a bare name, or a name with its arguments. An
+ * entry can also carry the reason shown to the wearer and whether the permission is required.
  */
 export type Permission = string | { name: string; parameters?: Record<string, string[]>; plugin?: string; reason?: string; required?: boolean };
 
@@ -31,6 +31,25 @@ export const STOCK_DOMAINS = ['alphavantage.co', 'finnhub.io', 'twelvedata.com',
  * a face with either picker lists it whether or not it fetches weather.
  */
 export const PICKER_DOMAINS = ['open-meteo.com'];
+
+/**
+ * What a generated Internet entry is for. `reason` is the line the wearer reads when the entry has one
+ * purpose, and `phrase` is the same purpose joined to another, for a site two features share.
+ */
+interface Purpose {
+  reason: string;
+  phrase: string;
+}
+
+const WEATHER_PURPOSE: Purpose = { reason: 'To get the weather', phrase: 'get the weather' };
+const STOCK_PURPOSE: Purpose = { reason: 'To get your stock quotes', phrase: 'get your stock quotes' };
+const PICKER_PURPOSE: Purpose = { reason: 'To search for places in settings', phrase: 'search for places' };
+const ICAL_PURPOSE: Purpose = { reason: 'To fetch your iCal calendar link', phrase: 'fetch your iCal calendar link' };
+
+// the reasons for the phone features the keys and defines bring
+const LOCATION_REASON = 'To show the weather where you are';
+const CALENDAR_REASON = "To show events from your phone's calendars";
+const MUSIC_REASON = "To show what's playing on your phone";
 
 /**
  * True for a key whose row is a location or time zone picker. The framework builds its location
@@ -94,6 +113,15 @@ export function readOwn(declared: unknown, face: string): Permission[] {
     if (typeof entry === 'object' && entry.plugin !== undefined && typeof entry.plugin !== 'string') {
       throw new ToolError(`${face}'s appinfo usesPermissions gives ${entry.name} the plugin ${JSON.stringify(entry.plugin)}, which has to be the plugin's id as text`);
     }
+
+    // the phone shows reason as the line under the permission and reads required as yes or no
+    if (typeof entry === 'object' && entry.reason !== undefined && typeof entry.reason !== 'string') {
+      throw new ToolError(`${face}'s appinfo usesPermissions gives ${entry.name} the reason ${JSON.stringify(entry.reason)}, which has to be text`);
+    }
+
+    if (typeof entry === 'object' && entry.required !== undefined && typeof entry.required !== 'boolean') {
+      throw new ToolError(`${face}'s appinfo usesPermissions gives ${entry.name} required ${JSON.stringify(entry.required)}, which has to be true or false`);
+    }
   }
 
   return declared;
@@ -147,6 +175,56 @@ function isParameters(value: unknown): boolean {
   return Object.values(value).every((list) => Array.isArray(list) && list.every((item) => typeof item === 'string'));
 }
 
+/** The reason for an entry serving each of these purposes, joined into one sentence when there is more than one. */
+function reasonFor(purposes: Purpose[]): string {
+  if (purposes.length === 1) {
+    return purposes[0].reason;
+  }
+
+  const phrases = purposes.map((purpose) => purpose.phrase);
+  const last = phrases.pop();
+  const joined = phrases.length === 1 ? `${phrases[0]} and ${last}` : `${phrases.join(', ')}, and ${last}`;
+
+  return `To ${joined}`;
+}
+
+/**
+ * One Internet entry per feature that fetches, each holding the sites no earlier feature took. A site
+ * two features share stays in the first one's entry, and that entry's reason gains the second purpose,
+ * so the wearer reads each site once with everything it is for. A feature left with no site of its
+ * own gets no entry. A site one of the face's own marked entries lists is left out, since it sits in
+ * that entry already.
+ */
+function siteEntries(groups: { purpose: Purpose; sites: string[] }[], claimed: Set<string>): Permission[] {
+  const entries: { sites: string[]; purposes: Purpose[] }[] = [];
+  const owners = new Map<string, { sites: string[]; purposes: Purpose[] }>();
+
+  for (const group of groups) {
+    const entry = { sites: [] as string[], purposes: [group.purpose] };
+
+    for (const site of group.sites) {
+      const owner = owners.get(site);
+
+      if (claimed.has(site) || owner === entry) {
+        continue;
+      }
+
+      if (owner === undefined) {
+        entry.sites.push(site);
+        owners.set(site, entry);
+      } else if (!owner.purposes.includes(group.purpose)) {
+        owner.purposes.push(group.purpose);
+      }
+    }
+
+    if (entry.sites.length > 0) {
+      entries.push(entry);
+    }
+  }
+
+  return entries.map((entry) => ({ name: 'Internet', parameters: { domains: entry.sites }, reason: reasonFor(entry.purposes), required: false }));
+}
+
 /**
  * The usesPermissions list for a face, from the features its message keys switch on plus any the
  * face lists itself.
@@ -156,13 +234,22 @@ function isParameters(value: unknown): boolean {
  * for theirs the same way. A face with the location or time zone picker asks for Open-Meteo, which the
  * picker searches from inside the settings page. The location picker is left out of that when the
  * weather comes from a plugin alone, since the page then drops it with the other location rows. A
- * calendar offering its iCal link asks for the hosts
- * the face lists in `calendarHosts`, after the other sites and in the face's own order, or for the
- * whole web without them, since a feed can sit on any site. A calendar from a plugin alone asks for no
- * site. A face built with `PLUGIN_CALENDAR` also asks for the calendar, which the calendar plugins
- * need, and one built with `PLUGIN_MUSIC` asks for `ReadMusic`, which the Pebble app's music plugin
- * needs. The face's own entries join these. Its sites go into the one Internet entry, a bare Internet
- * of its own opens it to every site, and a name already on the list is not added twice.
+ * calendar offering its iCal link asks for the hosts the face lists in `calendarHosts`, in the face's
+ * own order, or for the whole web without them, since a feed can sit on any site. A calendar from a
+ * plugin alone asks for no site. A face built with `PLUGIN_CALENDAR` also asks for the calendar,
+ * which the calendar plugins need, and one built with `PLUGIN_MUSIC` asks for `ReadMusic`, which the
+ * Pebble app's music plugin needs.
+ *
+ * Every entry it writes has a reason and `required: false`, and each feature's sites get an Internet
+ * entry of their own, so the store listing says what each site is for and the phone asks about one
+ * only when the face first uses it. A site goes in one entry. The whole web for an iCal link sits
+ * beside the per-site entries rather than in place of them, so the listing still says what each named
+ * site is for.
+ *
+ * The face's own entries join these. One with a reason or `required` goes in as written, and takes
+ * the place of a generated entry for the same name or site. A bare name joins the list once. A bare
+ * Internet opens every site, and the sites of a plain Internet entry go in one entry of their own,
+ * after the generated ones and without any site those already list.
  *
  * @param messageKeys The face's message keys, as its appinfo declares them.
  * @param declared The face's own usesPermissions from its appinfo, if it has any.
@@ -174,7 +261,6 @@ function isParameters(value: unknown): boolean {
 export function permissionsFor(messageKeys: unknown, declared: unknown, face: string, defines: Record<string, number> = {}, providers: ProviderLists = {}): Permission[] {
   const keys = keyNames(messageKeys);
   const weather = keys.has(FEATURE_KEYS.weather);
-  const names = new Set<string>();
   // the build cannot see the settings page, since the phone builds it, so it goes by the keys a picker
   // saves under. a page that puts a locationsearch under any other key gets no site from here, and
   // the face lists open-meteo.com in its own usesPermissions, as the docs say. a plugin only weather
@@ -184,72 +270,104 @@ export function permissionsFor(messageKeys: unknown, declared: unknown, face: st
   const noLocationSearch = providerMode(providers.weather) === 'plugin';
   const picker = [...keys].some((key) => isPickerKey(key) && !(noLocationSearch && key === 'LOCATION_NAME'));
   const ical = keys.has(FEATURE_KEYS.calendar) && providersOffered('calendar', providers.calendar).some((provider) => provider.anySite);
-  const hosts = ical ? providers.calendarHosts ?? [] : [];
-  const domains = new Set([
-    ...(weather ? narrowed(WEATHER_DOMAINS, 'weather', providers.weather) : []),
-    ...(keys.has(FEATURE_KEYS.stocks) ? narrowed(STOCK_DOMAINS, 'stocks', providers.stocks) : []),
-    ...(picker ? PICKER_DOMAINS : []),
-    ...hosts,
-  ]);
-  const others: Permission[] = [];
-  let anySite = ical && providers.calendarHosts === undefined;
+  const groups = [
+    { purpose: WEATHER_PURPOSE, sites: weather ? narrowed(WEATHER_DOMAINS, 'weather', providers.weather) : [] },
+    { purpose: STOCK_PURPOSE, sites: keys.has(FEATURE_KEYS.stocks) ? narrowed(STOCK_DOMAINS, 'stocks', providers.stocks) : [] },
+    { purpose: PICKER_PURPOSE, sites: picker ? PICKER_DOMAINS : [] },
+    { purpose: ICAL_PURPOSE, sites: ical ? providers.calendarHosts ?? [] : [] },
+  ];
+  const generated: { name: string; reason: string; required: boolean }[] = [];
 
   // whether GPS is used comes from the saved setting and its default, which the build cannot read,
   // so every weather face lists it. the phone only asks the wearer once a lookup actually happens
   if (weather) {
-    names.add('Location');
+    generated.push({ name: 'Location', reason: LOCATION_REASON, required: false });
   }
 
   // CALENDAR_SOURCE needs no check here, since the build adds it beside PLUGIN_CALENDAR when the face keeps a choice
   const kindsOn = pluginKindsOn(defines).map((kind) => kind.define);
 
   if (kindsOn.includes('PLUGIN_CALENDAR')) {
-    names.add('Calendar');
+    generated.push({ name: 'Calendar', reason: CALENDAR_REASON, required: false });
   }
 
   // the Pebble app's own Music plugin asks its callers for ReadMusic. the phone's Phone plugin asks
   // for nothing, so PLUGIN_PHONE adds no entry
   if (kindsOn.includes('PLUGIN_MUSIC')) {
-    names.add('ReadMusic');
+    generated.push({ name: 'ReadMusic', reason: MUSIC_REASON, required: false });
   }
+
+  const names: string[] = [];
+  const ownSites: string[] = [];
+  const kept: Permission[] = [];
+  let ownAnySite = false;
 
   for (const entry of readOwn(declared, face)) {
     const name = typeof entry === 'string' ? entry : entry.name;
     const parameters = typeof entry === 'string' ? {} : entry.parameters ?? {};
+    const marked = typeof entry !== 'string' && (entry.reason !== undefined || entry.required !== undefined);
     const plain = typeof entry === 'string' || (entry.plugin === undefined && Object.keys(parameters).length === 0);
+    const sitesOnly = name === 'Internet' && (typeof entry === 'string' || entry.plugin === undefined) && Object.keys(parameters).every((key) => key === 'domains');
 
-    if (name === 'Internet' && typeof entry !== 'string' && entry.plugin === undefined && Object.keys(parameters).every((key) => key === 'domains')) {
-      // one Internet entry carries every site, and a list with nothing in it means any site, as on the phone
+    if (sitesOnly && !marked) {
+      // a list with nothing in it means any site, as on the phone
       const sites = parameters.domains ?? [];
 
-      sites.forEach((site) => domains.add(site));
-      anySite = anySite || sites.length === 0;
-    } else if (plain) {
-      if (name === 'Internet') {
-        anySite = true;
-      } else {
-        names.add(name);
-      }
-    } else if (!others.some((other) => JSON.stringify(other) === JSON.stringify(entry))) {
-      others.push(entry);
+      ownSites.push(...sites);
+      ownAnySite = ownAnySite || sites.length === 0;
+    } else if (plain && !marked) {
+      names.push(name);
+    } else if (!kept.some((other) => JSON.stringify(other) === JSON.stringify(entry))) {
+      kept.push(entry);
+    }
+  }
+
+  // a marked entry of the face's own takes the place of a generated one for the same name or site
+  const claimedNames = new Set<string>();
+  const claimedSites = new Set<string>();
+  let claimedAnySite = false;
+
+  for (const entry of kept) {
+    if (typeof entry === 'string' || entry.plugin !== undefined) {
+      continue;
+    }
+
+    if (opensEverySite(entry)) {
+      claimedAnySite = true;
+    } else if (entry.name === 'Internet') {
+      (entry.parameters?.domains ?? []).forEach((site) => claimedSites.add(site));
+    } else if (Object.keys(entry.parameters ?? {}).length === 0) {
+      claimedNames.add(entry.name);
     }
   }
 
   // with hosts listed the calendar opens no site itself, so any site here came from the face's own
   // entries, which would leave the hosts doing nothing
-  if (providers.calendarHosts && anySite) {
+  if (providers.calendarHosts && (ownAnySite || claimedAnySite)) {
     throw new ToolError(hostsOpenedWide(face));
   }
 
-  const permissions: Permission[] = [...names];
+  const generatedNames = generated.map((entry) => entry.name);
+  const ownNames = names.filter((name, index) => names.indexOf(name) === index && !generatedNames.includes(name) && !claimedNames.has(name));
+  const generatedSites = groups.flatMap((group) => group.sites);
+  const plainSites = ownSites.filter((site, index) => ownSites.indexOf(site) === index && !generatedSites.includes(site) && !claimedSites.has(site));
+  const anySite: Permission[] = [];
 
-  if (anySite) {
-    permissions.push('Internet');
-  } else if (domains.size > 0) {
-    permissions.push({ name: 'Internet', parameters: { domains: [...domains] } });
+  // the face's own marked entry for any site is in kept already, and stands for the iCal link's too
+  if (!claimedAnySite && ical && providers.calendarHosts === undefined) {
+    anySite.push({ name: 'Internet', reason: ICAL_PURPOSE.reason, required: false });
+  } else if (!claimedAnySite && ownAnySite) {
+    anySite.push('Internet');
   }
 
-  return [...permissions, ...others];
+  return [
+    ...generated.filter((entry) => !claimedNames.has(entry.name)),
+    ...ownNames,
+    ...siteEntries(groups, claimedSites),
+    ...anySite,
+    ...(plainSites.length > 0 ? [{ name: 'Internet', parameters: { domains: plainSites } }] : []),
+    ...kept,
+  ];
 }
 
 /**

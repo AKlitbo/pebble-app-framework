@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { PICKER_DOMAINS, STOCK_DOMAINS, WEATHER_DOMAINS, permissionWarnings, permissionsFor } from './permissions';
+import type { Permission } from './permissions';
 
 const TS = path.join(import.meta.dirname, '..', '..', 'ts');
 
@@ -28,6 +29,26 @@ function covers(domains: string[], host: string): boolean {
   return domains.some((domain) => host === domain || host.endsWith('.' + domain));
 }
 
+// the entries the build writes, as the store listing and the phone read them
+const LOCATION = { name: 'Location', reason: 'To show the weather where you are', required: false };
+const CALENDAR = { name: 'Calendar', reason: "To show events from your phone's calendars", required: false };
+const READ_MUSIC = { name: 'ReadMusic', reason: "To show what's playing on your phone", required: false };
+const ICAL_ANY_SITE = { name: 'Internet', reason: 'To fetch your iCal calendar link', required: false };
+const WEATHER_REASON = 'To get the weather';
+const STOCK_REASON = 'To get your stock quotes';
+const PICKER_REASON = 'To search for places in settings';
+const ICAL_REASON = 'To fetch your iCal calendar link';
+
+/** A generated Internet entry for these sites. */
+function sitesEntry(domains: string[], reason: string) {
+  return { name: 'Internet', parameters: { domains }, reason, required: false };
+}
+
+/** An entry's name, whichever way it is written. */
+function nameOf(entry: Permission): string {
+  return typeof entry === 'string' ? entry : entry.name;
+}
+
 describe('permissionsFor', () => {
   /** A weather face needs both, or wearers with plugins on get No GPS and Net Error. */
   test('asks a weather face for location and the weather sites', () => {
@@ -35,10 +56,7 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual([
-      'Location',
-      { name: 'Internet', parameters: { domains: ['open-meteo.com', 'openweathermap.org', 'weatherapi.com'] } },
-    ]);
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com', 'openweathermap.org', 'weatherapi.com'], WEATHER_REASON)]);
   });
 
   /**
@@ -50,28 +68,41 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toContain('Location');
+    expect(result).toContainEqual(LOCATION);
   });
 
-  /** Weather and stocks on one face share the one Internet entry, so both sets of sites have to be in it. */
-  test('lists the weather and the stock sites together', () => {
+  /**
+   * Installing asks about every entry when none says required, and waits on any that does, so one
+   * generated entry without `required: false` holds the face's weather behind a prompt at install. One
+   * without a reason shows on the store listing as a bare line.
+   */
+  test('marks every generated entry optional with a reason', () => {
+    const keys = ['WEATHER_REQUEST', 'STOCK_STRIP', 'CALENDAR_STRIP', 'CALENDAR_SOURCE', 'CLOCK_TIMEZONE_1', 'MUSIC_REQUEST'];
+
+    const result = permissionsFor(keys, undefined, 'face', { PLUGIN_CALENDAR: 1, PLUGIN_MUSIC: 1 }).filter((entry) => typeof entry === 'string' || entry.required !== false || !entry.reason);
+
+    expect(result).toEqual([]);
+  });
+
+  /** One entry's reason covers every site in it, so stock sites under the weather's reason would tell the wearer the wrong thing. */
+  test('gives the weather and the stock sites an entry each', () => {
     const keys = ['WEATHER_REQUEST', 'STOCK_STRIP'];
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual([
-      'Location',
-      { name: 'Internet', parameters: { domains: [...WEATHER_DOMAINS, ...STOCK_DOMAINS] } },
-    ]);
+    expect(result).toEqual([LOCATION, sitesEntry(WEATHER_DOMAINS, WEATHER_REASON), sitesEntry(STOCK_DOMAINS, STOCK_REASON)]);
   });
 
-  /** A calendar feed can be on any site, so a list of sites would block every feed the wearer pastes in. */
-  test('asks a calendar face for the whole web rather than a list', () => {
+  /**
+   * A calendar feed can be on any site, so a list of sites would block every feed the wearer pastes
+   * in. The per-site entries stay beside it, so the listing still says what each named site is for.
+   */
+  test('puts the whole web for a calendar beside the per-site entries', () => {
     const keys = ['WEATHER_REQUEST', 'STOCK_STRIP', 'CALENDAR_STRIP'];
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual(['Location', 'Internet']);
+    expect(result).toEqual([LOCATION, sitesEntry(WEATHER_DOMAINS, WEATHER_REASON), sitesEntry(STOCK_DOMAINS, STOCK_REASON), ICAL_ANY_SITE]);
   });
 
   /** A key declared as an array, such as STOCK_STRIP[2], is the same key and still switches the feature on. */
@@ -80,7 +111,7 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual([{ name: 'Internet', parameters: { domains: STOCK_DOMAINS } }]);
+    expect(result).toEqual([sitesEntry(STOCK_DOMAINS, STOCK_REASON)]);
   });
 
   /**
@@ -93,37 +124,34 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual([{ name: 'Internet', parameters: { domains: ['open-meteo.com'] } }]);
+    expect(result).toEqual([sitesEntry(['open-meteo.com'], PICKER_REASON)]);
   });
 
-  /** A weather face lists Open-Meteo already, and the picker listing it a second time would change its manifest for nothing. */
-  test('lists Open-Meteo once for a weather face with the location picker', () => {
+  /** The weather entry lists Open-Meteo already, so the picker's purpose joins its reason rather than the site going on twice. */
+  test('lists Open-Meteo once for a weather face with the location picker, with both purposes', () => {
     const keys = ['WEATHER_REQUEST', 'LOCATION_NAME'];
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual([
-      'Location',
-      { name: 'Internet', parameters: { domains: ['open-meteo.com', 'openweathermap.org', 'weatherapi.com'] } },
-    ]);
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com', 'openweathermap.org', 'weatherapi.com'], 'To get the weather and search for places')]);
   });
 
-  /** The picker's site has to join the one Internet entry the stocks made, or the time zone search finds nothing on that face. */
-  test('adds Open-Meteo after the stock sites for a stock face with a time zone picker', () => {
+  /** With no weather, Open-Meteo is the picker's alone, so the time zone search on a stock face needs an entry of its own. */
+  test('gives a stock face\'s time zone picker an entry of its own after the stock sites', () => {
     const keys = ['STOCK_STRIP', 'CLOCK_TIMEZONE_1'];
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual([{ name: 'Internet', parameters: { domains: [...STOCK_DOMAINS, 'open-meteo.com'] } }]);
+    expect(result).toEqual([sitesEntry(STOCK_DOMAINS, STOCK_REASON), sitesEntry(['open-meteo.com'], PICKER_REASON)]);
   });
 
-  /** A calendar face already reaches every site, and a list beside it would narrow what its feeds can reach. */
-  test('keeps a calendar face with a time zone picker on any site', () => {
+  /** The picker's entry says what Open-Meteo is for, which the calendar's any site does not. */
+  test('keeps the picker\'s entry beside a calendar face\'s any site', () => {
     const keys = ['CALENDAR_STRIP', 'CLOCK_TIMEZONE_1'];
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual(['Internet']);
+    expect(result).toEqual([sitesEntry(['open-meteo.com'], PICKER_REASON), ICAL_ANY_SITE]);
   });
 
   /** A face with no phone-side fetches gets an empty list, which the manifest then leaves out. */
@@ -141,7 +169,7 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_CALENDAR: 1 });
 
-    expect(result).toEqual(['Calendar', 'Internet']);
+    expect(result).toEqual([CALENDAR, ICAL_ANY_SITE]);
   });
 
   /** The wearer is asked to allow the calendar, so a face that offers no phone calendars must never put that question to them. */
@@ -154,7 +182,7 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face', defines);
 
-    expect(result).toEqual(['Internet']);
+    expect(result).toEqual([ICAL_ANY_SITE]);
   });
 
   /**
@@ -166,7 +194,7 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_MUSIC: 1 });
 
-    expect(result).toEqual(['ReadMusic']);
+    expect(result).toEqual([READ_MUSIC]);
   });
 
   /** The wearer is asked about their music, so a face that shows none must never put that question to them. */
@@ -177,7 +205,7 @@ describe('permissionsFor', () => {
   ])('leaves ReadMusic off a face %s', (_name, defines) => {
     const keys = ['WEATHER_REQUEST'];
 
-    const result = permissionsFor(keys, undefined, 'face', defines);
+    const result = permissionsFor(keys, undefined, 'face', defines).map(nameOf);
 
     expect(result).not.toContain('ReadMusic');
   });
@@ -191,36 +219,55 @@ describe('permissionsFor', () => {
     expect(result).toEqual([]);
   });
 
-  /** A face that fetches from a site of its own has to be able to list it, or that fetch fails for every wearer with plugins on. */
-  test('adds a face\'s own sites to the one Internet entry', () => {
+  /**
+   * A face that fetches from a site of its own has to be able to list it, or that fetch fails for every
+   * wearer with plugins on. In the weather's entry it would read as fetching the weather.
+   */
+  test('puts a face\'s own sites in an entry of their own after the generated ones', () => {
     const keys = ['WEATHER_REQUEST'];
     const own = [{ name: 'Internet', parameters: { domains: ['example.com'] } }];
 
     const result = permissionsFor(keys, own, 'face');
 
-    expect(result).toEqual([
-      'Location',
-      { name: 'Internet', parameters: { domains: [...WEATHER_DOMAINS, 'example.com'] } },
-    ]);
+    expect(result).toEqual([LOCATION, sitesEntry(WEATHER_DOMAINS, WEATHER_REASON), { name: 'Internet', parameters: { domains: ['example.com'] } }]);
   });
 
-  /** A face that asks for any site of its own would still be held to the providers' sites if its entry sat beside the list. */
-  test('opens the Internet entry to any site when the face asks for it bare', () => {
+  /** A site in two entries puts two reasons on one line of the listing, so the face's own entry leaves out what the providers list. */
+  test('leaves a site the generated entries list out of the face\'s own, and lists the rest once', () => {
+    const keys = ['WEATHER_REQUEST'];
+    const own = [{ name: 'Internet', parameters: { domains: ['open-meteo.com', 'example.com'] } }, { name: 'Internet', parameters: { domains: ['example.com', 'tides.example.org'] } }];
+
+    const result = permissionsFor(keys, own, 'face');
+
+    expect(result).toEqual([LOCATION, sitesEntry(WEATHER_DOMAINS, WEATHER_REASON), { name: 'Internet', parameters: { domains: ['example.com', 'tides.example.org'] } }]);
+  });
+
+  /** A bare Internet of the face's own still opens every site, and the stock sites keep their entry so the listing says what they are for. */
+  test('keeps the per-site entries beside a bare Internet of the face\'s own', () => {
     const keys = ['STOCK_STRIP'];
 
     const result = permissionsFor(keys, ['Internet'], 'face');
 
-    expect(result).toEqual(['Internet']);
+    expect(result).toEqual([sitesEntry(STOCK_DOMAINS, STOCK_REASON), 'Internet']);
   });
 
-  /** A calendar face already reaches every site, so a site list of the face's own beside it would only narrow what the wearer sees asked for. */
-  test('keeps a calendar face on any site when it also lists sites of its own', () => {
+  /** Two entries for any site would put the same question to the wearer twice, so the calendar's stands for the face's bare one. */
+  test('writes one any site entry for a calendar face with a bare Internet of its own', () => {
+    const keys = ['CALENDAR_STRIP'];
+
+    const result = permissionsFor(keys, ['Internet'], 'face');
+
+    expect(result).toEqual([ICAL_ANY_SITE]);
+  });
+
+  /** The face's own site is a different purpose from the calendar's feeds, so it keeps its own entry beside any site. */
+  test('keeps a face\'s own sites beside a calendar face\'s any site', () => {
     const keys = ['CALENDAR_STRIP'];
     const own = [{ name: 'Internet', parameters: { domains: ['example.com'] } }];
 
     const result = permissionsFor(keys, own, 'face');
 
-    expect(result).toEqual(['Internet']);
+    expect(result).toEqual([ICAL_ANY_SITE, { name: 'Internet', parameters: { domains: ['example.com'] } }]);
   });
 
   /** Location written as an object is the same permission, and listing it twice puts it on the install prompt twice. */
@@ -230,7 +277,44 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, own, 'face');
 
-    expect(result).toEqual(['Location', 'Calendar', { name: 'Internet', parameters: { domains: WEATHER_DOMAINS } }]);
+    expect(result).toEqual([LOCATION, 'Calendar', sitesEntry(WEATHER_DOMAINS, WEATHER_REASON)]);
+  });
+
+  /** The reason and required flag are the face's word to the wearer, so rewriting them would change what the listing and the install ask. */
+  test('keeps a face\'s own entry with a reason as written, after the rest', () => {
+    const keys = ['WEATHER_REQUEST'];
+    const own = [{ name: 'Internet', parameters: { domains: ['example.com'] }, reason: 'To show the tides', required: true }];
+
+    const result = permissionsFor(keys, own, 'face');
+
+    expect(result).toEqual([LOCATION, sitesEntry(WEATHER_DOMAINS, WEATHER_REASON), own[0]]);
+  });
+
+  /** A face marking one of the providers' sites required has to win, or the site sits in two entries with two answers to required. */
+  test('lets a face\'s own marked site take the place of the generated one', () => {
+    const own = [{ name: 'Internet', parameters: { domains: ['yahoo.com'] }, reason: 'To get quotes from Yahoo', required: true }];
+
+    const result = permissionsFor(['STOCK_STRIP'], own, 'face', {}, { stocks: ['yahoo', 'finnhub'] });
+
+    expect(result).toEqual([sitesEntry(['finnhub.io'], STOCK_REASON), own[0]]);
+  });
+
+  /** A face making Location required writes its own, and a second Location beside it would ask the wearer twice with two answers. */
+  test('lets a face\'s own marked Location take the place of the generated one', () => {
+    const own = [{ name: 'Location', reason: 'To show the sunrise where you are', required: true }];
+
+    const result = permissionsFor(['WEATHER_REQUEST'], own, 'face');
+
+    expect(result).toEqual([sitesEntry(WEATHER_DOMAINS, WEATHER_REASON), own[0]]);
+  });
+
+  /** A marked any site of the face's own already reaches every feed, so the calendar's beside it would ask the same question twice. */
+  test('lets a face\'s own marked any site stand for the calendar\'s', () => {
+    const own = [{ name: 'Internet', reason: 'To reach your feeds', required: false }];
+
+    const result = permissionsFor(['CALENDAR_STRIP'], own, 'face');
+
+    expect(result).toEqual([own[0]]);
   });
 
   /** An entry with no name reaches the phone as a permission it cannot read, so the build stops on it and names the face. */
@@ -252,6 +336,16 @@ describe('permissionsFor', () => {
     const call = () => permissionsFor([], [{ name: 'HomeControl', plugin: 5 }], 'my-face');
 
     expect(call).toThrow(/gives HomeControl the plugin 5/);
+  });
+
+  /** The phone shows the reason as text and reads required as yes or no, so anything else leaves the listing and the install guessing. */
+  test.each([
+    ['a reason that is not text', { name: 'Location', reason: 5 }, /gives Location the reason 5, which has to be text/],
+    ['a required that is not true or false', { name: 'Location', required: 'yes' }, /gives Location required "yes", which has to be true or false/],
+  ])('refuses %s', (_name, entry, message) => {
+    const call = () => permissionsFor([], [entry], 'my-face');
+
+    expect(call).toThrow(message);
   });
 
   /** A site written as a bare string rather than a list leaves the entry unreadable on the phone, so the fetch it was for is blocked. */
@@ -298,28 +392,28 @@ describe('permissionsFor with a providers list', () => {
   test('asks a face offering Open-Meteo alone for Location and its one site', () => {
     const result = permissionsFor(weatherKeys, undefined, 'face', {}, { weather: ['openmeteo'] });
 
-    expect(result).toEqual(['Location', { name: 'Internet', parameters: { domains: ['open-meteo.com'] } }]);
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com'], WEATHER_REASON)]);
   });
 
   /** OWM borrows readings from Open-Meteo, so a face offering it alone that left Open-Meteo out would lose its UV, dew point, and forecast. */
   test('asks a face offering OWM alone for Open-Meteo too, in the framework order', () => {
     const result = permissionsFor(weatherKeys, undefined, 'face', {}, { weather: ['owm'] });
 
-    expect(result).toEqual(['Location', { name: 'Internet', parameters: { domains: ['open-meteo.com', 'openweathermap.org'] } }]);
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com', 'openweathermap.org'], WEATHER_REASON)]);
   });
 
   /** The weather plugin needs the location and no site, so a plugin only face still showing the weather sites is the bug this catches. */
   test('asks a plugin only weather face for Location and no site', () => {
     const result = permissionsFor(weatherKeys, undefined, 'face', { PLUGIN_WEATHER: 1 }, { weather: ['plugin'] });
 
-    expect(result).toEqual(['Location']);
+    expect(result).toEqual([LOCATION]);
   });
 
   /** A mixed list still fetches from its custom providers when the wearer picks one, so their sites stay. */
   test('asks a mixed weather face for its custom providers\' sites', () => {
     const result = permissionsFor(weatherKeys, undefined, 'face', { PLUGIN_WEATHER: 1 }, { weather: ['plugin', 'openmeteo'] });
 
-    expect(result).toEqual(['Location', { name: 'Internet', parameters: { domains: ['open-meteo.com'] } }]);
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com'], WEATHER_REASON)]);
   });
 
   /** A stock plugin fetches its own quotes, so a plugin only stock face still asking for the stock sites is the bug this catches. */
@@ -333,7 +427,7 @@ describe('permissionsFor with a providers list', () => {
   test('asks a mixed stock face for the sites of the providers it lists alone', () => {
     const result = permissionsFor(['STOCK_STRIP', 'STOCK_REQUEST'], undefined, 'face', { PLUGIN_STOCKS: 1 }, { stocks: ['plugin', 'finnhub'] });
 
-    expect(result).toEqual([{ name: 'Internet', parameters: { domains: ['finnhub.io'] } }]);
+    expect(result).toEqual([sitesEntry(['finnhub.io'], STOCK_REASON)]);
   });
 
   /** A plugin only calendar face still showing "Connect to any website" is the bug this catches. */
@@ -342,7 +436,7 @@ describe('permissionsFor with a providers list', () => {
 
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_CALENDAR: 1 }, { calendar: ['plugin'] });
 
-    expect(result).toEqual(['Calendar']);
+    expect(result).toEqual([CALENDAR]);
   });
 
   /** The iCal link beside the plugin can still sit on any site, so the mixed calendar keeps the whole web. */
@@ -351,29 +445,47 @@ describe('permissionsFor with a providers list', () => {
 
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_CALENDAR: 1 }, { calendar: ['plugin', 'ical'] });
 
-    expect(result).toEqual(['Calendar', 'Internet']);
+    expect(result).toEqual([CALENDAR, ICAL_ANY_SITE]);
   });
 
   /** With its hosts listed the calendar asks for those alone, which is what takes "any website" off the install page. */
   test.each([
-    ['beside a mixed calendar list', { calendar: ['plugin', 'ical'], calendarHosts: ['google.com', 'icloud.com'] }, { PLUGIN_CALENDAR: 1 }, ['Calendar']],
+    ['beside a mixed calendar list', { calendar: ['plugin', 'ical'], calendarHosts: ['google.com', 'icloud.com'] }, { PLUGIN_CALENDAR: 1 }, [CALENDAR]],
     ['with no calendar list', { calendarHosts: ['google.com', 'icloud.com'] }, {}, []],
-  ])('asks for the calendar hosts in place of any site %s', (_name, providers, defines, names) => {
+  ])('asks for the calendar hosts in place of any site %s', (_name, providers, defines, named) => {
     const keys = ['CALENDAR_STRIP', 'CALENDAR_SOURCE'];
 
     const result = permissionsFor(keys, undefined, 'face', defines, providers);
 
-    expect(result).toEqual([...names, { name: 'Internet', parameters: { domains: ['google.com', 'icloud.com'] } }]);
+    expect(result).toEqual([...named, sitesEntry(['google.com', 'icloud.com'], ICAL_REASON)]);
   });
 
-  /** The hosts follow the other sites in the face's own order, and a host already listed goes on once. */
-  test('puts the calendar hosts after the other sites, each once', () => {
+  /**
+   * A host the stocks already list stays in the stock entry, and that entry's reason names the calendar
+   * too, so the wearer reads each site once with everything it is for. The rest follow in the face's
+   * own order.
+   */
+  test('puts each calendar host in one entry, and names the calendar on a shared one', () => {
     const keys = ['STOCK_STRIP', 'CALENDAR_STRIP', 'CLOCK_TIMEZONE_1'];
     const providers = { stocks: ['yahoo'], calendarHosts: ['icloud.com', 'yahoo.com', 'google.com'] };
 
     const result = permissionsFor(keys, undefined, 'face', {}, providers);
 
-    expect(result).toEqual([{ name: 'Internet', parameters: { domains: ['yahoo.com', 'open-meteo.com', 'icloud.com', 'google.com'] } }]);
+    expect(result).toEqual([
+      sitesEntry(['yahoo.com'], 'To get your stock quotes and fetch your iCal calendar link'),
+      sitesEntry(['open-meteo.com'], PICKER_REASON),
+      sitesEntry(['icloud.com', 'google.com'], ICAL_REASON),
+    ]);
+  });
+
+  /** A site serving three features names all three in one sentence, which is what the wearer reads on its one line. */
+  test('names every purpose of a site three features share', () => {
+    const keys = ['WEATHER_REQUEST', 'CALENDAR_STRIP', 'LOCATION_NAME'];
+    const providers = { weather: ['openmeteo'], calendarHosts: ['open-meteo.com'] };
+
+    const result = permissionsFor(keys, undefined, 'face', {}, providers);
+
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com'], 'To get the weather, search for places, and fetch your iCal calendar link')]);
   });
 
   /** A face whose kinds all come from plugins reaches no site, so an Internet entry would only add a prompt the wearer never needed. */
@@ -384,7 +496,7 @@ describe('permissionsFor with a providers list', () => {
 
     const result = permissionsFor(keys, undefined, 'face', defines, providers);
 
-    expect(result).toEqual(['Location', 'Calendar', 'ReadMusic']);
+    expect(result).toEqual([LOCATION, CALENDAR, READ_MUSIC]);
   });
 
   /** The page drops the location search with the other location rows when the weather comes from a plugin alone, so Open-Meteo would sit on the install page for a search that is not there. */
@@ -393,25 +505,25 @@ describe('permissionsFor with a providers list', () => {
 
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_WEATHER: 1 }, { weather: ['plugin'] });
 
-    expect(result).toEqual(['Location']);
+    expect(result).toEqual([LOCATION]);
   });
 
-  /** The time zone picker stays on the page whatever the weather comes from, and it searches Open-Meteo from there. */
+  /** The time zone picker stays on the page whatever the weather comes from, and it searches Open-Meteo from there, so the site is the picker's alone. */
   test('keeps Open-Meteo for a plugin only weather face with a time zone picker', () => {
     const keys = ['WEATHER_REQUEST', 'LOCATION_NAME', 'CLOCK_TIMEZONE_1'];
 
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_WEATHER: 1 }, { weather: ['plugin'] });
 
-    expect(result).toEqual(['Location', { name: 'Internet', parameters: { domains: ['open-meteo.com'] } }]);
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com'], PICKER_REASON)]);
   });
 
-  /** Weather and stocks narrowed together still share the one Internet entry the phone reads. */
-  test('puts narrowed weather and stock sites in one Internet entry', () => {
+  /** Narrowing cuts each kind's entry down on its own, and neither borrows the other's reason. */
+  test('gives narrowed weather and stock sites an entry each', () => {
     const keys = ['WEATHER_REQUEST', 'STOCK_STRIP'];
 
     const result = permissionsFor(keys, undefined, 'face', {}, { weather: ['openmeteo'], stocks: ['yahoo'] });
 
-    expect(result).toEqual(['Location', { name: 'Internet', parameters: { domains: ['open-meteo.com', 'yahoo.com'] } }]);
+    expect(result).toEqual([LOCATION, sitesEntry(['open-meteo.com'], WEATHER_REASON), sitesEntry(['yahoo.com'], STOCK_REASON)]);
   });
 
   /** Each kind narrows on its own, so one face mixing its weather, taking its calendar from a plugin, and offering Yahoo asks for each kind's own part. */
@@ -421,22 +533,23 @@ describe('permissionsFor with a providers list', () => {
 
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_WEATHER: 1, PLUGIN_CALENDAR: 1 }, providers);
 
-    expect(result).toEqual(['Location', 'Calendar', { name: 'Internet', parameters: { domains: ['open-meteo.com', 'yahoo.com'] } }]);
+    expect(result).toEqual([LOCATION, CALENDAR, sitesEntry(['open-meteo.com'], WEATHER_REASON), sitesEntry(['yahoo.com'], STOCK_REASON)]);
   });
 
   /** A face's own fetches still need their site on a narrowed face, and a site the providers already list goes on once. */
-  test('adds a face\'s own sites to a narrowed entry, each once', () => {
+  test('leaves a site a narrowed entry lists out of the face\'s own', () => {
     const own = [{ name: 'Internet', parameters: { domains: ['example.com', 'yahoo.com'] } }];
 
     const result = permissionsFor(['STOCK_STRIP'], own, 'face', {}, { stocks: ['yahoo'] });
 
-    expect(result).toEqual([{ name: 'Internet', parameters: { domains: ['yahoo.com', 'example.com'] } }]);
+    expect(result).toEqual([sitesEntry(['yahoo.com'], STOCK_REASON), { name: 'Internet', parameters: { domains: ['example.com'] } }]);
   });
 
   /** A face that opens every site itself would get nothing from its hosts, so it has to pick one or the other. */
   test.each([
     ['a bare Internet', ['Internet']],
     ['an Internet with no sites', [{ name: 'Internet', parameters: { domains: [] } }]],
+    ['a marked Internet with no sites', [{ name: 'Internet', reason: 'To reach your feeds', required: false }]],
   ])('refuses calendarHosts beside %s of the face\'s own', (_name, own) => {
     const call = () => permissionsFor(['CALENDAR_STRIP'], own, 'my-face', {}, { calendarHosts: ['google.com'] });
 

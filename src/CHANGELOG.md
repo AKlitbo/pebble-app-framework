@@ -12,6 +12,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Fixed the Pebble appstore leaving a face that reads plugins out of its "Faces and Apps That Use Plugins" collection. The store looks for a call to `Pebble.subscribeToSource` by that name, which the phone now makes. A face picks this up with its next release on the new framework.
 
+### Wearer-Visible Changes
+
+#### Fixed
+
+- Fixed the store listing giving no reason for a face's permissions, and installing or updating a face asking for every permission up front, which held the weather until the wearer answered. `permissionsFor` now gives each permission it writes a reason and `required: false`, with each feature's sites in an `Internet` entry of their own, so the phone asks about one the first time the face uses it. A face's own entry with a `reason` or `required` goes in as written.
+
 ## [6.3.0] - 2026-11-13
 
 ### Framework Changes

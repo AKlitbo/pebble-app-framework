@@ -406,16 +406,17 @@ describe('checkAppinfo', () => {
   }
 
   /**
-   * A face without providers has to build the manifest it builds today, byte for byte. This is the
-   * manifest such a face wrote before the list existed, written out whole.
+   * A face without providers gets the manifest its keys alone give, byte for byte, with each generated
+   * permission carrying its reason and required flag where the Pebble app reads them. It is written out
+   * whole.
    */
-  test('builds a face without providers the manifest it builds today', () => {
+  test('builds a face without providers the manifest its keys alone give', () => {
     const config = faceConfig({ messageKeys: [...WEATHER_KEYS, 'WEATHER_PROVIDER', 'STOCK_STRIP'] });
     const checked = checkAppinfo(config, 'gridlock');
 
     const result = JSON.stringify(buildManifest(config, { author: 'x', version: '1.0.0' }, { name: 'gridlock', watchface: true }, checked.defines, checked.permissions, checked.textDefines));
 
-    expect(result).toBe('{"name":"gridlock","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Test","uuid":"uuid-1","sdkVersion":"3","enableMultiJS":true,"targetPlatforms":["emery"],"watchapp":{"watchface":true},"capabilities":["health"],"messageKeys":["WEATHER_REQUEST","WEATHER_TEMPERATURE","WEATHER_CONDITIONS","WEATHER_OK","WEATHER_PROVIDER","STOCK_STRIP"],"resources":{"media":[{"type":"bitmap","name":"ICON_ONE","file":"one.png"},{"type":"bitmap","name":"ICON_TWO","file":"two.png"}]},"usesPermissions":["Location",{"name":"Internet","parameters":{"domains":["open-meteo.com","openweathermap.org","weatherapi.com","alphavantage.co","finnhub.io","twelvedata.com","yahoo.com"]}}]}}');
+    expect(result).toBe('{"name":"gridlock","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Test","uuid":"uuid-1","sdkVersion":"3","enableMultiJS":true,"targetPlatforms":["emery"],"watchapp":{"watchface":true},"capabilities":["health"],"messageKeys":["WEATHER_REQUEST","WEATHER_TEMPERATURE","WEATHER_CONDITIONS","WEATHER_OK","WEATHER_PROVIDER","STOCK_STRIP"],"resources":{"media":[{"type":"bitmap","name":"ICON_ONE","file":"one.png"},{"type":"bitmap","name":"ICON_TWO","file":"two.png"}]},"usesPermissions":[{"name":"Location","reason":"To show the weather where you are","required":false},{"name":"Internet","parameters":{"domains":["open-meteo.com","openweathermap.org","weatherapi.com"]},"reason":"To get the weather","required":false},{"name":"Internet","parameters":{"domains":["alphavantage.co","finnhub.io","twelvedata.com","yahoo.com"]},"reason":"To get your stock quotes","required":false}]}}');
   });
 
   /** The SDK copies only the pebble block, so providers has to stay out of the manifest the way defines does. */
@@ -425,7 +426,11 @@ describe('checkAppinfo', () => {
 
     const result = buildManifest(config, { author: 'x', version: '1.0.0' }, { name: 'gridlock', watchface: true }, checked.defines, checked.permissions);
 
-    expect(result.pebble.usesPermissions).toEqual(['Location', { name: 'Internet', parameters: { domains: ['open-meteo.com', 'yahoo.com'] } }]);
+    expect(result.pebble.usesPermissions).toEqual([
+      { name: 'Location', reason: 'To show the weather where you are', required: false },
+      { name: 'Internet', parameters: { domains: ['open-meteo.com'] }, reason: 'To get the weather and search for places', required: false },
+      { name: 'Internet', parameters: { domains: ['yahoo.com'] }, reason: 'To get your stock quotes', required: false },
+    ]);
     expect(JSON.stringify(result)).not.toContain('providers');
   });
 
@@ -561,7 +566,7 @@ describe('checkAppinfo for PLUGIN_STOCKS', () => {
 
     const result = { permissions: checked.permissions, textDefines: checked.textDefines };
 
-    expect(result).toEqual({ permissions: [{ name: 'Internet', parameters: { domains: ['yahoo.com'] } }], textDefines: { PLUGIN_SOURCE_STOCK_DEFAULT: 'yahoo' } });
+    expect(result).toEqual({ permissions: [{ name: 'Internet', parameters: { domains: ['yahoo.com'] }, reason: 'To get your stock quotes', required: false }], textDefines: { PLUGIN_SOURCE_STOCK_DEFAULT: 'yahoo' } });
   });
 
   /** A plugin only list keeps no choice on the watch, so the select key a face lists itself would ride every save for nothing. */
