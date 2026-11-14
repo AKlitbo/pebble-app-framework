@@ -428,7 +428,8 @@ export function createSourceSubscription(options: SubscriptionOptions): SourceSu
       return;
     }
 
-    if (!host || typeof host.subscribeToSource !== 'function') {
+    // host is the global Pebble, and an absent one stops here before the name below is read
+    if (!host || typeof Pebble.subscribeToSource !== 'function') {
       noPlugin('the phone has no subscribe call');
       return;
     }
@@ -440,7 +441,10 @@ export function createSourceSubscription(options: SubscriptionOptions): SourceSu
     running = true;
 
     try {
-      returned = host.subscribeToSource({
+      // the Pebble appstore lists an app as reading plugins when its script calls
+      // Pebble.subscribeToSource by that name, so the call names the global rather than going
+      // through host, which is the same object
+      returned = Pebble.subscribeToSource({
         category,
         item,
         properties,

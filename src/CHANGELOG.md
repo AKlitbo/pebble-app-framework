@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Framework Changes
+
+#### Fixed
+
+- Fixed the Pebble appstore leaving a face that reads plugins out of its "Faces and Apps That Use Plugins" collection. The store looks for a call to `Pebble.subscribeToSource` by that name, which the phone now makes. A face picks this up with its next release on the new framework.
+
 ## [6.3.0] - 2026-11-13
 
 ### Framework Changes
