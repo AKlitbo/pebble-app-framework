@@ -56,6 +56,24 @@ describe('buildConfig wire contract', () => {
   });
 });
 
+describe('buildConfig section order', () => {
+  /**
+   * Picking a weather plugin hides Location Settings, so it has to sit straight under Weather or the
+   * card that folds away is somewhere the wearer is not looking. Health, whose defaults work
+   * untouched, comes after the sources that need setting up.
+   */
+  test('puts Location Settings under Weather and Health after the sources', () => {
+    const config = buildConfig({ weather: {}, location: {}, steps: {} });
+
+    const result = config
+      .map((section) => (section.items || []).find((item) => item.type === 'heading'))
+      .map((heading) => (heading ? heading.defaultValue : undefined))
+      .filter((title) => title === 'Weather' || title === 'Location Settings' || title === 'Health');
+
+    expect(result).toEqual(['Weather', 'Location Settings', 'Health']);
+  });
+});
+
 describe('buildConfig optional sections', () => {
   /** A face with no stats readout declares no health keys, so the page must not offer one it never reads. */
   test('leaves the health section out unless the face shows steps or battery', () => {
@@ -496,7 +514,7 @@ describe('buildConfig plugin source marks', () => {
   test('marks every row that only feeds a weather fetch, the Location Settings heading included', () => {
     const result = allRows(fullPage()).filter((row) => row.pluginSourceHides === 'WEATHER_PROVIDER');
 
-    expect(result.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME', 'WEATHER_TEMPERATURE_UNIT', 'WEATHER_API_KEY']);
+    expect(result.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['WEATHER_TEMPERATURE_UNIT', 'WEATHER_API_KEY', 'Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME']);
   });
 
   /**

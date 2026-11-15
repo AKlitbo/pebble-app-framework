@@ -37,11 +37,13 @@ export default buildConfig({
 | the face's own | `layoutSections` is passed | whatever the face builds, such as a layout editor |
 | Bluetooth | always | the connection icon, and a buzz on connect and on disconnect |
 | Clock | always | the date and time formats, the face's `clockItems`, a second clock's time zone with `clock.timeZone`, and the hourly buzz with `hourlyVibe` |
-| Health | `steps` or `battery` | what the steps readout counts, and how the battery reads |
-| Location Settings | `location` | phone GPS, a fallback, and a manual place |
 | Weather | `weather`, `temperature`, or `wind` | the temperature unit, the wind speed unit with `wind`, and the provider with its key |
+| Location Settings | `location` | phone GPS, a fallback, and a manual place |
 | Calendar Preferences | `calendar` | the iCal link, then the face's own `items` |
 | Stock Preferences | `stocks` | the provider, its key, and the tickers, then the face's own `items`. A face built with `PLUGIN_STOCKS` gets Preferred Source in the provider select |
+| Health | `steps` or `battery` | what the steps readout counts, and how the battery reads |
+
+The sources that need setting up come ahead of Health, whose defaults work untouched. Location Settings sits straight under Weather, so picking a weather plugin folds it away just below the select that hides it.
 
 **Each Section Brings Its Keys.** Every message key a section uses has to be declared in the face's `pebble.appinfo.json`, and each one adds to the inbox the face sizes, as [Opening the Connection](talking-to-the-phone.md#opening-the-connection) covers. Bluetooth and Clock are always on the page, so their keys are always needed. An optional section that is left out brings no keys, which is why Health returns nothing at all, not even a heading, for a face that shows neither steps nor battery.
 

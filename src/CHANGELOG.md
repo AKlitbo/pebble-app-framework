@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Wearer-Visible Changes
+
+#### Fixed
+
+- Fixed the settings page showing Location Settings above Weather, so picking a weather plugin hid a section further up the page rather than the one right under it. `buildConfig` now puts Location Settings straight under Weather, and Health after the weather, calendar, and stock sections.
+
 ## [6.3.1] - 2026-11-14
 
 ### Framework Changes

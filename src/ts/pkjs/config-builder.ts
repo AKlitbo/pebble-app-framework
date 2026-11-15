@@ -739,7 +739,10 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
     clockSection(options),
   ];
 
-  [healthSection(options), locationSection(options), weatherSection(options), calendarSection(options), stocksSection(options)].forEach((section) => {
+  // the sources that need setting up come ahead of Health, whose defaults work untouched. Location
+  // sits straight under Weather, so picking a weather plugin folds it away just below the select
+  // that hides it
+  [weatherSection(options), locationSection(options), calendarSection(options), stocksSection(options), healthSection(options)].forEach((section) => {
     if (section) {
       config.push(section);
     }

@@ -340,9 +340,9 @@ describe('pluginSourcePage the marked rows', () => {
 
     const pluginOff = { key: 'WEATHER_PROVIDER', in: ['openmeteo', 'owm', 'weatherapi'] };
 
-    expect(hidden.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME', 'WEATHER_API_KEY', 'WEATHER_TEMPERATURE_UNIT']);
+    expect(hidden.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['WEATHER_API_KEY', 'WEATHER_TEMPERATURE_UNIT', 'Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME']);
     // the key row keeps the builder's own condition for the keyed providers, and both have to hold
-    expect(hidden.map((row) => row.visibleWhen)).toEqual([...Array(4).fill([pluginOff]), [{ key: 'WEATHER_PROVIDER', notIn: ['openmeteo'] }, pluginOff], [pluginOff]]);
+    expect(hidden.map((row) => row.visibleWhen)).toEqual([[{ key: 'WEATHER_PROVIDER', notIn: ['openmeteo'] }, pluginOff], ...Array(5).fill([pluginOff])]);
   });
 
   /** Clay cannot hide a section, so with every row in it hidden the Location Settings card would sit empty. */
@@ -582,11 +582,24 @@ describe('pluginSourcePage moving the rows the select hides', () => {
     return page.findIndex((item) => allRows([item]).some((row) => row.messageKey === messageKey));
   }
 
+  /**
+   * The weather page with Location Settings moved above Weather. The builder puts it under Weather,
+   * but a page a face builds itself can have it either side, and this is the one the move has work on.
+   */
+  function locationFirstPage(): ClayConfigItem[] {
+    const page = weatherPage();
+    const location = page.splice(placeOf(page, 'LOCATION_USE_GPS'), 1)[0];
+
+    page.splice(placeOf(page, 'WEATHER_PROVIDER'), 0, location);
+
+    return page;
+  }
+
   /** Rows hiding above the select make the page jump under the wearer's finger as they pick the plugin. */
   test('moves the location section to sit straight after the weather section while a plugin is on offer', () => {
-    const before = weatherPage();
+    const before = locationFirstPage();
 
-    const result = pluginSourcePage(weatherPage(), weatherInputs({ movesBelow: 'LOCATION_USE_GPS' }));
+    const result = pluginSourcePage(locationFirstPage(), weatherInputs({ movesBelow: 'LOCATION_USE_GPS' }));
 
     expect(placeOf(before, 'LOCATION_USE_GPS')).toBeLessThan(placeOf(before, 'WEATHER_PROVIDER'));
     expect(placeOf(result, 'LOCATION_USE_GPS')).toBe(placeOf(result, 'WEATHER_PROVIDER') + 1);
@@ -601,15 +614,15 @@ describe('pluginSourcePage moving the rows the select hides', () => {
 
   /** With no plugin choice nothing hides, so a page that moved anyway would differ from a face's without plugin sources for no reason. */
   test('leaves the order alone when no plugin choice is on offer', () => {
-    const result = faceRows(pluginSourcePage(weatherPage(), weatherInputs({ plugins: [], movesBelow: 'LOCATION_USE_GPS' })));
+    const result = faceRows(pluginSourcePage(locationFirstPage(), weatherInputs({ plugins: [], movesBelow: 'LOCATION_USE_GPS' })));
 
-    expect(result.map((item) => item.type)).toEqual(weatherPage().map((item) => item.type));
+    expect(result.map((item) => item.type)).toEqual(locationFirstPage().map((item) => item.type));
     expect(placeOf(result, 'LOCATION_USE_GPS')).toBeLessThan(placeOf(result, 'WEATHER_PROVIDER'));
   });
 
   /** A face's alternate time zone in the same section has nothing to do with weather, and moving it would carry it away from where the face put it. */
   test('leaves a section holding a row with no mark where it is', () => {
-    const page = weatherPage();
+    const page = locationFirstPage();
     const location = page.find((item) => allRows([item]).some((row) => row.messageKey === 'LOCATION_USE_GPS')) as ClayConfigItem;
 
     location.items = [...(location.items || []), { type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', label: 'Second Clock', timeZone: true }];
