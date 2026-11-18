@@ -346,7 +346,7 @@ describe('the words and addresses the panel scenarios look for', () => {
     ['Weather Enhanced', WEATHER_ENHANCED_LISTING],
     ['Stocks', PEBBLE_STOCKS_LISTING],
     ['Stocks + Crypto', STOCKS_CRYPTO_LISTING],
-    ['Calendar + iCal', CALENDAR_ICAL_LISTING],
+    ['Calendar Enhanced + iCal', CALENDAR_ICAL_LISTING],
   ])('match the directory\'s listing for %s', (name, listing) => {
     const result = storeListing(KNOWN_PLUGINS.find((plugin) => plugin.name === name) as (typeof KNOWN_PLUGINS)[number]);
 

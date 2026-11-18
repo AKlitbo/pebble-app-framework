@@ -22,7 +22,7 @@ plugins/calendar-ical/
 ```json
 {
   "name": "calendar-ical",
-  "displayName": "Calendar + iCal",
+  "displayName": "Calendar Enhanced + iCal",
   "uuid": "…",
   "version": "1.0.0",
   "sdkVersion": "3",

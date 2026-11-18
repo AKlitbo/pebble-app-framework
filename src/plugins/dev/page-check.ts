@@ -283,12 +283,12 @@ export const CALENDAR_ICAL_LISTING = 'https://apps.repebble.com/calendar-ical_22
 
 // the panel's weather plugins on a phone that lists the built-in ones, and its calendar plugins
 const PANEL_WEATHER = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_TAG }, { name: 'MET Norway Weather', tag: 'v1.0.5', listing: MET_NORWAY_LISTING }, { name: 'Weather+', tag: 'v1.0.0', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', tag: 'v1.0.0', listing: WEATHER_ENHANCED_LISTING }] };
-const PANEL_CALENDAR = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_TAG }, { name: 'Calendar + iCal', tag: 'v1.1.0', listing: CALENDAR_ICAL_LISTING }] };
+const PANEL_CALENDAR = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_TAG }, { name: 'Calendar Enhanced + iCal', tag: 'v1.1.0', listing: CALENDAR_ICAL_LISTING }] };
 
 // the same on a phone whose list leaves the built-in ones out, which the panel marks off
 const BUILT_IN_OFF = `${BUILT_IN_TAG}, ${OFF_TAG}`;
 const PANEL_WEATHER_OFF = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_OFF }, { name: 'MET Norway Weather', tag: 'v1.0.5', listing: MET_NORWAY_LISTING }, { name: 'Weather+', tag: 'v1.0.0', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', tag: 'v1.0.0', listing: WEATHER_ENHANCED_LISTING }] };
-const PANEL_CALENDAR_OFF = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_OFF }, { name: 'Calendar + iCal', tag: 'v1.1.0', listing: CALENDAR_ICAL_LISTING }] };
+const PANEL_CALENDAR_OFF = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_OFF }, { name: 'Calendar Enhanced + iCal', tag: 'v1.1.0', listing: CALENDAR_ICAL_LISTING }] };
 
 // what marks the supported plugins panel on the page
 const PANEL_SELECTOR = '.pf-plugins';

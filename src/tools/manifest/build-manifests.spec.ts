@@ -769,11 +769,11 @@ describe('checkPluginKeys for the kinds only a plugin fills', () => {
 describe('plugin apps', () => {
   type AnyAppinfo = Parameters<typeof checkAppinfo>[0];
 
-  // a plugin app as Calendar + iCal declares it, with a permission reason and a source asking Calendar of its callers
+  // a plugin app as Calendar Enhanced + iCal declares it, with a permission reason and a source asking Calendar of its callers
   function pluginConfig(extra: Record<string, unknown> = {}): AnyAppinfo {
     return {
       name: 'calendar-ical',
-      displayName: 'Calendar + iCal',
+      displayName: 'Calendar Enhanced + iCal',
       uuid: 'uuid-2',
       sdkVersion: '3',
       projectType: 'plugin',
@@ -822,7 +822,7 @@ describe('plugin apps', () => {
 
     const result = JSON.stringify(buildPluginManifest(config, { author: 'x', version: '1.0.0' }, checkAppinfo(config, 'calendar-ical').permissions));
 
-    expect(result).toBe('{"name":"calendar-ical","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Calendar + iCal","uuid":"uuid-2","sdkVersion":"3","projectType":"plugin","configPage":"config.html","usesPermissions":[{"name":"Calendar","reason":"To merge your phone calendars","required":true}],"plugin":{"description":"Phone calendars and iCal links.","sources":[{"category":"calendar","items":["event"],"properties":{"name":["longText"]},"supportsMultiple":true,"callerPermissions":["Calendar"]}],"script":"plugin.js"}}}');
+    expect(result).toBe('{"name":"calendar-ical","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Calendar Enhanced + iCal","uuid":"uuid-2","sdkVersion":"3","projectType":"plugin","configPage":"config.html","usesPermissions":[{"name":"Calendar","reason":"To merge your phone calendars","required":true}],"plugin":{"description":"Phone calendars and iCal links.","sources":[{"category":"calendar","items":["event"],"properties":{"name":["longText"]},"supportsMultiple":true,"callerPermissions":["Calendar"]}],"script":"plugin.js"}}}');
   });
 
   /** The SDK takes an empty list as a plugin that reaches nothing, so no permissions leaves the key out rather than writing one. */

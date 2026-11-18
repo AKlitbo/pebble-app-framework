@@ -33,6 +33,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed a step walk with no layouts needing the face to define `dev_show_layout` to link. The harness now calls it only when a step has a layout, so a face whose walks only change settings and readings can delete its stub.
 - Fixed `paf tool <face> thumbnails` on a step walk refusing the walk's first setting as undeclared, rather than saying to pick a panel walk.
 
+### Wearer-Visible Changes
+
+#### Changed
+
+- The supported plugins panel now lists the calendar plugin by its new name, Calendar Enhanced + iCal.
+
 ## [6.3.2] - 2026-11-14
 
 ### Wearer-Visible Changes
