@@ -1,0 +1,452 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/plugins/dev/c/dev/dev_config.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v6.4.0" selected>v6.4.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__config_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">dev_config.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="dev__config_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;pebble.h&gt;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &quot;<a class="code" href="hrv__log_8h.html">health/hrv_log.h</a>&quot;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &quot;<a class="code" href="health__store_8h.html">io/stores/health_store.h</a>&quot;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &quot;<a class="code" href="system__store_8h.html">io/stores/system_store.h</a>&quot;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
+<div class="foldopen" id="foldopen00031" data-start="{" data-end="};">
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga679ad3447bb9eba149cf367cd9c0eff1">   31</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>{</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1ae7e38b85e1b38d1f4d4099ae55c0af04">   33</a></span>    <a class="code hl_enumvalue" href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1ae7e38b85e1b38d1f4d4099ae55c0af04">DEV_VALUE_NUMBER</a>, </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4">   34</a></span>    <a class="code hl_enumvalue" href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4">DEV_VALUE_TEXT</a>    </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>} <a class="code hl_enumeration" href="group__lib__dev.html#ga679ad3447bb9eba149cf367cd9c0eff1">DevValueType</a>;</div>
+</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span></div>
+<div class="foldopen" id="foldopen00038" data-start="{" data-end="};">
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structDevSetting.html">   38</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structDevSetting.html#a35e9170c3b0d38cf2438e4713263bdcc">   40</a></span>    <span class="keyword">const</span> uint32_t *<a class="code hl_variable" href="structDevSetting.html#a35e9170c3b0d38cf2438e4713263bdcc">key</a>; </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="structDevSetting.html#a2dd05a5ca53bdb72928c78a4b4427089">   41</a></span>    <a class="code hl_enumeration" href="group__lib__dev.html#ga679ad3447bb9eba149cf367cd9c0eff1">DevValueType</a> <a class="code hl_variable" href="structDevSetting.html#a2dd05a5ca53bdb72928c78a4b4427089">type</a>;   </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structDevSetting.html#a469e593a7d2f7b6c8dbecd14fb2cfe5a">   42</a></span>    int32_t <a class="code hl_variable" href="structDevSetting.html#a469e593a7d2f7b6c8dbecd14fb2cfe5a">number</a>;      </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="structDevSetting.html#a5d8e1eead7f62f455af73dbfe6d28603">   43</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structDevSetting.html#a5d8e1eead7f62f455af73dbfe6d28603">text</a>;    </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>} <a class="code hl_struct" href="structDevSetting.html">DevSetting</a>;</div>
+</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span></div>
+<div class="foldopen" id="foldopen00047" data-start="{" data-end="};">
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">   47</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>{</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    DEV_STORE_WEATHER,</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    DEV_STORE_HEALTH,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    DEV_STORE_SYSTEM,</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    DEV_STORE_PHONE,</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    DEV_STORE_MUSIC,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    DEV_STORE_STOCKS,</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    DEV_STORE_CALENDAR,</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    DEV_STORE_LOCATION,</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="group__lib__dev.html#gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2">   57</a></span>    <a class="code hl_enumvalue" href="group__lib__dev.html#gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2">DEV_STORE_COUNT</a> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>} <a class="code hl_enumeration" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a>;</div>
+</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga3288368bafa527ef05f6705a3a6808d8">   61</a></span><span class="preprocessor">#define DEV_NONE 0xFF</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span></div>
+<div class="foldopen" id="foldopen00064" data-start="{" data-end="};">
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structDevStep.html">   64</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>{</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="structDevStep.html#a862b0f4735d2b015bbb8b28d8e6333f0">   66</a></span>    uint16_t <a class="code hl_variable" href="structDevStep.html#a862b0f4735d2b015bbb8b28d8e6333f0">first</a>;     </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="structDevStep.html#a925706210d3c6d478c94c1abadbb8d08">   67</a></span>    uint16_t <a class="code hl_variable" href="structDevStep.html#a925706210d3c6d478c94c1abadbb8d08">count</a>;     </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structDevStep.html#a2151d57fec4baa9aa9e7f0700af79ec1">   68</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structDevStep.html#a2151d57fec4baa9aa9e7f0700af79ec1">layout</a>; </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="structDevStep.html#a08349ba6b7109881a94fde80289d4032">   69</a></span>    uint8_t <a class="code hl_variable" href="structDevStep.html#a08349ba6b7109881a94fde80289d4032">readings</a>;   </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>} <a class="code hl_struct" href="structDevStep.html">DevStep</a>;</div>
+</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span></div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="};">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="structDevReadings.html">   73</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>{</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structDevReadings.html#acbe4b2967ca2eaae485930435aab4c01">   75</a></span>    uint16_t <a class="code hl_variable" href="structDevReadings.html#acbe4b2967ca2eaae485930435aab4c01">minute</a>;                </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structDevReadings.html#a888ddc655ec4521bfc6034d8276ff825">   76</a></span>    uint8_t <a class="code hl_variable" href="structDevReadings.html#a888ddc655ec4521bfc6034d8276ff825">date</a>;                   </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structDevReadings.html#a19f191fe002fcf42d8a7847493b44b12">   77</a></span>    uint8_t <a class="code hl_variable" href="structDevReadings.html#a19f191fe002fcf42d8a7847493b44b12">store</a>[<a class="code hl_enumvalue" href="group__lib__dev.html#gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2">DEV_STORE_COUNT</a>]; </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>} <a class="code hl_struct" href="structDevReadings.html">DevReadings</a>;</div>
+</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span></div>
+<div class="foldopen" id="foldopen00081" data-start="{" data-end="};">
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="structDevDate.html">   81</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>{</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="structDevDate.html#ade1c9d6745e6593ead39b22e48a94ad3">   83</a></span>    int16_t <a class="code hl_variable" href="structDevDate.html#ade1c9d6745e6593ead39b22e48a94ad3">year</a>;      </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structDevDate.html#a602a6ae686e233fd864d739cc3a52dc9">   84</a></span>    uint8_t <a class="code hl_variable" href="structDevDate.html#a602a6ae686e233fd864d739cc3a52dc9">month</a>;     </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structDevDate.html#aeaf318f0b3e08719a24fc1baa93d7ca5">   85</a></span>    uint8_t <a class="code hl_variable" href="structDevDate.html#aeaf318f0b3e08719a24fc1baa93d7ca5">day</a>;       </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="structDevDate.html#ad803221f320da8258aea5b4937b4faea">   86</a></span>    uint8_t <a class="code hl_variable" href="structDevDate.html#ad803221f320da8258aea5b4937b4faea">weekday</a>;   </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="structDevDate.html#a4063531afb8cce5fe1cc093b93c6a1fb">   87</a></span>    uint16_t <a class="code hl_variable" href="structDevDate.html#a4063531afb8cce5fe1cc093b93c6a1fb">year_day</a>; </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>} <a class="code hl_struct" href="structDevDate.html">DevDate</a>;</div>
+</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span></div>
+<div class="foldopen" id="foldopen00091" data-start="{" data-end="};">
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="structDevRun.html">   91</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>{</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="structDevRun.html#ad479035547b1f2b11a810838e404efdd">   93</a></span>    uint16_t <a class="code hl_variable" href="structDevRun.html#ad479035547b1f2b11a810838e404efdd">first</a>; </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="structDevRun.html#a90e08733136121a0792eb64f9e8267b6">   94</a></span>    uint16_t <a class="code hl_variable" href="structDevRun.html#a90e08733136121a0792eb64f9e8267b6">count</a>; </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>} <a class="code hl_struct" href="structDevRun.html">DevRun</a>;</div>
+</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span></div>
+<div class="foldopen" id="foldopen00098" data-start="{" data-end="};">
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="structDevPanel.html">   98</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>{</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno"><a class="line" href="structDevPanel.html#a587563eedf0ff3c5ffb8a86c4af52f0c">  100</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structDevPanel.html#a587563eedf0ff3c5ffb8a86c4af52f0c">panel</a>; </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="structDevPanel.html#a5d5f57f75dd5b642190b1ffe9b4b9dce">  101</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structDevPanel.html#a5d5f57f75dd5b642190b1ffe9b4b9dce">size</a>;  </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>} <a class="code hl_struct" href="structDevPanel.html">DevPanel</a>;</div>
+</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span></div>
+<div class="foldopen" id="foldopen00105" data-start="{" data-end="};">
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="structDevHourReading.html">  105</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>{</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="structDevHourReading.html#a481f1d804904fd7e85b1b4270d9d6279">  107</a></span>    uint8_t <a class="code hl_variable" href="structDevHourReading.html#a481f1d804904fd7e85b1b4270d9d6279">hour</a>; </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="structDevHourReading.html#a41b83546cbfe7a884d68041dffd78c6c">  108</a></span>    uint8_t <a class="code hl_variable" href="structDevHourReading.html#a41b83546cbfe7a884d68041dffd78c6c">bpm</a>;  </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>} <a class="code hl_struct" href="structDevHourReading.html">DevHourReading</a>;</div>
+</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span></div>
+<div class="foldopen" id="foldopen00112" data-start="{" data-end="};">
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="structDevHrvReading.html">  112</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>{</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="structDevHrvReading.html#a7c6e17512be67f4926b3b6cd041ff564">  114</a></span>    uint16_t <a class="code hl_variable" href="structDevHrvReading.html#a7c6e17512be67f4926b3b6cd041ff564">minute</a>; </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="structDevHrvReading.html#a18cccd3789ecf1672e5babceeaa591cb">  115</a></span>    uint8_t <a class="code hl_variable" href="structDevHrvReading.html#a18cccd3789ecf1672e5babceeaa591cb">ms</a>;      </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="structDevHrvReading.html#a055160f46fe8f55622e7e9fc36b029ac">  116</a></span>    <a class="code hl_enumeration" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> <a class="code hl_variable" href="structDevHrvReading.html#a055160f46fe8f55622e7e9fc36b029ac">state</a>;  </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="structDevHrvReading.html#a1399eb8035a3bf586ffdc75451a51357">  117</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structDevHrvReading.html#a1399eb8035a3bf586ffdc75451a51357">asleep</a>;     </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>} <a class="code hl_struct" href="structDevHrvReading.html">DevHrvReading</a>;</div>
+</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span></div>
+<div class="foldopen" id="foldopen00121" data-start="{" data-end="};">
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno"><a class="line" href="structDevEvent.html">  121</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>{</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="structDevEvent.html#af5e1419132bd816da719aa078b5d9b5f">  123</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structDevEvent.html#af5e1419132bd816da719aa078b5d9b5f">title</a>;    </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno"><a class="line" href="structDevEvent.html#af0f3090d7297fded73d2e18b2f590dc4">  124</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structDevEvent.html#af0f3090d7297fded73d2e18b2f590dc4">location</a>; </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno"><a class="line" href="structDevEvent.html#aaea3a3cd92aefecf98d0cb8bed55f34b">  125</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structDevEvent.html#aaea3a3cd92aefecf98d0cb8bed55f34b">all_day</a>;         </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno"><a class="line" href="structDevEvent.html#ada6cd3b717cc6cab6c4bf651e9e8257e">  126</a></span>    int32_t <a class="code hl_variable" href="structDevEvent.html#ada6cd3b717cc6cab6c4bf651e9e8257e">in_minutes</a>;   </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno"><a class="line" href="structDevEvent.html#a730b2a0c5274081df9e7b714190f5161">  127</a></span>    int32_t <a class="code hl_variable" href="structDevEvent.html#a730b2a0c5274081df9e7b714190f5161">minutes</a>;      </div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno"><a class="line" href="structDevEvent.html#a17aca433948ba72facd6ed775dbd2708">  128</a></span>    int32_t <a class="code hl_variable" href="structDevEvent.html#a17aca433948ba72facd6ed775dbd2708">in_days</a>;      </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>} <a class="code hl_struct" href="structDevEvent.html">DevEvent</a>;</div>
+</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span></div>
+<div class="foldopen" id="foldopen00132" data-start="{" data-end="};">
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno"><a class="line" href="structDevHealth.html">  132</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>{</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="structDevHealth.html#a6e347cb87da7fa0d821215b44f64a7ce">  134</a></span>    <a class="code hl_struct" href="structHealthSeed.html">HealthSeed</a> <a class="code hl_variable" href="structDevHealth.html#a6e347cb87da7fa0d821215b44f64a7ce">seed</a>;              </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno"><a class="line" href="structDevHealth.html#ae7ccd7cae6c1ad60454c2c419982767b">  135</a></span>    <span class="keyword">const</span> <a class="code hl_struct" href="structDevHourReading.html">DevHourReading</a> *<a class="code hl_variable" href="structDevHealth.html#ae7ccd7cae6c1ad60454c2c419982767b">hr_day</a>; </div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno"><a class="line" href="structDevHealth.html#a370f27f47aa23b826aa6526167179598">  136</a></span>    uint16_t <a class="code hl_variable" href="structDevHealth.html#a370f27f47aa23b826aa6526167179598">hr_day_count</a>;        </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno"><a class="line" href="structDevHealth.html#a6d0745e9d933a41b7cb07a5286b4bfe4">  137</a></span>    <span class="keyword">const</span> <a class="code hl_struct" href="structDevHrvReading.html">DevHrvReading</a> *<a class="code hl_variable" href="structDevHealth.html#a6d0745e9d933a41b7cb07a5286b4bfe4">hrv_log</a>; </div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno"><a class="line" href="structDevHealth.html#a77d9f433b09099616298934f4799eb79">  138</a></span>    uint16_t <a class="code hl_variable" href="structDevHealth.html#a77d9f433b09099616298934f4799eb79">hrv_count</a>;           </div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>} <a class="code hl_struct" href="structDevHealth.html">DevHealth</a>;</div>
+</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span></div>
+<div class="foldopen" id="foldopen00142" data-start="{" data-end="};">
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno"><a class="line" href="structDevSystem.html">  142</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>{</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno"><a class="line" href="structDevSystem.html#af39e334ef34260e737170bcbb594ba93">  144</a></span>    <a class="code hl_struct" href="structSystemSeed.html">SystemSeed</a> <a class="code hl_variable" href="structDevSystem.html#af39e334ef34260e737170bcbb594ba93">seed</a>;      </div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="structDevSystem.html#a0d1151f2e0de174370ed2c1dfd5d8ec0">  145</a></span>    int32_t <a class="code hl_variable" href="structDevSystem.html#a0d1151f2e0de174370ed2c1dfd5d8ec0">alarm_in_min</a>; </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>} <a class="code hl_struct" href="structDevSystem.html">DevSystem</a>;</div>
+</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno"><a class="line" href="group__lib__dev.html#gad48bb03bf89822c657c3afd02edebe70">  155</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#gad48bb03bf89822c657c3afd02edebe70">dev_show_panel</a>(<span class="keywordtype">int</span> panel, <span class="keywordtype">int</span> size);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span></div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga4e8d69cd43d2406d1ebbc9d2ae56bc58">  164</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#ga4e8d69cd43d2406d1ebbc9d2ae56bc58">dev_show_layout</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *layout);</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="preprocessor">#if DEV_MODE</span></div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span></div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#gaf30f694e40ab6afd85e1968d4760430a">dev_config_apply_settings</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span></div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="keywordtype">bool</span> dev_config_holds(uint32_t key);</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span></div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>uint8_t <a class="code hl_function" href="group__lib__dev.html#ga0e8ac61910770193b47dd05ef3fc5957">dev_config_pick</a>(<a class="code hl_enumeration" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> store);</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span></div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#ga44e8f0128ee27bae8fedcbc7d767e60e">dev_config_pin</a>(<span class="keyword">struct</span> tm *when);</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span></div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__dev.html#gaca1272da503307b016c82d6507b5097d">dev_config_seed</a>(<a class="code hl_enumeration" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> store);</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span></div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>uint16_t <a class="code hl_function" href="group__lib__dev.html#ga4f6abc3104307260df803e409c3832d5">dev_config_walk_count</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span></div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#ga2dcf173ee99499b6a71740b0ac62bfcf">dev_config_walk_show</a>(uint16_t step);</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span></div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno"><a class="line" href="group__lib__dev.html#gaf30f694e40ab6afd85e1968d4760430a">  231</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#gaf30f694e40ab6afd85e1968d4760430a">dev_config_apply_settings</a>(<span class="keywordtype">void</span>) {}</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span></div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga0e8ac61910770193b47dd05ef3fc5957">  234</a></span><span class="keyword">static</span> <span class="keyword">inline</span> uint8_t <a class="code hl_function" href="group__lib__dev.html#ga0e8ac61910770193b47dd05ef3fc5957">dev_config_pick</a>(<a class="code hl_enumeration" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> store) { (void)store; <span class="keywordflow">return</span> <a class="code hl_define" href="group__lib__dev.html#ga3288368bafa527ef05f6705a3a6808d8">DEV_NONE</a>; }</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga44e8f0128ee27bae8fedcbc7d767e60e">  237</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#ga44e8f0128ee27bae8fedcbc7d767e60e">dev_config_pin</a>(<span class="keyword">struct</span> tm *when) { (void)when; }</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno"><a class="line" href="group__lib__dev.html#gaca1272da503307b016c82d6507b5097d">  240</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__dev.html#gaca1272da503307b016c82d6507b5097d">dev_config_seed</a>(<a class="code hl_enumeration" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> store) { (void)store; <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span></div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga4f6abc3104307260df803e409c3832d5">  243</a></span><span class="keyword">static</span> <span class="keyword">inline</span> uint16_t <a class="code hl_function" href="group__lib__dev.html#ga4f6abc3104307260df803e409c3832d5">dev_config_walk_count</a>(<span class="keywordtype">void</span>) { <span class="keywordflow">return</span> 0; }</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span></div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno"><a class="line" href="group__lib__dev.html#ga2dcf173ee99499b6a71740b0ac62bfcf">  246</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#ga2dcf173ee99499b6a71740b0ac62bfcf">dev_config_walk_show</a>(uint16_t step) { (void)step; }</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span> </div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span></div>
+<div class="ttc" id="agroup__lib__core_html_gae63b8153c70e7611881a2e05bec214a7"><div class="ttname"><a href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a></div><div class="ttdeci">HrvState</div><div class="ttdoc">What the wearer was doing through a reading&#39;s burst.</div><div class="ttdef"><b>Definition</b> hrv_log.h:34</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga0e8ac61910770193b47dd05ef3fc5957"><div class="ttname"><a href="group__lib__dev.html#ga0e8ac61910770193b47dd05ef3fc5957">dev_config_pick</a></div><div class="ttdeci">static uint8_t dev_config_pick(DevStore store)</div><div class="ttdoc">Has no seeds with dev mode off.</div><div class="ttdef"><b>Definition</b> dev_config.h:234</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga2dcf173ee99499b6a71740b0ac62bfcf"><div class="ttname"><a href="group__lib__dev.html#ga2dcf173ee99499b6a71740b0ac62bfcf">dev_config_walk_show</a></div><div class="ttdeci">static void dev_config_walk_show(uint16_t step)</div><div class="ttdoc">Does nothing with dev mode off.</div><div class="ttdef"><b>Definition</b> dev_config.h:246</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga3288368bafa527ef05f6705a3a6808d8"><div class="ttname"><a href="group__lib__dev.html#ga3288368bafa527ef05f6705a3a6808d8">DEV_NONE</a></div><div class="ttdeci">#define DEV_NONE</div><div class="ttdoc">The mark for no pick in a set of readings: a store left to the fixture, or a date left to the watch.</div><div class="ttdef"><b>Definition</b> dev_config.h:61</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga44e8f0128ee27bae8fedcbc7d767e60e"><div class="ttname"><a href="group__lib__dev.html#ga44e8f0128ee27bae8fedcbc7d767e60e">dev_config_pin</a></div><div class="ttdeci">static void dev_config_pin(struct tm *when)</div><div class="ttdoc">Leaves the time alone with dev mode off.</div><div class="ttdef"><b>Definition</b> dev_config.h:237</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga4e8d69cd43d2406d1ebbc9d2ae56bc58"><div class="ttname"><a href="group__lib__dev.html#ga4e8d69cd43d2406d1ebbc9d2ae56bc58">dev_show_layout</a></div><div class="ttdeci">void dev_show_layout(const char *layout)</div><div class="ttdoc">Shows one whole layout, for a walk with a step that has one. The face defines it, and the dev plugin ...</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga4f6abc3104307260df803e409c3832d5"><div class="ttname"><a href="group__lib__dev.html#ga4f6abc3104307260df803e409c3832d5">dev_config_walk_count</a></div><div class="ttdeci">static uint16_t dev_config_walk_count(void)</div><div class="ttdoc">Has no walk with dev mode off.</div><div class="ttdef"><b>Definition</b> dev_config.h:243</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga679ad3447bb9eba149cf367cd9c0eff1"><div class="ttname"><a href="group__lib__dev.html#ga679ad3447bb9eba149cf367cd9c0eff1">DevValueType</a></div><div class="ttdeci">DevValueType</div><div class="ttdoc">How a setting&#39;s value travels, the way the settings page sends it.</div><div class="ttdef"><b>Definition</b> dev_config.h:32</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga72f9ed7498486290682f9f71e83a35c2"><div class="ttname"><a href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a></div><div class="ttdeci">DevStore</div><div class="ttdoc">The stores a dev build seeds, for asking whether the config seeds one.</div><div class="ttdef"><b>Definition</b> dev_config.h:48</div></div>
+<div class="ttc" id="agroup__lib__dev_html_gaca1272da503307b016c82d6507b5097d"><div class="ttname"><a href="group__lib__dev.html#gaca1272da503307b016c82d6507b5097d">dev_config_seed</a></div><div class="ttdeci">static bool dev_config_seed(DevStore store)</div><div class="ttdoc">Seeds nothing with dev mode off.</div><div class="ttdef"><b>Definition</b> dev_config.h:240</div></div>
+<div class="ttc" id="agroup__lib__dev_html_gad48bb03bf89822c657c3afd02edebe70"><div class="ttname"><a href="group__lib__dev.html#gad48bb03bf89822c657c3afd02edebe70">dev_show_panel</a></div><div class="ttdeci">void dev_show_panel(int panel, int size)</div><div class="ttdoc">Shows one panel on its own at one size, for a walk that lists panels. The face defines it,...</div></div>
+<div class="ttc" id="agroup__lib__dev_html_gaf30f694e40ab6afd85e1968d4760430a"><div class="ttname"><a href="group__lib__dev.html#gaf30f694e40ab6afd85e1968d4760430a">dev_config_apply_settings</a></div><div class="ttdeci">static void dev_config_apply_settings(void)</div><div class="ttdoc">Does nothing with dev mode off.</div><div class="ttdef"><b>Definition</b> dev_config.h:231</div></div>
+<div class="ttc" id="agroup__lib__dev_html_gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4"><div class="ttname"><a href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4">DEV_VALUE_TEXT</a></div><div class="ttdeci">@ DEV_VALUE_TEXT</div><div class="ttdoc">Text.</div><div class="ttdef"><b>Definition</b> dev_config.h:34</div></div>
+<div class="ttc" id="agroup__lib__dev_html_gga679ad3447bb9eba149cf367cd9c0eff1ae7e38b85e1b38d1f4d4099ae55c0af04"><div class="ttname"><a href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1ae7e38b85e1b38d1f4d4099ae55c0af04">DEV_VALUE_NUMBER</a></div><div class="ttdeci">@ DEV_VALUE_NUMBER</div><div class="ttdoc">A whole number, a toggle as 0 or 1, or a colour as 0xRRGGBB.</div><div class="ttdef"><b>Definition</b> dev_config.h:33</div></div>
+<div class="ttc" id="agroup__lib__dev_html_gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2"><div class="ttname"><a href="group__lib__dev.html#gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2">DEV_STORE_COUNT</a></div><div class="ttdeci">@ DEV_STORE_COUNT</div><div class="ttdoc">How many stores there are, not a store of its own.</div><div class="ttdef"><b>Definition</b> dev_config.h:57</div></div>
+<div class="ttc" id="ahealth__store_8h_html"><div class="ttname"><a href="health__store_8h.html">health_store.h</a></div><div class="ttdoc">Active health store. It subscribes to the watch&#39;s health service itself and holds the readings,...</div></div>
+<div class="ttc" id="ahrv__log_8h_html"><div class="ttname"><a href="hrv__log_8h.html">hrv_log.h</a></div><div class="ttdoc">The heart rate variability readings kept for a face&#39;s panels: the last few with what the wearer was d...</div></div>
+<div class="ttc" id="astructDevDate_html"><div class="ttname"><a href="structDevDate.html">DevDate</a></div><div class="ttdoc">A pinned date, counted the way a struct tm counts it.</div><div class="ttdef"><b>Definition</b> dev_config.h:82</div></div>
+<div class="ttc" id="astructDevDate_html_a4063531afb8cce5fe1cc093b93c6a1fb"><div class="ttname"><a href="structDevDate.html#a4063531afb8cce5fe1cc093b93c6a1fb">DevDate::year_day</a></div><div class="ttdeci">uint16_t year_day</div><div class="ttdoc">0 for the first of January</div><div class="ttdef"><b>Definition</b> dev_config.h:87</div></div>
+<div class="ttc" id="astructDevDate_html_a602a6ae686e233fd864d739cc3a52dc9"><div class="ttname"><a href="structDevDate.html#a602a6ae686e233fd864d739cc3a52dc9">DevDate::month</a></div><div class="ttdeci">uint8_t month</div><div class="ttdoc">0 for January</div><div class="ttdef"><b>Definition</b> dev_config.h:84</div></div>
+<div class="ttc" id="astructDevDate_html_ad803221f320da8258aea5b4937b4faea"><div class="ttname"><a href="structDevDate.html#ad803221f320da8258aea5b4937b4faea">DevDate::weekday</a></div><div class="ttdeci">uint8_t weekday</div><div class="ttdoc">0 for Sunday</div><div class="ttdef"><b>Definition</b> dev_config.h:86</div></div>
+<div class="ttc" id="astructDevDate_html_ade1c9d6745e6593ead39b22e48a94ad3"><div class="ttname"><a href="structDevDate.html#ade1c9d6745e6593ead39b22e48a94ad3">DevDate::year</a></div><div class="ttdeci">int16_t year</div><div class="ttdoc">Years since 1900.</div><div class="ttdef"><b>Definition</b> dev_config.h:83</div></div>
+<div class="ttc" id="astructDevDate_html_aeaf318f0b3e08719a24fc1baa93d7ca5"><div class="ttname"><a href="structDevDate.html#aeaf318f0b3e08719a24fc1baa93d7ca5">DevDate::day</a></div><div class="ttdeci">uint8_t day</div><div class="ttdoc">The day of the month.</div><div class="ttdef"><b>Definition</b> dev_config.h:85</div></div>
+<div class="ttc" id="astructDevEvent_html"><div class="ttname"><a href="structDevEvent.html">DevEvent</a></div><div class="ttdoc">One agenda event, placed against the watch&#39;s clock when the stores are seeded.</div><div class="ttdef"><b>Definition</b> dev_config.h:122</div></div>
+<div class="ttc" id="astructDevEvent_html_a17aca433948ba72facd6ed775dbd2708"><div class="ttname"><a href="structDevEvent.html#a17aca433948ba72facd6ed775dbd2708">DevEvent::in_days</a></div><div class="ttdeci">int32_t in_days</div><div class="ttdoc">For an all-day event, how many days after today it falls.</div><div class="ttdef"><b>Definition</b> dev_config.h:128</div></div>
+<div class="ttc" id="astructDevEvent_html_a730b2a0c5274081df9e7b714190f5161"><div class="ttname"><a href="structDevEvent.html#a730b2a0c5274081df9e7b714190f5161">DevEvent::minutes</a></div><div class="ttdeci">int32_t minutes</div><div class="ttdoc">For a timed event, how long it runs.</div><div class="ttdef"><b>Definition</b> dev_config.h:127</div></div>
+<div class="ttc" id="astructDevEvent_html_aaea3a3cd92aefecf98d0cb8bed55f34b"><div class="ttname"><a href="structDevEvent.html#aaea3a3cd92aefecf98d0cb8bed55f34b">DevEvent::all_day</a></div><div class="ttdeci">bool all_day</div><div class="ttdoc">True for an all-day event.</div><div class="ttdef"><b>Definition</b> dev_config.h:125</div></div>
+<div class="ttc" id="astructDevEvent_html_ada6cd3b717cc6cab6c4bf651e9e8257e"><div class="ttname"><a href="structDevEvent.html#ada6cd3b717cc6cab6c4bf651e9e8257e">DevEvent::in_minutes</a></div><div class="ttdeci">int32_t in_minutes</div><div class="ttdoc">For a timed event, how many minutes from now it starts.</div><div class="ttdef"><b>Definition</b> dev_config.h:126</div></div>
+<div class="ttc" id="astructDevEvent_html_af0f3090d7297fded73d2e18b2f590dc4"><div class="ttname"><a href="structDevEvent.html#af0f3090d7297fded73d2e18b2f590dc4">DevEvent::location</a></div><div class="ttdeci">const char * location</div><div class="ttdoc">The place, or empty.</div><div class="ttdef"><b>Definition</b> dev_config.h:124</div></div>
+<div class="ttc" id="astructDevEvent_html_af5e1419132bd816da719aa078b5d9b5f"><div class="ttname"><a href="structDevEvent.html#af5e1419132bd816da719aa078b5d9b5f">DevEvent::title</a></div><div class="ttdeci">const char * title</div><div class="ttdoc">The title.</div><div class="ttdef"><b>Definition</b> dev_config.h:123</div></div>
+<div class="ttc" id="astructDevHealth_html"><div class="ttname"><a href="structDevHealth.html">DevHealth</a></div><div class="ttdoc">One health seed, with the day&#39;s heart rate and the HRV log the store builds from it.</div><div class="ttdef"><b>Definition</b> dev_config.h:133</div></div>
+<div class="ttc" id="astructDevHealth_html_a370f27f47aa23b826aa6526167179598"><div class="ttname"><a href="structDevHealth.html#a370f27f47aa23b826aa6526167179598">DevHealth::hr_day_count</a></div><div class="ttdeci">uint16_t hr_day_count</div><div class="ttdoc">How many readings hr_day holds.</div><div class="ttdef"><b>Definition</b> dev_config.h:136</div></div>
+<div class="ttc" id="astructDevHealth_html_a6d0745e9d933a41b7cb07a5286b4bfe4"><div class="ttname"><a href="structDevHealth.html#a6d0745e9d933a41b7cb07a5286b4bfe4">DevHealth::hrv_log</a></div><div class="ttdeci">const DevHrvReading * hrv_log</div><div class="ttdoc">The HRV log, or NULL to leave it out.</div><div class="ttdef"><b>Definition</b> dev_config.h:137</div></div>
+<div class="ttc" id="astructDevHealth_html_a6e347cb87da7fa0d821215b44f64a7ce"><div class="ttname"><a href="structDevHealth.html#a6e347cb87da7fa0d821215b44f64a7ce">DevHealth::seed</a></div><div class="ttdeci">HealthSeed seed</div><div class="ttdoc">The readings and curves the seed takes as they are.</div><div class="ttdef"><b>Definition</b> dev_config.h:134</div></div>
+<div class="ttc" id="astructDevHealth_html_a77d9f433b09099616298934f4799eb79"><div class="ttname"><a href="structDevHealth.html#a77d9f433b09099616298934f4799eb79">DevHealth::hrv_count</a></div><div class="ttdeci">uint16_t hrv_count</div><div class="ttdoc">How many readings hrv_log holds.</div><div class="ttdef"><b>Definition</b> dev_config.h:138</div></div>
+<div class="ttc" id="astructDevHealth_html_ae7ccd7cae6c1ad60454c2c419982767b"><div class="ttname"><a href="structDevHealth.html#ae7ccd7cae6c1ad60454c2c419982767b">DevHealth::hr_day</a></div><div class="ttdeci">const DevHourReading * hr_day</div><div class="ttdoc">The day&#39;s heart rate, or NULL to leave that part out.</div><div class="ttdef"><b>Definition</b> dev_config.h:135</div></div>
+<div class="ttc" id="astructDevHourReading_html"><div class="ttname"><a href="structDevHourReading.html">DevHourReading</a></div><div class="ttdoc">One heart rate reading for the day&#39;s chart.</div><div class="ttdef"><b>Definition</b> dev_config.h:106</div></div>
+<div class="ttc" id="astructDevHourReading_html_a41b83546cbfe7a884d68041dffd78c6c"><div class="ttname"><a href="structDevHourReading.html#a41b83546cbfe7a884d68041dffd78c6c">DevHourReading::bpm</a></div><div class="ttdeci">uint8_t bpm</div><div class="ttdoc">The reading.</div><div class="ttdef"><b>Definition</b> dev_config.h:108</div></div>
+<div class="ttc" id="astructDevHourReading_html_a481f1d804904fd7e85b1b4270d9d6279"><div class="ttname"><a href="structDevHourReading.html#a481f1d804904fd7e85b1b4270d9d6279">DevHourReading::hour</a></div><div class="ttdeci">uint8_t hour</div><div class="ttdoc">The hour it lands in, 0 for midnight.</div><div class="ttdef"><b>Definition</b> dev_config.h:107</div></div>
+<div class="ttc" id="astructDevHrvReading_html"><div class="ttname"><a href="structDevHrvReading.html">DevHrvReading</a></div><div class="ttdoc">One HRV reading for the log, placed by its minute of the day.</div><div class="ttdef"><b>Definition</b> dev_config.h:113</div></div>
+<div class="ttc" id="astructDevHrvReading_html_a055160f46fe8f55622e7e9fc36b029ac"><div class="ttname"><a href="structDevHrvReading.html#a055160f46fe8f55622e7e9fc36b029ac">DevHrvReading::state</a></div><div class="ttdeci">HrvState state</div><div class="ttdoc">What the wearer was doing.</div><div class="ttdef"><b>Definition</b> dev_config.h:116</div></div>
+<div class="ttc" id="astructDevHrvReading_html_a1399eb8035a3bf586ffdc75451a51357"><div class="ttname"><a href="structDevHrvReading.html#a1399eb8035a3bf586ffdc75451a51357">DevHrvReading::asleep</a></div><div class="ttdeci">bool asleep</div><div class="ttdoc">Whether Pebble said the wearer was asleep.</div><div class="ttdef"><b>Definition</b> dev_config.h:117</div></div>
+<div class="ttc" id="astructDevHrvReading_html_a18cccd3789ecf1672e5babceeaa591cb"><div class="ttname"><a href="structDevHrvReading.html#a18cccd3789ecf1672e5babceeaa591cb">DevHrvReading::ms</a></div><div class="ttdeci">uint8_t ms</div><div class="ttdoc">The reading.</div><div class="ttdef"><b>Definition</b> dev_config.h:115</div></div>
+<div class="ttc" id="astructDevHrvReading_html_a7c6e17512be67f4926b3b6cd041ff564"><div class="ttname"><a href="structDevHrvReading.html#a7c6e17512be67f4926b3b6cd041ff564">DevHrvReading::minute</a></div><div class="ttdeci">uint16_t minute</div><div class="ttdoc">Its minute of the day, which is never after the pinned clock.</div><div class="ttdef"><b>Definition</b> dev_config.h:114</div></div>
+<div class="ttc" id="astructDevPanel_html"><div class="ttname"><a href="structDevPanel.html">DevPanel</a></div><div class="ttdoc">One screen of a panel walk.</div><div class="ttdef"><b>Definition</b> dev_config.h:99</div></div>
+<div class="ttc" id="astructDevPanel_html_a587563eedf0ff3c5ffb8a86c4af52f0c"><div class="ttname"><a href="structDevPanel.html#a587563eedf0ff3c5ffb8a86c4af52f0c">DevPanel::panel</a></div><div class="ttdeci">int panel</div><div class="ttdoc">The panel, as the face&#39;s C knows it.</div><div class="ttdef"><b>Definition</b> dev_config.h:100</div></div>
+<div class="ttc" id="astructDevPanel_html_a5d5f57f75dd5b642190b1ffe9b4b9dce"><div class="ttname"><a href="structDevPanel.html#a5d5f57f75dd5b642190b1ffe9b4b9dce">DevPanel::size</a></div><div class="ttdeci">int size</div><div class="ttdoc">Its size, as the face&#39;s C knows it.</div><div class="ttdef"><b>Definition</b> dev_config.h:101</div></div>
+<div class="ttc" id="astructDevReadings_html"><div class="ttname"><a href="structDevReadings.html">DevReadings</a></div><div class="ttdoc">The clock, date, and seeds one screen shows. The launch&#39;s comes first in the table.</div><div class="ttdef"><b>Definition</b> dev_config.h:74</div></div>
+<div class="ttc" id="astructDevReadings_html_a19f191fe002fcf42d8a7847493b44b12"><div class="ttname"><a href="structDevReadings.html#a19f191fe002fcf42d8a7847493b44b12">DevReadings::store</a></div><div class="ttdeci">uint8_t store[DEV_STORE_COUNT]</div><div class="ttdoc">Which seed each store takes, by DevStore, or DEV_NONE for the fixture.</div><div class="ttdef"><b>Definition</b> dev_config.h:77</div></div>
+<div class="ttc" id="astructDevReadings_html_a888ddc655ec4521bfc6034d8276ff825"><div class="ttname"><a href="structDevReadings.html#a888ddc655ec4521bfc6034d8276ff825">DevReadings::date</a></div><div class="ttdeci">uint8_t date</div><div class="ttdoc">Which pinned date, or DEV_NONE for the watch&#39;s own.</div><div class="ttdef"><b>Definition</b> dev_config.h:76</div></div>
+<div class="ttc" id="astructDevReadings_html_acbe4b2967ca2eaae485930435aab4c01"><div class="ttname"><a href="structDevReadings.html#acbe4b2967ca2eaae485930435aab4c01">DevReadings::minute</a></div><div class="ttdeci">uint16_t minute</div><div class="ttdoc">The pinned clock, as minutes past midnight.</div><div class="ttdef"><b>Definition</b> dev_config.h:75</div></div>
+<div class="ttc" id="astructDevRun_html"><div class="ttname"><a href="structDevRun.html">DevRun</a></div><div class="ttdoc">A run of rows in a table, such as one agenda&#39;s events.</div><div class="ttdef"><b>Definition</b> dev_config.h:92</div></div>
+<div class="ttc" id="astructDevRun_html_a90e08733136121a0792eb64f9e8267b6"><div class="ttname"><a href="structDevRun.html#a90e08733136121a0792eb64f9e8267b6">DevRun::count</a></div><div class="ttdeci">uint16_t count</div><div class="ttdoc">How many rows it holds.</div><div class="ttdef"><b>Definition</b> dev_config.h:94</div></div>
+<div class="ttc" id="astructDevRun_html_ad479035547b1f2b11a810838e404efdd"><div class="ttname"><a href="structDevRun.html#ad479035547b1f2b11a810838e404efdd">DevRun::first</a></div><div class="ttdeci">uint16_t first</div><div class="ttdoc">Where the run starts.</div><div class="ttdef"><b>Definition</b> dev_config.h:93</div></div>
+<div class="ttc" id="astructDevSetting_html"><div class="ttname"><a href="structDevSetting.html">DevSetting</a></div><div class="ttdoc">One setting the config applies, by its message key.</div><div class="ttdef"><b>Definition</b> dev_config.h:39</div></div>
+<div class="ttc" id="astructDevSetting_html_a2dd05a5ca53bdb72928c78a4b4427089"><div class="ttname"><a href="structDevSetting.html#a2dd05a5ca53bdb72928c78a4b4427089">DevSetting::type</a></div><div class="ttdeci">DevValueType type</div><div class="ttdoc">How the value travels.</div><div class="ttdef"><b>Definition</b> dev_config.h:41</div></div>
+<div class="ttc" id="astructDevSetting_html_a35e9170c3b0d38cf2438e4713263bdcc"><div class="ttname"><a href="structDevSetting.html#a35e9170c3b0d38cf2438e4713263bdcc">DevSetting::key</a></div><div class="ttdeci">const uint32_t * key</div><div class="ttdoc">The MESSAGE_KEY_ it goes on, which the SDK fills in at launch.</div><div class="ttdef"><b>Definition</b> dev_config.h:40</div></div>
+<div class="ttc" id="astructDevSetting_html_a469e593a7d2f7b6c8dbecd14fb2cfe5a"><div class="ttname"><a href="structDevSetting.html#a469e593a7d2f7b6c8dbecd14fb2cfe5a">DevSetting::number</a></div><div class="ttdeci">int32_t number</div><div class="ttdoc">The value, for a number.</div><div class="ttdef"><b>Definition</b> dev_config.h:42</div></div>
+<div class="ttc" id="astructDevSetting_html_a5d8e1eead7f62f455af73dbfe6d28603"><div class="ttname"><a href="structDevSetting.html#a5d8e1eead7f62f455af73dbfe6d28603">DevSetting::text</a></div><div class="ttdeci">const char * text</div><div class="ttdoc">The value, for text.</div><div class="ttdef"><b>Definition</b> dev_config.h:43</div></div>
+<div class="ttc" id="astructDevStep_html"><div class="ttname"><a href="structDevStep.html">DevStep</a></div><div class="ttdoc">One screen of a walk the config lays out as steps.</div><div class="ttdef"><b>Definition</b> dev_config.h:65</div></div>
+<div class="ttc" id="astructDevStep_html_a08349ba6b7109881a94fde80289d4032"><div class="ttname"><a href="structDevStep.html#a08349ba6b7109881a94fde80289d4032">DevStep::readings</a></div><div class="ttdeci">uint8_t readings</div><div class="ttdoc">Which set of readings it shows, by its place in the table of sets.</div><div class="ttdef"><b>Definition</b> dev_config.h:69</div></div>
+<div class="ttc" id="astructDevStep_html_a2151d57fec4baa9aa9e7f0700af79ec1"><div class="ttname"><a href="structDevStep.html#a2151d57fec4baa9aa9e7f0700af79ec1">DevStep::layout</a></div><div class="ttdeci">const char * layout</div><div class="ttdoc">What it hands dev_show_layout, or NULL to leave the layout alone.</div><div class="ttdef"><b>Definition</b> dev_config.h:68</div></div>
+<div class="ttc" id="astructDevStep_html_a862b0f4735d2b015bbb8b28d8e6333f0"><div class="ttname"><a href="structDevStep.html#a862b0f4735d2b015bbb8b28d8e6333f0">DevStep::first</a></div><div class="ttdeci">uint16_t first</div><div class="ttdoc">Where its settings start in the walk&#39;s settings table.</div><div class="ttdef"><b>Definition</b> dev_config.h:66</div></div>
+<div class="ttc" id="astructDevStep_html_a925706210d3c6d478c94c1abadbb8d08"><div class="ttname"><a href="structDevStep.html#a925706210d3c6d478c94c1abadbb8d08">DevStep::count</a></div><div class="ttdeci">uint16_t count</div><div class="ttdoc">How many settings it applies.</div><div class="ttdef"><b>Definition</b> dev_config.h:67</div></div>
+<div class="ttc" id="astructDevSystem_html"><div class="ttname"><a href="structDevSystem.html">DevSystem</a></div><div class="ttdoc">One system seed, with its next alarm counted from when the stores are seeded.</div><div class="ttdef"><b>Definition</b> dev_config.h:143</div></div>
+<div class="ttc" id="astructDevSystem_html_a0d1151f2e0de174370ed2c1dfd5d8ec0"><div class="ttname"><a href="structDevSystem.html#a0d1151f2e0de174370ed2c1dfd5d8ec0">DevSystem::alarm_in_min</a></div><div class="ttdeci">int32_t alarm_in_min</div><div class="ttdoc">Minutes until the next alarm, or 0 for none.</div><div class="ttdef"><b>Definition</b> dev_config.h:145</div></div>
+<div class="ttc" id="astructDevSystem_html_af39e334ef34260e737170bcbb594ba93"><div class="ttname"><a href="structDevSystem.html#af39e334ef34260e737170bcbb594ba93">DevSystem::seed</a></div><div class="ttdeci">SystemSeed seed</div><div class="ttdoc">The battery and the link.</div><div class="ttdef"><b>Definition</b> dev_config.h:144</div></div>
+<div class="ttc" id="astructHealthSeed_html"><div class="ttname"><a href="structHealthSeed.html">HealthSeed</a></div><div class="ttdoc">Optional prefill, or pinned readings when live = false. A part&#39;s seed is only taken when the face nam...</div><div class="ttdef"><b>Definition</b> health_store.h:113</div></div>
+<div class="ttc" id="astructSystemSeed_html"><div class="ttname"><a href="structSystemSeed.html">SystemSeed</a></div><div class="ttdoc">Optional prefill, or pinned state when live = false.</div><div class="ttdef"><b>Definition</b> system_store.h:88</div></div>
+<div class="ttc" id="asystem__store_8h_html"><div class="ttname"><a href="system__store_8h.html">system_store.h</a></div><div class="ttdoc">Active system store: the watch&#39;s own battery, bluetooth and next-alarm state. It subscribes to the ba...</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>plugins</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><a href="dev__config_8h.html">dev_config.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
