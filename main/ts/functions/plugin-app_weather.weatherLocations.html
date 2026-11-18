@@ -57,9 +57,10 @@
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Reads the wearer's places from the Pebble app's built-in Preferences plugin.</p>
 <p>It subscribes to them as well, so the Pebble app runs the plugin again when the wearer changes the
-list. Naming the built-in by its uuid reaches it whichever plugin the wearer prefers. A read the
-Pebble app refuses, such as one before the wearer allows Location, hands back no places and the
-reason.</p>
+list. Naming the built-in by its uuid reaches it whichever plugin the wearer prefers. A place with
+no coordinates is left out, as <code>placesFrom</code> leaves it. A read the Pebble app refuses, such as one
+before the wearer allows Location, hands back no places and the reason, or <code>NO_REASON</code> when the
+refusal names none.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -70,7 +71,7 @@ reason.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">places</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/plugin-app_weather.WeatherPlace.html" class="tsd-signature-type tsd-kind-interface">WeatherPlace</a><span class="tsd-signature-symbol">[]</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The places in the wearer's order, and the reason when the read failed.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d1ec7559acc8e8f7329d0d3132fb1da20271984e/src/ts/plugin-app/weather.ts#L560">plugin-app/weather.ts:560</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-app/weather.ts#L649">plugin-app/weather.ts:649</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

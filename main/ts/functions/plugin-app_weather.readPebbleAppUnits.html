@@ -57,9 +57,10 @@
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Reads the wearer's units from the Pebble app's built-in Preferences plugin, for a caller that has to
 tell the Pebble app's own units from the defaults, such as a settings page showing them.</p>
-<p>A read the Pebble app refuses answers no units and the reason, such as <code>PERMISSION_DENIED</code>, and a
-reply that names none of the units answers no units and <code>NO_UNITS</code>. Only a reply that names them
-answers units, with the plugin's own choices over them and the defaults for any it leaves out.</p>
+<p>A read the Pebble app refuses answers no units and the reason, such as <code>PERMISSION_DENIED</code>, or
+<code>NO_REASON</code> when the refusal names none, and a reply that names none of the units answers no units
+and <code>NO_UNITS</code>. Only a reply that names them answers units, with the plugin's own choices over them
+and the defaults for any it leaves out.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -73,7 +74,7 @@ answers units, with the plugin's own choices over them and the defaults for any 
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">units</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/plugin-app_weather.WeatherUnits.html" class="tsd-signature-type tsd-kind-interface">WeatherUnits</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The units, or null and the reason there are none.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d1ec7559acc8e8f7329d0d3132fb1da20271984e/src/ts/plugin-app/weather.ts#L631">plugin-app/weather.ts:631</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-app/weather.ts#L717">plugin-app/weather.ts:717</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

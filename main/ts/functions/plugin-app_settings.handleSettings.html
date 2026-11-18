@@ -53,13 +53,18 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="handlesettings"><span class="tsd-kind-call-signature">handleSettings</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/plugin-app_settings.SettingsOptions.html" class="tsd-signature-type tsd-kind-interface">SettingsOptions</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">pebble</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/plugin-app_runtime.PluginPebble.html" class="tsd-signature-type tsd-kind-interface">PluginPebble</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">storage</span><span class="tsd-signature-symbol">?:</span> <a href="../types/plugin-app_settings.SettingsStorage.html" class="tsd-signature-type tsd-kind-type-alias">SettingsStorage</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#handlesettings" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="handlesettings"><span class="tsd-kind-call-signature">handleSettings</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/plugin-app_settings.SettingsOptions.html" class="tsd-signature-type tsd-kind-interface">SettingsOptions</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">pebble</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/plugin-app_runtime.PluginPebble.html" class="tsd-signature-type tsd-kind-interface">PluginPebble</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">storage</span><span class="tsd-signature-symbol">?:</span> <a href="../types/plugin-app_settings.SettingsStorage.html" class="tsd-signature-type tsd-kind-type-alias">SettingsStorage</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">hooks</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/plugin-app_settings.SettingsHooks.html" class="tsd-signature-type tsd-kind-interface">SettingsHooks</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#handlesettings" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Answers the plugin app's settings page.</p>
 <p>A load gets every setting, secret ones included, so the page opens on what was saved, and a secret
 that cannot be read fails the load so the page cannot save over it. A save keeps the settings and
 then has the Pebble app read the sources the plugin names again, so a changed setting shows without
 waiting for the next refresh. Anything that fails is answered with the reason, which the page shows.</p>
+<p>The plugin runtime takes one config handler, so a plugin app that answers messages of its own, or
+acts on a save, does it through <code>hooks</code> rather than a handler of its own. With no hooks, a message
+that is neither the load nor the save is answered with an error.</p>
+<p>Saves are kept one at a time, in the order they came in, so a second save never reads the
+settings halfway through the first one's write.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -72,10 +77,13 @@ waiting for the next refresh. Anything that fails is answered with the reason, w
 </div></li>
 <li><span><span class="tsd-kind-parameter">storage</span>: <a href="../types/plugin-app_settings.SettingsStorage.html" class="tsd-signature-type tsd-kind-type-alias">SettingsStorage</a><span class="tsd-signature-symbol"> = localStorage</span></span>
 <div class="tsd-comment tsd-typography"><p>Where the settings that are not secret are kept, normally <code>localStorage</code>.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">hooks</span>: <a href="../interfaces/plugin-app_settings.SettingsHooks.html" class="tsd-signature-type tsd-kind-interface">SettingsHooks</a><span class="tsd-signature-symbol"> = {}</span></span>
+<div class="tsd-comment tsd-typography"><p>The plugin app's answer to its own messages, and what it does once a save is kept.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d1ec7559acc8e8f7329d0d3132fb1da20271984e/src/ts/plugin-app/settings.ts#L125">plugin-app/settings.ts:125</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-app/settings.ts#L213">plugin-app/settings.ts:213</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

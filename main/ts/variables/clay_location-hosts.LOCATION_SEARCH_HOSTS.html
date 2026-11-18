@@ -51,15 +51,10 @@
 <li><a href="" aria-current="page">LOCATION_SEARCH_HOSTS</a></li></ul>
 <h1>Variable LOCATION_SEARCH_HOSTS<code class="tsd-tag">Const</code></h1></div>
 <div class="tsd-signature"><span class="tsd-kind-variable">LOCATION_SEARCH_HOSTS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></div>
-<div class="tsd-comment tsd-typography"><p>The hosts the location search calls from inside the settings page: Open-Meteo's geocoder for the
-places, and its forecast call for a place's time zone.</p>
-<p>The search writes its URLs out in full, since Clay runs its code in the webview where it reaches
-nothing outside itself, and a spec checks this list against every host those URLs name. The plugin
-page build checks a plugin app's permissions against it. Node runs that build straight from its
-source, so this file imports nothing.</p>
+<div class="tsd-comment tsd-typography"><p>Every host the location search can call.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d1ec7559acc8e8f7329d0d3132fb1da20271984e/src/ts/clay/location-hosts.ts#L10">clay/location-hosts.ts:10</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/clay/location-hosts.ts#L19">clay/location-hosts.ts:19</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
