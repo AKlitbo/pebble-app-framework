@@ -9836,12 +9836,26 @@
     <path>src/plugins/dev/c/dev/</path>
     <filename>dev__config_8h.html</filename>
     <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
     <class kind="struct">DevSetting</class>
     <class kind="struct">DevStep</class>
+    <class kind="struct">DevReadings</class>
+    <class kind="struct">DevDate</class>
+    <class kind="struct">DevRun</class>
     <class kind="struct">DevPanel</class>
     <class kind="struct">DevHourReading</class>
     <class kind="struct">DevHrvReading</class>
     <class kind="struct">DevEvent</class>
+    <class kind="struct">DevHealth</class>
+    <class kind="struct">DevSystem</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>DEV_NONE</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga3288368bafa527ef05f6705a3a6808d8</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="enumeration">
       <type></type>
       <name>DevValueType</name>
@@ -9868,6 +9882,12 @@
       <anchor>ga72f9ed7498486290682f9f71e83a35c2</anchor>
       <arglist></arglist>
     </member>
+    <member kind="enumvalue">
+      <name>DEV_STORE_COUNT</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function">
       <type>void</type>
       <name>dev_show_panel</name>
@@ -9888,6 +9908,13 @@
       <anchorfile>group__lib__dev.html</anchorfile>
       <anchor>gaf30f694e40ab6afd85e1968d4760430a</anchor>
       <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>dev_config_pick</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga0e8ac61910770193b47dd05ef3fc5957</anchor>
+      <arglist>(DevStore store)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
@@ -9911,10 +9938,10 @@
       <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
-      <type>static bool</type>
+      <type>static void</type>
       <name>dev_config_walk_show</name>
       <anchorfile>group__lib__dev.html</anchorfile>
-      <anchor>ga69106cf7c82db20167ad3950ddafd238</anchor>
+      <anchor>ga2dcf173ee99499b6a71740b0ac62bfcf</anchor>
       <arglist>(uint16_t step)</arglist>
     </member>
   </compound>
@@ -9988,10 +10015,38 @@
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
-      <name>apply_shot</name>
+      <name>seed_rest_store</name>
       <anchorfile>dev__walk_8c.html</anchorfile>
-      <anchor>a626e6bc16739d5be4d8e8ff0e4233ecb</anchor>
-      <arglist>(uint8_t index)</arglist>
+      <anchor>ac3ef341c5f6409e64a09d12cfd2cd308</anchor>
+      <arglist>(DevStore store)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>seed_rest</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>af6eea15621d14fff2f2d48ea651b26a6</anchor>
+      <arglist>(bool all)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>repaint</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a5a83e9755898afb2b344fcf4dbbbef8c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>show_theme</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>aef8cd635412bba94697c47e838fddbca</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>show_step</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a8470f3e887d81bbf0718c59caddfe4e9</anchor>
+      <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
@@ -10076,6 +10131,20 @@
       <anchorfile>dev__walk_8c.html</anchorfile>
       <anchor>ab5090bdb6421b46ebdbb010b88a0dae2</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const DevStore</type>
+      <name>s_rest</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a98921b1adb1a49cb0b5a46fd09532248</anchor>
+      <arglist>[]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_rest_picks</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a16cc87be5d34ca09cdcd572bac330b36</anchor>
+      <arglist>[ARRAY_LENGTH(s_rest)]</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -10545,6 +10614,45 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>DevDate</name>
+    <filename>structDevDate.html</filename>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>year</name>
+      <anchorfile>structDevDate.html</anchorfile>
+      <anchor>ade1c9d6745e6593ead39b22e48a94ad3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>month</name>
+      <anchorfile>structDevDate.html</anchorfile>
+      <anchor>a602a6ae686e233fd864d739cc3a52dc9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>day</name>
+      <anchorfile>structDevDate.html</anchorfile>
+      <anchor>aeaf318f0b3e08719a24fc1baa93d7ca5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>weekday</name>
+      <anchorfile>structDevDate.html</anchorfile>
+      <anchor>ad803221f320da8258aea5b4937b4faea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>year_day</name>
+      <anchorfile>structDevDate.html</anchorfile>
+      <anchor>a4063531afb8cce5fe1cc093b93c6a1fb</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>DevEvent</name>
     <filename>structDevEvent.html</filename>
     <member kind="variable">
@@ -10587,6 +10695,45 @@
       <name>in_days</name>
       <anchorfile>structDevEvent.html</anchorfile>
       <anchor>a17aca433948ba72facd6ed775dbd2708</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevHealth</name>
+    <filename>structDevHealth.html</filename>
+    <member kind="variable">
+      <type>HealthSeed</type>
+      <name>seed</name>
+      <anchorfile>structDevHealth.html</anchorfile>
+      <anchor>a6e347cb87da7fa0d821215b44f64a7ce</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const DevHourReading *</type>
+      <name>hr_day</name>
+      <anchorfile>structDevHealth.html</anchorfile>
+      <anchor>ae7ccd7cae6c1ad60454c2c419982767b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hr_day_count</name>
+      <anchorfile>structDevHealth.html</anchorfile>
+      <anchor>a370f27f47aa23b826aa6526167179598</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const DevHrvReading *</type>
+      <name>hrv_log</name>
+      <anchorfile>structDevHealth.html</anchorfile>
+      <anchor>a6d0745e9d933a41b7cb07a5286b4bfe4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_count</name>
+      <anchorfile>structDevHealth.html</anchorfile>
+      <anchor>a77d9f433b09099616298934f4799eb79</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -10655,6 +10802,49 @@
       <name>size</name>
       <anchorfile>structDevPanel.html</anchorfile>
       <anchor>a5d5f57f75dd5b642190b1ffe9b4b9dce</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevReadings</name>
+    <filename>structDevReadings.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>minute</name>
+      <anchorfile>structDevReadings.html</anchorfile>
+      <anchor>acbe4b2967ca2eaae485930435aab4c01</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>date</name>
+      <anchorfile>structDevReadings.html</anchorfile>
+      <anchor>a888ddc655ec4521bfc6034d8276ff825</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>store</name>
+      <anchorfile>structDevReadings.html</anchorfile>
+      <anchor>a19f191fe002fcf42d8a7847493b44b12</anchor>
+      <arglist>[DEV_STORE_COUNT]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevRun</name>
+    <filename>structDevRun.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>first</name>
+      <anchorfile>structDevRun.html</anchorfile>
+      <anchor>ad479035547b1f2b11a810838e404efdd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>count</name>
+      <anchorfile>structDevRun.html</anchorfile>
+      <anchor>a90e08733136121a0792eb64f9e8267b6</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -10765,6 +10955,31 @@
       <name>layout</name>
       <anchorfile>structDevStep.html</anchorfile>
       <anchor>a2151d57fec4baa9aa9e7f0700af79ec1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>readings</name>
+      <anchorfile>structDevStep.html</anchorfile>
+      <anchor>a08349ba6b7109881a94fde80289d4032</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevSystem</name>
+    <filename>structDevSystem.html</filename>
+    <member kind="variable">
+      <type>SystemSeed</type>
+      <name>seed</name>
+      <anchorfile>structDevSystem.html</anchorfile>
+      <anchor>af39e334ef34260e737170bcbb594ba93</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int32_t</type>
+      <name>alarm_in_min</name>
+      <anchorfile>structDevSystem.html</anchorfile>
+      <anchor>a0d1151f2e0de174370ed2c1dfd5d8ec0</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -17364,11 +17579,23 @@
     <file path="src/plugins/dev/c/dev/">dev_walk.h</file>
     <class kind="struct">DevSetting</class>
     <class kind="struct">DevStep</class>
+    <class kind="struct">DevReadings</class>
+    <class kind="struct">DevDate</class>
+    <class kind="struct">DevRun</class>
     <class kind="struct">DevPanel</class>
     <class kind="struct">DevHourReading</class>
     <class kind="struct">DevHrvReading</class>
     <class kind="struct">DevEvent</class>
+    <class kind="struct">DevHealth</class>
+    <class kind="struct">DevSystem</class>
     <class kind="struct">[struct].s_fixed</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>DEV_NONE</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga3288368bafa527ef05f6705a3a6808d8</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="enumeration">
       <type></type>
       <name>DevValueType</name>
@@ -17393,6 +17620,12 @@
       <name>DevStore</name>
       <anchorfile>group__lib__dev.html</anchorfile>
       <anchor>ga72f9ed7498486290682f9f71e83a35c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_STORE_COUNT</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -17442,6 +17675,13 @@
       <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>dev_config_pick</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga0e8ac61910770193b47dd05ef3fc5957</anchor>
+      <arglist>(DevStore store)</arglist>
+    </member>
+    <member kind="function" static="yes">
       <type>static void</type>
       <name>dev_config_pin</name>
       <anchorfile>group__lib__dev.html</anchorfile>
@@ -17463,10 +17703,10 @@
       <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
-      <type>static bool</type>
+      <type>static void</type>
       <name>dev_config_walk_show</name>
       <anchorfile>group__lib__dev.html</anchorfile>
-      <anchor>ga69106cf7c82db20167ad3950ddafd238</anchor>
+      <anchor>ga2dcf173ee99499b6a71740b0ac62bfcf</anchor>
       <arglist>(uint16_t step)</arglist>
     </member>
     <member kind="function" static="yes">

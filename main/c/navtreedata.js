@@ -53,11 +53,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"group__lib__core.html#ga6b4dbe785f6d28d845b326a152444ddd",
-"group__lib__settings.html#ga3af4893cdd074306b3fcc30df1cb8a00",
-"group__lib__system.html#ga68e3aacc6c4efcb6b2827627e09da299",
-"structHealthSeed.html#a8a4f5427747cc9c610f9a4d762f60e82",
-"structWeatherState.html"
+"group__lib__core.html#ga694e9c38004c250485939cbf5c33ea1f",
+"group__lib__settings.html#ga25de3b313f6a766c08b5af9f3cac864d",
+"group__lib__stores.html#gafb83e889fc10f054eb75c665b53d6de1",
+"structHealthConfig.html#ada15ad269a3134ff2ebb721a1c2aeef1",
+"structWeatherMessage.html#a7b03071ef02a2a9a5906f65735f1b010"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

@@ -195,10 +195,12 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__config_8h
 </div><!--header-->
 <div class="contents">
 
-<p>What a dev build takes from the unit's paf.dev.config.json beyond the walk and the clock: the date, the settings it applies at launch, the readings it seeds in place of the fixture, and the steps of a walk the file lays out as a list.  
+<p>What a dev build takes from the unit's paf.dev.config.json beyond the walk: the clock and date each screen pins, the settings it applies at launch, the readings it seeds in place of the fixture, and the steps of a walk the file lays out as a list.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;pebble.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="hrv__log_8h_source.html">health/hrv_log.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="health__store_8h_source.html">io/stores/health_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
 </div>
 <p><a href="dev__config_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -208,6 +210,12 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One setting the config applies, by its message key.  <a href="structDevSetting.html#details">More...</a><br /></td></tr>
 <tr class="memitem:DevStep" id="r_DevStep"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevStep.html">DevStep</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One screen of a walk the config lays out as steps.  <a href="structDevStep.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevReadings" id="r_DevReadings"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevReadings.html">DevReadings</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The clock, date, and seeds one screen shows. The launch's comes first in the table.  <a href="structDevReadings.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevDate" id="r_DevDate"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevDate.html">DevDate</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pinned date, counted the way a struct tm counts it.  <a href="structDevDate.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevRun" id="r_DevRun"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevRun.html">DevRun</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A run of rows in a table, such as one agenda's events.  <a href="structDevRun.html#details">More...</a><br /></td></tr>
 <tr class="memitem:DevPanel" id="r_DevPanel"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevPanel.html">DevPanel</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One screen of a panel walk.  <a href="structDevPanel.html#details">More...</a><br /></td></tr>
 <tr class="memitem:DevHourReading" id="r_DevHourReading"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevHourReading.html">DevHourReading</a></td></tr>
@@ -216,6 +224,16 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One HRV reading for the log, placed by its minute of the day.  <a href="structDevHrvReading.html#details">More...</a><br /></td></tr>
 <tr class="memitem:DevEvent" id="r_DevEvent"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevEvent.html">DevEvent</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One agenda event, placed against the watch's clock when the stores are seeded.  <a href="structDevEvent.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevHealth" id="r_DevHealth"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevHealth.html">DevHealth</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One health seed, with the day's heart rate and the HRV log the store builds from it.  <a href="structDevHealth.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevSystem" id="r_DevSystem"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevSystem.html">DevSystem</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One system seed, with its next alarm counted from when the stores are seeded.  <a href="structDevSystem.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga3288368bafa527ef05f6705a3a6808d8" id="r_ga3288368bafa527ef05f6705a3a6808d8"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>DEV_NONE</b>&#160;&#160;&#160;0xFF</td></tr>
+<tr class="memdesc:ga3288368bafa527ef05f6705a3a6808d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The mark for no pick in a set of readings: a store left to the fixture, or a date left to the watch. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -223,7 +241,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="group__lib__dev.html#gga679ad3447bb9eba149cf367cd9c0eff1a63afa11ba69e4378510e7fd2b04381a4">DEV_VALUE_TEXT</a>
  }</td></tr>
 <tr class="memdesc:ga679ad3447bb9eba149cf367cd9c0eff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">How a setting's value travels, the way the settings page sends it.  <a href="group__lib__dev.html#ga679ad3447bb9eba149cf367cd9c0eff1">More...</a><br /></td></tr>
-<tr class="memitem:ga72f9ed7498486290682f9f71e83a35c2" id="r_ga72f9ed7498486290682f9f71e83a35c2"><td class="memItemLeft"><a id="ga72f9ed7498486290682f9f71e83a35c2" name="ga72f9ed7498486290682f9f71e83a35c2"></a>enum &#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> { <br />
+<tr class="memitem:ga72f9ed7498486290682f9f71e83a35c2" id="r_ga72f9ed7498486290682f9f71e83a35c2"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> { <br />
 &#160;&#160;<b>DEV_STORE_WEATHER</b>
 , <b>DEV_STORE_HEALTH</b>
 , <b>DEV_STORE_SYSTEM</b>
@@ -233,32 +251,36 @@ Enumerations</h2></td></tr>
 , <b>DEV_STORE_STOCKS</b>
 , <b>DEV_STORE_CALENDAR</b>
 , <b>DEV_STORE_LOCATION</b>
+, <br />
+&#160;&#160;<a class="el" href="group__lib__dev.html#gga72f9ed7498486290682f9f71e83a35c2a48645b2e6a5c3efc51e5ae3956b240c2">DEV_STORE_COUNT</a>
 <br />
  }</td></tr>
-<tr class="memdesc:ga72f9ed7498486290682f9f71e83a35c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The stores a dev build seeds, for asking whether the config seeds one. <br /></td></tr>
+<tr class="memdesc:ga72f9ed7498486290682f9f71e83a35c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The stores a dev build seeds, for asking whether the config seeds one.  <a href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gad48bb03bf89822c657c3afd02edebe70" id="r_gad48bb03bf89822c657c3afd02edebe70"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gad48bb03bf89822c657c3afd02edebe70">dev_show_panel</a> (int panel, int size)</td></tr>
 <tr class="memdesc:gad48bb03bf89822c657c3afd02edebe70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows one panel on its own at one size, for a walk that lists panels. The face defines it, and the dev plugin calls it on each step of the walk, then runs the face's theme hook and rebuilds.  <br /></td></tr>
 <tr class="memitem:ga4e8d69cd43d2406d1ebbc9d2ae56bc58" id="r_ga4e8d69cd43d2406d1ebbc9d2ae56bc58"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga4e8d69cd43d2406d1ebbc9d2ae56bc58">dev_show_layout</a> (const char *layout)</td></tr>
-<tr class="memdesc:ga4e8d69cd43d2406d1ebbc9d2ae56bc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows one whole layout, for a walk that lists layouts. The face defines it, and the dev plugin calls it on each step that has a layout, after the step's settings, then runs the face's theme hook and rebuilds.  <br /></td></tr>
+<tr class="memdesc:ga4e8d69cd43d2406d1ebbc9d2ae56bc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows one whole layout, for a walk with a step that has one. The face defines it, and the dev plugin calls it on each step that has a layout, after the step's settings, then seeds the stores, runs the face's theme hook, and rebuilds. A face whose walks have no layouts leaves it out.  <br /></td></tr>
 <tr class="memitem:gaf30f694e40ab6afd85e1968d4760430a" id="r_gaf30f694e40ab6afd85e1968d4760430a"><td class="memItemLeft">
 static void&#160;</td><td class="memItemRight"><b>dev_config_apply_settings</b> (void)</td></tr>
 <tr class="memdesc:gaf30f694e40ab6afd85e1968d4760430a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing with dev mode off. <br /></td></tr>
+<tr class="memitem:ga0e8ac61910770193b47dd05ef3fc5957" id="r_ga0e8ac61910770193b47dd05ef3fc5957"><td class="memItemLeft">static uint8_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga0e8ac61910770193b47dd05ef3fc5957">dev_config_pick</a> (<a class="el" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> store)</td></tr>
+<tr class="memdesc:ga0e8ac61910770193b47dd05ef3fc5957"><td class="mdescLeft">&#160;</td><td class="mdescRight">Has no seeds with dev mode off.  <br /></td></tr>
 <tr class="memitem:ga44e8f0128ee27bae8fedcbc7d767e60e" id="r_ga44e8f0128ee27bae8fedcbc7d767e60e"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga44e8f0128ee27bae8fedcbc7d767e60e">dev_config_pin</a> (struct tm *when)</td></tr>
 <tr class="memdesc:ga44e8f0128ee27bae8fedcbc7d767e60e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Leaves the time alone with dev mode off.  <br /></td></tr>
 <tr class="memitem:gaca1272da503307b016c82d6507b5097d" id="r_gaca1272da503307b016c82d6507b5097d"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gaca1272da503307b016c82d6507b5097d">dev_config_seed</a> (<a class="el" href="group__lib__dev.html#ga72f9ed7498486290682f9f71e83a35c2">DevStore</a> store)</td></tr>
 <tr class="memdesc:gaca1272da503307b016c82d6507b5097d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seeds nothing with dev mode off.  <br /></td></tr>
 <tr class="memitem:ga4f6abc3104307260df803e409c3832d5" id="r_ga4f6abc3104307260df803e409c3832d5"><td class="memItemLeft">static uint16_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga4f6abc3104307260df803e409c3832d5">dev_config_walk_count</a> (void)</td></tr>
 <tr class="memdesc:ga4f6abc3104307260df803e409c3832d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Has no walk with dev mode off.  <br /></td></tr>
-<tr class="memitem:ga69106cf7c82db20167ad3950ddafd238" id="r_ga69106cf7c82db20167ad3950ddafd238"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga69106cf7c82db20167ad3950ddafd238">dev_config_walk_show</a> (uint16_t step)</td></tr>
-<tr class="memdesc:ga69106cf7c82db20167ad3950ddafd238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing with dev mode off.  <br /></td></tr>
+<tr class="memitem:ga2dcf173ee99499b6a71740b0ac62bfcf" id="r_ga2dcf173ee99499b6a71740b0ac62bfcf"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga2dcf173ee99499b6a71740b0ac62bfcf">dev_config_walk_show</a> (uint16_t step)</td></tr>
+<tr class="memdesc:ga2dcf173ee99499b6a71740b0ac62bfcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing with dev mode off.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>What a dev build takes from the unit's paf.dev.config.json beyond the walk and the clock: the date, the settings it applies at launch, the readings it seeds in place of the fixture, and the steps of a walk the file lays out as a list. </p>
-<p>paf build &ndash;dev writes the face's share of the file into a header the build puts beside the settings page's, and <a class="el" href="dev__config_8c.html" title="The part of the dev harness the unit&#39;s paf.dev.config.json lays out: the settings applied at launch,...">dev_config.c</a> is the only file that includes it. The theme walk in <a class="el" href="dev__walk_8c.html" title="The shared dev harness. It seeds the stores from a fixed fixture, or from the unit&#39;s paf....">dev_walk.c</a> asks here before it seeds each store, and runs a listed walk through here, so a face reaches all of it through the hooks in <a class="el" href="dev__hooks_8h.html" title="The calls a face makes to run the dev harness, and the switches they read. The build sets the switche...">dev_hooks.h</a>. With dev mode off every call here is an empty inline, and <a class="el" href="dev__config_8c.html" title="The part of the dev harness the unit&#39;s paf.dev.config.json lays out: the settings applied at launch,...">dev_config.c</a> compiles to nothing.</p>
-<p>A face whose walk lists panels defines dev_show_panel, and one whose walk lists layouts defines dev_show_layout. A dev build whose walk needs one the face lacks stops at the link, naming it. </p>
+<div class="textblock"><p>What a dev build takes from the unit's paf.dev.config.json beyond the walk: the clock and date each screen pins, the settings it applies at launch, the readings it seeds in place of the fixture, and the steps of a walk the file lays out as a list. </p>
+<p>paf build &ndash;dev writes the face's share of the file into a header the build puts beside the settings page's, and <a class="el" href="dev__config_8c.html" title="The part of the dev harness the unit&#39;s paf.dev.config.json lays out: the settings applied at launch,...">dev_config.c</a> is the only file that includes it. The harness in <a class="el" href="dev__walk_8c.html" title="The shared dev harness. It seeds the stores from a fixed fixture, or from the unit&#39;s paf....">dev_walk.c</a> asks here before it seeds each store, and runs a listed walk through here, so a face reaches all of it through the hooks in <a class="el" href="dev__hooks_8h.html" title="The calls a face makes to run the dev harness, and the switches they read. The build sets the switche...">dev_hooks.h</a>. With dev mode off every call here is an empty inline, and <a class="el" href="dev__config_8c.html" title="The part of the dev harness the unit&#39;s paf.dev.config.json lays out: the settings applied at launch,...">dev_config.c</a> compiles to nothing.</p>
+<p>A face whose walk lists panels defines dev_show_panel, and one whose walk has a step with a layout defines dev_show_layout. A dev build whose walk needs one the face lacks stops at the link, naming it, and a walk that needs neither links without them. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

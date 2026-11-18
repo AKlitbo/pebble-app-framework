@@ -1,5 +1,10 @@
 var NAVTREEINDEX2 =
 {
+"group__lib__settings.html#ga25de3b313f6a766c08b5af9f3cac864d":[1,3,51],
+"group__lib__settings.html#ga270513f4a67f8533c0b8d28e53cb6e52":[1,3,23],
+"group__lib__settings.html#ga281a4f818f93bf883410d0222e21713b":[1,3,64],
+"group__lib__settings.html#ga311ba161873a4026937acc17c57525cc":[1,3,61],
+"group__lib__settings.html#ga3751b197b3c6a12637ebdf7ebc0ea997":[1,3,67],
 "group__lib__settings.html#ga3af4893cdd074306b3fcc30df1cb8a00":[1,3,37],
 "group__lib__settings.html#ga40b5dc5d02dfa2e8a630782dc5be7263":[1,3,68],
 "group__lib__settings.html#ga4527c503f4a0ba228febe0f9985ad28f":[1,3,30],
@@ -244,10 +249,5 @@ var NAVTREEINDEX2 =
 "group__lib__stores.html#gaf48ed118c83053074b953aa994ace230":[1,2,60],
 "group__lib__stores.html#gaf5880da69fee6e18843b989032e67836":[1,2,152],
 "group__lib__stores.html#gaf58a7b0cae4bb710b1c4834cd90df0ba":[1,2,58],
-"group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867":[1,2,68],
-"group__lib__stores.html#gafb83e889fc10f054eb75c665b53d6de1":[1,2,72],
-"group__lib__system.html":[1,4],
-"group__lib__system.html#ga005b71470c6beaa166cd9cc7c5cf10b1":[1,4,12],
-"group__lib__system.html#ga06fdc71bb88f3abae23d9c6ac8ef7c8e":[1,4,14],
-"group__lib__system.html#ga4132ffc49e378387d53b1a1171fd2b05":[1,4,7]
+"group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867":[1,2,68]
 };

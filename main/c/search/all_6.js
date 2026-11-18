@@ -8,7 +8,7 @@ var searchData=
   ['field_5fvalue_5fsize_5fmax_5',['field_value_size_max',['../settings_8c.html#af2864a2798c5e8551ec3217923c20354',1,'settings.c']]],
   ['fields_6',['fields',['../structSettingsSchema.html#a0c8a65bed4b4810a0d8b5aa38b7ea2ed',1,'SettingsSchema']]],
   ['finished_5fdiffs_7',['finished_diffs',['../structHrvRun.html#ac6cfd6e43f145c2428061b7ed8141d9e',1,'HrvRun']]],
-  ['first_8',['first',['../structDevStep.html#a862b0f4735d2b015bbb8b28d8e6333f0',1,'DevStep']]],
+  ['first_8',['first',['../structDevStep.html#a862b0f4735d2b015bbb8b28d8e6333f0',1,'DevStep::first'],['../structDevRun.html#ad479035547b1f2b11a810838e404efdd',1,'DevRun::first']]],
   ['first_5fms_9',['first_ms',['../structStoreFetch.html#a57bae37532649062e21d44b21b93a0ff',1,'StoreFetch']]],
   ['first_5fsize_10',['first_size',['../structSettingsSchema.html#a631fe9764dad73ab2e4042366932ff3e',1,'SettingsSchema']]],
   ['flags_11',['flags',['../structHrvLog.html#a9f7a5f58d53427cce901584c8e4ae8af',1,'HrvLog']]],

@@ -23,11 +23,12 @@ var searchData=
   ['record_20',['record',['../health__hrv_8c.html#a1eec8cf29190373ee37ae2e9f1e6c501',1,'health_hrv.c']]],
   ['refresh_5factivity_21',['refresh_activity',['../health__store_8c.html#ad11a87cd6fe81b62297e02012fd47e6d',1,'health_store.c']]],
   ['refresh_5fhr_22',['refresh_hr',['../health__store_8c.html#a1198d2e95d57cb493cbfcf02ca2c498a',1,'health_store.c']]],
-  ['repaint_5fslot_23',['repaint_slot',['../engine_8c.html#aa951c14b92f78cf5e7dd25b4ebf47007',1,'engine.c']]],
-  ['request_24',['request',['../health__hrv_8c.html#ad69029585e2bff65f98182904a9704e2',1,'health_hrv.c']]],
-  ['reset_5fstate_25',['reset_state',['../calendar__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;calendar_store.c'],['../stock__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;stock_store.c'],['../weather__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;weather_store.c']]],
-  ['retry_5fpass_26',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]],
-  ['role_5fpick_27',['role_pick',['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c'],['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c']]],
-  ['root_5ffloor_28',['root_floor',['../hrv__run_8c.html#a583fd1918a62e97638ff34787f0155ad',1,'hrv_run.c']]],
-  ['rotate_5findex_29',['rotate_index',['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c'],['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c']]]
+  ['repaint_23',['repaint',['../dev__walk_8c.html#a5a83e9755898afb2b344fcf4dbbbef8c',1,'dev_walk.c']]],
+  ['repaint_5fslot_24',['repaint_slot',['../engine_8c.html#aa951c14b92f78cf5e7dd25b4ebf47007',1,'engine.c']]],
+  ['request_25',['request',['../health__hrv_8c.html#ad69029585e2bff65f98182904a9704e2',1,'health_hrv.c']]],
+  ['reset_5fstate_26',['reset_state',['../calendar__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;calendar_store.c'],['../stock__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;stock_store.c'],['../weather__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;weather_store.c']]],
+  ['retry_5fpass_27',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]],
+  ['role_5fpick_28',['role_pick',['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c'],['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c']]],
+  ['root_5ffloor_29',['root_floor',['../hrv__run_8c.html#a583fd1918a62e97638ff34787f0155ad',1,'hrv_run.c']]],
+  ['rotate_5findex_30',['rotate_index',['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c'],['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c']]]
 ];
