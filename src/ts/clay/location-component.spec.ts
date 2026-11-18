@@ -298,8 +298,8 @@ describe('initialize', () => {
   });
 
   /** If selecting a result fails to persist its coordinates and offset, the watch loses the place or has to geocode for itself. */
-  test('persists the chosen coordinates, label, and resolved offset on selection', () => {
-    const mounted = mount();
+  test('persists the chosen coordinates, label, and resolved offset on selection in a timezone field', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     mounted.ctx.initialize();
 
@@ -309,7 +309,7 @@ describe('initialize', () => {
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
 
-    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: 3600, timezone: 'America/Phoenix' }));
 
     const saved = JSON.parse(mounted.hidden.value);
@@ -374,9 +374,30 @@ describe('initialize', () => {
     expect(mounted.note.style.display).toBe('none');
   });
 
+  /**
+   * The zone lookup is a forecast call to api.open-meteo.com. A field that takes no zone, such as a
+   * weather location or a plugin's added place, never reads it, so the call only spent the wearer's
+   * Open-Meteo allowance.
+   */
+  test('makes no zone lookup and fires change once on a field that takes no zone', () => {
+    const mounted = mount();
+
+    mounted.ctx.initialize();
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(200, JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112, timezone: 'America/Phoenix' },
+    ] }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const result = [xhrs.length, mounted.ctx.trigger.mock.calls.length, JSON.parse(mounted.hidden.value).lat];
+
+    expect(result).toEqual([1, 1, 33.4]);
+  });
+
   /** A slow lookup for the first city tapped must not write that city over the one picked after it. */
   test('ignores a zone lookup that answers after a newer pick', () => {
-    const mounted = mount();
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     mounted.ctx.initialize();
 
@@ -386,7 +407,7 @@ describe('initialize', () => {
       { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
       { name: 'Springfield', admin1: 'Missouri', latitude: 37.2, longitude: -93.3 },
     ] }));
-    const items = mounted.list.querySelectorAll('.pf-loc-item');
+    const items = mounted.list.querySelectorAll('.pf-loc-item:not(.pf-loc-item-zone)');
 
     items[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     items[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -400,7 +421,7 @@ describe('initialize', () => {
 
   /** A lookup that lands after the box was edited must not save a city the box no longer shows. */
   test('ignores a zone lookup that answers after the query was edited', () => {
-    const mounted = mount();
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     mounted.ctx.initialize();
 
@@ -409,7 +430,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
     ] }));
-    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     type(mounted.query, 'Spr');
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
 
@@ -487,7 +508,7 @@ describe('initialize', () => {
    * read the pick then, and never heard the lookup, kept a place with no clock.
    */
   test('fires change again once the zone lookup writes the zone', () => {
-    const mounted = mount();
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     const seen: string[] = [];
 
     mounted.ctx.trigger.mockImplementation(() => void seen.push(mounted.hidden.value));
@@ -497,7 +518,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
-    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));
     const result = seen.map((value) => [JSON.parse(value).tz, JSON.parse(value).offset]);
@@ -511,7 +532,7 @@ describe('initialize', () => {
    * code had run.
    */
   test('lets a change handler that throws on the zone lookup be heard', () => {
-    const mounted = mount();
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     mounted.ctx.initialize();
     type(mounted.query, 'Phoenix');
@@ -519,7 +540,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
-    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     mounted.ctx.trigger.mockImplementation(() => {
       throw new Error('page handler');
     });
@@ -531,7 +552,7 @@ describe('initialize', () => {
 
   /** A lookup that only agrees with the pick tells page code nothing new, so the row stays at the one change from the tap. */
   test('stays quiet when the zone lookup changes nothing', () => {
-    const mounted = mount();
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     mounted.ctx.initialize();
     type(mounted.query, 'Phoenix');
@@ -539,7 +560,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112, timezone: 'America/Phoenix' },
     ] }));
-    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));
     const result = mounted.ctx.trigger.mock.calls.length;
@@ -572,7 +593,7 @@ describe('initialize', () => {
    * filled its name in again from the place it had just added.
    */
   test('writes nothing and stays quiet for a lookup answering after the row was emptied', () => {
-    const mounted = mount();
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     mounted.ctx.initialize();
     type(mounted.query, 'Phoenix');
@@ -580,7 +601,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
-    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     mounted.ctx.set('');
 
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));

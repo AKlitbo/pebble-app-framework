@@ -38,7 +38,7 @@ import { isObject } from '../shared/values.ts';
 import { icaljsPlugin } from './build-plugin.ts';
 import { checkCustomClay, installHost } from './settings-page.ts';
 import { reachesSite, readOwn } from '../manifest/permissions.ts';
-import { LOCATION_SEARCH_HOSTS } from '../../ts/clay/location-hosts.ts';
+import { LOCATION_GEOCODER_HOST, LOCATION_ZONE_HOST } from '../../ts/clay/location-hosts.ts';
 import { settingsPageUrl, takePreviewLoaders } from '../../ts/clay/preview-pictures.ts';
 import type { Permission } from '../manifest/permissions.ts';
 import type { ClayConfigItem } from '../../ts/clay/types.ts';
@@ -156,20 +156,25 @@ function checkDrawn(clay: PageClay, items: ClayConfigItem[], name: string): void
 
 /**
  * Stops on a location search the plugin app's usesPermissions give no way out to. The search calls
- * Open-Meteo's hosts from inside the page, and on Android the Pebble app holds the page to the sites
- * the plugin lists, so a host left off finds no place there with nothing said. Each host the search
- * calls is checked on its own, so `open-meteo.com`, each host by name, or an Internet entry naming no
- * site all pass.
+ * Open-Meteo's geocoder from inside the page, and a row marked `timeZone: true` calls its forecast
+ * host as well for a picked place's zone. On Android the Pebble app holds the page to the sites the
+ * plugin lists, so a host left off fails there with nothing said. Each host the page's searches call
+ * is checked on its own, so `open-meteo.com`, each host by name, or an Internet entry naming no site
+ * all pass.
  */
 function checkPickerSites(items: ClayConfigItem[], permissions: Permission[], name: string): void {
   if (!anyItem(items, (item) => item.type === LOCATION_SEARCH)) {
     return;
   }
 
-  const missing = LOCATION_SEARCH_HOSTS.filter((host) => !reachesSite(permissions, host));
+  const zoned = anyItem(items, (item) => item.type === LOCATION_SEARCH && Boolean(item.timeZone));
+  const hosts = zoned ? [LOCATION_GEOCODER_HOST, LOCATION_ZONE_HOST] : [LOCATION_GEOCODER_HOST];
+  const missing = hosts.filter((host) => !reachesSite(permissions, host));
 
   if (missing.length) {
-    throw new ToolError(`${name}'s settings page has a locationsearch row, which calls ${LOCATION_SEARCH_HOSTS.join(' and ')}, but its appinfo usesPermissions does not reach ${missing.join(' or ')} under Internet, so on Android the search finds nothing. List "open-meteo.com", which covers both, or each host the search calls, in the domains of an Internet entry`);
+    const what = zoned ? 'a locationsearch row that takes a time zone' : 'a locationsearch row';
+
+    throw new ToolError(`${name}'s settings page has ${what}, which calls ${hosts.join(' and ')}, but its appinfo usesPermissions does not reach ${missing.join(' or ')} under Internet, so on Android the search fails. List "open-meteo.com", which covers ${zoned ? 'both' : 'it'}, or each host the search calls, in the domains of an Internet entry`);
   }
 }
 

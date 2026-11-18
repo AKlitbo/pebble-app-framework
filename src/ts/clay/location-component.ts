@@ -19,9 +19,11 @@
  * to say the missing zone is on purpose.
  *
  * Each pick fires the row's Clay change event, so page code can read the pick with the row's `get` as
- * it lands. A place pick fires it a second time when the zone lookup writes the zone, and typing
- * that clears a pick fires it too. Page code that fills a row from the pick fills it only when the
- * place itself changes, so the second change never writes over the wearer's edit.
+ * it lands. On a timezone field a place pick asks api.open-meteo.com for the place's zone and
+ * minutes, and fires it a second time when that lookup writes them. A field that takes no zone makes
+ * no lookup, since nothing reads its zone, so its pick fires once. Typing that clears a pick fires it
+ * too. Page code on a timezone field that fills a row from the pick fills it only when the place
+ * itself changes, so the second change never writes over the wearer's edit.
  *
  * IMPORTANT: `initialize` and the `manipulator` methods are serialized
  * (via .toString()) and run inside the Clay config webview, a separate JS
@@ -574,8 +576,8 @@ export default {
           picks++;
 
           // the geocoder already names the place's zone, so the pick is whole from the tap and a
-          // save straight away or offline still keeps the right clock. the lookup below only
-          // fills in the minutes, or the zone for a place the geocoder gave none
+          // save straight away or offline still keeps the right clock. on a timezone field the
+          // lookup below only fills in the minutes, or the zone for a place the geocoder gave none
           const zone = typeof place.timezone === 'string' ? place.timezone : '';
 
           hiddenEl.value = JSON.stringify({
@@ -590,12 +592,16 @@ export default {
           noteEl.style.display = (wantsZone && !zone) ? 'block' : 'none';
           unpickedEl.style.display = 'none';
 
-          resolveOffset(place);
+          // only a timezone field reads the zone, so any other field spends no forecast call on it
+          if (wantsZone) {
+            resolveOffset(place);
+          }
+
           closeList();
 
           // the pick lands from a tap on the list, which fires no change of its own, so the row says
-          // so itself for page code reading the pick. the zone lookup above says so again once it
-          // lands, for the same place
+          // so itself for page code reading the pick. on a timezone field the zone lookup above says
+          // so again once it lands, for the same place
           self.trigger('change');
         });
         listEl.appendChild(item);

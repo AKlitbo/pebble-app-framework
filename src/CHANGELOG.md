@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added `ts/weather/coords.ts`, with `validCoords`, `COORD_DECIMALS`, and `roundCoordinate`. `validCoords` is still exported from the Open-Meteo provider.
 
+#### Changed
+
+- The location search now looks up a place's time zone only on a field marked `timeZone: true`, so a weather location field spends no forecast call. A plugin page needs `api.open-meteo.com` only when a row takes a zone.
+
 ## [6.4.0] - 2026-11-18
 
 ### Framework Changes

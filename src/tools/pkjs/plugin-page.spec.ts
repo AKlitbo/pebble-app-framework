@@ -408,6 +408,9 @@ const LOCATION_SEARCH = path.join(import.meta.dirname, '..', '..', 'ts', 'clay',
 /** A page holding one location search row. */
 const SEARCH_PAGE: ClayConfigItem[] = [{ type: 'locationsearch', id: 'where', label: 'Place' }];
 
+/** A page holding one location search row that takes a time zone. */
+const ZONE_PAGE: ClayConfigItem[] = [{ type: 'locationsearch', id: 'zone', label: 'Second Clock', timeZone: true }];
+
 /** A plugin app whose page holds a location search and passes the framework's, listing Open-Meteo unless told otherwise. */
 function searchPlugin(usesPermissions: unknown = OPEN_METEO): string {
   return pluginWithConfig([
@@ -474,25 +477,34 @@ describe('components on a plugin page', () => {
 
     const result = () => renderPluginPage(source, 'search-plugin');
 
-    expect(result).toThrow(/search-plugin's settings page has a locationsearch row, which calls geocoding-api.open-meteo.com and api.open-meteo.com, but its appinfo usesPermissions does not reach geocoding-api.open-meteo.com or api.open-meteo.com under Internet/);
+    expect(result).toThrow(/search-plugin's settings page has a locationsearch row, which calls geocoding-api.open-meteo.com, but its appinfo usesPermissions does not reach geocoding-api.open-meteo.com under Internet/);
   });
 
-  /** The two hosts the search calls, listed by name, work on the phone, so refusing them would stop a page that works. */
-  test('takes the two hosts the search calls listed by name', () => {
+  /** The two hosts a timezone search calls, listed by name, work on the phone, so refusing them would stop a page that works. */
+  test('takes the two hosts a timezone search calls listed by name', () => {
     const usesPermissions = [{ name: 'Internet', parameters: { domains: ['geocoding-api.open-meteo.com', 'api.open-meteo.com'] } }];
+
+    const result = () => renderPluginPage({ clayConfig: ZONE_PAGE, components: [locationComponent], usesPermissions }, 'search-plugin');
+
+    expect(result).not.toThrow();
+  });
+
+  /** A search that takes no zone only calls the geocoder, so requiring the forecast host too stopped a page that works. */
+  test('takes the geocoder alone for a search that takes no zone', () => {
+    const usesPermissions = [{ name: 'Internet', parameters: { domains: ['geocoding-api.open-meteo.com'] } }];
 
     const result = () => renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent], usesPermissions }, 'search-plugin');
 
     expect(result).not.toThrow();
   });
 
-  /** With only the geocoder listed the search finds places, but a pick never gets its time zone, so the build names the host left off. */
-  test('refuses a search with one of its two hosts listed and names the other', () => {
+  /** With only the geocoder listed a timezone search finds places, but a pick never gets its zone, so the build names the host left off. */
+  test('refuses a timezone search with only the geocoder listed and names the forecast host', () => {
     const usesPermissions = [{ name: 'Internet', parameters: { domains: ['geocoding-api.open-meteo.com'] } }];
 
-    const result = () => renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent], usesPermissions }, 'search-plugin');
+    const result = () => renderPluginPage({ clayConfig: [...SEARCH_PAGE, ...ZONE_PAGE], components: [locationComponent], usesPermissions }, 'search-plugin');
 
-    expect(result).toThrow(/does not reach api.open-meteo.com under Internet/);
+    expect(result).toThrow(/has a locationsearch row that takes a time zone, which calls geocoding-api.open-meteo.com and api.open-meteo.com, but its appinfo usesPermissions does not reach api.open-meteo.com under Internet/);
   });
 
   /** An Internet entry naming no site lets the phone reach every site, Open-Meteo included, so refusing it would stop a page that works. */
@@ -533,7 +545,7 @@ describe('components on a plugin page', () => {
 
     const result = () => renderPluginPage({ clayConfig, components: [locationComponent] }, 'search-plugin');
 
-    expect(result).toThrow(/does not reach geocoding-api.open-meteo.com or api.open-meteo.com/);
+    expect(result).toThrow(/does not reach geocoding-api.open-meteo.com under Internet/);
   });
 
   /** Clay stops the page at a row with no type as it does at one nothing draws, so the build stops on it too. */
