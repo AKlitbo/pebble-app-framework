@@ -215,7 +215,7 @@ On a local framework, an edit to the framework only makes the build clean when i
 
 **`--dev`** builds the face in dev mode, on framework 6.0.0 or later, on the `dev` plugin's fixture, with the walk and the clock the unit's `paf.dev.config.json` gives that face, as [the dev plugin](../how/dev-plugin.md#turning-it-on-for-a-dev-build) covers. A unit that does not list the plugin stops the build, so `paf build all --dev` fails each face in such a unit and carries on past it. A plugin app has no watch code for dev mode to change, so `paf build all --dev` passes over one with a line saying so, and a plugin app named on its own with `--dev` stops the build. `paf` hands the flag on to the framework's build script with the rest. An older framework passes it on to `pebble build`, which refuses it. A switch between a dev build and a normal one needs no clean build.
 
-Every other argument goes on to `pebble build`. The `.pbw` lands in `targets/<face>/build/`.
+Every other argument goes on to `pebble build`. The `.pbw` lands in `targets/<face>/build/`. It carries no source map for the phone code. `pebble-js-app.js.map` stays beside it in `build/`, which is where `pebble logs` reads it to turn a stack trace from the phone back into source lines.
 
 ## paf gen
 

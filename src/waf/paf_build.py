@@ -89,6 +89,34 @@ def page_platforms_problem(sandbox, target_platforms):
     return None
 
 
+# the name of the waf step that keeps the source map out of a face's .pbw
+LEAVE_OUT_JS_SOURCE_MAP = 'paf_leave_out_js_source_map'
+
+
+def leave_out_js_source_map(bundle):
+    """
+    Keeps the PebbleKit JS source map out of the .pbw one bundle task generator puts together.
+
+    The SDK's process_js has webpack write pebble-js-app.js.map beside the bundle and lists both for
+    the .pbw, so the map ships at about the size of the JS itself. The step added here runs after
+    process_js and before the .pbw is put together, and takes the map off that list. webpack still
+    writes the map into build/, and has to, since pebble logs reads it from there to turn a stack trace
+    from the phone back into source lines.
+
+    The step is added to this bundle alone, so no other task generator runs it. The header checks
+    import this module with no waf about, so waf is only imported once a build calls this.
+    """
+    from waflib.TaskGen import after_method, before_method
+
+    @after_method('process_js')
+    @before_method('make_pbl_bundle')
+    def paf_leave_out_js_source_map(task_gen):
+        js = task_gen.to_nodes(getattr(task_gen, 'js', []))
+        task_gen.js = [node for node in js if not node.name.endswith('.js.map')]
+
+    bundle.meths.append(LEAVE_OUT_JS_SOURCE_MAP)
+
+
 def build_face(ctx, source, extra_cflags=None):
     """
     The build: resolve include paths, collect the face's C and JS plus the framework's, compile the
@@ -200,8 +228,12 @@ def build_face(ctx, source, extra_cflags=None):
     js_entry = entry.path_from(ctx.path)
 
     ctx.set_group('bundle')
-    ctx.pbl_bundle(
+    bundle = ctx.pbl_bundle(
         binaries=binaries,
         js=js_sources,
         js_entry_file=js_entry
     )
+
+    # the phone never reads the source map, and it is about as big as the JS
+    # pebble logs reads it from build/, so it stays there
+    leave_out_js_source_map(bundle)
