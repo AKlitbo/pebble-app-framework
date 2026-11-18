@@ -25,6 +25,7 @@ import themePreviewComponent from '../clay/theme-preview-component';
 import hiddenStoreComponent from '../clay/hidden-store-component';
 import pageStyleComponent from '../clay/page-style-component';
 import dependentVisibility from '../clay/dependent-visibility';
+import builderPluginSources from '../clay/builder-plugin-sources-fn';
 import noteComponent from '../plugin-sources/note-component';
 import { ASK_GAP_MS } from './asks';
 import buildConfig from './config-builder';
@@ -3180,8 +3181,87 @@ describe('startPebbleApp settings page hooks', () => {
 
     openSettings(page, [pageFeature((config) => pluginSourcePage(config, inputs))]);
 
-    expect(PageClay.opened[0].customFn).toBe(dependentVisibility);
+    const result = partPlaces(PageClay.opened[0].customFn, [dependentVisibility]);
+
+    expect(result[0]).toBeGreaterThanOrEqual(0);
     expect(hasVisibleWhen(PageClay.opened[0].config as ClayConfigItem[])).toBe(true);
+  });
+
+  describe('the plugin sources for builders', () => {
+    const plugin = { uuid: 'weather-uuid', name: 'Weather', sources: [{ category: 'weather', items: ['location'] }] };
+    const state = { pluginUuid: null, lastError: null, lastEmpty: false };
+    const inputs = { selectKey: 'WEATHER_PROVIDER', category: 'weather', item: 'location', plugins: [plugin], messageKeys: { WEATHER_PROVIDER: 1 }, state, standard: WEATHER_STANDARD, texts: {} };
+
+    /**
+     * Runs the text Clay writes for a custom function on a stand-in page holding a builder that hooked
+     * the plugin sources and a weather select on the plugin, and gives back what the builder heard.
+     */
+    function heardOnPage(customFn: unknown): unknown[] {
+      const heard: unknown[] = [];
+      const element = { _pfPluginSources: (picked: unknown) => heard.push(picked) };
+      const builderRow = { $element: [element], get: () => '', on: () => {} };
+      const selectRow = { $element: [{}], get: () => 'plugin', on: () => {} };
+      let afterBuild: (() => void) | null = null;
+      const page = {
+        EVENTS: { AFTER_BUILD: 'after_build' },
+        on: (event: string, handler: () => void) => {
+          if (event === 'after_build') {
+            afterBuild = handler;
+          }
+        },
+        getAllItems: () => [builderRow, selectRow],
+        getItemByMessageKey: (key: string) => (key === 'WEATHER_PROVIDER' ? selectRow : undefined),
+      };
+      const written = new Function('return ' + String(customFn))() as (this: unknown) => void;
+
+      written.call(page);
+      afterBuild?.();
+
+      return heard;
+    }
+
+    /** A builder's warnings only hear the picked sources through this, so a face that passes nothing would never warn about a weather panel. */
+    test('hands a hooked builder the sources on a page with the plugin kinds row and no customClay', () => {
+      openSettings(buildConfig({ location: {}, weather: {} }), [pageFeature((config) => pluginSourcePage(config, inputs))]);
+
+      const result = heardOnPage(PageClay.opened[0].customFn);
+
+      expect(result).toEqual([{ weather: true, stocks: false, calendar: false }]);
+    });
+
+    /** The face's own page code has to keep running beside it, after the framework's, or a face loses whatever its customClay did. */
+    test('runs it ahead of the face\'s own customClay', () => {
+      const customClay = function () {
+        document.title = 'face page code';
+      };
+
+      openSettings(buildConfig({ location: {}, weather: {} }), [pageFeature((config) => pluginSourcePage(config, inputs))], customClay);
+
+      const result = partPlaces(PageClay.opened[0].customFn, [builderPluginSources, customClay]);
+
+      expect(result[0]).toBeGreaterThanOrEqual(0);
+      expect(result[1]).toBeGreaterThan(result[0]);
+    });
+
+    /** A face that still passes it would hand every builder the sources twice on each change. */
+    test('runs it once for a face that passes it as its own customClay', () => {
+      openSettings(buildConfig({ location: {}, weather: {} }), [pageFeature((config) => pluginSourcePage(config, inputs))], builderPluginSources);
+
+      const result = heardOnPage(PageClay.opened[0].customFn);
+
+      expect(result).toHaveLength(1);
+    });
+
+    /** A face that reads no plugin has nothing to warn about, so its page text stays as Clay writes it. */
+    test('leaves it off a page with no plugin kinds row', () => {
+      const customClay = function () {};
+
+      openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config])], customClay);
+
+      const result = PageClay.opened[0].customFn;
+
+      expect(result).toBe(customClay);
+    });
   });
 
   /** A plugin page on a face with its own customClay has to hide its rows as well as run the face's code, or the location rows stay showing while the plugin is picked. */

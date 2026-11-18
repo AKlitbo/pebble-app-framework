@@ -16,6 +16,7 @@ import hiddenStoreComponent from '../clay/hidden-store-component';
 import pageStyleComponent from '../clay/page-style-component';
 import dependentVisibility from '../clay/dependent-visibility';
 import providerKeysFn from '../clay/provider-keys-fn';
+import builderPluginSources from '../clay/builder-plugin-sources-fn';
 import { combineCustomFns, customClayShape } from '../clay/custom-fn';
 import { copyPage } from '../clay/copy-page';
 import { settleIntro } from '../clay/rows';
@@ -95,16 +96,33 @@ function hasProviderKeys(items: ClayConfigItem[]): boolean {
 }
 
 /**
+ * Whether a page holds the plugin kinds row. The row's type is `PLUGIN_KINDS_TYPE` in
+ * plugin-sources/kinds-component.ts. It is written out here because a value import of that folder
+ * would break a face built without plugin defines, and app.spec.ts opens a page the plugin page
+ * really made, so the two cannot drift apart unnoticed.
+ */
+function hasPluginKinds(items: ClayConfigItem[]): boolean {
+  return items.some((item) => item.type === 'pluginKinds' || (item.items ? hasPluginKinds(item.items) : false));
+}
+
+/**
  * The custom function Clay gets for one page. The framework's show and hide comes first when the
- * page has any visibleWhen row, then the key for each provider when a key row carries them, and the
- * face's customClay runs last, so the face's code can still change a row the framework showed or
- * hid. A page with none of them gets no custom function.
+ * page has any visibleWhen row, then the key for each provider when a key row carries them, then the
+ * sources a builder's plugin warnings read when the page has the plugin kinds row. The face's
+ * customClay runs last, so the face's code can still change a row the framework showed or hid. A page
+ * with none of them gets no custom function.
+ *
+ * A face that passes builderPluginSources as its own customClay has it left out, so it never runs
+ * twice. The framework already runs it on every page where it can do anything.
  */
 function pageCustomFn(page: ClayConfigItem[], customClay: unknown): unknown {
+  const faceCode = customClay === builderPluginSources ? undefined : customClay;
+
   return combineCustomFns([
     { code: hasVisibleWhen(page) ? dependentVisibility : undefined, label: 'the framework\'s show and hide' },
     { code: hasProviderKeys(page) ? providerKeysFn : undefined, label: 'the framework\'s key for each provider' },
-    { code: customClay, label: 'the face\'s customClay' },
+    { code: hasPluginKinds(page) ? builderPluginSources : undefined, label: 'the framework\'s plugin sources for builders' },
+    { code: faceCode, label: 'the face\'s customClay' },
   ]);
 }
 

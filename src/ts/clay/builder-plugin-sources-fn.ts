@@ -3,7 +3,8 @@
  * builder can warn about a weather, stock, or calendar panel the phone has no plugin for.
  *
  * Clay hands a builder component nothing but its own row, so a builder cannot read the source
- * selects itself. A face passes this as its customClay, which Clay runs with the page as `this`. Once
+ * selects itself. The app runs this as part of the page's custom function on every page holding the
+ * plugin kinds row, ahead of the face's own customClay, and Clay runs it with the page as `this`. Once
  * the page is built it reads `WEATHER_PROVIDER`, `STOCK_PROVIDER`, and `CALENDAR_SOURCE`, and hands
  * the answer to every row whose element carries a `_pfPluginSources` hook, which the builder piece
  * `ts/shared/plugin-warnings` hangs there. It hands it over again whenever one of the selects

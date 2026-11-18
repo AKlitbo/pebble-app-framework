@@ -147,8 +147,9 @@ describe('builder plugin sources page code', () => {
   });
 
   /**
-   * A face with page code of its own hands both over combined, and the page runs the text Clay writes
-   * rather than the function. Losing this one there would leave every chosen kind unnamed.
+   * The app combines this with the framework's other page code and the face's customClay, and the
+   * page runs the text Clay writes rather than the function. Losing it there would leave every chosen
+   * kind unnamed.
    */
   test('runs from the text Clay writes when combined with a face\'s own page code', () => {
     const hooked = builder();

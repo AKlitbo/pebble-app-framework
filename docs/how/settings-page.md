@@ -152,7 +152,7 @@ export default {
 
 **Nothing from the Module Comes Along.** Only the function bodies are copied, so an import or a module-level constant is undefined on the page and throws. Values go inline, and data the component needs rides on its page item, such as a list of panels with their icons and colours passed as `moduleOptions` and read from `this.config`. A type is fine, since TypeScript erases it before anything is copied.
 
-**The Custom Function Too.** A face can pass Clay's custom function as `customClay`, which runs once on the page with the whole page as `this`, before any row is built. It is copied the same way and follows the same rules. Write it as a `function`, not an arrow, since Clay hands it the page as `this` and an arrow cannot take one. `paf build` stops on an arrow, a method, or anything that is not a function, naming the face. The phone still logs a warning for an arrow and stops on anything that is not a function, for a page built some other way. The framework's own page code, such as the show and hide for `visibleWhen` rows, runs first, and the face's `customClay` runs after it. When both run, each runs inside its own `try`, so an error one throws is logged with `console.error` and the other still runs.
+**The Custom Function Too.** A face can pass Clay's custom function as `customClay`, which runs once on the page with the whole page as `this`, before any row is built. It is copied the same way and follows the same rules. Write it as a `function`, not an arrow, since Clay hands it the page as `this` and an arrow cannot take one. `paf build` stops on an arrow, a method, or anything that is not a function, naming the face. The phone still logs a warning for an arrow and stops on anything that is not a function, for a page built some other way. The framework's own page code, such as the show and hide for `visibleWhen` rows and the plugin sources a builder's warnings read, runs first, and the face's `customClay` runs after it. When both run, each runs inside its own `try`, so an error one throws is logged with `console.error` and the other still runs.
 
 ### Scratch State in a Hidden Store
 
@@ -374,16 +374,7 @@ warnings.update(['Now Playing', 'Stock']);
 
 `panelKinds` names the kind each panel reads, by the name `update` gets, and a panel left out reads no plugin. Plugins off folds every panel into one warning. Otherwise each kind with no plugin gets its own, naming its panels once.
 
-A now playing or phone battery panel always reads its plugin. A weather, stock, or calendar panel only reads one while its Data Source is the plugin, and a builder cannot read the source selects from its own row. So the face passes the framework's page code as its `customClay`:
-
-```ts
-// in the face's src/pkjs/index.ts
-import builderPluginSources from '../../paf/ts/clay/builder-plugin-sources-fn';
-
-app.startPebbleApp({ clayConfig, components: [gridEditor], features: [weather, stocks, music], customClay: builderPluginSources });
-```
-
-Once the page is built, it reads `WEATHER_PROVIDER`, `STOCK_PROVIDER`, and `CALENDAR_SOURCE`, and hands what the wearer picked to every builder on the page that made a warning box, through the `_pfPluginSources` hook `createPluginWarnings` hangs on `root`. It does that again whenever one of the selects changes. A select missing from the page reads as not picked. Until the page code first calls it, the box names no weather, stock, or calendar panel. A face with page code of its own passes both to `combineCustomFns` from [`custom-fn.ts`](../../src/ts/clay/custom-fn.ts) and hands the result over as its `customClay`, and the page runs each in turn.
+A now playing or phone battery panel always reads its plugin. A weather, stock, or calendar panel only reads one while its Data Source is the plugin, and a builder cannot read the source selects from its own row. So the framework runs page code of its own, `builderPluginSources` in [`builder-plugin-sources-fn.ts`](../../src/ts/clay/builder-plugin-sources-fn.ts), on every page that holds the plugin kinds row, and the face passes nothing for it. It runs after the key for each provider and before the face's own `customClay`. Once the page is built, it reads `WEATHER_PROVIDER`, `STOCK_PROVIDER`, and `CALENDAR_SOURCE`, and hands what the wearer picked to every builder on the page that made a warning box, through the `_pfPluginSources` hook `createPluginWarnings` hangs on `root`. It does that again whenever one of the selects changes. A select missing from the page reads as not picked, and a page with no builder that made a warning box is left as it is. Until the page code first calls the hook, the box names no weather, stock, or calendar panel. A face that passes `builderPluginSources` as its own `customClay` gets it once, from the framework.
 
 ## Previewing the Page
 
