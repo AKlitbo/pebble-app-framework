@@ -10,6 +10,7 @@
  */
 
 import type { ClayConfigItem, ThemePreviewPictures } from '../clay/types';
+import { warnMissingPictures } from '../clay/preview-pictures';
 import { VIBE_OPTIONS, WIND_UNIT_OPTIONS } from './config-rows';
 
 /** The per-section description a face hands buildConfig. Each section is optional.
@@ -22,8 +23,10 @@ export interface ConfigBuilderOptions {
   /** previews shows a picture of the chosen theme under the dropdown, keyed by the option's value as
    * a string, each a list of one or more pictures (such as a day and a night shot), or a map of such
    * a list per platform so each watch shows its own shots. It comes from the file
-   * `paf gen <face> theme-previews` writes. Without it the picker is the plain select. */
-  theme?: { label?: string; description?: string; options?: Array<{ label: string; value: string | number }>; previews?: Record<string, ThemePreviewPictures> };
+   * `paf gen <face> theme-previews` writes. It can also be a function that hands that map back, which
+   * the framework calls as the settings page opens, so the pictures only load then. Without it the
+   * picker is the plain select. */
+  theme?: { label?: string; description?: string; options?: Array<{ label: string; value: string | number }>; previews?: Record<string, ThemePreviewPictures> | (() => Record<string, ThemePreviewPictures>) };
   /** Extra controls to sit inside the Appearance section, under the theme picker. For a setting
    * that belongs with the look of the face rather than in a section of its own. */
   appearanceItems?: ClayConfigItem[];
@@ -104,20 +107,6 @@ const PLAIN_INTRO = 'Personalize your layout and make this watchface your own.';
 /** The default intro for a page with a Weather section. */
 const WEATHER_INTRO = 'Personalize your layout, dial in your weather preferences, and make this watchface your own.';
 
-/** Whether a theme's previews entry carries at least one picture, across both shapes it can take, a
- * plain list or a list per platform. */
-function hasPicture(pictures?: ThemePreviewPictures): boolean {
-  if (!pictures) {
-    return false;
-  }
-
-  if (Array.isArray(pictures)) {
-    return pictures.length > 0;
-  }
-
-  return Object.keys(pictures).some((platform) => (pictures[platform] || []).length > 0);
-}
-
 /**
  * The theme picker: rows with a picture beside each name when the face has previews, the plain
  * select otherwise. Either way the value saves under APPEARANCE_THEME with 0 as the default.
@@ -135,19 +124,21 @@ function themePicker(theme: NonNullable<ConfigBuilderOptions['theme']>): ClayCon
     'options': theme.options,
   };
 
-  if (!theme.previews || !Object.keys(theme.previews).length) {
+  const previews = theme.previews;
+
+  // a function only hands its pictures over as the page opens, so it is the picker whatever it holds,
+  // and its missing pictures are warned about once it has loaded them
+  if (typeof previews === 'function') {
+    return { ...picker, 'type': 'themePreview', 'previews': previews };
+  }
+
+  if (!previews || !Object.keys(previews).length) {
     return picker;
   }
 
-  // a theme with no picture still shows, by its name alone, so the picker is not the place this is
-  // noticed. warn so a missing preview turns up in the preview tool's console instead
-  (theme.options || []).forEach((option) => {
-    if (!hasPicture(theme.previews![String(option.value)])) {
-      console.warn(`buildConfig: theme.previews has no picture for "${option.label}" (value ${option.value})`);
-    }
-  });
+  warnMissingPictures(theme.options, previews, 'buildConfig: theme.previews');
 
-  return { ...picker, 'type': 'themePreview', 'previews': theme.previews };
+  return { ...picker, 'type': 'themePreview', 'previews': previews };
 }
 
 /**
@@ -710,7 +701,8 @@ function introRow(options: ConfigBuilderOptions): ClayConfigItem {
  *   battery     { label?, description? }         the battery readout control in the Health section
  *   theme       { label?, description?, options?, previews? }  the theme picker. options is the theme
  *                                                   list, and a picker given none has nothing to offer.
- *                                                   previews shows a picture beside each name
+ *                                                   previews shows a picture beside each name, and
+ *                                                   can be a function the page calls as it opens
  *   clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
  *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
  *   weather     {}                               marker, adds the provider picker to the Weather section

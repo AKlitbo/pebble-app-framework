@@ -15,11 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added the `ts/shared/palette` builder piece and its `css/palette.css`. `createPalette` draws a tab for each panel size, a row of group tabs under it, the panel tiles, and a status line naming the group on show, from the groups, sizes, and panels the builder passes in.
 - Added the `ts/shared/plugin-warnings` builder piece. `createPluginWarnings` warns under the watch about each placed panel whose plugin the phone cannot serve, from the plugin kinds row and the kind the builder gives each panel. The framework's page code reads the source selects on any page with the plugin kinds row, so a weather, stock, or calendar panel only warns while its Data Source is the plugin, or always on a face whose providers list is the plugin alone. The face's own `customClay` still runs after it.
 - Added `progress_hour_pct`, `progress_day_pct`, `progress_week_pct`, and `progress_year_pct` in `clock/progress.h`, which give how far through the hour, day, week, or year the wall clock is as a whole percent from 0 to 99. Pass the fields of the clock's `struct tm`, with the year in full and, for the week, the weekday it starts on. `progress_week_day` gives the day of that week, from 1 to 7. A week start outside 0 to 6 wraps round.
+- Added a function form for a `themePreview` row's `previews` and for `buildConfig`'s `theme.previews`. The framework calls it each time the settings page opens, so a face that requires its generated file inside it, as `() => require('./clay/theme-previews.g')`, only loads the pictures then rather than every time the phone code starts.
 
 #### Changed
 
 - The plugin kinds row now leaves out a kind whose select drops to its one option, or is missing from the page, while the face is on a source of its own, such as the calendar on its iCal link with plugins off. A face's own component reading the row gets no state for that kind, the same as for a kind the face does not read from a plugin.
 - The build now stops on a row of a plugin app's settings page that no registered component draws, and names the row's type, or on a row with no type. Clay stops drawing the page at that row, so the page would open blank on the phone. Export the component that draws it in `components` from `src/config/index.ts`, or take the row off the page.
+- The settings page now carries only the theme previews for the watch it opens on. Each open cuts a platform-keyed theme down to the platform of the watch it opens on, the one the picker reads, inside every key under `previewsByKey` too, before Clay writes the page. A theme whose map leaves out that watch keeps the list the picker would fall back to. A face with shots for two platforms sends the page about half the base64 it did, and needs no change.
 
 ### Plugin Changes
 
@@ -37,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Dev Plugin:** A step with nothing in it, `{}`, now stops a dev build. Give the step settings, a layout, or a clock, date, or stores of its own, or remove it.
 - **Dev Plugin:** A walk or a step that pins a clock earlier than the HRV log it takes on now stops the dev build, picked or not. Give it a health store of its own, or pin its clock at or after the log's last reading.
 - **Dev Plugin:** The dev header writes each set of readings and each store's seeds once, so steps that share them share the memory. More than 255 different sets, or more than 255 seeds for one store, stops the dev build.
+- **Dev Plugin:** `paf tool <face> clay-preview` now writes the page the phone sends for `--platform`, with each theme picker's previews loaded and cut to that watch, in its page and in its JSON of the page.
 
 #### Fixed
 

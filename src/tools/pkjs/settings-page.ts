@@ -35,6 +35,7 @@ import { readChoice } from '../../ts/pkjs/settings-store.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import { ToolError } from '../shared/tool-error.ts';
 import { isObject } from '../shared/values.ts';
+import { pageForWatch, settingsPageUrl, watchPlatform, type PreviewLoaders } from '../../ts/clay/preview-pictures.ts';
 import type { ClayConfigItem } from '../../ts/clay/types.ts';
 
 const requireHost = createRequire(import.meta.url);
@@ -99,6 +100,8 @@ export type ClayPage = {
   config: unknown[];
   /** The function the page runs before it builds. */
   customFn: unknown;
+  /** The watch the page was opened from, which Clay fills on a phone and the preview fills itself. */
+  meta?: unknown;
 };
 
 /** The framework's app module as the face's compiled index.js sees it. */
@@ -119,6 +122,8 @@ export type FaceStart = {
   hooks: unknown[];
   /** The page an open falls back to when the features' rows cannot be added. */
   fallbackPage: (config: unknown[]) => unknown[];
+  /** The previews functions taken off the page, by the messageKey of the picker each belongs to. */
+  previewLoaders: PreviewLoaders;
 };
 
 /** The parts of the framework's compiled app module the loader calls. */
@@ -162,6 +167,11 @@ export type LoadedPage = {
   built: { config: unknown[]; customFn: unknown };
   /** What each feature handed back as it started, in the order the face lists them. Empty when they did not start. */
   features: unknown[];
+  /** Writes the page's data URL the way the phone does as the page opens, with each theme picker's
+   * previews loaded and cut down to the shots of the watch in Clay's meta. */
+  url(): string;
+  /** A page as the phone sends it, with each theme picker's previews loaded and cut down the same way. */
+  forPhone(page: unknown[]): unknown[];
 };
 
 /** A face's settings page as the phone would open it on one platform. */
@@ -690,7 +700,15 @@ function loadPage(paths: FacePaths, entry: string, messageKeys: Record<string, n
   // key held for every provider
   app.prepareSettingsPage(clay, start.options, [...features, ...start.hooks], built);
 
-  return { given, start, clay, built, features };
+  return {
+    given,
+    start,
+    clay,
+    built,
+    features,
+    url: () => settingsPageUrl(clay, start.previewLoaders),
+    forPhone: (page) => pageForWatch(page as ClayConfigItem[], watchPlatform(clay), start.previewLoaders),
+  };
 }
 
 /** Every option value a choice control lists, with Clay's option groups opened up. */

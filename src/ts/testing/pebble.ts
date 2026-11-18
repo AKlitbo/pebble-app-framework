@@ -89,6 +89,9 @@ export interface FakePebble {
   /** The subscriptions the face has not ended. */
   live(): FakeSourceSubscription[];
 
+  /** The platform `getActiveWatchInfo` says the watch is on. emery unless the spec sets another. */
+  platform: string;
+
   /** Runs every listener registered for an event, as PebbleKit JS does when the event lands. */
   fire(type: string, event?: unknown): void;
 
@@ -182,6 +185,7 @@ export function withFakePebble(options: FakePebbleOptions = {}): FakePebble {
     live() {
       return fake.subscriptions.filter((subscription) => !subscription.ended);
     },
+    platform: 'emery',
     fire(type: string, event?: unknown) {
       (listeners[type] || []).forEach((handler) => handler(event));
     },
@@ -197,6 +201,7 @@ export function withFakePebble(options: FakePebbleOptions = {}): FakePebble {
     },
     sendAppMessage,
     openURL: () => {},
+    getActiveWatchInfo: () => ({ platform: fake.platform }),
   };
 
   if (options.plugins !== false) {

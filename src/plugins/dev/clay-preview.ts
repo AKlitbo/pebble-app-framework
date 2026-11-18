@@ -89,9 +89,9 @@ const VALUE_FLAGS: Record<string, string> = {
 export type RenderedPage = {
   /** The page as the browser opens it. */
   html: string;
-  /** The settings page as Clay built it from the face's own page, as JSON. A face that lists providers has the providers' open pass run on it, as an open that falls back gets it. */
+  /** The settings page as Clay built it from the face's own page, as JSON, with each theme picker's previews as the phone sends them. A face that lists providers has the providers' open pass run on it, as an open that falls back gets it. */
   unfolded: string;
-  /** The settings page that opens, after the features' page hooks, as JSON. */
+  /** The settings page that opens, after the features' page hooks, as JSON, with each theme picker's previews as the phone sends them. */
   folded: string;
   /** The custom function's text, as Clay writes it into the page. */
   customFn: string;
@@ -312,8 +312,9 @@ export function renderPage(args: Pick<ClayPreviewArgs, 'face' | 'platform'>, pat
 
   // Clay fills meta from the Pebble global, which the preview does not have
   // left alone the page carries activeWatchInfo: null, and any item with capabilities throws on it
-  // filling it with --platform's watch is what lets the capability filter run off the phone
-  (clay as { meta?: unknown }).meta = {
+  // filling it with --platform's watch is what lets the capability filter run off the phone, and it is
+  // the watch each theme picker's previews are cut to
+  clay.meta = {
     activeWatchInfo: { platform: args.platform, firmware: { major: 4, minor: 3, patch: 0 } },
     accountToken: '',
     watchToken: '',
@@ -321,9 +322,9 @@ export function renderPage(args: Pick<ClayPreviewArgs, 'face' | 'platform'>, pat
   };
 
   return {
-    html: htmlFromDataUrl(clay.generateUrl()),
-    unfolded: JSON.stringify(built.config),
-    folded: JSON.stringify(clay.config),
+    html: htmlFromDataUrl(loaded.url()),
+    unfolded: JSON.stringify(loaded.forPhone(built.config)),
+    folded: JSON.stringify(loaded.forPhone(clay.config)),
     customFn: String(clay.customFn),
   };
 }

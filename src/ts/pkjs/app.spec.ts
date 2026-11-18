@@ -3030,7 +3030,8 @@ describe('startPebbleApp settings page hooks', () => {
    * A Clay that keeps what it was built with and what each page it opened held. Like the real one,
    * it deep copies the page it is built with, keeps a do-nothing custom function when given none,
    * registers its own component for each of its types the page it was built with uses, and adds a
-   * ready listener to the Pebble bridge, as Clay does with its own events left to the face.
+   * ready listener to the Pebble bridge, as Clay does with its own events left to the face. Like the
+   * real one, that listener fills its meta with the watch the bridge names.
    */
   class PageClay {
     static built: PageClay[] = [];
@@ -3041,6 +3042,7 @@ describe('startPebbleApp settings page hooks', () => {
     components: Record<string, unknown> = {};
     builtConfig: unknown[];
     builtCustomFn: unknown;
+    meta: { activeWatchInfo: { platform?: string } | null } = { activeWatchInfo: null };
 
     constructor(config: ClayConfigItem[], customFn?: unknown) {
       this.config = JSON.parse(JSON.stringify(config));
@@ -3062,7 +3064,10 @@ describe('startPebbleApp settings page hooks', () => {
 
       register(config);
       PageClay.built.push(this);
-      Pebble.addEventListener('ready', () => PageClay.heard.push(this));
+      Pebble.addEventListener('ready', () => {
+        PageClay.heard.push(this);
+        this.meta = { activeWatchInfo: Pebble.getActiveWatchInfo ? Pebble.getActiveWatchInfo() : null };
+      });
     }
 
     registerComponent(component: { name: string }) {
@@ -3585,6 +3590,93 @@ describe('startPebbleApp settings page hooks', () => {
 
     expect(PageClay.opened[0].config).toEqual([search]);
     expect(PageClay.built[0].components.input).toEqual({ name: 'input' });
+  });
+
+  describe('theme picker previews', () => {
+    // one palette with a day shot per watch, filed under two scenes the way previewsByKey reads them
+    const SCENES = {
+      '0': { '0': { emery: ['data:image/png;base64,E0'], gabbro: ['data:image/png;base64,G0'] } },
+      '1': { '0': { emery: ['data:image/png;base64,E1'], gabbro: ['data:image/png;base64,G1'] } },
+    };
+
+    /** A scene palette picker whose previews are the given map or function. */
+    function scenePicker(previews: ClayConfigItem['previews']): ClayConfigItem {
+      return { type: 'themePreview', messageKey: 'APPEARANCE_THEME', label: 'Scene Palette', options: [{ label: 'Sketchbook', value: 0 }], previews, previewsByKey: 'APPEARANCE_SCENE' };
+    }
+
+    /** The picker row on the page the open handed Clay. */
+    function openedPicker(index = 0): ClayConfigItem {
+      return (PageClay.opened[index].config as ClayConfigItem[])[0];
+    }
+
+    /**
+     * The reason a face hands over a function. Loading the pictures at launch put megabytes of base64
+     * in memory on every launch and reconnect, though the wearer rarely opens the settings.
+     */
+    test('loads a previews function only once the settings page opens', () => {
+      const load = vi.fn(() => SCENES);
+
+      app.startPebbleApp({ clayConfig: [scenePicker(load)], features: [] });
+      pebble.fire('ready');
+
+      const before = load.mock.calls.length;
+
+      pebble.fire('showConfiguration');
+
+      expect(before).toBe(0);
+      expect(load).toHaveBeenCalledTimes(1);
+    });
+
+    /** Each scene's set goes in with only the shots of the watch in hand, since the other platform's would only weigh the page down. */
+    test('opens the page with only the watch in hand\'s shots', () => {
+      pebble.platform = 'gabbro';
+
+      openSettings([scenePicker(() => SCENES)], []);
+
+      expect(openedPicker().previews).toEqual({
+        '0': { '0': { gabbro: ['data:image/png;base64,G0'] } },
+        '1': { '0': { gabbro: ['data:image/png;base64,G1'] } },
+      });
+    });
+
+    /**
+     * Each open is cut for the watch that opens the page. A cut kept from the first open would hand a
+     * round watch that connects later the rectangular watch's shots.
+     */
+    test('loads and cuts the previews again on the next open, for the watch that opens it', () => {
+      const load = vi.fn(() => SCENES);
+
+      openSettings([scenePicker(load)], []);
+      pebble.platform = 'gabbro';
+      pebble.fire('ready');
+
+      pebble.fire('showConfiguration');
+
+      expect(load).toHaveBeenCalledTimes(2);
+      expect(openedPicker(1).previews).toEqual({
+        '0': { '0': { gabbro: ['data:image/png;base64,G0'] } },
+        '1': { '0': { gabbro: ['data:image/png;base64,G1'] } },
+      });
+    });
+
+    /** A face that passes the generated map itself keeps working, and its page gets the same cut. */
+    test('cuts plain previews down to the watch in hand as well', () => {
+      openSettings([scenePicker(SCENES)], []);
+
+      expect(openedPicker().previews).toEqual({
+        '0': { '0': { emery: ['data:image/png;base64,E0'] } },
+        '1': { '0': { emery: ['data:image/png;base64,E1'] } },
+      });
+    });
+
+    /** Clay rebuilds a function from its text, which loses the require inside it, so Clay never holds one. */
+    test('builds Clay from the page without the previews function', () => {
+      const load = vi.fn(() => SCENES);
+
+      openSettings([scenePicker(load)], []);
+
+      expect((PageClay.built[0].builtConfig as ClayConfigItem[])[0].previews).toEqual({});
+    });
   });
 });
 

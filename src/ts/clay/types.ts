@@ -21,6 +21,15 @@ export type VisibilityCondition = { key: string; in: Array<string | number | boo
  * face's manifest uses. */
 export type ThemePreviewPictures = string[] | Record<string, string[]>;
 
+/** A themePreview row's pictures for every option, keyed by the option's value as a string. Under
+ * previewsByKey it nests one level deeper, keyed first by the other control's value. */
+export type ThemePreviewMap = Record<string, ThemePreviewPictures> | Record<string, Record<string, ThemePreviewPictures>>;
+
+/** A themePreview row's previews: the map itself, or a function that hands it back. The framework
+ * calls the function each time the settings page opens, so a face that requires its generated file
+ * inside it only loads the pictures then. */
+export type ThemePreviewSource = ThemePreviewMap | (() => ThemePreviewMap);
+
 /**
  * One Clay config item (a section, heading, select, toggle, input, custom
  * component, etc.). The fields both the config builder and the runtime touch are
@@ -58,8 +67,10 @@ export interface ClayConfigItem {
    * the face's theme-previews.g.js or a named map's theme-previews-<name>.g.js. A value is a list of data URLs, drawn side by side, so a theme
    * can carry one picture or a few (such as a day and a night shot). A value can instead be a map
    * keyed by platform, so a round and a rectangular watch each show their own shots. With
-   * previewsByKey set, it nests one level deeper, keyed first by the sibling control's value. */
-  previews?: Record<string, ThemePreviewPictures> | Record<string, Record<string, ThemePreviewPictures>>;
+   * previewsByKey set, it nests one level deeper, keyed first by the sibling control's value. It can
+   * also be a function handing the map back, which the framework calls as the settings page opens.
+   * Either way the page gets only the shots for the watch it opens on. */
+  previews?: ThemePreviewSource;
   /** themePreview only: the messageKey of another control on the page whose value picks which set of
    * previews to draw. The previews map then nests, keyed first by that control's value and then by the
    * option's value, so the shots under the picker follow a second choice such as the scene. The named

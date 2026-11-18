@@ -39,6 +39,7 @@ import { icaljsPlugin } from './build-plugin.ts';
 import { checkCustomClay, installHost } from './settings-page.ts';
 import { reachesSite, readOwn } from '../manifest/permissions.ts';
 import { LOCATION_SEARCH_HOSTS } from '../../ts/clay/location-hosts.ts';
+import { settingsPageUrl, takePreviewLoaders } from '../../ts/clay/preview-pictures.ts';
 import type { Permission } from '../manifest/permissions.ts';
 import type { ClayConfigItem } from '../../ts/clay/types.ts';
 
@@ -68,7 +69,7 @@ export interface PluginPageSource {
 const LOCATION_SEARCH = 'locationsearch';
 
 /** Clay as the build uses it. */
-type PageClay = { meta: unknown; components?: Record<string, unknown>; generateUrl(): string; registerComponent(component: unknown): void };
+type PageClay = { config: unknown[]; meta: unknown; components?: Record<string, unknown>; generateUrl(): string; registerComponent(component: unknown): void };
 
 /** Clay's constructor, as the build loads it. */
 type PageClayConstructor = new (config: unknown, customFn: unknown, options: unknown) => PageClay;
@@ -180,7 +181,9 @@ function checkPickerSites(items: ClayConfigItem[], permissions: Permission[], na
  * @return The page's HTML.
  */
 export function renderPluginPage(source: PluginPageSource, name: string): string {
-  const items = pluginPageItems(source.clayConfig, name);
+  // a theme picker's previews function comes off the page before Clay sees it, the way a face's does
+  const taken = takePreviewLoaders(source.clayConfig);
+  const items = pluginPageItems(taken.page, name);
   const customFn = combineCustomFns([
     { code: anyItem(items, (item) => item.visibleWhen !== undefined) ? dependentVisibility : undefined, label: 'the framework\'s show and hide' },
     { code: pluginSettingsPage, label: 'the framework\'s plugin settings' },
@@ -207,10 +210,11 @@ export function renderPluginPage(source: PluginPageSource, name: string): string
     checkDrawn(clay, items, name);
     checkPickerSites(items, source.usesPermissions || [], name);
 
-    // a plugin's page opens with no watch behind it
+    // a plugin's page opens with no watch behind it, so each theme picker keeps the one list of shots
+    // it draws without one
     clay.meta = { activeWatchInfo: null, accountToken: '', watchToken: '', userData: {} };
 
-    const url = clay.generateUrl();
+    const url = settingsPageUrl(clay, taken.loaders);
     const prefix = 'data:text/html;charset=utf-8,';
     const html = url.startsWith(prefix) ? decodeURIComponent(url.slice(prefix.length)) : url;
 

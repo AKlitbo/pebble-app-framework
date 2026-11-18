@@ -22,6 +22,7 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 import { pluginPageItems, readPluginPage, renderPluginPage, SAVE_STATUS_ID } from './plugin-page';
 import { handleSettings } from '../../ts/plugin-app/settings';
 import locationComponent from '../../ts/clay/location-component';
+import themePreviewComponent from '../../ts/clay/theme-preview-component';
 import type { PluginPebble } from '../../ts/plugin-app/runtime';
 import type { ClayConfigItem } from '../../ts/clay/types';
 import { tempDir } from '../../ts/testing/temp-dir.ts';
@@ -448,6 +449,20 @@ describe('components on a plugin page', () => {
     const result = renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent], usesPermissions: OPEN_METEO }, 'search-plugin');
 
     expect(result).toContain('.component-input .label {');
+  });
+
+  /**
+   * A plugin's page is built once with no watch behind it, so a picker's previews function is called
+   * here and only the list the picker draws without a watch goes in. Left to Clay, the function went
+   * into the page as its own text, every platform's shots with it.
+   */
+  test('loads a previews function into the page, cut to the list the picker draws with no watch', () => {
+    const clayConfig: ClayConfigItem[] = [{ type: 'themePreview', messageKey: 'THEME', label: 'Theme', options: [{ label: 'A', value: 0 }], previews: () => ({ 0: { emery: ['data:image/png;base64,EMERYSHOT'], gabbro: ['data:image/png;base64,GABBROSHOT'] } }) }];
+
+    const result = renderPluginPage({ clayConfig, components: [themePreviewComponent] }, 'picker-plugin');
+
+    expect(result).toContain('EMERYSHOT');
+    expect(result).not.toContain('GABBROSHOT');
   });
 
   /**

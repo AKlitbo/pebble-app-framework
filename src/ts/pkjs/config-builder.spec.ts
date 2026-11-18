@@ -356,6 +356,22 @@ describe('buildConfig theme preview picker', () => {
 
     warn.mockRestore();
   });
+
+  /**
+   * A previews function holds its pictures until the page opens, so the picker has to stay the
+   * picture picker and pass the function on uncalled. Calling it here would load the pictures on
+   * every launch, since buildConfig runs as the phone code starts.
+   */
+  test('passes a previews function on to the picture picker without calling it', () => {
+    const previews = vi.fn(() => ({ 0: ['data:image/png;base64,AAAA'] }));
+
+    const config = buildConfig({ theme: { options: [{ label: 'A', value: 0 }], previews } });
+    const picker = findItemByKey(config, 'APPEARANCE_THEME');
+
+    expect(picker.type).toBe('themePreview');
+    expect(picker.previews).toBe(previews);
+    expect(previews).not.toHaveBeenCalled();
+  });
 });
 
 describe('buildConfig time zone picker', () => {

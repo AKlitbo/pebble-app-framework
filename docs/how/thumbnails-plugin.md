@@ -193,6 +193,22 @@ import scenePalettePreviews from './clay/theme-previews-scene-palette.g';
 
 A value under `mapsByKey` that is a path rather than a block is refused, since the picker would find no shots under any value of the other control. So is a name under both `maps` and `mapsByKey`, a `maps` or `mapsByKey` that names no map, an empty map, and an empty block. A manifest with no `maps` or `mapsByKey` is the main map alone and writes `theme-previews.g.js` even when it is empty. One that holds only named maps writes no main file. `maps` and `mapsByKey` are the two keys the manifest keeps for itself, so a picker cannot carry an option whose value is either word.
 
+**Loading Only When the Page Opens.** A `themePreview` item's `previews`, and `buildConfig`'s `theme.previews`, can be a function in place of the map, and the framework calls it each time the settings page opens. A face that requires the generated file inside the function loads the pictures only then, rather than every time the phone code starts:
+
+```ts
+{
+  type: 'themePreview',
+  // …
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  previews: () => require('./clay/theme-previews-scene-palette.g'),
+  previewsByKey: 'APPEARANCE_SCENE',
+},
+```
+
+The require has to sit inside the function. An `import` at the top of `config.ts` loads the file as the phone code starts, whatever the function does with it. The bundler still keeps the file once the first open has loaded it, so the saving is on every launch where the wearer does not open the settings. The framework keeps the function under the picker's `messageKey`, so a picker with a previews function needs one.
+
+**One Watch's Shots on the Page.** Each time the settings page opens, the framework cuts every theme down to the shots for the watch it opens on before Clay writes the page, inside every key under `previewsByKey` too. A theme whose map leaves that watch out keeps the list the picker would fall back to, so the page draws what it would have drawn with all of them. A flat value is the same on every watch and stays whole. A face does nothing for this, whether it passes the map or a function.
+
 **What `paf check` Catches.** The theme-preview check mirrors the panel one, across the main file and every named map's file. It reports a committed file that differs from what the generator would write now, including a named map that was never written, and a path that is missing or is not a PNG, with the map it sits in. It also reports a committed file that no map in the manifest builds, such as a named map's file after the map was taken out, and every committed file in a face with no manifest to build it from. The generator warns about such a file too, and leaves deleting it to the face, since its `config.ts` may still import it.
 
 ## What It Costs
@@ -201,9 +217,9 @@ Base64 writes every three bytes as four characters, so the generated file is abo
 
 Theme previews run larger, since each is a whole-watch shot and a theme can carry a day and a night one. A set of eight themes with both comes to roughly 80 to 100 KB. A face that carries a set per platform ships every platform's shots in the one file, so two platforms roughly double it. The whole settings page goes to the phone as one data URL, so a face that finds the page slow or refusing to open can drop to a single shot per theme, which about halves it.
 
-**In the Phone Code.** The generated file is part of the face's phone code. It ships in every download of the face and loads every time the phone code starts, whether or not the wearer opens the settings page. None of it reaches the watch, since the PNGs are not listed as watch resources and the watch never runs the phone code.
+**In the Phone Code.** The generated file is part of the face's phone code. It ships in every download of the face, and loads every time the phone code starts unless the face requires it inside a previews function. None of it reaches the watch, since the PNGs are not listed as watch resources and the watch never runs the phone code.
 
-**In the Page.** Clay writes the whole page description into the page each time the settings page opens, and an object handed to two items is written out twice. A face that gives the pictures to two editors carries them twice.
+**In the Page.** Clay writes the whole page description into the page each time the settings page opens, and an object handed to two items is written out twice. A face that gives the pictures to two editors carries them twice. A theme picker's previews go in for one platform only, so a face with shots for two watches sends the page about half of them.
 
 ## What `paf check` Catches
 

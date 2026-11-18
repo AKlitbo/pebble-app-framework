@@ -19,8 +19,10 @@ import providerKeysFn from '../clay/provider-keys-fn';
 import builderPluginSources from '../clay/builder-plugin-sources-fn';
 import { combineCustomFns, customClayShape } from '../clay/custom-fn';
 import { copyPage } from '../clay/copy-page';
-import { rowTypes, settleIntro, typesWithoutComponent } from '../clay/rows';
 import { BORROWED_LOOKS, borrowLooks, componentName } from '../clay/looks';
+import { settingsPageUrl, takePreviewLoaders } from '../clay/preview-pictures';
+import type { PreviewLoaders } from '../clay/preview-pictures';
+import { rowTypes, settleIntro, typesWithoutComponent } from '../clay/rows';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { createSettingsAsk } from './settings-ask';
@@ -797,6 +799,11 @@ export interface FaceStart {
    * the start narrowed it. A face that lists none gets that page back with only its intro settled.
    */
   fallbackPage(config: unknown[]): unknown[];
+  /**
+   * The previews functions taken off the face's page, by the messageKey of the picker each belongs
+   * to, which the settings page calls as it opens. Clay never sees them. Empty for a face with none.
+   */
+  previewLoaders: PreviewLoaders;
 }
 
 /**
@@ -809,6 +816,10 @@ export interface FaceStart {
  * Everything only a face with a list runs stays behind the build's swap, so it never reaches the
  * bundle of a face without one.
  *
+ * A theme picker's previews function comes off the page first, into previewLoaders, since Clay
+ * rebuilds every function on its page from the function's text and the require inside would not
+ * survive that. settingsPageUrl calls it back as the page opens.
+ *
  * startPebbleApp calls this before it builds Clay, and the dev plugin's clay-preview calls it too, so
  * the preview opens the page the phone would.
  *
@@ -817,13 +828,17 @@ export interface FaceStart {
  * @return The options to start with, the defaults, the lists for the features, and the providers' hooks.
  */
 export function faceStart(options: StartOptions, providers: FaceProviders | null = faceProviders): FaceStart {
-  const start: FaceStart = providers
-    ? providers.start(options, collectDefaults)
-    : { options, defaults: collectDefaults(options.clayConfig), providers: null, hooks: [], seedSettled: () => false, launchSettled: () => false, fallbackPage: (config) => config };
+  // a previews function comes off the page before anything reads it, so no page built from it, and
+  // no Clay, ever holds one. a face with none keeps its own options
+  const taken = takePreviewLoaders(options.clayConfig);
+  const own = taken.page === options.clayConfig ? options : { ...options, clayConfig: taken.page };
+  const start = providers
+    ? providers.start(own, collectDefaults)
+    : { options: own, defaults: collectDefaults(own.clayConfig), providers: null, hooks: [], seedSettled: () => false, launchSettled: () => false, fallbackPage: (config: unknown[]) => config };
   const fallback = start.fallbackPage;
 
   // the fallback is a page the phone opens too, so its intro is settled once its rows are final
-  return { ...start, fallbackPage: (config) => settledPage(fallback(config)) };
+  return { ...start, fallbackPage: (config) => settledPage(fallback(config)), previewLoaders: taken.loaders };
 }
 
 /**
@@ -1149,7 +1164,7 @@ function startPebbleApp(faceOptions: StartOptions): void {
     prepareSettingsPage(clay, options, features, built);
 
     // Clay's auto-handling is off, so open the config page ourselves
-    Pebble.openURL(clay.generateUrl());
+    Pebble.openURL(settingsPageUrl(clay, start.previewLoaders));
   });
 
   Pebble.addEventListener('webviewclosed', (event) => {

@@ -31,6 +31,9 @@ interface PebbleBridge {
   enumeratePlugins?(): unknown;
   /** Subscribes to one category and item, and hands back a handle carrying unsubscribe. */
   subscribeToSource?(request: unknown): unknown;
+
+  /** The watch the phone is talking to, read for its platform, such as emery. */
+  getActiveWatchInfo?(): { platform?: string } | null;
 }
 
 declare const Pebble: PebbleBridge;
@@ -49,6 +52,8 @@ interface ClayConstructor {
     config: unknown[];
     /** The function the page runs before it builds. */
     customFn: unknown;
+    /** The watch the page was opened from, which Clay fills from getActiveWatchInfo when the phone says ready. */
+    meta?: unknown;
     /** Every component registered so far, by name. Clay registers its own for each type the page it was built with uses. */
     components: Record<string, unknown>;
   };

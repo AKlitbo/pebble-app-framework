@@ -95,7 +95,7 @@ export interface FaceProviders {
    * @param collect The app's own defaults collector, collectDefaults.
    * @return What the app starts with.
    */
-  start(options: StartOptions, collect: (items: ClayConfigItem[]) => Record<string, unknown>): FaceStart;
+  start(options: StartOptions, collect: (items: ClayConfigItem[]) => Record<string, unknown>): Omit<FaceStart, 'previewLoaders'>;
   /**
    * The first pass. It narrows each picker, sets its default, takes the key row off when no listed
    * provider needs a key, and takes off the custom rows of a plugin only kind.
@@ -445,7 +445,7 @@ export function faceProvidersFor(written: WrittenProviders, stockCache?: StockCa
     return config;
   }
 
-  function start(options: StartOptions, collect: (items: ClayConfigItem[]) => Record<string, unknown>): FaceStart {
+  function start(options: StartOptions, collect: (items: ClayConfigItem[]) => Record<string, unknown>): Omit<FaceStart, 'previewLoaders'> {
     const own = options.clayConfig;
     const narrowed = narrow(own);
     const defaults = collect(narrowed);
