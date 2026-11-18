@@ -1,8 +1,8 @@
 # Dates and Durations
 
-On the 1st of January 2027, a week readout totalled against the calendar year says `53/52`. The day is in ISO week 53 of 2026, and 2027 itself has only 52 weeks. Small calendar readouts are full of edges like that, which only show on a few days a year, and the framework gets them right once so a face does not find them on someone's wrist in January. It covers the week number, the day of the year, the days left in it, a month grid, two-letter weekday labels, and a length of time such as a night's sleep or the wait until sunset.
+On the 1st of January 2027, a week readout totalled against the calendar year says `53/52`. The day is in ISO week 53 of 2026, and 2027 itself has only 52 weeks. Small calendar readouts are full of edges like that, which only show on a few days a year, and the framework gets them right once so a face does not find them on someone's wrist in January. It covers the week number, the day of the year, the days left in it, a month grid, how far through the hour, day, week, or year it is, two-letter weekday labels, and a length of time such as a night's sleep or the wait until sunset.
 
-The code lives in [`date.h`](../../src/c/core/clock/date.h) and [`date.c`](../../src/c/core/clock/date.c), [`duration.h`](../../src/c/core/clock/duration.h) and [`duration.c`](../../src/c/core/clock/duration.c), and [`weekday.h`](../../src/c/core/clock/weekday.h) and [`weekday.c`](../../src/c/core/clock/weekday.c), all under `src/c/core/clock/`. The date functions take the fields of a `struct tm` one at a time, with the year written out in full, so a face passes `tm_year + 1900`, `tm_yday`, and `tm_wday` straight from its clock.
+The code lives in [`date.h`](../../src/c/core/clock/date.h) and [`date.c`](../../src/c/core/clock/date.c), [`duration.h`](../../src/c/core/clock/duration.h) and [`duration.c`](../../src/c/core/clock/duration.c), [`progress.h`](../../src/c/core/clock/progress.h) and [`progress.c`](../../src/c/core/clock/progress.c), and [`weekday.h`](../../src/c/core/clock/weekday.h) and [`weekday.c`](../../src/c/core/clock/weekday.c), all under `src/c/core/clock/`. The date functions take the fields of a `struct tm` one at a time, with the year written out in full, so a face passes `tm_year + 1900`, `tm_yday`, and `tm_wday` straight from its clock.
 
 ## Week Numbers
 
@@ -47,6 +47,27 @@ int first = date_first_wday(t->tm_wday, t->tm_mday);   // 0 Sunday to 6 Saturday
 
 // a grid with Monday in its first column leaves this many empty cells before the 1st
 int lead = (first - 1 + 7) % 7;
+```
+
+## How Far Through
+
+`progress_hour_pct`, `progress_day_pct`, `progress_week_pct`, and `progress_year_pct` give how far through its period the wall clock is, as a whole percent for a bar. Each takes the seconds too, so a bar on a face that ticks every second moves with it. Each rounds down and stops at 99, so the last second of the year reads 99 and a bar never reads full with time still to go. It reads 0 again once the next period starts.
+
+```c
+int pct = progress_year_pct(t->tm_year + 1900, t->tm_yday, t->tm_hour, t->tm_min, t->tm_sec);
+```
+
+**The Year.** February gets its leap day by the same rule as the day counts, so noon on the 2nd of July is 50% through 2026 and 49% through 2024.
+
+**The Day.** A day is 24 hours of wall clock, even on the day the clocks change. That day the bar reads a little ahead or behind rather than jumping.
+
+**The Week.** The week counts from whichever day the face says it starts on, 0 Sunday to 6 Saturday, so a face passes the wearer's choice. `progress_week_day` gives the day of that week, counting its first day as day 1, so a Sunday in a week starting Monday is day 7:
+
+```c
+int first = 1;   // weeks start on Monday
+int pct = progress_week_pct(t->tm_wday, first, t->tm_hour, t->tm_min, t->tm_sec);
+
+snprintf(out, n, "%d%% DAY %d/7", pct, progress_week_day(t->tm_wday, first));   // "85% DAY 7/7" at midnight on Sunday
 ```
 
 ## Durations

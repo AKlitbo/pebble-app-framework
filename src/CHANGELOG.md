@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a `change` event to the location search. The row fires it when a place or a zone is picked, so page code can read the pick with the row's `get`.
 - Added the `ts/shared/palette` builder piece and its `css/palette.css`. `createPalette` draws a tab for each panel size, a row of group tabs under it, the panel tiles, and a status line naming the group on show, from the groups, sizes, and panels the builder passes in.
 - Added the `ts/shared/plugin-warnings` builder piece. `createPluginWarnings` warns under the watch about each placed panel whose plugin the phone cannot serve, from the plugin kinds row and the kind the builder gives each panel. The framework's page code reads the source selects on any page with the plugin kinds row, so a weather, stock, or calendar panel only warns while its Data Source is the plugin, and the face's own `customClay` still runs after it.
+- Added `progress_hour_pct`, `progress_day_pct`, `progress_week_pct`, and `progress_year_pct` in `clock/progress.h`, which give how far through the hour, day, week, or year the wall clock is as a whole percent from 0 to 99. Pass the fields of the clock's `struct tm`, with the year in full and, for the week, the weekday it starts on. `progress_week_day` gives the day of that week, from 1 to 7.
 
 #### Changed
 
