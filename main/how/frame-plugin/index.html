@@ -127,8 +127,8 @@
         <main class="page">
           <h1>The Frame Plugin</h1>
           
-          <div class="readme"><p>The <code>frame</code> plugin turns a face&#39;s frame, drawn as an HTML page with CSS, into the background picture the watch shows behind its readouts. <code>paf gen &lt;face&gt; background</code> opens the page in Firefox, empties out the live text the watch draws for itself, takes a picture of the screen area at several times its size, shrinks it to the watch&#39;s screen, and writes one PNG for each frame or theme on each platform the face targets. It can fold a bake down to sixteen colours, which halves the memory the watch needs to hold it, and it carries the Pebble palette as CSS variables so a frame&#39;s fills land on colours the watch can show.</p>
-<p>The generator is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/087972db00ad63e51a34c962207036a33f40cf30/src/plugins/frame/generate-background.ts"><code>generate-background.ts</code></a>, and the plugin&#39;s <a href="https://github.com/AKlitbo/pebble-app-framework/blob/087972db00ad63e51a34c962207036a33f40cf30/src/plugins/frame/package.json"><code>package.json</code></a> tells <code>paf</code> how to run it. The palette is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/087972db00ad63e51a34c962207036a33f40cf30/src/plugins/frame/css/pebble-colors.css"><code>pebble-colors.css</code></a>, beside it under <code>src/plugins/frame/</code>.</p>
+          <div class="readme"><p>The <code>frame</code> plugin turns a face&#39;s frame, drawn as an HTML page with CSS, into the background picture the watch shows behind its readouts. <code>paf gen &lt;face&gt; background</code> opens the page in Firefox, empties out the live text the watch draws for itself, takes a picture of the screen area at several times its size, shrinks it to the watch&#39;s screen, and writes one PNG for each frame and theme on each platform the face targets. It can fold a bake down to sixteen colours, which halves the memory the watch needs to hold it, and it carries the Pebble palette as CSS variables so a frame&#39;s fills land on colours the watch can show.</p>
+<p>The generator is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/45b5bf3d468363ffd8908008ec4a02b6923819d0/src/plugins/frame/generate-background.ts"><code>generate-background.ts</code></a>, and the plugin&#39;s <a href="https://github.com/AKlitbo/pebble-app-framework/blob/45b5bf3d468363ffd8908008ec4a02b6923819d0/src/plugins/frame/package.json"><code>package.json</code></a> tells <code>paf</code> how to run it. The palette is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/45b5bf3d468363ffd8908008ec4a02b6923819d0/src/plugins/frame/css/pebble-colors.css"><code>pebble-colors.css</code></a>, beside it under <code>src/plugins/frame/</code>.</p>
 <pre class="mermaid">flowchart LR
   config[&quot;frame.config.json&quot;] --&gt; gen[&quot;paf gen bakes it in Firefox&quot;]
   page[&quot;the frame page and its stylesheets&quot;] --&gt; gen
@@ -211,6 +211,14 @@ resources/images/
 <td align="left"><code>maxColors</code></td>
 <td align="left">the most colours the bake may keep, left out for no cap</td>
 </tr>
+<tr>
+<td align="left"><code>frameThemes</code></td>
+<td align="left">on a face with themes and more than one frame, the themes each frame other than <code>defaultFrame</code> bakes under, needed for <code>--frame all</code></td>
+</tr>
+<tr>
+<td align="left"><code>bareFrameTheme</code></td>
+<td align="left">on a face with themes and more than one frame, the theme under which a frame other than <code>defaultFrame</code> leaves the theme out of its file name, left out or <code>null</code> for none</td>
+</tr>
 </tbody></table>
 <h2 id="frames-and-themes">Frames and Themes</h2>
 <p><code>supportsTheme</code> says how a face has its looks.</p>
@@ -223,7 +231,21 @@ resources/images/
 <span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> gen</span><span style="color:var(--code-token-string)"> my-themed-face</span><span style="color:var(--code-token-string)"> background</span><span style="color:var(--code-token-string)"> --theme</span><span style="color:var(--code-token-string)"> dusk</span><span style="color:var(--code-token-comment)"> # one theme</span></span>
 <span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> gen</span><span style="color:var(--code-token-string)"> my-themed-face</span><span style="color:var(--code-token-string)"> background</span><span style="color:var(--code-token-string)"> --theme</span><span style="color:var(--code-token-string)"> all</span><span style="color:var(--code-token-comment)">  # every theme</span></span></code></pre>
 <p><code>--frame</code> also takes the page&#39;s file name, so <code>night~emery.html</code> picks <code>night</code>. The platform tag is dropped and picks nothing, since every platform the face targets is baked whichever page is named. The generator refuses a frame or theme the face does not have and lists the names it has. It refuses a word given without its flag too, so a stray name never bakes the default frame over its background.</p>
-<p><strong>What Each Kind of Face Takes.</strong> A face without themes takes <code>--theme all</code> and bakes each frame as it stands, and refuses a named theme. A face with themes has to be told which, since a bake with no theme writes a file no theme loads. It also bakes one frame per run, since a themed background is named after its theme alone and a second frame would be written over the first. So a face with themes and more than one frame refuses <code>--frame all</code>, and <code>paf gen &lt;face&gt; all</code> stops on it. A frame page or theme sheet called <code>all</code> is refused wherever it comes from, since the word already means every one.</p>
+<p><strong>What Each Kind of Face Takes.</strong> A face without themes takes <code>--theme all</code> and bakes each frame as it stands, and refuses a named theme. A face with themes has to be told which, since a bake with no theme writes a file no theme loads. A frame page or theme sheet called <code>all</code> is refused wherever it comes from, since the word already means every one.</p>
+<p><strong>More than One Frame with Themes.</strong> A face with themes can hold more pages beside its main one, such as a second desktop drawn in its own style. Each page links its own stylesheets under names without <code>theme_</code> in them, so the theme swap leaves them alone, and a theme sheet can <code>@import</code> a page&#39;s colours for that theme. The generator bakes <code>defaultFrame</code> under every theme and names each PNG after the theme alone. It bakes every other frame under the themes <code>frameThemes</code> lists, and names each PNG after the frame and the theme. A face lists the looks its other frames have:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "defaultFrame"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "editor"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "defaultScale"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "supportsTheme"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "bareBackgroundBase"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> null</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "frameThemes"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">"dark"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "light"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "terminal"</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "bareFrameTheme"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "light"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "clearTextSelectors"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">".time"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> ".data"</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "hideSelectors"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> []</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>bareFrameTheme</code> only changes the file name. Under that theme a frame other than <code>defaultFrame</code> leaves the theme out of its PNG&#39;s name, so <code>retro</code> bakes to <code>background-retro</code> under <code>light</code> and to <code>background-retro-dark</code> under <code>dark</code>. The bake under it still swaps in that theme&#39;s sheet like any other, so a frame that should keep its page&#39;s own colours there needs a theme sheet that sets none of the variables the frame reads.</p>
+<p><code>--frame all --theme all</code>, and so <code>paf gen &lt;face&gt; all</code>, bakes every frame under each of its themes. <code>--frame all --theme dark</code> bakes each frame that takes <code>dark</code>, and a named frame asked for under a theme it does not take is refused. A face that sets no <code>frameThemes</code> refuses <code>--frame all</code> and says to set it, and <code>bareFrameTheme</code> if one theme leaves the name bare, since baking each other frame under every theme would leave PNGs beside the real ones that nothing loads. A frame named with <code>--frame</code> still bakes on its own, under every theme when <code>frameThemes</code> is left out. Both settings are only read on a face with a frame other than <code>defaultFrame</code>, so a face with one frame never trips over them. With more than one frame, <code>defaultFrame</code> has to be one of them, since it is the frame the theme backgrounds are named after. A face with themes and one frame names that frame after the theme alone whatever <code>defaultFrame</code> says.</p>
+<p>Before baking, the generator works out the file name for every frame under every theme it takes, and refuses two that land on one file, such as a frame called <code>dark</code> under <code>bareFrameTheme</code> beside the main frame under a theme called <code>dark</code>. It names both and writes neither.</p>
 <h2 id="baking-a-page">Baking a Page</h2>
 <p>The generator drives Firefox through Playwright. It uses Firefox rather than Chromium, since Chromium clips pseudo-elements drawn at a z-index of -1, which is a common way to draw carve-outs in a frame&#39;s chrome.</p>
 <p><strong>Stylesheets First.</strong> Firefox draws a page whose stylesheet is missing without a word, and a frame whose palette sheet went missing would bake with every colour it set left out. So before baking anything, the generator opens every page it is about to bake and checks each local stylesheet link is a file that is there. One missing stops the run before any PNG is rewritten. A sheet from the web is not checked, since one that fails shows as the wrong font rather than a bare frame. A themed run skips the page&#39;s own theme links, since it swaps them out anyway.</p>
@@ -264,7 +286,7 @@ resources/images/
 </tr>
 </tbody></table>
 <p>Emery and gabbro give an app 128 KB in all, for its code, its static data, and its heap together. A background at eight bits takes over a third of that on emery and over half on gabbro, before the face has loaded a font or an icon. The jump from sixteen colours to seventeen costs another 22 KB on emery, and the seventeenth is usually a few edge pixels off a curve. On a face that is already full, that is the difference between the background loading and <code>gbitmap_create_with_resource</code> handing back NULL.</p>
-<p>Four of IDE VSCode&#39;s six themes land on twenty or more palette colours, and its config sets no cap, so those ship at eight bits.</p>
+<p>A face whose themes land on twenty or more palette colours, with no cap set in its config, ships those themes at eight bits.</p>
 <h2 id="keeping-to-sixteen-colours">Keeping to Sixteen Colours</h2>
 <p><code>maxColors</code> caps the bake. After the shrink, the generator sorts every pixel by the palette colour the SDK will round it to, with the same rounding on each colour channel, and counts each. While there are more colours than the cap, it takes the one with the fewest pixels and folds it into the nearest colour left, by straight-line distance across red, green, blue, and see-through. Ties go by the colour&#39;s value, so baking the same art again folds it the same way.</p>
 <p>Only the pixels in a folded colour are repainted, each to the exact palette colour it joined. Every other pixel keeps the value the shrink gave it, so the anti-aliasing everywhere else is left alone. The colours that go are anti-aliasing crumbs off curved chrome, a handful of pixels each, so the fold is hard to spot.</p>
@@ -282,19 +304,27 @@ resources/images/
 </tr>
 </thead>
 <tbody><tr>
-<td align="left">a theme</td>
-<td align="left"><code>background-&lt;theme&gt;~&lt;platform&gt;.png</code></td>
-</tr>
-<tr>
-<td align="left">the <code>bareBackgroundBase</code> frame</td>
+<td align="left">the <code>bareBackgroundBase</code> frame of a face without themes</td>
 <td align="left"><code>background~&lt;platform&gt;.png</code></td>
 </tr>
 <tr>
-<td align="left">any other frame</td>
+<td align="left">any other frame of a face without themes</td>
+<td align="left"><code>background-&lt;frame&gt;~&lt;platform&gt;.png</code></td>
+</tr>
+<tr>
+<td align="left">the <code>defaultFrame</code> of a face with themes, or its only frame, under a theme</td>
+<td align="left"><code>background-&lt;theme&gt;~&lt;platform&gt;.png</code></td>
+</tr>
+<tr>
+<td align="left">another frame of a face with themes, under a theme</td>
+<td align="left"><code>background-&lt;frame&gt;-&lt;theme&gt;~&lt;platform&gt;.png</code></td>
+</tr>
+<tr>
+<td align="left">another frame of a face with themes, under <code>bareFrameTheme</code></td>
 <td align="left"><code>background-&lt;frame&gt;~&lt;platform&gt;.png</code></td>
 </tr>
 </tbody></table>
-<p><code>--out</code> writes somewhere else, with its path from the unit&#39;s root. The platform tag is added to the name. A run that bakes several frames or several themes also adds the frame or theme to each name, so they land beside each other rather than over each other or over the committed backgrounds.</p>
+<p><code>--out</code> writes somewhere else, with its path from the unit&#39;s root. The platform tag is added to the name. A run that bakes several frames or several themes also adds the frame, the theme, or both to each name, so they land beside each other rather than over each other or over the committed backgrounds.</p>
 <p><strong>How the Build Finds Them.</strong> The face lists each background in its appinfo without the tag, and the SDK picks the file tagged for the platform it is building:</p>
 <pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{ </span><span style="color:var(--code-token-keyword)">"type"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "bitmap"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "name"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "IMAGE_BG_DAY"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "file"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "images/background.png"</span><span style="color:var(--code-foreground)"> },</span></span>
 <span class="line"><span style="color:var(--code-foreground)">{ </span><span style="color:var(--code-token-keyword)">"type"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "bitmap"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "name"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "IMAGE_BG_NIGHT"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "file"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "images/background-night.png"</span><span style="color:var(--code-foreground)"> }</span></span></code></pre>

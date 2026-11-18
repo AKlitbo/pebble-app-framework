@@ -197,24 +197,21 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_0fstruc
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a69dfa550f32ab21f5c6c5d378d8acd7f" name="a69dfa550f32ab21f5c6c5d378d8acd7f"></a>
-int&#160;</td><td class="memItemRight"><b>hr</b></td></tr>
-<tr class="memdesc:a69dfa550f32ab21f5c6c5d378d8acd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest heart rate reading. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="ae463a880e2607355d222974f60b31907" name="ae463a880e2607355d222974f60b31907"></a>
-int&#160;</td><td class="memItemRight"><b>steps</b></td></tr>
-<tr class="memdesc:ae463a880e2607355d222974f60b31907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Step count. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a87fa654bed2286d1a29fa1d3815c44d2" name="a87fa654bed2286d1a29fa1d3815c44d2"></a>
-int&#160;</td><td class="memItemRight"><b>calories</b></td></tr>
-<tr class="memdesc:a87fa654bed2286d1a29fa1d3815c44d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calorie count. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a4ff82846014207e0597ba097ec0aa0c8" name="a4ff82846014207e0597ba097ec0aa0c8"></a>
-int&#160;</td><td class="memItemRight"><b>sleep_min</b></td></tr>
-<tr class="memdesc:a4ff82846014207e0597ba097ec0aa0c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes slept. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a11d0ef78d29da6a774cd888998da275f" name="a11d0ef78d29da6a774cd888998da275f"></a>
-int&#160;</td><td class="memItemRight"><b>active_min</b></td></tr>
-<tr class="memdesc:a11d0ef78d29da6a774cd888998da275f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active minutes. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a6bae943d352d4ea4b1a3f3085e626110" name="a6bae943d352d4ea4b1a3f3085e626110"></a>
-int&#160;</td><td class="memItemRight"><b>distance_m</b></td></tr>
-<tr class="memdesc:a6bae943d352d4ea4b1a3f3085e626110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance walked, in metres. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a6b42b043dd8aa439301e3ef7f088d97e" name="a6b42b043dd8aa439301e3ef7f088d97e"></a>
+uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
+<tr class="memdesc:a6b42b043dd8aa439301e3ef7f088d97e"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_LOCATION, so a restore can tell this blob from another shape. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a49d22b97f22f8f3b5f52e9c3f5320abd" name="a49d22b97f22f8f3b5f52e9c3f5320abd"></a>
+char&#160;</td><td class="memItemRight"><b>lat</b> [20]</td></tr>
+<tr class="memdesc:a49d22b97f22f8f3b5f52e9c3f5320abd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude as text, as the phone sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab9a6be89c66daedb8c2c8cf463e543e9" name="ab9a6be89c66daedb8c2c8cf463e543e9"></a>
+char&#160;</td><td class="memItemRight"><b>lon</b> [20]</td></tr>
+<tr class="memdesc:ab9a6be89c66daedb8c2c8cf463e543e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude as text, as the phone sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a159cde20b06213ce3c284be791802f9d" name="a159cde20b06213ce3c284be791802f9d"></a>
+<a class="el" href="structCalendarStrip.html">CalendarStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
+<tr class="memdesc:a159cde20b06213ce3c284be791802f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda as the phone last sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a76fab064443fccad957cca54b5bf2c27" name="a76fab064443fccad957cca54b5bf2c27"></a>
+time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
+<tr class="memdesc:a76fab064443fccad957cca54b5bf2c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">When that agenda arrived. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="aa3436b4f53e574810565c9b29d0042d5" name="aa3436b4f53e574810565c9b29d0042d5"></a>
 uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
 <tr class="memdesc:aa3436b4f53e574810565c9b29d0042d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_STOCK, so a restore can tell this blob from another shape. <br /></td></tr>
@@ -233,21 +230,24 @@ bool&#160;</td><td class="memItemRight"><b>charging</b></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a21ac9c99ae8ee34bcc3bc028d7e10495" name="a21ac9c99ae8ee34bcc3bc028d7e10495"></a>
 <a class="el" href="structLinkState.html">LinkState</a>&#160;</td><td class="memItemRight"><b>link</b></td></tr>
 <tr class="memdesc:a21ac9c99ae8ee34bcc3bc028d7e10495"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone link as last read. The first reading only seeds. Later changes can buzz. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a6b42b043dd8aa439301e3ef7f088d97e" name="a6b42b043dd8aa439301e3ef7f088d97e"></a>
-uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
-<tr class="memdesc:a6b42b043dd8aa439301e3ef7f088d97e"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_LOCATION, so a restore can tell this blob from another shape. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a49d22b97f22f8f3b5f52e9c3f5320abd" name="a49d22b97f22f8f3b5f52e9c3f5320abd"></a>
-char&#160;</td><td class="memItemRight"><b>lat</b> [20]</td></tr>
-<tr class="memdesc:a49d22b97f22f8f3b5f52e9c3f5320abd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude as text, as the phone sent it. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="ab9a6be89c66daedb8c2c8cf463e543e9" name="ab9a6be89c66daedb8c2c8cf463e543e9"></a>
-char&#160;</td><td class="memItemRight"><b>lon</b> [20]</td></tr>
-<tr class="memdesc:ab9a6be89c66daedb8c2c8cf463e543e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude as text, as the phone sent it. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a159cde20b06213ce3c284be791802f9d" name="a159cde20b06213ce3c284be791802f9d"></a>
-<a class="el" href="structCalendarStrip.html">CalendarStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
-<tr class="memdesc:a159cde20b06213ce3c284be791802f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda as the phone last sent it. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a76fab064443fccad957cca54b5bf2c27" name="a76fab064443fccad957cca54b5bf2c27"></a>
-time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
-<tr class="memdesc:a76fab064443fccad957cca54b5bf2c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">When that agenda arrived. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a69dfa550f32ab21f5c6c5d378d8acd7f" name="a69dfa550f32ab21f5c6c5d378d8acd7f"></a>
+int&#160;</td><td class="memItemRight"><b>hr</b></td></tr>
+<tr class="memdesc:a69dfa550f32ab21f5c6c5d378d8acd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest heart rate reading. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ae463a880e2607355d222974f60b31907" name="ae463a880e2607355d222974f60b31907"></a>
+int&#160;</td><td class="memItemRight"><b>steps</b></td></tr>
+<tr class="memdesc:ae463a880e2607355d222974f60b31907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Step count. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a87fa654bed2286d1a29fa1d3815c44d2" name="a87fa654bed2286d1a29fa1d3815c44d2"></a>
+int&#160;</td><td class="memItemRight"><b>calories</b></td></tr>
+<tr class="memdesc:a87fa654bed2286d1a29fa1d3815c44d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calorie count. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a4ff82846014207e0597ba097ec0aa0c8" name="a4ff82846014207e0597ba097ec0aa0c8"></a>
+int&#160;</td><td class="memItemRight"><b>sleep_min</b></td></tr>
+<tr class="memdesc:a4ff82846014207e0597ba097ec0aa0c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes slept. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a11d0ef78d29da6a774cd888998da275f" name="a11d0ef78d29da6a774cd888998da275f"></a>
+int&#160;</td><td class="memItemRight"><b>active_min</b></td></tr>
+<tr class="memdesc:a11d0ef78d29da6a774cd888998da275f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active minutes. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a6bae943d352d4ea4b1a3f3085e626110" name="a6bae943d352d4ea4b1a3f3085e626110"></a>
+int&#160;</td><td class="memItemRight"><b>distance_m</b></td></tr>
+<tr class="memdesc:a6bae943d352d4ea4b1a3f3085e626110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance walked, in metres. <br /></td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following files:</div><!-- contents -->
 </div><!-- doc-content -->

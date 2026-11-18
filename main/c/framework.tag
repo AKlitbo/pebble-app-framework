@@ -581,6 +581,123 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>progress.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>progress_8c.html</filename>
+    <includes id="progress_8h" name="progress.h" local="yes" import="no" module="no" objc="no">clock/progress.h</includes>
+    <includes id="date_8h" name="date.h" local="yes" import="no" module="no" objc="no">clock/date.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECS_PER_HOUR</name>
+      <anchorfile>progress_8c.html</anchorfile>
+      <anchor>a11528d10d5838afd2d0ec2f5841167cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECS_PER_DAY</name>
+      <anchorfile>progress_8c.html</anchorfile>
+      <anchor>ae6bc10904b2b09a717f1fb81cce017de</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>pct_of_seconds</name>
+      <anchorfile>progress_8c.html</anchorfile>
+      <anchor>ac81de3f7175d7bd96a7baa99a7229f55</anchor>
+      <arglist>(int elapsed, int total)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>seconds_into_day</name>
+      <anchorfile>progress_8c.html</anchorfile>
+      <anchor>a3b2bd2f1145e1751f5301f0b16cd350d</anchor>
+      <arglist>(int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>days_in_year</name>
+      <anchorfile>progress_8c.html</anchorfile>
+      <anchor>ab9e7e886db7dfb5d89979f28163f7d98</anchor>
+      <arglist>(int year)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_week_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaff5cdd910a113d27b46c4eafa496dfe3</anchor>
+      <arglist>(int wday, int week_start)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_hour_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga777b59997a33ba58edb2a35718d46514</anchor>
+      <arglist>(int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_day_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f5c5d51357cdff2c044a22b5daa96d8</anchor>
+      <arglist>(int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_week_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac822689c2904663255c09ddb723a262b</anchor>
+      <arglist>(int wday, int week_start, int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_year_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaba8a9ff681b5347fdfe7ece5ca772dc1</anchor>
+      <arglist>(int year, int yday, int hour, int min, int sec)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>progress.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>progress_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_hour_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga777b59997a33ba58edb2a35718d46514</anchor>
+      <arglist>(int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_day_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f5c5d51357cdff2c044a22b5daa96d8</anchor>
+      <arglist>(int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_week_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac822689c2904663255c09ddb723a262b</anchor>
+      <arglist>(int wday, int week_start, int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_year_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaba8a9ff681b5347fdfe7ece5ca772dc1</anchor>
+      <arglist>(int year, int yday, int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_week_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaff5cdd910a113d27b46c4eafa496dfe3</anchor>
+      <arglist>(int wday, int week_start)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>rotate.c</name>
     <path>src/c/core/clock/</path>
     <filename>rotate_8c.html</filename>
@@ -10326,45 +10443,38 @@
     <name>[struct].s_state</name>
     <filename>struct_0fstruct_0e_8s__state.html</filename>
     <member kind="variable">
-      <type>int</type>
-      <name>hr</name>
+      <type>uint8_t</type>
+      <name>tag</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a69dfa550f32ab21f5c6c5d378d8acd7f</anchor>
+      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
-      <name>steps</name>
+      <type>char</type>
+      <name>lat</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>ae463a880e2607355d222974f60b31907</anchor>
+      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lon</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarStrip</type>
+      <name>strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
-      <name>calories</name>
+      <type>time_t</type>
+      <name>last_sync</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a87fa654bed2286d1a29fa1d3815c44d2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>sleep_min</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a4ff82846014207e0597ba097ec0aa0c8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>active_min</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a11d0ef78d29da6a774cd888998da275f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>distance_m</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a6bae943d352d4ea4b1a3f3085e626110</anchor>
+      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -10410,38 +10520,45 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>uint8_t</type>
-      <name>tag</name>
+      <type>int</type>
+      <name>hr</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
+      <anchor>a69dfa550f32ab21f5c6c5d378d8acd7f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>char</type>
-      <name>lat</name>
+      <type>int</type>
+      <name>steps</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>char</type>
-      <name>lon</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>CalendarStrip</type>
-      <name>strip</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
+      <anchor>ae463a880e2607355d222974f60b31907</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>time_t</type>
-      <name>last_sync</name>
+      <type>int</type>
+      <name>calories</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
+      <anchor>a87fa654bed2286d1a29fa1d3815c44d2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>sleep_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a4ff82846014207e0597ba097ec0aa0c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>active_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a11d0ef78d29da6a774cd888998da275f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>distance_m</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a6bae943d352d4ea4b1a3f3085e626110</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -13201,6 +13318,8 @@
     <file path="src/c/core/clock/">moon.h</file>
     <file path="src/c/core/clock/">nightsched.c</file>
     <file path="src/c/core/clock/">nightsched.h</file>
+    <file path="src/c/core/clock/">progress.c</file>
+    <file path="src/c/core/clock/">progress.h</file>
     <file path="src/c/core/clock/">rotate.c</file>
     <file path="src/c/core/clock/">rotate.h</file>
     <file path="src/c/core/clock/">solar.c</file>
@@ -14110,6 +14229,41 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gab655e624866f012b97621268f0038504</anchor>
       <arglist>(int mode, int now, int rise, int set, int fixed_start, int fixed_end, bool have_night)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_hour_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga777b59997a33ba58edb2a35718d46514</anchor>
+      <arglist>(int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_day_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f5c5d51357cdff2c044a22b5daa96d8</anchor>
+      <arglist>(int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_week_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac822689c2904663255c09ddb723a262b</anchor>
+      <arglist>(int wday, int week_start, int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_year_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaba8a9ff681b5347fdfe7ece5ca772dc1</anchor>
+      <arglist>(int year, int yday, int hour, int min, int sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>progress_week_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaff5cdd910a113d27b46c4eafa496dfe3</anchor>
+      <arglist>(int wday, int week_start)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -15387,8 +15541,8 @@
     <class kind="struct">SystemSeed</class>
     <class kind="struct">WeatherConfig</class>
     <class kind="struct">WeatherSeed</class>
-    <class kind="struct">[struct].s_state</class>
     <class kind="struct">[struct].s_hours</class>
+    <class kind="struct">[struct].s_state</class>
     <class kind="struct">[struct].s_window</class>
     <member kind="define">
       <type>#define</type>

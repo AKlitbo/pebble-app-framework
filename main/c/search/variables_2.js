@@ -1,7 +1,7 @@
 var searchData=
 [
   ['calendar_0',['calendar',['../structPluginSourceSettings.html#a75f039697f416740c7eac0c5653862da',1,'PluginSourceSettings']]],
-  ['calories_1',['calories',['../structHealthConfig.html#af6cc7bfa1e1468a1568965065272ec3a',1,'HealthConfig::calories'],['../structHealthSeed.html#aa6696d59b0ddcf768b8fd291bbc14119',1,'HealthSeed::calories'],['../struct_0fstruct_0e_8s__state.html#a87fa654bed2286d1a29fa1d3815c44d2',1,'[struct].s_state::calories'],['../struct_0fstruct_0e_8s__fixed.html#a3aef642ea830252c418387bb9331342c',1,'[struct].s_fixed::calories']]],
+  ['calories_1',['calories',['../structHealthConfig.html#af6cc7bfa1e1468a1568965065272ec3a',1,'HealthConfig::calories'],['../structHealthSeed.html#aa6696d59b0ddcf768b8fd291bbc14119',1,'HealthSeed::calories'],['../struct_0fstruct_0e_8s__fixed.html#a3aef642ea830252c418387bb9331342c',1,'[struct].s_fixed::calories'],['../struct_0fstruct_0e_8s__state.html#a87fa654bed2286d1a29fa1d3815c44d2',1,'[struct].s_state::calories']]],
   ['change_5fpct_2',['change_pct',['../structStockSlot.html#a8dd9ac04b08e83a1400323dcd32e76f8',1,'StockSlot']]],
   ['changed_3',['changed',['../structSettingsInbound.html#afe10d6eafb1c7b87bbf92d71cd16618f',1,'SettingsInbound']]],
   ['charging_4',['charging',['../structSystemSeed.html#a709c393ec6012a6fccd8bfba55c21594',1,'SystemSeed::charging'],['../struct_0fstruct_0e_8s__state.html#addc8e821b664e115fe20565aa835a42d',1,'[struct].s_state::charging']]],

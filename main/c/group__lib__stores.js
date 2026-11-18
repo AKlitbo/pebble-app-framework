@@ -169,6 +169,10 @@ var group__lib__stores =
       [ "wind_dir", "structWeatherSeed.html#abe78d980ed72ae675e9e9c4aac94baf5", null ],
       [ "wind_kmh", "structWeatherSeed.html#a709b8a2cb2aa19136736b221aa2b600d", null ]
     ] ],
+    [ "[struct].s_hours", "struct_0fstruct_0e_8s__hours.html", [
+      [ "step_hourly", "struct_0fstruct_0e_8s__hours.html#abd059fa328e9264564b60957fb56696f", null ],
+      [ "step_hours", "struct_0fstruct_0e_8s__hours.html#a848ed5523b067bf05dd5907529261202", null ]
+    ] ],
     [ "[struct].s_state", "struct_0fstruct_0e_8s__state.html", [
       [ "active_min", "struct_0fstruct_0e_8s__state.html#a11d0ef78d29da6a774cd888998da275f", null ],
       [ "battery_level", "struct_0fstruct_0e_8s__state.html#a5342d9c4d055ae70b79f91132fa02d4b", null ],
@@ -187,10 +191,6 @@ var group__lib__stores =
       [ "strip", "struct_0fstruct_0e_8s__state.html#a67444768cf8bf88bd0e079bfc6f9378a", null ],
       [ "tag", "struct_0fstruct_0e_8s__state.html#a6b42b043dd8aa439301e3ef7f088d97e", null ],
       [ "tag", "struct_0fstruct_0e_8s__state.html#aa3436b4f53e574810565c9b29d0042d5", null ]
-    ] ],
-    [ "[struct].s_hours", "struct_0fstruct_0e_8s__hours.html", [
-      [ "step_hourly", "struct_0fstruct_0e_8s__hours.html#abd059fa328e9264564b60957fb56696f", null ],
-      [ "step_hours", "struct_0fstruct_0e_8s__hours.html#a848ed5523b067bf05dd5907529261202", null ]
     ] ],
     [ "[struct].s_window", "struct_0fstruct_0e_8s__window.html", [
       [ "hr_history", "struct_0fstruct_0e_8s__window.html#a4d76d9a5f88589d6d9c83fab6cb4be15", null ],

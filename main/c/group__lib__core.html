@@ -228,6 +228,10 @@ Files</h2></td></tr>
 <tr class="memdesc:nightsched_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The night window, by containment rather than by edge. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fclock_2Fnightsched_2Eh" id="r_src_2Fc_2Fcore_2Fclock_2Fnightsched_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="nightsched_8h.html">src/c/core/clock/nightsched.h</a></td></tr>
 <tr class="memdesc:nightsched_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a night-time window is open right now, from plain clock readings. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fclock_2Fprogress_2Ec" id="r_src_2Fc_2Fcore_2Fclock_2Fprogress_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="progress_8c.html">src/c/core/clock/progress.c</a></td></tr>
+<tr class="memdesc:progress_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The progress sums: seconds gone over seconds in the period, as a whole percent. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fclock_2Fprogress_2Eh" id="r_src_2Fc_2Fcore_2Fclock_2Fprogress_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="progress_8h.html">src/c/core/clock/progress.h</a></td></tr>
+<tr class="memdesc:progress_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far through the hour, day, week, and year the wall clock is, as a whole percent. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fclock_2Frotate_2Ec" id="r_src_2Fc_2Fcore_2Fclock_2Frotate_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="rotate_8c.html">src/c/core/clock/rotate.c</a></td></tr>
 <tr class="memdesc:rotate_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Working out which one is up from the clock. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fclock_2Frotate_2Eh" id="r_src_2Fc_2Fcore_2Fclock_2Frotate_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="rotate_8h.html">src/c/core/clock/rotate.h</a></td></tr>
@@ -707,6 +711,16 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga284e05094c9084b2fca021122f13488d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether now falls inside a window that may run past midnight.  <br /></td></tr>
 <tr class="memitem:gab655e624866f012b97621268f0038504" id="r_gab655e624866f012b97621268f0038504"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gab655e624866f012b97621268f0038504">night_schedule_active</a> (int mode, int now, int rise, int set, int fixed_start, int fixed_end, bool have_night)</td></tr>
 <tr class="memdesc:gab655e624866f012b97621268f0038504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the night window is open, whichever way the schedule is set.  <br /></td></tr>
+<tr class="memitem:ga777b59997a33ba58edb2a35718d46514" id="r_ga777b59997a33ba58edb2a35718d46514"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga777b59997a33ba58edb2a35718d46514">progress_hour_pct</a> (int min, int sec)</td></tr>
+<tr class="memdesc:ga777b59997a33ba58edb2a35718d46514"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far through the current hour it is.  <br /></td></tr>
+<tr class="memitem:ga9f5c5d51357cdff2c044a22b5daa96d8" id="r_ga9f5c5d51357cdff2c044a22b5daa96d8"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga9f5c5d51357cdff2c044a22b5daa96d8">progress_day_pct</a> (int hour, int min, int sec)</td></tr>
+<tr class="memdesc:ga9f5c5d51357cdff2c044a22b5daa96d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far through the current day it is.  <br /></td></tr>
+<tr class="memitem:gac822689c2904663255c09ddb723a262b" id="r_gac822689c2904663255c09ddb723a262b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gac822689c2904663255c09ddb723a262b">progress_week_pct</a> (int wday, int week_start, int hour, int min, int sec)</td></tr>
+<tr class="memdesc:gac822689c2904663255c09ddb723a262b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far through the current week it is, counting from the day the week starts on.  <br /></td></tr>
+<tr class="memitem:gaba8a9ff681b5347fdfe7ece5ca772dc1" id="r_gaba8a9ff681b5347fdfe7ece5ca772dc1"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gaba8a9ff681b5347fdfe7ece5ca772dc1">progress_year_pct</a> (int year, int yday, int hour, int min, int sec)</td></tr>
+<tr class="memdesc:gaba8a9ff681b5347fdfe7ece5ca772dc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far through the current year it is, with February getting its leap day.  <br /></td></tr>
+<tr class="memitem:gaff5cdd910a113d27b46c4eafa496dfe3" id="r_gaff5cdd910a113d27b46c4eafa496dfe3"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gaff5cdd910a113d27b46c4eafa496dfe3">progress_week_day</a> (int wday, int week_start)</td></tr>
+<tr class="memdesc:gaff5cdd910a113d27b46c4eafa496dfe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many days the week has run, counting the first day as day 1.  <br /></td></tr>
 <tr class="memitem:ga2c930ac9149442ad63c57a55927f6090" id="r_ga2c930ac9149442ad63c57a55927f6090"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga2c930ac9149442ad63c57a55927f6090">rotate_index</a> (int year, int yday, int hour, int minute, int interval_min, int count)</td></tr>
 <tr class="memdesc:ga2c930ac9149442ad63c57a55927f6090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which of <span class="tt">count</span> is up now, advancing by one every <span class="tt">interval_min</span> minutes and wrapping round at the end.  <br /></td></tr>
 <tr class="memitem:gac982a31420ab76dbaa86ab1885c065ad" id="r_gac982a31420ab76dbaa86ab1885c065ad"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gac982a31420ab76dbaa86ab1885c065ad">solar_day_progress</a> (int rise, int set, int now)</td></tr>
@@ -4436,6 +4450,203 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The pixel row for the reading. A window with no height (hi &lt;= lo) gives the bottom row. </dd></dl>
+
+</div>
+</div>
+<a id="ga9f5c5d51357cdff2c044a22b5daa96d8" name="ga9f5c5d51357cdff2c044a22b5daa96d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9f5c5d51357cdff2c044a22b5daa96d8">&#9670;&#160;</a></span>progress_day_pct()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int progress_day_pct </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How far through the current day it is. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hour</td><td>The hour, 0 to 23. </td></tr>
+    <tr><td class="paramname">min</td><td>The minute, 0 to 59. </td></tr>
+    <tr><td class="paramname">sec</td><td>The second, 0 to 59. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whole percent from 0 to 99. </dd></dl>
+
+</div>
+</div>
+<a id="ga777b59997a33ba58edb2a35718d46514" name="ga777b59997a33ba58edb2a35718d46514"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga777b59997a33ba58edb2a35718d46514">&#9670;&#160;</a></span>progress_hour_pct()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int progress_hour_pct </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How far through the current hour it is. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">min</td><td>The minute, 0 to 59. </td></tr>
+    <tr><td class="paramname">sec</td><td>The second, 0 to 59. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whole percent from 0 to 99. </dd></dl>
+
+</div>
+</div>
+<a id="gaff5cdd910a113d27b46c4eafa496dfe3" name="gaff5cdd910a113d27b46c4eafa496dfe3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaff5cdd910a113d27b46c4eafa496dfe3">&#9670;&#160;</a></span>progress_week_day()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int progress_week_day </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>wday</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>week_start</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How many days the week has run, counting the first day as day 1. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">wday</td><td>Today's weekday, 0 Sunday to 6 Saturday. </td></tr>
+    <tr><td class="paramname">week_start</td><td>The weekday the week begins on, 0 Sunday to 6 Saturday. A value outside that wraps round, so 7 is Sunday and -1 is Saturday. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The day number from 1 to 7. </dd></dl>
+
+</div>
+</div>
+<a id="gac822689c2904663255c09ddb723a262b" name="gac822689c2904663255c09ddb723a262b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac822689c2904663255c09ddb723a262b">&#9670;&#160;</a></span>progress_week_pct()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int progress_week_pct </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>wday</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>week_start</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How far through the current week it is, counting from the day the week starts on. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">wday</td><td>Today's weekday, 0 Sunday to 6 Saturday. </td></tr>
+    <tr><td class="paramname">week_start</td><td>The weekday the week begins on, 0 Sunday to 6 Saturday. A value outside that wraps round, so 7 is Sunday and -1 is Saturday. </td></tr>
+    <tr><td class="paramname">hour</td><td>The hour, 0 to 23. </td></tr>
+    <tr><td class="paramname">min</td><td>The minute, 0 to 59. </td></tr>
+    <tr><td class="paramname">sec</td><td>The second, 0 to 59. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whole percent from 0 to 99. </dd></dl>
+
+</div>
+</div>
+<a id="gaba8a9ff681b5347fdfe7ece5ca772dc1" name="gaba8a9ff681b5347fdfe7ece5ca772dc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaba8a9ff681b5347fdfe7ece5ca772dc1">&#9670;&#160;</a></span>progress_year_pct()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int progress_year_pct </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>year</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>yday</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How far through the current year it is, with February getting its leap day. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">year</td><td>The full year (2026, not 126). </td></tr>
+    <tr><td class="paramname">yday</td><td>The day of the year counting January 1st as 0 (like tm_yday). </td></tr>
+    <tr><td class="paramname">hour</td><td>The hour, 0 to 23. </td></tr>
+    <tr><td class="paramname">min</td><td>The minute, 0 to 59. </td></tr>
+    <tr><td class="paramname">sec</td><td>The second, 0 to 59. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whole percent from 0 to 99. </dd></dl>
 
 </div>
 </div>

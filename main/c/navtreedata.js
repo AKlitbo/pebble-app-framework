@@ -54,10 +54,10 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "group__lib__core.html#ga694e9c38004c250485939cbf5c33ea1f",
-"group__lib__settings.html#ga25de3b313f6a766c08b5af9f3cac864d",
-"group__lib__stores.html#gafb83e889fc10f054eb75c665b53d6de1",
-"structHealthConfig.html#ada15ad269a3134ff2ebb721a1c2aeef1",
-"structWeatherMessage.html#a7b03071ef02a2a9a5906f65735f1b010"
+"group__lib__settings.html#ga172fb13323b731d043aefa0d66a751ce",
+"group__lib__stores.html#gaf18cc0c1c6259577a616c734457c2f40",
+"structHealthConfig.html#a843879d7b5ad5103735e75d662e3781b",
+"structWeatherMessage.html#a2246248b9662e9e1bd5ca6c8ed1a4096"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';
