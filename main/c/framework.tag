@@ -803,9 +803,9 @@
     <includes id="tide_8h" name="tide.h" local="yes" import="no" module="no" objc="no">clock/tide.h</includes>
     <member kind="define">
       <type>#define</type>
-      <name>TIDE_PERIOD_CUBE</name>
+      <name>TIDE_HALF_CUBE</name>
       <anchorfile>tide_8c.html</anchorfile>
-      <anchor>addd7b1e7073eecf23e026be9c1ac3a89</anchor>
+      <anchor>a2e50a77e24ea998f7daa2c19b5fab863</anchor>
       <arglist></arglist>
     </member>
     <member kind="function" static="yes">

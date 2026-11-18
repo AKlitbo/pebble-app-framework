@@ -61,7 +61,8 @@
           
           <div class="readme"><p>All notable changes to the Pebble App Framework are documented in this file. Each version lists the framework changes a face developer has to know about first, then the wearer-visible changes, the ones someone wearing any face built on it would see without the face changing its code.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="unreleased"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v6.3.2...HEAD">Unreleased</a></h2>
+<h2 id="unreleased"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v6.4.0...HEAD">Unreleased</a></h2>
+<h2 id="640---2026-11-18"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v6.3.2...v6.4.0">6.4.0</a> - 2026-11-18</h2>
 <h3 id="framework-changes">Framework Changes</h3>
 <h4 id="added">Added</h4>
 <ul>
@@ -70,11 +71,15 @@
 <li>Added the <code>ts/shared/palette</code> builder piece and its <code>css/palette.css</code>. <code>createPalette</code> draws a tab for each panel size, a row of group tabs under it, the panel tiles, and a status line naming the group on show, from the groups, sizes, and panels the builder passes in.</li>
 <li>Added the <code>ts/shared/plugin-warnings</code> builder piece. <code>createPluginWarnings</code> warns under the watch about each placed panel whose plugin the phone cannot serve, from the plugin kinds row and the kind the builder gives each panel. The framework&#39;s page code reads the source selects on any page with the plugin kinds row, so a weather, stock, or calendar panel only warns while its Data Source is the plugin, or always on a face whose providers list is the plugin alone. The face&#39;s own <code>customClay</code> still runs after it.</li>
 <li>Added <code>progress_hour_pct</code>, <code>progress_day_pct</code>, <code>progress_week_pct</code>, and <code>progress_year_pct</code> in <code>clock/progress.h</code>, which give how far through the hour, day, week, or year the wall clock is as a whole percent from 0 to 99. Pass the fields of the clock&#39;s <code>struct tm</code>, with the year in full and, for the week, the weekday it starts on. <code>progress_week_day</code> gives the day of that week, from 1 to 7. A week start outside 0 to 6 wraps round.</li>
+<li>Added a function form for a <code>themePreview</code> row&#39;s <code>previews</code> and for <code>buildConfig</code>&#39;s <code>theme.previews</code>. The framework calls it each time the settings page opens, so a face that requires its generated file inside it, as <code>() =&gt; require(&#39;./clay/theme-previews.g&#39;)</code>, only loads the pictures then rather than every time the phone code starts.</li>
 </ul>
 <h4 id="changed">Changed</h4>
 <ul>
 <li>The plugin kinds row now leaves out a kind whose select drops to its one option, or is missing from the page, while the face is on a source of its own, such as the calendar on its iCal link with plugins off. A face&#39;s own component reading the row gets no state for that kind, the same as for a kind the face does not read from a plugin.</li>
 <li>The build now stops on a row of a plugin app&#39;s settings page that no registered component draws, and names the row&#39;s type, or on a row with no type. Clay stops drawing the page at that row, so the page would open blank on the phone. Export the component that draws it in <code>components</code> from <code>src/config/index.ts</code>, or take the row off the page.</li>
+<li>The settings page now carries only the theme previews for the watch it opens on. Each open cuts a platform-keyed theme down to the platform of the watch it opens on, the one the picker reads, inside every key under <code>previewsByKey</code> too, before Clay writes the page. A theme whose map leaves out that watch keeps the list the picker would fall back to. A face with shots for two platforms sends the page about half the base64 it did, and needs no change.</li>
+<li>A face&#39;s <code>.pbw</code> now leaves out <code>pebble-js-app.js.map</code>, which is about as big as the JS. <code>pebble logs</code> still translates stack traces from the copy in the sandbox&#39;s <code>build/</code>.</li>
+<li><code>tide_level</code> now works in 32-bit arithmetic, so a face that uses it no longer links libgcc&#39;s <code>__udivmoddi4</code>, about 750 bytes. The levels are unchanged.</li>
 </ul>
 <h3 id="plugin-changes">Plugin Changes</h3>
 <h4 id="added-1">Added</h4>
@@ -85,12 +90,14 @@
 <li><strong>Frame Plugin:</strong> Added baking every frame of a face with themes. Once its <code>frame.config.json</code> sets <code>frameThemes</code>, <code>paf gen &lt;face&gt; background --frame all --theme all</code>, and so <code>paf gen &lt;face&gt; all</code>, bakes <code>defaultFrame</code> under each theme to <code>background-&lt;theme&gt;</code> and each other frame to <code>background-&lt;frame&gt;-&lt;theme&gt;</code>. Without <code>frameThemes</code> the run still stops on a face with more than one frame, and says to set it.</li>
 <li><strong>Frame Plugin:</strong> Added <code>frameThemes</code> and <code>bareFrameTheme</code> to <code>frame/frame.config.json</code>. <code>frameThemes</code> lists the themes a frame other than <code>defaultFrame</code> bakes under, and under <code>bareFrameTheme</code> such a frame leaves the theme out of its name, as <code>background-&lt;frame&gt;</code>. The generator stops on two bakes that would land on one file and names both.</li>
 <li><strong>Thumbnails Plugin:</strong> Added named maps to <code>resources/theme-previews.json</code>, for a page with more than one <code>themePreview</code> picker. Each map under <code>maps</code> is written to <code>src/pkjs/clay/theme-previews-&lt;name&gt;.g.js</code> for a face to import into that picker&#39;s <code>previews</code>. Each under <code>mapsByKey</code> is keyed first by another control&#39;s value, for a picker with <code>previewsByKey</code>, and is written the same way. A manifest without either writes the same <code>theme-previews.g.js</code>. The theme-preview check covers every map&#39;s file, and reports one that no map in the manifest builds.</li>
+<li><strong>Thumbnails Plugin:</strong> Added <code>keys</code> and <code>previews</code> to a <code>mapsByKey</code> map, so it lists its options once. <code>keys</code> maps each value of the other control to a name. <code>previews</code> holds the options, and <code>{key}</code> in a path stands for each name in turn. A map written out in full writes the same file as before. The other control cannot use <code>keys</code> or <code>previews</code> as a value, and neither can an option of a map under <code>maps</code>. A path that holds <code>{key}</code> outside <code>keys</code> now stops the run.</li>
 </ul>
 <h4 id="changed-1">Changed</h4>
 <ul>
 <li><strong>Dev Plugin:</strong> A step with nothing in it, <code>{}</code>, now stops a dev build. Give the step settings, a layout, or a clock, date, or stores of its own, or remove it.</li>
 <li><strong>Dev Plugin:</strong> A walk or a step that pins a clock earlier than the HRV log it takes on now stops the dev build, picked or not. Give it a health store of its own, or pin its clock at or after the log&#39;s last reading.</li>
 <li><strong>Dev Plugin:</strong> The dev header writes each set of readings and each store&#39;s seeds once, so steps that share them share the memory. More than 255 different sets, or more than 255 seeds for one store, stops the dev build.</li>
+<li><strong>Dev Plugin:</strong> <code>paf tool &lt;face&gt; clay-preview</code> now writes the page the phone sends for <code>--platform</code>, with each theme picker&#39;s previews loaded and cut to that watch, in its page and in its JSON of the page.</li>
 </ul>
 <h4 id="fixed">Fixed</h4>
 <ul>
