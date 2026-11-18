@@ -7,7 +7,7 @@
  * hears back, since a save that fails without saying so loses the wearer's change.
  */
 
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { handleSettings, LOAD_MESSAGE, readSettings, SAVE_MESSAGE, SETTINGS_KEY } from './settings';
 import type { PluginPebble } from './runtime';
 
@@ -151,5 +151,257 @@ describe('readSettings', () => {
     const result = await readSettings({ secret: ['FEED_URL'], defaults: { FEED_URL: '', REFRESH: '30' } }, runtime.pebble, fakeStorage());
 
     expect(result).toEqual({ FEED_URL: '', REFRESH: '30' });
+  });
+
+  /** A saved list spread its indexes into the settings as keys of their own, which no page ever saved. */
+  test('reads a saved value that is not an object as the defaults', async () => {
+    const runtime = fakeRuntime();
+
+    const result = await readSettings({ defaults: { REFRESH: '30' } }, runtime.pebble, fakeStorage({ [SETTINGS_KEY]: '["5"]' }));
+
+    expect(result).toEqual({ REFRESH: '30' });
+  });
+});
+
+describe('the hooks', () => {
+  /** The runtime takes one config handler, so a plugin's own message with no hook has to be told it is not known rather than left hanging. */
+  test('answers a message it does not know with an error when there is no hook', async () => {
+    const runtime = fakeRuntime();
+
+    handleSettings({}, runtime.pebble, fakeStorage());
+    const result = await runtime.send({ type: 'my-plugin-units' });
+
+    expect(result).toEqual({ error: 'the plugin does not know that message' });
+  });
+
+  /** A plugin answering its own messages beside the settings has no handler of its own to answer them with. */
+  test('hands a message it does not know to onMessage with its type', async () => {
+    const runtime = fakeRuntime();
+    const heard: unknown[] = [];
+
+    handleSettings({}, runtime.pebble, fakeStorage(), { onMessage: (type, message, respond) => { heard.push(type, message); respond({ units: 'metric' }); } });
+    const reply = await runtime.send({ type: 'my-plugin-units', extra: 1 });
+
+    const result = [reply, heard];
+
+    expect(result).toEqual([{ units: 'metric' }, ['my-plugin-units', { type: 'my-plugin-units', extra: 1 }]]);
+  });
+
+  /**
+   * A hook that did not wait for its own callback had the page hear the error and then its late reply
+   * as well, so the page saw two answers to one message.
+   */
+  test('drops a reply onMessage makes after it returned', async () => {
+    const runtime = fakeRuntime();
+    const replies: unknown[] = [];
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    let later: () => void = () => undefined;
+    let handler: ((message: unknown, respond: (reply: unknown) => void) => Promise<void>) | null = null;
+    const pebble = { ...runtime.pebble, registerConfigHandler: (registered: typeof handler) => void (handler = registered) } as unknown as PluginPebble;
+
+    handleSettings({}, pebble, fakeStorage(), { onMessage: (_type, _message, respond) => void (later = () => respond({ units: 'metric' })) });
+    await handler!({ type: 'my-plugin-units' }, (reply) => void replies.push(reply));
+    later();
+    log.mockRestore();
+
+    expect(replies).toEqual([{ error: 'the plugin does not know that message' }]);
+  });
+
+  /** A hook that forgot to reply for a type it does not know left the page's sendMessage waiting for good. */
+  test('answers with the error when onMessage returns without replying', async () => {
+    const runtime = fakeRuntime();
+
+    handleSettings({}, runtime.pebble, fakeStorage(), { onMessage: () => undefined });
+    const result = await runtime.send({ type: 'someone-else' });
+
+    expect(result).toEqual({ error: 'the plugin does not know that message' });
+  });
+
+  /** A hook that replied and then threw had the page hear a second, error reply after its real answer. */
+  test('sends one reply when onMessage replies and then throws', async () => {
+    const runtime = fakeRuntime();
+    const replies: unknown[] = [];
+    let handler: ((message: unknown, respond: (reply: unknown) => void) => Promise<void>) | null = null;
+    const pebble = { ...runtime.pebble, registerConfigHandler: (registered: typeof handler) => void (handler = registered) } as unknown as PluginPebble;
+
+    handleSettings({}, pebble, fakeStorage(), {
+      onMessage: (_type, _message, respond) => {
+        respond({ units: 'metric' });
+        throw new Error('boom');
+      },
+    });
+    await handler!({ type: 'my-plugin-units' }, (reply) => void replies.push(reply));
+
+    expect(replies).toEqual([{ units: 'metric' }]);
+  });
+
+  /** A hook that threw before replying would otherwise leave the page with no answer at all. */
+  test('answers with the reason when onMessage throws before replying', async () => {
+    const runtime = fakeRuntime();
+
+    handleSettings({}, runtime.pebble, fakeStorage(), { onMessage: () => { throw new Error('boom'); } });
+    const result = await runtime.send({ type: 'my-plugin-units' });
+
+    expect(result).toEqual({ error: 'Error: boom' });
+  });
+
+  /** A hook that took the load or the save would leave the page opening blank or never saving. */
+  test('keeps answering the load and the save itself with onMessage set', async () => {
+    const runtime = fakeRuntime();
+    const heard: unknown[] = [];
+
+    handleSettings({ defaults: { REFRESH: '30' } }, runtime.pebble, fakeStorage(), { onMessage: (type) => void heard.push(type) });
+    const loaded = await runtime.send({ type: LOAD_MESSAGE });
+    const saved = await runtime.send({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } });
+
+    const result = [loaded, saved, heard];
+
+    expect(result).toEqual([{ settings: { REFRESH: '30' } }, { ok: true }, []]);
+  });
+
+  /**
+   * A plugin acting on a changed setting, such as lifting a hold when a plan switch flips, needs the
+   * settings before and after. A secret in either would hand an API key to code that only compares
+   * switches, and a default missing from before would read as a change the wearer never made.
+   */
+  test('tells onSaved the settings before and after, defaults under them and secrets left out', async () => {
+    const runtime = fakeRuntime();
+    const storage = fakeStorage({ [SETTINGS_KEY]: JSON.stringify({ PAID: false, FEED_URL: 'https://old.example' }) });
+    const heard: unknown[] = [];
+
+    handleSettings({ secret: ['FEED_URL'], defaults: { REFRESH: '30', PAID: false } }, runtime.pebble, storage, { onSaved: (before, after) => void heard.push(before, after) });
+    await runtime.send({ type: SAVE_MESSAGE, settings: { PAID: true, FEED_URL: 'https://new.example' } });
+
+    expect(heard).toEqual([
+      { REFRESH: '30', PAID: false },
+      { REFRESH: '30', PAID: true },
+    ]);
+  });
+
+  /** A hook run on a save that failed would act on settings the plugin never kept. */
+  test('runs onSaved only for a save it kept', async () => {
+    const runtime = fakeRuntime(true);
+    const heard: unknown[] = [];
+
+    handleSettings({ secret: ['FEED_URL'] }, runtime.pebble, fakeStorage(), { onSaved: () => void heard.push('saved') });
+    await runtime.send({ type: SAVE_MESSAGE, settings: { FEED_URL: 'https://new.example' } });
+
+    expect(heard).toEqual([]);
+  });
+
+  /**
+   * The page gives up on a save after five seconds. Answering only once a slow hook finished made a kept
+   * save look failed there, so the page hears it kept first, and the refresh waits for the hook so a run
+   * it starts sees what the hook did.
+   */
+  test('answers the save as kept before onSaved runs, and refreshes once it settles', async () => {
+    const runtime = fakeRuntime();
+    const order: string[] = [];
+    let finish: () => void = () => undefined;
+    let handler: ((message: unknown, respond: (reply: unknown) => void) => Promise<void>) | null = null;
+    const pebble = {
+      ...runtime.pebble,
+      registerConfigHandler: (registered: typeof handler) => void (handler = registered),
+      refreshSources: () => void order.push('refresh'),
+    } as unknown as PluginPebble;
+
+    handleSettings({ refresh: ['weather/location'] }, pebble, fakeStorage(), {
+      onSaved: () => new Promise<void>((resolve) => {
+        order.push('hook started');
+
+        finish = () => {
+          order.push('hook done');
+          resolve();
+        };
+      }),
+    });
+    const done = handler!({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } }, (reply) => void order.push(`reply ${JSON.stringify(reply)}`));
+
+    for (let turn = 0; turn < 10; turn++) {
+      await Promise.resolve();
+    }
+
+    const whileRunning = [...order];
+
+    finish();
+    await done;
+
+    const result = [whileRunning, order];
+
+    expect(result).toEqual([
+      ['reply {"ok":true}', 'hook started'],
+      ['reply {"ok":true}', 'hook started', 'hook done', 'refresh'],
+    ]);
+  });
+
+  /**
+   * A second tap while the first save's hook was still running ran a second hook at once, alongside the
+   * first. Each hook runs only after the one before it, and hears the settings its own save changed.
+   */
+  test('runs the hooks of two quick saves one at a time, each with its own before and after', async () => {
+    const runtime = fakeRuntime();
+    const heard: unknown[] = [];
+    const replies: unknown[] = [];
+    let finishFirst: () => void = () => undefined;
+    let handler: ((message: unknown, respond: (reply: unknown) => void) => Promise<void>) | null = null;
+    const pebble = { ...runtime.pebble, registerConfigHandler: (registered: typeof handler) => void (handler = registered) } as unknown as PluginPebble;
+
+    handleSettings({ defaults: { REFRESH: '30' } }, pebble, fakeStorage(), {
+      onSaved: (before, after) => {
+        heard.push([before.REFRESH, after.REFRESH]);
+
+        return heard.length === 1 ? new Promise<void>((resolve) => void (finishFirst = resolve)) : undefined;
+      },
+    });
+    const first = handler!({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } }, (reply) => void replies.push(reply));
+    const second = handler!({ type: SAVE_MESSAGE, settings: { REFRESH: '60' } }, (reply) => void replies.push(reply));
+
+    for (let turn = 0; turn < 10; turn++) {
+      await Promise.resolve();
+    }
+
+    const whileFirstRuns = [replies.length, heard.length];
+
+    finishFirst();
+    await Promise.all([first, second]);
+
+    const result = [whileFirstRuns, heard];
+
+    expect(result).toEqual([
+      [2, 1],
+      [
+        ['30', '15'],
+        ['15', '60'],
+      ],
+    ]);
+  });
+
+  /** An async hook that rejected escaped the save's catch, so the failure was never logged. */
+  test('logs an async onSaved that rejects, with the save still answered as kept', async () => {
+    const runtime = fakeRuntime();
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    handleSettings({}, runtime.pebble, fakeStorage(), {
+      onSaved: async () => {
+        await Promise.resolve();
+        throw new Error('boom');
+      },
+    });
+    const reply = await runtime.send({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } });
+    const result = [reply, log.mock.calls.length];
+
+    log.mockRestore();
+
+    expect(result).toEqual([{ ok: true }, 1]);
+  });
+
+  /** The settings are already kept by the time the hook runs, so a hook that throws must not tell the page the save failed. */
+  test('answers a kept save as kept when onSaved throws', async () => {
+    const runtime = fakeRuntime();
+
+    handleSettings({}, runtime.pebble, fakeStorage(), { onSaved: () => { throw new Error('boom'); } });
+    const result = await runtime.send({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } });
+
+    expect(result).toEqual({ ok: true });
   });
 });

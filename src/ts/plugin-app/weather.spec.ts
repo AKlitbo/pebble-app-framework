@@ -16,7 +16,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { conditionCode, DEFAULT_UNITS, locationInstance, NO_UNITS, pebbleAppUnits, PHRASE_LABELS, readPebbleAppUnits, SHORT_LABELS, unitsFrom, WEATHER_LOCATION_SOURCE, weatherLocations } from './weather';
+import { conditionCode, DEFAULT_UNITS, failureReason, fetchablePlaces, listedPlacesFrom, listWeatherPlaces, locationInstance, NO_REASON, NO_UNITS, pebbleAppUnits, PHRASE_LABELS, placesFrom, readPebbleAppUnits, SHORT_LABELS, unitsFrom, WEATHER_LOCATION_SOURCE, weatherLocations } from './weather';
 import { SHORT_TEXT_MAX } from './short-text';
 import conditions from '../weather/conditions';
 import type { WeatherUnits } from './weather';
@@ -434,45 +434,48 @@ describe('the declaration', () => {
   });
 });
 
+/** A runtime whose Preferences plugin answers the places with one update or refuses, and which keeps every subscription made. */
+function placesPebble(answer: SourceEnvelope | Error | object): PluginPebble & { subscribed: SourceRequest[] } {
+  const subscribed: SourceRequest[] = [];
+
+  return {
+    subscribed,
+    subscribeSource: (request: SourceRequest) => void subscribed.push(request),
+    readSource: async () => {
+      if (answer instanceof Error || !('instances' in answer)) {
+        throw answer;
+      }
+
+      return answer;
+    },
+  } as unknown as PluginPebble & { subscribed: SourceRequest[] };
+}
+
+/** A place as the Preferences plugin serves it, with coordinates or without. */
+function servedPlace(key: string, name: string, coords: typeof DELHI | null, current = false): SourceInstance {
+  return {
+    instanceId: key,
+    properties: {
+      name: { shortText: { text: name } },
+      ...(coords ? { latitude: { numericValue: { value: coords.lat } }, longitude: { numericValue: { value: coords.lon } } } : {}),
+      current: { boolean: { value: current } },
+    },
+  };
+}
+
 describe('weatherLocations', () => {
-  /** A runtime whose Preferences plugin answers with one update or refuses. */
-  function fakePebble(answer: SourceEnvelope | Error): PluginPebble {
-    return {
-      subscribeSource: (_request: SourceRequest) => {},
-      readSource: async () => {
-        if (answer instanceof Error) {
-          throw answer;
-        }
-
-        return answer;
-      },
-    } as unknown as PluginPebble;
-  }
-
-  /** A place as the Preferences plugin serves it, with coordinates or without. */
-  function place(key: string, name: string, coords: typeof DELHI | null, current = false): SourceInstance {
-    return {
-      instanceId: key,
-      properties: {
-        name: { shortText: { text: name } },
-        ...(coords ? { latitude: { numericValue: { value: coords.lat } }, longitude: { numericValue: { value: coords.lon } } } : {}),
-        current: { boolean: { value: current } },
-      },
-    };
-  }
-
   /**
    * The Pebble app shows the first place on the watch, so the order has to stay the wearer's. A current
    * location with no fix yet has no coordinates and cannot be fetched this run.
    */
   test('keeps the wearer order and leaves out a place with no coordinates', async () => {
-    const update = { instances: [place('b', 'Here', null, true), place('a', 'Delhi', DELHI), place('c', 'Honolulu', HONOLULU)] };
+    const update = { instances: [servedPlace('b', 'Here', null, true), servedPlace('a', 'Delhi', DELHI), servedPlace('c', 'Honolulu', HONOLULU)] };
 
-    const result = (await weatherLocations(fakePebble(update))).places.map((entry) => [entry.key, entry.name, entry.current]);
+    const result = (await weatherLocations(placesPebble(update))).places;
 
     expect(result).toEqual([
-      ['a', 'Delhi', false],
-      ['c', 'Honolulu', false],
+      { key: 'a', name: 'Delhi', lat: DELHI.lat, lon: DELHI.lon, current: false },
+      { key: 'c', name: 'Honolulu', lat: HONOLULU.lat, lon: HONOLULU.lon, current: false },
     ]);
   });
 
@@ -480,9 +483,152 @@ describe('weatherLocations', () => {
   test('hands back no places and the reason for a refused read', async () => {
     const refusal = Object.assign(new Error('refused'), { code: 'PERMISSION_DENIED' });
 
-    const result = await weatherLocations(fakePebble(refusal));
+    const result = await weatherLocations(placesPebble(refusal));
 
     expect(result).toEqual({ places: [], error: 'PERMISSION_DENIED' });
+  });
+
+  /** Without the subscription the Pebble app never runs the plugin again when the wearer changes the list. */
+  test('subscribes to the places', async () => {
+    const pebble = placesPebble({ instances: [] });
+
+    await weatherLocations(pebble);
+
+    expect(pebble.subscribed).toEqual([{ category: 'preferences', item: 'weather_location', plugin: '00000000-0000-0000-0001-000000000009' }]);
+  });
+});
+
+describe('listWeatherPlaces', () => {
+  /**
+   * A settings page that dropped the current location while the phone had no fix lost the wearer's
+   * switch and place for it on the next save, so the place has to be listed, marked as not located.
+   */
+  test('lists a current location with no fix, marked as not located', async () => {
+    const update = { instances: [servedPlace('here', 'Here', null, true)] };
+
+    const result = (await listWeatherPlaces(placesPebble(update))).places;
+
+    expect(result).toEqual([{ key: 'here', name: 'Here', current: true, located: false }]);
+  });
+
+  /** The first place is the one the watch shows, so a list out of the wearer's order puts the wrong city on top. */
+  test('keeps the wearer order and the coordinates of each located place', async () => {
+    const update = { instances: [servedPlace('c', 'Honolulu', HONOLULU), servedPlace('b', 'Here', null, true), servedPlace('a', 'Delhi', DELHI)] };
+
+    const result = (await listWeatherPlaces(placesPebble(update))).places;
+
+    expect(result).toEqual([
+      { key: 'c', name: 'Honolulu', lat: HONOLULU.lat, lon: HONOLULU.lon, current: false, located: true },
+      { key: 'b', name: 'Here', current: true, located: false },
+      { key: 'a', name: 'Delhi', lat: DELHI.lat, lon: DELHI.lon, current: false, located: true },
+    ]);
+  });
+
+  /** A place with no key cannot be found again on a later read, so keeping it would give a switch that never sticks. */
+  test('drops a place with no key', async () => {
+    const update = { instances: [servedPlace('', 'Nowhere', DELHI), { properties: servedPlace('x', 'Keyless', DELHI).properties }, servedPlace('a', 'Delhi', DELHI)] };
+
+    const result = (await listWeatherPlaces(placesPebble(update))).places.map((listed) => listed.key);
+
+    expect(result).toEqual(['a']);
+  });
+
+  /** A refused read has to say why, so a page can tell a wearer who has not allowed Location from one with no places. */
+  test('hands back no places and the reason for a refused read', async () => {
+    const refusal = Object.assign(new Error('refused'), { code: 'PERMISSION_DENIED' });
+
+    const result = await listWeatherPlaces(placesPebble(refusal));
+
+    expect(result).toEqual({ places: [], error: 'PERMISSION_DENIED' });
+  });
+
+  /** A refusal with an empty code and message showed the wearer `[object Object]` as the reason. */
+  test('gives NO_REASON for a refusal that names nothing', async () => {
+    const result = await listWeatherPlaces(placesPebble({ code: '', message: '' }));
+
+    expect(result).toEqual({ places: [], error: NO_REASON });
+  });
+
+  /** A blank code picked first hid a real message, and the page showed NO_REASON for a refusal that said why. */
+  test('gives the message when the code is blank', async () => {
+    const result = await listWeatherPlaces(placesPebble({ code: '  ', message: 'Location is off' }));
+
+    expect(result).toEqual({ places: [], error: 'Location is off' });
+  });
+
+  /** A runtime that gives its code as a number still names the refusal, rather than reading as no reason. */
+  test('gives a numeric code as its digits', async () => {
+    const result = await listWeatherPlaces(placesPebble({ code: 403 }));
+
+    expect(result).toEqual({ places: [], error: '403' });
+  });
+
+  /** A code of 0, or one that is not a real number, names nothing, and reading it as `0` hid the message that said why. */
+  test.each([[0], [Number.NaN], [Infinity]])('gives the message over a numeric code of %s', async (code) => {
+    const result = await listWeatherPlaces(placesPebble({ code, message: 'Location is off' }));
+
+    expect(result).toEqual({ places: [], error: 'Location is off' });
+  });
+
+  /** A settings page reading the list must not ask the Pebble app to run the plugin again whenever the list changes. */
+  test('makes no subscription unless asked to', async () => {
+    const pebble = placesPebble({ instances: [servedPlace('a', 'Delhi', DELHI)] });
+
+    await listWeatherPlaces(pebble);
+
+    expect(pebble.subscribed).toEqual([]);
+  });
+});
+
+describe('listedPlacesFrom', () => {
+  /**
+   * The Pebble app can push a current location it is still setting up, with its key and no properties
+   * yet. Dropping it lost the place a settings page keeps a switch for, and its order with it.
+   */
+  test('lists a keyed place with no properties yet, with no name and not located', () => {
+    const update = { instances: [{ instanceId: 'here' }, servedPlace('a', 'Delhi', DELHI)] } as SourceEnvelope;
+
+    const result = [listedPlacesFrom(update), placesFrom(update).map((place) => place.key)];
+
+    expect(result).toEqual([
+      [
+        { key: 'here', name: '', current: false, located: false },
+        { key: 'a', name: 'Delhi', lat: DELHI.lat, lon: DELHI.lon, current: false, located: true },
+      ],
+      ['a'],
+    ]);
+  });
+});
+
+describe('failureReason', () => {
+  /** A plugin reading sources of its own has to show a refusal in the same words the framework's reads use, or one page reads two ways. */
+  test.each([
+    [Object.assign(new Error('refused'), { code: 'PERMISSION_DENIED' }), 'PERMISSION_DENIED'],
+    [{ code: 0, message: 'Location is off' }, 'Location is off'],
+    [{ code: '', message: '' }, NO_REASON],
+    [null, NO_REASON],
+  ])('reads %o as %s', (error, expected) => {
+    const result = failureReason(error);
+
+    expect(result).toBe(expected);
+  });
+});
+
+describe('fetchablePlaces', () => {
+  /** A place with no fix handed to a provider has it refuse the whole batch, and a place out of order puts the wrong city first. */
+  test('keeps only the places with coordinates, in order, without the located mark', () => {
+    const listed = [
+      { key: 'c', name: 'Honolulu', lat: HONOLULU.lat, lon: HONOLULU.lon, current: false, located: true as const },
+      { key: 'b', name: 'Here', current: true, located: false as const },
+      { key: 'a', name: 'Delhi', lat: DELHI.lat, lon: DELHI.lon, current: false, located: true as const },
+    ];
+
+    const result = fetchablePlaces(listed);
+
+    expect(result).toEqual([
+      { key: 'c', name: 'Honolulu', lat: HONOLULU.lat, lon: HONOLULU.lon, current: false },
+      { key: 'a', name: 'Delhi', lat: DELHI.lat, lon: DELHI.lon, current: false },
+    ]);
   });
 });
 
@@ -513,11 +659,11 @@ describe('unitsFrom', () => {
 });
 
 describe('readPebbleAppUnits', () => {
-  /** A runtime whose Preferences plugin answers the units with one update or refuses. */
-  function unitsPebble(answer: SourceEnvelope | Error): PluginPebble {
+  /** A runtime whose Preferences plugin answers the units with one update or refuses with what it is given. */
+  function unitsPebble(answer: SourceEnvelope | Error | object): PluginPebble {
     return {
       readSource: async () => {
-        if (answer instanceof Error) {
+        if (answer instanceof Error || !('instances' in answer)) {
           throw answer;
         }
 
@@ -534,6 +680,20 @@ describe('readPebbleAppUnits', () => {
     const result = await readPebbleAppUnits(unitsPebble(Object.assign(new Error('refused'), { code: 'PERMISSION_DENIED' })));
 
     expect(result).toEqual({ units: null, error: 'PERMISSION_DENIED' });
+  });
+
+  /** An Error with an empty code and message read as `Error`, its own name, which tells the wearer nothing. */
+  test('gives NO_REASON for an Error that names nothing', async () => {
+    const result = await readPebbleAppUnits(unitsPebble(Object.assign(new Error(''), { code: '' })));
+
+    expect(result).toEqual({ units: null, error: NO_REASON });
+  });
+
+  /** A plain refusal with an empty code and message showed the wearer `[object Object]` beside Pebble App. */
+  test('gives NO_REASON for a plain refusal that names nothing', async () => {
+    const result = await readPebbleAppUnits(unitsPebble({ code: '', message: '' }));
+
+    expect(result).toEqual({ units: null, error: NO_REASON });
   });
 
   /** A reply with no units in it says nothing about the wearer's, so it must not read as °C either. */

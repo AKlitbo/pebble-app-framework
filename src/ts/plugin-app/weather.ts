@@ -12,7 +12,7 @@
  */
 
 import conditions from '../weather/conditions';
-import { validCoords } from '../weather/providers/openmeteo';
+import { COORD_DECIMALS, roundCoordinate, validCoords } from '../weather/coords';
 import { firstProperties, flag, instancesOf, numeric, propertiesOf, text } from '../plugin-shapes/shapes';
 import { appFahrenheit } from '../plugin-shapes/units';
 import { SHORT_TEXT_MAX, shortName } from './short-text';
@@ -160,10 +160,6 @@ const WIND_PER_KMH: Record<WeatherUnits['windSpeed'], number> = { 'km/h': 1, mph
 
 /** How many inHg make a hPa. */
 const INHG_PER_HPA = 0.0295299830714;
-
-// four decimals is about 11 m, as fine as a weather place needs and no finer than the Pebble app's
-// own places, and the most MET Norway takes for a place
-const COORD_DECIMALS = 4;
 
 // the properties sent only to a request that names them
 const ASKED_FOR_ONLY = ['latitude', 'longitude'];
@@ -410,7 +406,7 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
       return undefined;
     }
 
-    const rounded = Number(value.toFixed(COORD_DECIMALS));
+    const rounded = roundCoordinate(value);
 
     // two decimals is about 1 km, which fits a shortText. the number and the long text keep all four
     return { numericValue: { value: rounded, unit: '°' }, shortText: { text: rounded.toFixed(2) }, longText: { text: rounded.toFixed(COORD_DECIMALS) } };
@@ -514,11 +510,88 @@ const PLACES_REQUEST: SourceRequest = { category: 'preferences', item: 'weather_
 /** The read of the wearer's units from the built-in Preferences plugin. */
 const UNITS_REQUEST: SourceRequest = { category: 'preferences', item: 'units', plugin: BUILT_IN_PREFERENCES };
 
-/** What the runtime gave as the reason a read failed, such as `PERMISSION_DENIED`. */
-function reason(error: unknown): string {
-  const failure = error as { code?: unknown; message?: unknown } | null;
+/** The reason a failed read gives when the runtime named none. */
+export const NO_REASON = 'NO_REASON';
 
-  return String((failure && (failure.code || failure.message)) || error);
+/**
+ * The words for why a read of a source failed, as the plugin runtime gave them, such as
+ * `PERMISSION_DENIED`. It is the text the framework's own reads give, for a plugin app that reads
+ * sources of its own and wants a refusal to read the same.
+ *
+ * The code wins, then the message. A blank one names nothing, and so does a numeric code of 0 or one
+ * that is not a finite number, so the message after it wins. A failure that names neither reads as
+ * `NO_REASON` rather than as the text of an object.
+ *
+ * @param error What the read threw or rejected with, which may be anything.
+ * @return The reason, never empty.
+ */
+export function failureReason(error: unknown): string {
+  const failure = error && typeof error === 'object' ? (error as { code?: unknown; message?: unknown }) : null;
+  const candidates = failure ? [failure.code, failure.message] : [error];
+
+  // the code wins, then the message, each only when it says something, so a blank code never hides a
+  // real message. a code given as a number reads as itself, unless it is 0 or not a real number
+  for (const named of candidates) {
+    if (typeof named === 'string' && named.trim()) {
+      return named.trim();
+    }
+
+    if (typeof named === 'number' && Number.isFinite(named) && named !== 0) {
+      return String(named);
+    }
+  }
+
+  return NO_REASON;
+}
+
+/**
+ * One place in the Pebble app's weather list as `listWeatherPlaces` reads it. A place with
+ * coordinates carries them and has `located` true. One without, such as a current location the phone
+ * has no fix for yet, has `located` false and no coordinates.
+ */
+export type ListedWeatherPlace = (WeatherPlace & { located: true }) | (Omit<WeatherPlace, 'lat' | 'lon'> & { located: false });
+
+/**
+ * Every place in a `preferences/weather_location` update, in the wearer's order, with or without
+ * coordinates, as `listWeatherPlaces` reads them. A plugin app handling an update the Pebble app
+ * pushes reads the whole list here.
+ *
+ * An instance with no key is left out, since nothing could find it again. One with a key and no
+ * properties yet, such as a current location the Pebble app is still setting up, is listed with an
+ * empty name and `located` false.
+ *
+ * @param envelope The update, which may be missing or carry anything.
+ * @return Every place with a key.
+ */
+export function listedPlacesFrom(envelope: SourceEnvelope | null | undefined): ListedWeatherPlace[] {
+  const places: ListedWeatherPlace[] = [];
+
+  instancesOf(envelope).forEach((instance) => {
+    const properties = propertiesOf(instance);
+    const key = instance && typeof instance.instanceId === 'string' ? instance.instanceId : '';
+
+    if (!key) {
+      return;
+    }
+
+    const place = { key, name: text(properties?.name, 'short') || '', current: flag(properties?.current) === true };
+    const coords = { lat: numeric(properties?.latitude)?.value as number, lon: numeric(properties?.longitude)?.value as number };
+
+    places.push(validCoords(coords) ? { ...place, lat: coords.lat, lon: coords.lon, located: true } : { ...place, located: false });
+  });
+
+  return places;
+}
+
+/**
+ * The places of a listing that can be fetched, in its order, without the `located` mark, as
+ * `weatherLocations` hands them back.
+ *
+ * @param listed Places as `listWeatherPlaces` reads them.
+ * @return The places that have coordinates.
+ */
+export function fetchablePlaces(listed: ListedWeatherPlace[]): WeatherPlace[] {
+  return listed.flatMap(({ located, ...place }) => (located ? [place as WeatherPlace] : []));
 }
 
 /**
@@ -529,42 +602,54 @@ function reason(error: unknown): string {
  * @return The places that can be fetched.
  */
 export function placesFrom(envelope: SourceEnvelope | null | undefined): WeatherPlace[] {
-  const places: WeatherPlace[] = [];
+  return fetchablePlaces(listedPlacesFrom(envelope));
+}
 
-  instancesOf(envelope).forEach((instance) => {
-    const properties = propertiesOf(instance);
-    const key = instance && typeof instance.instanceId === 'string' ? instance.instanceId : '';
-    const coords = { lat: numeric(properties?.latitude)?.value as number, lon: numeric(properties?.longitude)?.value as number };
-
-    if (!properties || !key || !validCoords(coords)) {
-      return;
+/**
+ * Reads every place in the Pebble app's weather list from its built-in Preferences plugin, the ones
+ * with no coordinates included, for a caller that has to show or keep the whole list, such as a
+ * settings page.
+ *
+ * Each place comes back in the wearer's order with its key, its name, whether it is the current
+ * location, and `located`, which says whether it has coordinates and so can be fetched. A place with
+ * coordinates carries them. An instance with no key is left out, since nothing could find it again,
+ * and one with no properties yet is listed with an empty name and `located` false.
+ * It makes no subscription unless `subscribe` is set, so a settings page reading the list does not ask
+ * the Pebble app to run the plugin again. A read the Pebble app refuses hands back no places and the
+ * reason, or `NO_REASON` when the refusal names none.
+ *
+ * @param pebble The plugin runtime's `Pebble`.
+ * @param options Set `subscribe` to also subscribe to the list, as `weatherLocations` does, so the Pebble app runs the plugin again when the wearer changes it.
+ * @return Every place in the wearer's order, and the reason when the read failed.
+ */
+export async function listWeatherPlaces(pebble: PluginPebble, options: { subscribe?: boolean } = {}): Promise<{ places: ListedWeatherPlace[]; error?: string }> {
+  try {
+    if (options.subscribe) {
+      pebble.subscribeSource(PLACES_REQUEST);
     }
 
-    places.push({ key, name: text(properties.name, 'short') || '', lat: coords.lat, lon: coords.lon, current: flag(properties.current) === true });
-  });
-
-  return places;
+    return { places: listedPlacesFrom(await pebble.readSource(PLACES_REQUEST)) };
+  } catch (error) {
+    return { places: [], error: failureReason(error) };
+  }
 }
 
 /**
  * Reads the wearer's places from the Pebble app's built-in Preferences plugin.
  *
  * It subscribes to them as well, so the Pebble app runs the plugin again when the wearer changes the
- * list. Naming the built-in by its uuid reaches it whichever plugin the wearer prefers. A read the
- * Pebble app refuses, such as one before the wearer allows Location, hands back no places and the
- * reason.
+ * list. Naming the built-in by its uuid reaches it whichever plugin the wearer prefers. A place with
+ * no coordinates is left out, as `placesFrom` leaves it. A read the Pebble app refuses, such as one
+ * before the wearer allows Location, hands back no places and the reason, or `NO_REASON` when the
+ * refusal names none.
  *
  * @param pebble The plugin runtime's `Pebble`.
  * @return The places in the wearer's order, and the reason when the read failed.
  */
 export async function weatherLocations(pebble: PluginPebble): Promise<{ places: WeatherPlace[]; error?: string }> {
-  try {
-    pebble.subscribeSource(PLACES_REQUEST);
+  const listed = await listWeatherPlaces(pebble, { subscribe: true });
 
-    return { places: placesFrom(await pebble.readSource(PLACES_REQUEST)) };
-  } catch (error) {
-    return { places: [], error: reason(error) };
-  }
+  return { ...listed, places: fetchablePlaces(listed.places) };
 }
 
 // each unit as the Pebble app's Preferences plugin names it
@@ -620,9 +705,10 @@ function namesUnits(envelope: SourceEnvelope | null | undefined): boolean {
  * Reads the wearer's units from the Pebble app's built-in Preferences plugin, for a caller that has to
  * tell the Pebble app's own units from the defaults, such as a settings page showing them.
  *
- * A read the Pebble app refuses answers no units and the reason, such as `PERMISSION_DENIED`, and a
- * reply that names none of the units answers no units and `NO_UNITS`. Only a reply that names them
- * answers units, with the plugin's own choices over them and the defaults for any it leaves out.
+ * A read the Pebble app refuses answers no units and the reason, such as `PERMISSION_DENIED`, or
+ * `NO_REASON` when the refusal names none, and a reply that names none of the units answers no units
+ * and `NO_UNITS`. Only a reply that names them answers units, with the plugin's own choices over them
+ * and the defaults for any it leaves out.
  *
  * @param pebble The plugin runtime's `Pebble`.
  * @param overrides The plugin's own choice for each unit.
@@ -634,7 +720,7 @@ export async function readPebbleAppUnits(pebble: PluginPebble, overrides: UnitOv
   try {
     envelope = await pebble.readSource(UNITS_REQUEST);
   } catch (error) {
-    return { units: null, error: reason(error) };
+    return { units: null, error: failureReason(error) };
   }
 
   return namesUnits(envelope) ? { units: unitsFrom(envelope, overrides) } : { units: null, error: NO_UNITS };

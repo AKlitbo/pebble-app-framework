@@ -39,10 +39,52 @@ export interface SettingsOptions {
 /** The part of `localStorage` the helpers use, which a spec stands in for. */
 export type SettingsStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
+/** What a plugin app's own code hears from `handleSettings`, beside the load and the save it answers. */
+export interface SettingsHooks {
+  /**
+   * Answers a message from the settings page that is neither the load nor the save, such as one asking
+   * for something only the plugin can read. It calls `respond` once, before it returns or before its
+   * promise settles. A message it does not reply to in that time gets the error `handleSettings` gives
+   * a message it does not know, so the page is never left waiting, and a `respond` after that is only
+   * logged. Only the first reply goes to the page. A hook that throws before replying is answered with
+   * the error, and one that throws after is logged.
+   */
+  onMessage?: (type: unknown, message: unknown, respond: (reply: unknown) => void) => void | Promise<void>;
+  /**
+   * Hears a save once it is kept, with the settings before and after it. Each has the defaults under
+   * what was saved and leaves out every secret key, so a key that was saved in plain storage before the
+   * plugin made it secret is left out too.
+   *
+   * The page hears the save as kept first, so a slow hook never makes the page give up on a save that
+   * was kept. The Pebble app is asked to read the sources again once the hook returns or its promise
+   * settles, so a run it starts sees what the hook did. The hooks run one at a time in the order the
+   * saves came in, and each hears the settings as its own save left them. A hook that throws or
+   * rejects is logged.
+   */
+  onSaved?: (before: Record<string, unknown>, after: Record<string, unknown>) => void | Promise<void>;
+}
+
+/** The `type` a message from the settings page carries, or undefined for anything that is not an object. */
+function messageType(message: unknown): unknown {
+  return typeof message === 'object' && message !== null ? (message as { type?: unknown }).type : undefined;
+}
+
+/** The settings saved in plain storage, or none for a saved value that is not a JSON object. */
+function readSavedSettings(storage: SettingsStorage): Record<string, unknown> {
+  try {
+    const saved = JSON.parse(storage.getItem(SETTINGS_KEY) || 'null');
+
+    return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
+  } catch {
+    // unreadable, so nothing was saved that can be used
+    return {};
+  }
+}
+
 /**
  * The plugin app's settings, its defaults under what the wearer saved.
  *
- * Saved settings that do not read as JSON read as none, so the defaults stand. A secret key that
+ * Saved settings that do not read as a JSON object read as none, so the defaults stand. A secret key that
  * cannot be read keeps its default in a source handler, so a phone whose keystore is locked still
  * serves with the other settings. The settings page asks for it strictly, since a page that opened on
  * a blank secret would delete the real one on its next save.
@@ -54,15 +96,8 @@ export type SettingsStorage = Pick<Storage, 'getItem' | 'setItem'>;
  * @return Every setting, saved or default.
  */
 export async function readSettings(options: SettingsOptions = {}, pebble: PluginPebble = pluginPebble(), storage: SettingsStorage = localStorage, strict = false): Promise<Record<string, unknown>> {
-  let saved: Record<string, unknown> = {};
-
-  try {
-    saved = JSON.parse(storage.getItem(SETTINGS_KEY) || '{}');
-  } catch {
-    // unreadable, so the defaults stand
-  }
-
-  const settings: Record<string, unknown> = { ...(options.defaults || {}), ...saved };
+  // a saved value that does not read as an object leaves the defaults standing
+  const settings: Record<string, unknown> = { ...(options.defaults || {}), ...readSavedSettings(storage) };
 
   for (const key of options.secret || []) {
     try {
@@ -111,6 +146,51 @@ async function saveSettings(settings: Record<string, unknown>, options: Settings
 }
 
 /**
+ * Hands a message to the plugin's own `onMessage` and says whether the page got its answer. Only the
+ * first reply reaches the page, so a hook that replies and then throws sends no second, error reply.
+ * The reply closes once the hook returns or its promise settles, so a `respond` from a callback after
+ * that, once the page has had the error, is only logged.
+ */
+async function answerOwn(onMessage: NonNullable<SettingsHooks['onMessage']>, type: unknown, message: unknown, respond: (reply: unknown) => void): Promise<boolean> {
+  let replied = false;
+  let open = true;
+  const once = (reply: unknown): void => {
+    if (!open) {
+      console.log('plugin settings: the message hook replied after it returned, so the reply was dropped');
+      return;
+    }
+
+    if (!replied) {
+      replied = true;
+      respond(reply);
+    }
+  };
+
+  try {
+    await onMessage(type, message, once);
+  } catch (error) {
+    if (!replied) {
+      throw error;
+    }
+
+    console.log(`plugin settings: the message hook threw after it replied: ${error}`);
+  } finally {
+    open = false;
+  }
+
+  return replied;
+}
+
+/** The settings in plain storage with the defaults under them and every secret key left out, for `onSaved`. */
+function plainSettings(options: SettingsOptions, storage: SettingsStorage): Record<string, unknown> {
+  const settings: Record<string, unknown> = { ...(options.defaults || {}), ...readSavedSettings(storage) };
+
+  (options.secret || []).forEach((key) => delete settings[key]);
+
+  return settings;
+}
+
+/**
  * Answers the plugin app's settings page.
  *
  * A load gets every setting, secret ones included, so the page opens on what was saved, and a secret
@@ -118,13 +198,31 @@ async function saveSettings(settings: Record<string, unknown>, options: Settings
  * then has the Pebble app read the sources the plugin names again, so a changed setting shows without
  * waiting for the next refresh. Anything that fails is answered with the reason, which the page shows.
  *
+ * The plugin runtime takes one config handler, so a plugin app that answers messages of its own, or
+ * acts on a save, does it through `hooks` rather than a handler of its own. With no hooks, a message
+ * that is neither the load nor the save is answered with an error.
+ *
+ * Saves are kept one at a time, in the order they came in, so a second save never reads the
+ * settings halfway through the first one's write.
+ *
  * @param options The plugin app's secret keys, defaults, and sources to read again.
  * @param pebble The plugin runtime's `Pebble`, which a spec stands in for.
  * @param storage Where the settings that are not secret are kept, normally `localStorage`.
+ * @param hooks The plugin app's answer to its own messages, and what it does once a save is kept.
  */
-export function handleSettings(options: SettingsOptions = {}, pebble: PluginPebble = pluginPebble(), storage: SettingsStorage = localStorage): void {
+export function handleSettings(options: SettingsOptions = {}, pebble: PluginPebble = pluginPebble(), storage: SettingsStorage = localStorage, hooks: SettingsHooks = {}): void {
+  // the saves still being written, and the save hooks still running, each in the order they came in
+  let saving: Promise<unknown> = Promise.resolve();
+  let hearing: Promise<unknown> = Promise.resolve();
+
+  const refresh = (): void => {
+    if (options.refresh && options.refresh.length > 0) {
+      pebble.refreshSources(options.refresh);
+    }
+  };
+
   pebble.registerConfigHandler(async (message, respond) => {
-    const type = typeof message === 'object' && message !== null ? (message as { type?: unknown }).type : undefined;
+    const type = messageType(message);
 
     try {
       if (type === LOAD_MESSAGE) {
@@ -140,13 +238,49 @@ export function handleSettings(options: SettingsOptions = {}, pebble: PluginPebb
           return;
         }
 
-        await saveSettings(settings as Record<string, unknown>, options, pebble, storage);
+        const kept = saving.then(async () => {
+          const before = plainSettings(options, storage);
 
-        if (options.refresh && options.refresh.length > 0) {
-          pebble.refreshSources(options.refresh);
+          await saveSettings(settings as Record<string, unknown>, options, pebble, storage);
+
+          return { before, after: plainSettings(options, storage) };
+        });
+
+        saving = kept.catch(() => undefined);
+
+        const { before, after } = await kept;
+        const onSaved = hooks.onSaved;
+
+        if (!onSaved) {
+          refresh();
+          respond({ ok: true });
+          return;
         }
 
+        // the page gives up on a save after a few seconds, so it hears the save as kept before the
+        // hook runs, and the refresh waits for the hook so a run it starts sees what the hook did
         respond({ ok: true });
+
+        const heard = hearing.then(async () => {
+          try {
+            await onSaved(before, after);
+          } catch (error) {
+            console.log(`plugin settings: the save hook threw: ${error}`);
+          }
+
+          try {
+            refresh();
+          } catch (error) {
+            console.log(`plugin settings: the refresh after a save threw: ${error}`);
+          }
+        });
+
+        hearing = heard;
+        await heard;
+        return;
+      }
+
+      if (hooks.onMessage && (await answerOwn(hooks.onMessage, type, message, respond))) {
         return;
       }
 

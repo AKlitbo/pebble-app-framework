@@ -10,11 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Added
 
+- Added `listWeatherPlaces(pebble)` in `ts/plugin-app/weather.ts`, which lists every place in the Pebble app's weather list with whether it is `located`, without subscribing. `listedPlacesFrom` and `fetchablePlaces` read and filter the same list.
+- Added `failureReason(error)` and `NO_REASON`, the reason text the framework's own source reads give, for a plugin app's own reads.
+- Added `onMessage` and `onSaved` hooks to `handleSettings`, for a plugin app that answers messages of its own or acts after a save.
+- Added `ts/plugin-app/page-types.ts`, the page and bridge types for a plugin app's page code.
 - Added `ts/weather/coords.ts`, with `validCoords`, `COORD_DECIMALS`, and `roundCoordinate`. `validCoords` is still exported from the Open-Meteo provider.
 
 #### Changed
 
 - The location search now looks up a place's time zone only on a field marked `timeZone: true`, so a weather location field spends no forecast call. A plugin page needs `api.open-meteo.com` only when a row takes a zone.
+
+#### Fixed
+
+- Fixed `weatherLocations` and `readPebbleAppUnits` giving `[object Object]` or `Error` for a refused read that names no reason. They now give `NO_REASON`.
+- Fixed `readSettings` spreading a saved list or string into one setting per item. A saved value that is not an object now reads as nothing saved.
 
 ## [6.4.0] - 2026-11-18
 

@@ -17,34 +17,16 @@
  * return address at an in-page hash, so Clay's submit can never close the page with the settings unsaved.
  *
  * Clay writes this into the page as text and runs it there, so it reaches nothing outside itself: no
- * imports and no module-scope constants. It spells the two message types out, and they match the
- * plugin side's LOAD_MESSAGE and SAVE_MESSAGE in settings.ts.
+ * imports but its types, which compile away, and no module-scope constants. It spells the two message
+ * types out, and they match the plugin side's LOAD_MESSAGE and SAVE_MESSAGE in settings.ts.
  */
 
-/** The bits of a Clay row this reaches. */
-interface PageRow {
-  set(value: unknown): void;
-}
-
-/** The bits of the Clay config page this reaches. */
-interface ClayPage {
-  EVENTS: { AFTER_BUILD: string };
-  on(event: string, handler: () => void): void;
-  getItemById(id: string): PageRow | undefined;
-  getItemByMessageKey(messageKey: string): PageRow | undefined;
-  serialize(): Record<string, { value: unknown }>;
-}
-
-/** The page's bridge to the plugin, as the Pebble app gives a settings page. */
-interface PageBridge {
-  addEventListener(name: string, listener: (event: { target: string }) => void): void;
-  sendMessage(target: string, message: unknown): Promise<unknown>;
-}
+import type { ClayPage, PluginPageBridge } from './page-types';
 
 /** The plugin app settings page code Clay runs with the page as `this`. */
 export default function pluginSettingsPage(this: ClayPage): void {
   // arrows rather than a this alias, so the handlers reach the page without carrying a copy
-  const bridge = (window as unknown as { Pebble?: PageBridge }).Pebble;
+  const bridge = (window as unknown as { Pebble?: PluginPageBridge }).Pebble;
   let loaded = false;
   let loadAnswered = false;
   let saving = false;
