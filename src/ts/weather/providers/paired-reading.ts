@@ -10,7 +10,8 @@
 import { guardRequest, heardRequest, requestJson } from '../../pkjs/request';
 import type { SendHook } from '../../pkjs/request';
 import { joinCalls } from '../../pkjs/providers';
-import { fetchReading as fetchOpenMeteoReading, validCoords } from './openmeteo';
+import { fetchReading as fetchOpenMeteoReading } from './openmeteo';
+import { validCoords } from '../coords';
 import { emptyDaily, emptyHourly, readingStatus } from '../reading';
 import type { ReadingCondition, ReadingResult, ReadingStatus, WeatherReading } from '../reading';
 import type { RequestFn, WeatherCoords } from '../util';

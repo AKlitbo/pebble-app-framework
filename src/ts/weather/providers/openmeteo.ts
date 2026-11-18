@@ -11,6 +11,7 @@ import type { RequestFn, DoneFn, WeatherOpts, WeatherCoords, HourlyStrip, DailyS
 import { guardRequest, heardRequest, requestJson as requestWithError } from '../../pkjs/request';
 import type { SendHook } from '../../pkjs/request';
 import { READING_DAYS, READING_HOURS, readingStatus, valueOrGap } from '../reading';
+import { validCoords } from '../coords';
 import type { DailySeries, HourlySeries, ReadingCondition, ReadingResult, WeatherReading } from '../reading';
 
 const OPEN_METEO_FORECAST_API = 'https://api.open-meteo.com/v1/forecast';
@@ -606,17 +607,9 @@ export interface OpenMeteoReadingResponse {
   daily?: Record<string, unknown>;
 }
 
-/**
- * Whether a place's coordinates are real ones. Open-Meteo refuses a whole request when one place's are
- * out of range, so a reading asks for no place that fails this.
- *
- * @param coords The place's coordinates, or nothing.
- * @return True for a latitude and longitude in range.
- */
-export function validCoords(coords: WeatherCoords | null | undefined): coords is WeatherCoords {
-  return Boolean(coords) && Number.isFinite(coords?.lat) && Number.isFinite(coords?.lon) &&
-    Math.abs((coords as WeatherCoords).lat) <= 90 && Math.abs((coords as WeatherCoords).lon) <= 180;
-}
+// validCoords is the one in weather/coords.ts, reachable from here too for code that reads it with
+// the provider that refuses a request over it
+export { validCoords };
 
 /**
  * Builds the reading query for several places at once.
