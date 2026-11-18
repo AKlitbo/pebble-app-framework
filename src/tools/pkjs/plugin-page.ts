@@ -9,8 +9,9 @@
  * The config is bundled with esbuild the way the plugin's script is, so its imports resolve the same
  * way, and then Clay builds the page as it would on a phone, with the phone's globals stood in. The
  * page gets the framework's show and hide for its `visibleWhen` rows, then the framework's plugin
- * settings code from ts/plugin-app/page.ts, then the plugin app's own customClay. A page holding a
- * `locationsearch` row gets the framework's location search, as a face's page does. The settings code
+ * settings code from ts/plugin-app/page.ts, then the plugin app's own customClay. The Clay components
+ * the config exports as `components` are registered too, the way a face passes them to
+ * `startPebbleApp`, so a page can hold the framework's location search. The settings code
  * loads the saved settings from the plugin and saves them back to it, so the page gets a status row for
  * it to report in, above the Save button, and a Save button when the config has none. Clay's own Save
  * goes to a return address, which is pointed at an in-page hash so it can never close the page unsaved.
@@ -26,7 +27,6 @@ import { createRequire } from 'node:module';
 import esbuild from 'esbuild';
 import { combineCustomFns } from '../../ts/clay/custom-fn.ts';
 import dependentVisibility from '../../ts/clay/dependent-visibility.ts';
-import locationComponent from '../../ts/clay/location-component.ts';
 import pageStyleComponent from '../../ts/clay/page-style-component.ts';
 import pluginSettingsPage from '../../ts/plugin-app/page.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
@@ -53,13 +53,41 @@ const PAGE_RETURN = 'window.returnTo="#paf-save:"';
 export interface PluginPageSource {
   clayConfig: ClayConfigItem[];
   customClay?: unknown;
+  /** Clay components the page's rows need beyond Clay's own, such as the framework's location search. */
+  components?: unknown[];
 }
+
+/** The type of the framework's location search row, whose look comes from Clay's text box. */
+const LOCATION_SEARCH = 'locationsearch';
+
+/** The Clay type every row of a section is held in, which Clay draws itself rather than through a component. */
+const SECTION = 'section';
 
 /** Clay as the build uses it. */
 type PageClay = { meta: unknown; components?: Record<string, unknown>; generateUrl(): string; registerComponent(component: unknown): void };
 
 /** Clay's constructor, as the build loads it. */
 type PageClayConstructor = new (config: unknown, customFn: unknown, options: unknown) => PageClay;
+
+/** The name a Clay component goes by, or undefined for anything that is not one. */
+function componentName(component: unknown): unknown {
+  return isObject(component) ? component.name : undefined;
+}
+
+/** Every row type on the page, inside sections too, each once. */
+function rowTypes(items: ClayConfigItem[], into: string[] = []): string[] {
+  items.forEach((item) => {
+    if (!into.includes(item.type)) {
+      into.push(item.type);
+    }
+
+    if (item.items) {
+      rowTypes(item.items, into);
+    }
+  });
+
+  return into;
+}
 
 /** Whether any row on the page, inside sections too, matches. */
 function anyItem(items: ClayConfigItem[], test: (item: ClayConfigItem) => boolean): boolean {
@@ -103,15 +131,19 @@ export function pluginPageItems(config: ClayConfigItem[], name: string): ClayCon
 }
 
 /**
- * Registers the framework's location search on a page that holds one, the way a face's page gets it.
+ * Registers the plugin app's own components, with Clay's text box ahead of them for a location search
+ * on a page that has no text box.
  *
  * The search draws Clay's text box and takes its look from that component's style. Clay adds a
  * component's style only to a page that registers it, and registers its own only for the rows on the
  * page it was built with. So a page with no text box of its own gets Clay's from a spare Clay built
- * with one, or the search shows as a plain white field beside its label.
+ * with one, or the search shows as a plain white field beside its label. A plugin app passing its own
+ * text box keeps it.
  */
-function registerLocationSearch(Clay: PageClayConstructor, clay: PageClay, items: ClayConfigItem[]): void {
-  if (!anyItem(items, (item) => item.type === 'input')) {
+function registerComponents(Clay: PageClayConstructor, clay: PageClay, items: ClayConfigItem[], components: unknown[]): void {
+  const passed = components.map(componentName);
+
+  if (anyItem(items, (item) => item.type === LOCATION_SEARCH) && !anyItem(items, (item) => item.type === 'input') && !passed.includes('input')) {
     const input = (new Clay([{ type: 'input' }], null, { autoHandleEvents: false }).components || {}).input;
 
     if (input) {
@@ -119,13 +151,30 @@ function registerLocationSearch(Clay: PageClayConstructor, clay: PageClay, items
     }
   }
 
-  clay.registerComponent(locationComponent);
+  components.forEach((component) => clay.registerComponent(component));
+}
+
+/**
+ * Stops on a row no registered component draws. Clay stops building the page at that row in the
+ * webview, so the wearer would open a blank page with nothing said.
+ */
+function checkDrawn(clay: PageClay, items: ClayConfigItem[], name: string): void {
+  const registry = clay.components || {};
+  const missing = rowTypes(items).find((type) => type !== SECTION && !(type in registry));
+
+  if (missing === LOCATION_SEARCH) {
+    throw new ToolError(`${name}'s settings page has a locationsearch row, which no component draws. Import the framework's location search from ts/clay/location-component.ts in src/config/index.ts and export it in components, as in export const components = [locationSearch]`);
+  }
+
+  if (missing !== undefined) {
+    throw new ToolError(`${name}'s settings page has a ${missing} row, which no component draws, so the page would open blank. Export the component that draws it in components from src/config/index.ts, or take the row off the page`);
+  }
 }
 
 /**
  * Builds a plugin app's settings page as one self-contained HTML file.
  *
- * @param source The plugin app's Clay config and its optional customClay.
+ * @param source The plugin app's Clay config, its optional customClay, and its optional components.
  * @param name The plugin app's name, which a refusal names.
  * @return The page's HTML.
  */
@@ -151,9 +200,10 @@ export function renderPluginPage(source: PluginPageSource, name: string): string
     // row keeps the base padding, a gap under its value and at each side
     clay.registerComponent(pageStyleComponent);
 
-    if (anyItem(items, (item) => item.type === locationComponent.name)) {
-      registerLocationSearch(Clay, clay, items);
-    }
+    // the plugin app's own components go after the framework's rules, as a face's do, so a rule of
+    // its own at the same weight still wins
+    registerComponents(Clay, clay, items, source.components || []);
+    checkDrawn(clay, items, name);
 
     // a plugin's page opens with no watch behind it
     clay.meta = { activeWatchInfo: null, accountToken: '', watchToken: '', userData: {} };
@@ -181,7 +231,7 @@ export function renderPluginPage(source: PluginPageSource, name: string): string
  *
  * @param pluginDir The plugin app's folder.
  * @param name The plugin app's name, which a refusal names.
- * @return The Clay config and the optional customClay it exports.
+ * @return The Clay config and the optional customClay and components it exports.
  */
 export async function readPluginPage(pluginDir: string, name: string): Promise<PluginPageSource> {
   const entry = path.resolve(pluginDir, PLUGIN_CONFIG_ENTRY);
@@ -219,5 +269,9 @@ export async function readPluginPage(pluginDir: string, name: string): Promise<P
 
   checkCustomClay(name, exported.customClay);
 
-  return { clayConfig: exported.clayConfig as ClayConfigItem[], customClay: exported.customClay };
+  if (exported.components !== undefined && (!Array.isArray(exported.components) || exported.components.some((component) => typeof componentName(component) !== 'string'))) {
+    throw new ToolError(`${name}'s ${shown} exports components that are not a list of Clay components, each with a name. Export a list such as [locationSearch], or leave components out`);
+  }
+
+  return { clayConfig: exported.clayConfig as ClayConfigItem[], customClay: exported.customClay, components: exported.components as unknown[] | undefined };
 }

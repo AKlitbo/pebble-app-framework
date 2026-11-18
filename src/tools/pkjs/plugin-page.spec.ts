@@ -6,8 +6,8 @@
  * the whole round trip, the built page against the real plugin side through a stand-in bridge, a page
  * that cannot save its defaults over settings it never loaded, and a page staying open with the reason
  * when a save fails, since closing on a failed save loses the wearer's change. The rows the build adds,
- * and what it refuses, are pinned too, and so is the location search a page can hold, since Clay stops
- * the whole page on a row whose component nobody registered.
+ * and what it refuses, are pinned too, and so are the components a page passes, such as the location
+ * search, since Clay stops the whole page in the webview at a row whose component nobody registered.
  *
  * The page runs in jsdom. Its close goes to pebblejs://close, which jsdom reports as a navigation it
  * cannot do, so a close is counted from those reports. Nothing waits on the clock. Each step lets the
@@ -21,6 +21,7 @@ import { describe, test, expect } from 'vitest';
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { pluginPageItems, readPluginPage, renderPluginPage, SAVE_STATUS_ID } from './plugin-page';
 import { handleSettings } from '../../ts/plugin-app/settings';
+import locationComponent from '../../ts/clay/location-component';
 import type { PluginPebble } from '../../ts/plugin-app/runtime';
 import type { ClayConfigItem } from '../../ts/clay/types';
 import { tempDir } from '../../ts/testing/temp-dir.ts';
@@ -369,9 +370,9 @@ describe('the plugin settings page style', () => {
   });
 });
 
-/** A page built from this config, open in jsdom with a plugin that never answers. */
-async function openBuilt(clayConfig: ClayConfigItem[]): Promise<JSDOM> {
-  const html = renderPluginPage({ clayConfig }, 'search-plugin');
+/** A plugin app's page as the build reads and builds it, open in jsdom with a plugin that never answers. */
+async function openBuilt(dir: string): Promise<JSDOM> {
+  const html = renderPluginPage(await readPluginPage(dir, 'search-plugin'), 'search-plugin');
   const dom = new JSDOM(html, {
     runScripts: 'dangerously',
     url: 'https://plugin.invalid/config.html',
@@ -386,10 +387,51 @@ async function openBuilt(clayConfig: ClayConfigItem[]): Promise<JSDOM> {
   return dom;
 }
 
-describe('the location search on a plugin page', () => {
-  /** Clay stops building the page at a row whose component it does not hold, so a plugin's page with a search showed nothing at all. */
+/** A plugin app whose page config is this source, in a folder of its own. */
+function pluginWithConfig(source: string): string {
+  const dir = tempDir('paf-plugin-components-');
+
+  fs.mkdirSync(path.join(dir, 'src', 'config'), { recursive: true });
+  fs.writeFileSync(path.join(dir, 'src', 'config', 'index.ts'), source);
+
+  return dir;
+}
+
+/** The framework's location search, as a plugin app's config imports it. */
+const LOCATION_SEARCH = path.join(import.meta.dirname, '..', '..', 'ts', 'clay', 'location-component.ts').split(path.sep).join('/');
+
+/** A page holding one location search row. */
+const SEARCH_PAGE: ClayConfigItem[] = [{ type: 'locationsearch', id: 'where', label: 'Place' }];
+
+/** A plugin app whose page holds a location search and passes the framework's. */
+function searchPlugin(): string {
+  return pluginWithConfig([
+    `import locationSearch from '${LOCATION_SEARCH}';`,
+    `export const clayConfig = ${JSON.stringify(SEARCH_PAGE)};`,
+    'export const components = [locationSearch];',
+  ].join('\n'));
+}
+
+describe('components on a plugin page', () => {
+  /**
+   * Node cannot load the location search on its own, since its imports carry no extension. A page
+   * that imports it has to come through the bundle, or the build stops before it starts.
+   */
+  test('reads the location search a config imports and exports', async () => {
+    const dir = searchPlugin();
+
+    const result = (await readPluginPage(dir, 'search-plugin')).components?.map((component) => (component as { name: string }).name);
+
+    expect(result).toEqual(['locationsearch']);
+  });
+
+  /**
+   * Clay stops building the page at a row whose component it does not hold, so a plugin's page with a
+   * search showed nothing at all. The search goes into the page as the text of its functions, so it is
+   * built here from the bundle the build reads.
+   */
   test('draws a locationsearch row as the framework search', async () => {
-    const dom = await openBuilt([{ type: 'locationsearch', id: 'where', label: 'Place' }]);
+    const dom = await openBuilt(searchPlugin());
 
     const result = dom.window.document.querySelector('.pf-loc-search .pf-loc-query') !== null;
 
@@ -399,13 +441,29 @@ describe('the location search on a plugin page', () => {
 
   /** The search borrows Clay's text box look, which a page with no text box of its own would never carry, so it showed as a plain white field. */
   test("brings Clay's text box style to a page with no text box", () => {
-    const result = renderPluginPage({ clayConfig: [{ type: 'locationsearch', id: 'where', label: 'Place' }] }, 'search-plugin');
+    const result = renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent] }, 'search-plugin');
 
     expect(result).toContain('.component-input .label {');
   });
 
+  /** A row nothing draws builds without a word and opens as a blank page on the phone. */
+  test('refuses a locationsearch row with no component to draw it', () => {
+    const result = () => renderPluginPage({ clayConfig: SEARCH_PAGE }, 'search-plugin');
+
+    expect(result).toThrow(/search-plugin's settings page has a locationsearch row, which no component draws. Import the framework's location search/);
+  });
+
+  /** Clay registers each component by its name, so anything else stops the page in the webview rather than the build. */
+  test('refuses components that are not a list of Clay components', async () => {
+    const dir = pluginWithConfig(['export const clayConfig = [];', 'export const components = [{ template: "<div></div>" }];'].join('\n'));
+
+    const result = readPluginPage(dir, 'odd-plugin');
+
+    await expect(result).rejects.toThrow(/odd-plugin's src\/config\/index.ts exports components that are not a list of Clay components/);
+  });
+
   /** Every plugin page would carry the search's code and style, and Clay's text box, for a row it does not have. */
-  test('leaves the search off a page with no locationsearch row', async () => {
+  test('leaves the search off a page that does not pass it', async () => {
     const result = renderPluginPage(await readPluginPage(FIXTURE, 'fixture-plugin'), 'fixture-plugin');
 
     expect(result).not.toContain('pf-loc-search');
