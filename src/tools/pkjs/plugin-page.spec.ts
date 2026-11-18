@@ -6,7 +6,8 @@
  * the whole round trip, the built page against the real plugin side through a stand-in bridge, a page
  * that cannot save its defaults over settings it never loaded, and a page staying open with the reason
  * when a save fails, since closing on a failed save loses the wearer's change. The rows the build adds,
- * and what it refuses, are pinned too.
+ * and what it refuses, are pinned too, and so is the location search a page can hold, since Clay stops
+ * the whole page on a row whose component nobody registered.
  *
  * The page runs in jsdom. Its close goes to pebblejs://close, which jsdom reports as a navigation it
  * cannot do, so a close is counted from those reports. Nothing waits on the clock. Each step lets the
@@ -365,5 +366,48 @@ describe('the plugin settings page style', () => {
     const result = html.includes('.section > .component.component-select');
 
     expect(result).toBe(true);
+  });
+});
+
+/** A page built from this config, open in jsdom with a plugin that never answers. */
+async function openBuilt(clayConfig: ClayConfigItem[]): Promise<JSDOM> {
+  const html = renderPluginPage({ clayConfig }, 'search-plugin');
+  const dom = new JSDOM(html, {
+    runScripts: 'dangerously',
+    url: 'https://plugin.invalid/config.html',
+    virtualConsole: new VirtualConsole(),
+    beforeParse(window) {
+      (window as unknown as { Pebble: unknown }).Pebble = { addEventListener: () => {}, sendMessage: () => new Promise(() => {}) };
+    },
+  });
+
+  await settle();
+
+  return dom;
+}
+
+describe('the location search on a plugin page', () => {
+  /** Clay stops building the page at a row whose component it does not hold, so a plugin's page with a search showed nothing at all. */
+  test('draws a locationsearch row as the framework search', async () => {
+    const dom = await openBuilt([{ type: 'locationsearch', id: 'where', label: 'Place' }]);
+
+    const result = dom.window.document.querySelector('.pf-loc-search .pf-loc-query') !== null;
+
+    expect(result).toBe(true);
+    dom.window.close();
+  });
+
+  /** The search borrows Clay's text box look, which a page with no text box of its own would never carry, so it showed as a plain white field. */
+  test("brings Clay's text box style to a page with no text box", () => {
+    const result = renderPluginPage({ clayConfig: [{ type: 'locationsearch', id: 'where', label: 'Place' }] }, 'search-plugin');
+
+    expect(result).toContain('.component-input .label {');
+  });
+
+  /** Every plugin page would carry the search's code and style, and Clay's text box, for a row it does not have. */
+  test('leaves the search off a page with no locationsearch row', async () => {
+    const result = renderPluginPage(await readPluginPage(FIXTURE, 'fixture-plugin'), 'fixture-plugin');
+
+    expect(result).not.toContain('pf-loc-search');
   });
 });

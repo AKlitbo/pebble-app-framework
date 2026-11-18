@@ -55,6 +55,8 @@ The page's storage is not the plugin's, so the page asks the plugin for the save
 
 A row that names watch capabilities is refused, since a plugin's page opens with no watch behind it.
 
+A page can hold the framework's location search as a `locationsearch` row, as on a face's page, and the build registers it only on a page that has one. [The Location Search](settings-page.md#the-location-search) covers what it saves. The search asks Open-Meteo for its places, so a plugin app with one lists `open-meteo.com` under Internet in its `usesPermissions`. A search row with no `messageKey` stays out of the saved settings, and page code reads the pick with the row's `get` when the row fires `change`.
+
 On the plugin side, `handleSettings` from `ts/plugin-app/settings.ts` answers the page, and `readSettings` reads the settings back in a source handler:
 
 ```ts

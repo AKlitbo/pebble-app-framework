@@ -18,6 +18,9 @@
  * zone pick carries no coordinates, and a plain offset carries no zone either, so it sets `fixed`
  * to say the missing zone is on purpose.
  *
+ * Each pick fires the row's Clay change event, so page code can read the pick with the row's `get` as
+ * it lands.
+ *
  * IMPORTANT: `initialize` and the `manipulator` methods are serialized
  * (via .toString()) and run inside the Clay config webview, a separate JS
  * context. They must be self-contained and must NOT reference anything from
@@ -32,6 +35,8 @@ import { FOCUS_RING, LIST, LIST_ROW, LIST_ROW_PRESSED } from './control-style';
 export interface ClayComponentContext {
   $element: HTMLElement[];
   config: { label?: string; description?: string; messageKey?: string; timeZone?: boolean; attributes?: { placeholder?: string } };
+  /** Fires one of the row's Clay events, which handlers added with the row's `on` hear. */
+  trigger(event: string): void;
 }
 
 /** One Open-Meteo geocoding result the autocomplete list shows. */
@@ -523,6 +528,7 @@ export default {
           noteEl.style.display = 'none';
           unpickedEl.style.display = 'none';
           closeList();
+          self.trigger('change');
         });
         listEl.appendChild(item);
       });
@@ -556,6 +562,11 @@ export default {
 
           resolveOffset(place);
           closeList();
+
+          // the pick lands from a tap on the list, which fires no change of its own, so the row says
+          // so itself for page code reading the pick. the zone lookup above changes only the offset
+          // and stays quiet, so a name filled in from the pick is not filled in again over an edit
+          self.trigger('change');
         });
         listEl.appendChild(item);
       });

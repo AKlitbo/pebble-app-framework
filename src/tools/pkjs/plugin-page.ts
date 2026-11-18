@@ -9,7 +9,8 @@
  * The config is bundled with esbuild the way the plugin's script is, so its imports resolve the same
  * way, and then Clay builds the page as it would on a phone, with the phone's globals stood in. The
  * page gets the framework's show and hide for its `visibleWhen` rows, then the framework's plugin
- * settings code from ts/plugin-app/page.ts, then the plugin app's own customClay. The settings code
+ * settings code from ts/plugin-app/page.ts, then the plugin app's own customClay. A page holding a
+ * `locationsearch` row gets the framework's location search, as a face's page does. The settings code
  * loads the saved settings from the plugin and saves them back to it, so the page gets a status row for
  * it to report in, above the Save button, and a Save button when the config has none. Clay's own Save
  * goes to a return address, which is pointed at an in-page hash so it can never close the page unsaved.
@@ -25,6 +26,7 @@ import { createRequire } from 'node:module';
 import esbuild from 'esbuild';
 import { combineCustomFns } from '../../ts/clay/custom-fn.ts';
 import dependentVisibility from '../../ts/clay/dependent-visibility.ts';
+import locationComponent from '../../ts/clay/location-component.ts';
 import pageStyleComponent from '../../ts/clay/page-style-component.ts';
 import pluginSettingsPage from '../../ts/plugin-app/page.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
@@ -52,6 +54,12 @@ export interface PluginPageSource {
   clayConfig: ClayConfigItem[];
   customClay?: unknown;
 }
+
+/** Clay as the build uses it. */
+type PageClay = { meta: unknown; components?: Record<string, unknown>; generateUrl(): string; registerComponent(component: unknown): void };
+
+/** Clay's constructor, as the build loads it. */
+type PageClayConstructor = new (config: unknown, customFn: unknown, options: unknown) => PageClay;
 
 /** Whether any row on the page, inside sections too, matches. */
 function anyItem(items: ClayConfigItem[], test: (item: ClayConfigItem) => boolean): boolean {
@@ -95,6 +103,26 @@ export function pluginPageItems(config: ClayConfigItem[], name: string): ClayCon
 }
 
 /**
+ * Registers the framework's location search on a page that holds one, the way a face's page gets it.
+ *
+ * The search draws Clay's text box and takes its look from that component's style. Clay adds a
+ * component's style only to a page that registers it, and registers its own only for the rows on the
+ * page it was built with. So a page with no text box of its own gets Clay's from a spare Clay built
+ * with one, or the search shows as a plain white field beside its label.
+ */
+function registerLocationSearch(Clay: PageClayConstructor, clay: PageClay, items: ClayConfigItem[]): void {
+  if (!anyItem(items, (item) => item.type === 'input')) {
+    const input = (new Clay([{ type: 'input' }], null, { autoHandleEvents: false }).components || {}).input;
+
+    if (input) {
+      clay.registerComponent(input);
+    }
+  }
+
+  clay.registerComponent(locationComponent);
+}
+
+/**
  * Builds a plugin app's settings page as one self-contained HTML file.
  *
  * @param source The plugin app's Clay config and its optional customClay.
@@ -115,13 +143,17 @@ export function renderPluginPage(source: PluginPageSource, name: string): string
   const restoreLoad = stubModuleLoad((id) => (id === 'message_keys' ? {} : undefined));
 
   try {
-    const Clay = createRequire(path.join(ENGINE, 'package.json'))('@rebble/clay/src/js/index') as new (config: unknown, customFn: unknown, options: unknown) => { meta: unknown; generateUrl(): string; registerComponent(component: unknown): void };
+    const Clay = createRequire(path.join(ENGINE, 'package.json'))('@rebble/clay/src/js/index') as PageClayConstructor;
     const clay = new Clay(items, customFn, { autoHandleEvents: false });
 
     // the framework's rules for the whole page, the same ones a face's page carries. without them the
     // Pebble Android app's head script puts Clay's component styles ahead of its base sheet, and a select
     // row keeps the base padding, a gap under its value and at each side
     clay.registerComponent(pageStyleComponent);
+
+    if (anyItem(items, (item) => item.type === locationComponent.name)) {
+      registerLocationSearch(Clay, clay, items);
+    }
 
     // a plugin's page opens with no watch behind it
     clay.meta = { activeWatchInfo: null, accountToken: '', watchToken: '', userData: {} };

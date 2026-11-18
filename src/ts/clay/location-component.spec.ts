@@ -444,6 +444,46 @@ describe('initialize', () => {
     expect(mounted.unpicked.style.display).toBe('none');
   });
 
+  /**
+   * A tap on the list fires no change of its own, so page code waiting on the row to fill in a name
+   * from the pick would never hear it. The pick has to be saved by the time the row says so.
+   */
+  test('fires change once a place pick is saved', () => {
+    const mounted = mount();
+    const seen: string[] = [];
+
+    mounted.ctx.trigger.mockImplementation(() => void seen.push(mounted.hidden.value));
+    mounted.ctx.initialize();
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(200, JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112, timezone: 'America/Phoenix' },
+    ] }));
+
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const result = [mounted.ctx.trigger.mock.calls, seen.map((value) => JSON.parse(value).label)];
+
+    expect(result).toEqual([[['change']], ['Phoenix, Arizona, United States']]);
+  });
+
+  /** A second change when the zone lookup lands would fill a name in from the pick again, over the wearer's edit. */
+  test('stays quiet when the zone lookup lands', () => {
+    const mounted = mount();
+
+    mounted.ctx.initialize();
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(200, JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
+    ] }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));
+    const result = mounted.ctx.trigger.mock.calls.length;
+
+    expect(result).toBe(1);
+  });
+
   /** An emptied box is how a place gets cleared on purpose, so it saves as nothing without a prompt. */
   test('stays quiet when the box is emptied', () => {
     const mounted = mount();
@@ -606,6 +646,19 @@ describe('zone search', () => {
 
     expect(result).toEqual({ label: 'UTC', offset: 0, tz: 'UTC', fixed: false });
     expect(xhrs).toHaveLength(0);
+  });
+
+  /** A zone pick is a pick like a place, so page code reading the row has to hear it the same way. */
+  test('fires change on picking a zone', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
+    mounted.ctx.initialize();
+    type(mounted.query, 'utc');
+
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const result = mounted.ctx.trigger.mock.calls;
+
+    expect(result).toEqual([['change']]);
   });
 
   /**
