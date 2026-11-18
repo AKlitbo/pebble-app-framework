@@ -1,6 +1,6 @@
 {
   "name": "@paf/thumbnails",
-  "description": "Inlines a face's pictures as base64 for its settings page: panel thumbnails for the Clay layout builder, and theme previews for the theme picker.",
+  "description": "Inlines a face's pictures as base64 for its settings page: panel thumbnails for the Clay layout builder, and theme previews for the theme picker and any other picture picker.",
   "author": "Null Syntax",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,

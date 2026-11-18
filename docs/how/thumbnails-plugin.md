@@ -119,7 +119,7 @@ module.exports = {
 };
 ```
 
-As with the panel pictures, nothing is written on a problem: a path that is missing or is not a PNG stops the run and leaves the committed file as it was.
+As with the panel pictures, nothing is written on a problem. A path that is missing or is not a PNG stops the run and leaves the committed files as they were.
 
 **How the Page Reads It.** The face's `config.ts` imports the generated file and passes it to `buildConfig` as the theme section's `previews`, beside the theme `options`:
 
@@ -134,11 +134,70 @@ buildConfig({
 
 `buildConfig` then builds the picker from the framework's `themePreview` component instead of the plain select. It still saves under `APPEARANCE_THEME`. A face that passes no `previews` gets the plain dropdown, unchanged. See [The Theme Picker with Pictures](settings-page.md#the-theme-picker-with-pictures).
 
-**What `paf check` Catches.** The theme-preview check mirrors the panel one: a committed `theme-previews.g.js` that differs from what the generator would write now, a path that is missing or is not a PNG, and a committed file in a face with no manifest to build it from.
+**More than One Picker.** A page can hold more than one `themePreview` item, such as a layout picker with a shot of each layout above the theme picker. Each one takes its own map. The manifest names a map for each picker other than the theme one under `maps`, each in the same shape as the manifest's own entries, platform maps and lists included:
+
+```json
+{
+  "0": "previews/day.png",
+  "1": "previews/night.png",
+  "maps": {
+    "layout": {
+      "0": "previews/layout-classic.png",
+      "1": "previews/layout-wide.png"
+    }
+  }
+}
+```
+
+The entries outside `maps` are the main map, which goes to `theme-previews.g.js` as above. Each named map goes to a file of its own, `src/pkjs/clay/theme-previews-<name>.g.js`, so `layout` writes `theme-previews-layout.g.js`. A map's name lands in that file name, so it is lowercase letters and digits, with dashes between words. It cannot end in `component`, since a file ending in `-component.g.js` is a Clay component's generated output, and the check leaves such a file alone. A face imports the map it wants and hands it to that picker's `previews`:
+
+```ts
+import themePreviews from './clay/theme-previews.g';
+import layoutPreviews from './clay/theme-previews-layout.g';
+
+{
+  type: 'themePreview',
+  messageKey: 'APPEARANCE_LAYOUT',
+  label: 'Layout',
+  options: [{ label: 'Classic', value: 0 }, { label: 'Wide', value: 1 }],
+  previews: layoutPreviews,
+},
+```
+
+**A Picker That Follows Another Control.** A `themePreview` item with `previewsByKey` draws the shots for whatever another control on the page holds, so its `previews` are keyed first by that control's value and then by the picker's own. A map for such a picker goes under `mapsByKey`, with a block for each value of the other control:
+
+```json
+{
+  "mapsByKey": {
+    "scene-palette": {
+      "0": { "0": "previews/hills-dawn.png", "1": "previews/hills-dusk.png" },
+      "1": { "0": "previews/coast-dawn.png", "1": { "emery": "previews/coast-dusk.png", "gabbro": "previews/coast-dusk-round.png" } }
+    }
+  }
+}
+```
+
+It goes to `theme-previews-scene-palette.g.js` the same way, and plugs into the picker as is:
+
+```ts
+import scenePalettePreviews from './clay/theme-previews-scene-palette.g';
+
+{
+  type: 'themePreview',
+  messageKey: 'APPEARANCE_THEME',
+  options: PALETTE_OPTIONS,
+  previews: scenePalettePreviews,
+  previewsByKey: 'APPEARANCE_SCENE',
+},
+```
+
+A value under `mapsByKey` that is a path rather than a block is refused, since the picker would find no shots under any value of the other control. So is a name under both `maps` and `mapsByKey`, a `maps` or `mapsByKey` that names no map, an empty map, and an empty block. A manifest with no `maps` or `mapsByKey` is the main map alone and writes `theme-previews.g.js` even when it is empty. One that holds only named maps writes no main file. `maps` and `mapsByKey` are the two keys the manifest keeps for itself, so a picker cannot carry an option whose value is either word.
+
+**What `paf check` Catches.** The theme-preview check mirrors the panel one, across the main file and every named map's file. It reports a committed file that differs from what the generator would write now, including a named map that was never written, and a path that is missing or is not a PNG, with the map it sits in. It also reports a committed file that no map in the manifest builds, such as a named map's file after the map was taken out, and every committed file in a face with no manifest to build it from. The generator warns about such a file too, and leaves deleting it to the face, since its `config.ts` may still import it.
 
 ## What It Costs
 
-Base64 writes every three bytes as four characters, so the generated file is about a third larger than the PNGs it holds. On Gridlock, 73 pictures come to about 51 KB and the file to about 72 KB.
+Base64 writes every three bytes as four characters, so the generated file is about a third larger than the PNGs it holds. 73 pictures at about 51 KB come to a file of about 72 KB.
 
 Theme previews run larger, since each is a whole-watch shot and a theme can carry a day and a night one. A set of eight themes with both comes to roughly 80 to 100 KB. A face that carries a set per platform ships every platform's shots in the one file, so two platforms roughly double it. The whole settings page goes to the phone as one data URL, so a face that finds the page slow or refusing to open can drop to a single shot per theme, which about halves it.
 

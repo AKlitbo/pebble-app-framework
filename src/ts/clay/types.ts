@@ -55,7 +55,7 @@ export interface ClayConfigItem {
   moduleOptions?: unknown;
   moduleThumbnails?: unknown;
   /** themePreview only: the pictures for each option, keyed by the option's value as a string, from
-   * the face's theme-previews.g.js. A value is a list of data URLs, drawn side by side, so a theme
+   * the face's theme-previews.g.js or a named map's theme-previews-<name>.g.js. A value is a list of data URLs, drawn side by side, so a theme
    * can carry one picture or a few (such as a day and a night shot). A value can instead be a map
    * keyed by platform, so a round and a rectangular watch each show their own shots. With
    * previewsByKey set, it nests one level deeper, keyed first by the sibling control's value. */

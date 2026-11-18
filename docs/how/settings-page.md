@@ -254,6 +254,8 @@ The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothin
 
 A hand-built `themePreview` item can also set `previewsByKey`, the `messageKey` of another control on the page. Its `previews` then nest, keyed first by that control's value and then by the option's value, so the shots under the picker follow a second choice elsewhere on the page, such as a scene or a mode. The picker still owns `APPEARANCE_THEME` on its own, so the value saves the usual way. Clay lists the page's controls only once the page is built, so the picker reads the named control then and redraws the preview whenever it changes.
 
+Each `themePreview` item on a page takes a map of its own. The manifest names a map for each picker beyond the theme one, and one nested for a picker with `previewsByKey`, and the generator writes each to its own `theme-previews-<name>.g.js` for the face to import. [More than One Picker](thumbnails-plugin.md#theme-previews) covers the manifest's `maps` and `mapsByKey`.
+
 ## Showing Rows Only When They Apply
 
 A row that does nothing under the current choice can be hidden rather than left on the page looking live. Give it a `visibleWhen`, naming a control and the values of that control which reveal the row:
