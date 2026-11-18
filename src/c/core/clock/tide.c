@@ -6,8 +6,15 @@
  */
 #include "clock/tide.h"
 
-/// The cycle's length cubed, which the smoothstep divides by
-#define TIDE_PERIOD_CUBE ((int64_t)TIDE_PERIOD_MIN * TIDE_PERIOD_MIN * TIDE_PERIOD_MIN)
+/// Half the cycle's length cubed, rounded down, which rounds the smoothstep to the nearest point
+#define TIDE_HALF_CUBE ((TIDE_PERIOD_MIN * TIDE_PERIOD_MIN * TIDE_PERIOD_MIN) / 2)
+
+// the most tide_level's first division can take, a remainder of the period less one minute times the
+// largest scale, plus the half cube
+_Static_assert((int64_t)(TIDE_PERIOD_MIN - 1) * 300 * TIDE_PERIOD_MIN
+                   + (int64_t)TIDE_PERIOD_MIN * TIDE_PERIOD_MIN * TIDE_PERIOD_MIN / 2
+                   <= INT32_MAX,
+               "a longer TIDE_PERIOD_MIN overflows tide_level's 32-bit maths");
 
 /**
  * @brief Where in the cycle a minute count lands.
@@ -32,14 +39,18 @@ int tide_level(int32_t minutes)
     int32_t twice = phase(minutes) * 2;
     int32_t climb = twice < TIDE_PERIOD_MIN ? twice : 2 * TIDE_PERIOD_MIN - twice;
 
-    // the smoothstep curve 3t^2-2t^3 of climb over the period, scaled to 0..100. it flattens both
-    // turns and steepens the middle
-    // it is worked out in one go with one rounding at the end, so the level moves at most one point
-    // a minute and low and high water last about as long as each other
-    // the product on top runs past 40 billion, so it is worked in 64 bits
-    int64_t top = (int64_t)100 * climb * climb * (3 * TIDE_PERIOD_MIN - 2 * climb);
+    // the smoothstep curve 3t^2-2t^3 of climb over the period, scaled to 0..100 and rounded once to
+    // the nearest point, so the level moves at most one point a minute
+    // dividing by the period and then by its square gives the same whole number as dividing by the
+    // cube, and keeps every step under 400 million, inside 32 bits
+    // the half cube that rounds it goes in before the first division
+    // added any later, the steps round down first and high water lasts only a few minutes
+    int32_t square = climb * climb;
+    int32_t scale = 100 * (3 * TIDE_PERIOD_MIN - 2 * climb);
+    int32_t part = ((square % TIDE_PERIOD_MIN) * scale + TIDE_HALF_CUBE) / TIDE_PERIOD_MIN;
+    int32_t over_period = (square / TIDE_PERIOD_MIN) * scale + part;
 
-    return (int)((top + TIDE_PERIOD_CUBE / 2) / TIDE_PERIOD_CUBE);
+    return (int)(over_period / (TIDE_PERIOD_MIN * TIDE_PERIOD_MIN));
 }
 
 bool tide_rising(int32_t minutes)

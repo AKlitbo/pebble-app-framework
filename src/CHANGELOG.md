@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The build now stops on a row of a plugin app's settings page that no registered component draws, and names the row's type, or on a row with no type. Clay stops drawing the page at that row, so the page would open blank on the phone. Export the component that draws it in `components` from `src/config/index.ts`, or take the row off the page.
 - The settings page now carries only the theme previews for the watch it opens on. Each open cuts a platform-keyed theme down to the platform of the watch it opens on, the one the picker reads, inside every key under `previewsByKey` too, before Clay writes the page. A theme whose map leaves out that watch keeps the list the picker would fall back to. A face with shots for two platforms sends the page about half the base64 it did, and needs no change.
 - A face's `.pbw` now leaves out `pebble-js-app.js.map`, which is about as big as the JS. `pebble logs` still translates stack traces from the copy in the sandbox's `build/`.
+- `tide_level` now works in 32-bit arithmetic, so a face that uses it no longer links libgcc's `__udivmoddi4`, about 750 bytes. The levels are unchanged.
 
 ### Plugin Changes
 
