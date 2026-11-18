@@ -224,6 +224,8 @@ if (kinds.music === 'off' || kinds.music === 'missing') {
 
 `PLUGIN_KINDS_CLASS`, `PLUGIN_KINDS_TYPE`, and `pluginKindState` are exported from `page.ts` for code on the phone side.
 
+A drag and drop builder can take the warnings ready made. The builder piece `ts/shared/plugin-warnings` reads the row, takes the kind each panel reads from the face, and names each placed panel that cannot fill, as [Warning about Panels That Need a Plugin](settings-page.md#warning-about-panels-that-need-a-plugin) covers.
+
 ## The Quick Retry
 
 A plugin subscription lasts as long as the phone code's session, so the feature starts it afresh on every `ready`. While the plugin is picked and nothing is live, such as with plugins off or no plugin installed, the feature tries again every 2 minutes, so a plugin the wearer has just installed or turned on shows up within minutes. Reading the phone's plugin list is a local call, so a retry costs nothing on the network.

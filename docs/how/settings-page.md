@@ -319,9 +319,71 @@ An editor too big for one hand-written component, such as a drag and drop grid w
 
 A face keeps its pieces under `src/pkjs/clay/builder/`, and a family keeps the ones its faces share under `core/pkjs/clay/builder/`. A manifest beside them names the component, its template and stylesheets, the pieces to bundle, and where the finished `*.g.js` lands in the face. One piece, `init`, hangs the hooks on the row that the generated manipulator calls. `paf gen <face> clay` bundles the pieces with esbuild into one function that becomes the component's `initialize`, and parses the finished file once before it writes it, so a file that does not parse never lands.
 
-**Where a Piece Comes From.** A piece is looked up in the face first, then in its family's core, then in the framework's `src/ts/clay/builder/`, by the same path under each. A face's copy wins even when a shared piece is the one importing it. So one manifest in a family's core can build a different editor for each face: the drag handling and the popup panels come from the framework, and each face supplies its own grid geometry, the code that reads and writes its layout string, its starter layouts, and its template. Manifests shadow each other the same way, by file name.
+**Where a Piece Comes From.** A piece is looked up in the face first, then in its family's core, then in the framework's `src/ts/clay/builder/`, by the same path under each. A face's copy wins even when a shared piece is the one importing it. So one manifest in a family's core can build a different editor for each face: the drag handling, the palette, the plugin warnings, and the popup panels come from the framework, and each face supplies its own grid geometry, the code that reads and writes its layout string, its starter layouts, and its template. Manifests shadow each other the same way, by file name.
 
 **Committed, and Checked.** The build never runs the generator. It compiles the face's phone code, leaves the builder pieces out of the compile so they do not ship a second time as loose modules, and copies every committed `*.g.js` beside the result. The committed file is therefore all the page ever sees, and a piece edited without a fresh `paf gen` ships the old editor. `paf check` builds every component again in memory, compares it with the committed file, and reports a stale one with the `paf gen` line that fixes it. It also reports a committed component no manifest writes any more, since the build would still copy it into the face.
+
+### The Palette
+
+The `ts/shared/palette` piece draws the palette a builder's panels are dragged from: a tab for each panel size, a row of group tabs under it, the panel tiles, and a status line naming the group on show and how many panels it leaves out, with a Show All button beside it. Each size opens on its first group rather than on every panel, so the list stays short and no panel is a long drag from the watch. The group picked on a size is kept while the page is open. A size with one group shows no group row, and a size no panel comes in gets no tab.
+
+```ts
+// in the face's src/pkjs/clay/builder/ts/grid/init.ts
+import { createPalette } from '../../../../../../paf/ts/clay/builder/ts/shared/palette';
+
+const palette = createPalette({
+  container: root.querySelector('.grid-palette') as HTMLElement,
+  modules: panels,
+  groups: [{ name: 'Clock', icon: '⏰' }, { name: 'Weather', icon: '🌤' }],
+  sizes: [{ key: '1x2', wide: false }, { key: '1x4', wide: true }],
+  thumbFor: function (value, size) {
+    return shotFor(value, size);
+  },
+  onPick: function (panel, size, event) {
+    drag.start({ panel: panel, size: size }, event);
+  },
+});
+
+palette.markPlaced(placedValues);
+```
+
+* **The Panels.** Each one carries a `value`, a `label`, the `sizes` it comes in, and an `icon` and `color` the tile shows when `thumbFor` has no shot for it. Its `group` is the name of one of the face's groups. A panel with no group, or a group the face does not list, shows under Other, after the face's own groups.
+* **The Groups and Sizes.** Both are the face's, and the tabs keep the order they come in. A `wide` size spans the grid, so its tiles are twice as wide.
+* **What It Hands Back.** `onPick` gets the panel and the size on show on the tile's `pointerdown`, ready to start a drag. `markPlaced` dims the tiles of the panels already on the face, and the dimming lasts through every group switch.
+
+Its stylesheet is `css/palette.css`, which a manifest lists in its `styles` like its own, and the classes all start with `pf-palette`. It lays the palette out and leaves the colours of the tabs and Show All to the face. A face sets the box's fill with `--pf-palette-panel`, its edges with `--pf-palette-line`, and the side gutter with `--pf-palette-gutter`, 12px unless set. A size tab carries `active` while it is picked, a group tab carries `aria-pressed`, and a tile carries `placed`.
+
+### Warning about Panels That Need a Plugin
+
+The `ts/shared/plugin-warnings` piece puts a warning under the watch for each placed panel that reads a Pebble app plugin the phone cannot serve, such as a now playing panel while plugins are off, or a stock panel whose Data Source is the plugin with no stock plugin installed. It reads where each kind stands from the plugin kinds row, as [Which Kinds the Phone Serves](plugin-sources.md#which-kinds-the-phone-serves) covers, so a face that reads no plugin shows no warning.
+
+```ts
+// in the same init.ts
+import { createPluginWarnings } from '../../../../../../paf/ts/clay/builder/ts/shared/plugin-warnings';
+
+const root = this.$element[0];
+const warnings = createPluginWarnings({
+  root: root,
+  after: root.querySelector('.grid-watch') as HTMLElement,
+  panelKinds: { 'Now Playing': 'music', 'Phone Battery': 'phone', 'Forecast': 'weather', 'Stock': 'stocks' },
+});
+
+// on every change to the grid, with the names of the panels the watch shows
+warnings.update(['Now Playing', 'Stock']);
+```
+
+`panelKinds` names the kind each panel reads, by the name `update` gets, and a panel left out reads no plugin. Plugins off folds every panel into one warning. Otherwise each kind with no plugin gets its own, naming its panels once.
+
+A now playing or phone battery panel always reads its plugin. A weather, stock, or calendar panel only reads one while its Data Source is the plugin, and a builder cannot read the source selects from its own row. So the face passes the framework's page code as its `customClay`:
+
+```ts
+// in the face's src/pkjs/index.ts
+import builderPluginSources from '../../paf/ts/clay/builder-plugin-sources-fn';
+
+app.startPebbleApp({ clayConfig, components: [gridEditor], features: [weather, stocks, music], customClay: builderPluginSources });
+```
+
+Once the page is built, it reads `WEATHER_PROVIDER`, `STOCK_PROVIDER`, and `CALENDAR_SOURCE`, and hands what the wearer picked to every builder on the page that made a warning box, through the `_pfPluginSources` hook `createPluginWarnings` hangs on `root`. It does that again whenever one of the selects changes. A select missing from the page reads as not picked. Until the page code first calls it, the box names no weather, stock, or calendar panel. A face with page code of its own passes both to `combineCustomFns` from [`custom-fn.ts`](../../src/ts/clay/custom-fn.ts) and hands the result over as its `customClay`, and the page runs each in turn.
 
 ## Previewing the Page
 

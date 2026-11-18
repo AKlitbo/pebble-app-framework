@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `settings_apply_inbox_holding`, in a dev build only, which applies an inbox message the way `settings_apply_inbox` does but skips the keys a check holds.
 - Added `components` to a plugin app's settings page. `src/config/index.ts` can export a list of Clay components for the build to register, such as the framework's location search from `ts/clay/location-component.ts`. The search reaches Open-Meteo, so list `open-meteo.com` under Internet in the plugin app's `usesPermissions`. The build now stops on a row that no component draws, which Clay would leave blank.
 - Added a `change` event to the location search. The row fires it when a place or a zone is picked, so page code can read the pick with the row's `get`.
+- Added the `ts/shared/palette` builder piece and its `css/palette.css`. `createPalette` draws a tab for each panel size, a row of group tabs under it, the panel tiles, and a status line naming the group on show, from the groups, sizes, and panels the builder passes in.
+- Added the `ts/shared/plugin-warnings` builder piece. `createPluginWarnings` warns under the watch about each placed panel whose plugin the phone cannot serve, from the plugin kinds row and the kind the builder gives each panel. Pass `builderPluginSources` from `ts/clay/builder-plugin-sources-fn.ts` as the face's `customClay`, so a weather, stock, or calendar panel only warns while its Data Source is the plugin.
 
 #### Changed
 
