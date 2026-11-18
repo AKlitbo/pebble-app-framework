@@ -153,6 +153,27 @@ void test_week_day_monday_first_day_is_1(void)
     TEST_ASSERT_EQUAL_INT(1, result);
 }
 
+/**
+ * @brief A week start past Saturday wraps round to the weekday it lands on.
+ *
+ * A face that adds to the wearer's choice and never wraps it passes 8 for Monday. C keeps the sign of
+ * a negative remainder, so a plain % 7 counted that Sunday as day 0 of 7.
+ */
+void test_week_day_start_past_saturday_wraps(void)
+{
+    int result = progress_week_day(0, 8);
+
+    TEST_ASSERT_EQUAL_INT(7, result);
+}
+
+/** @brief A week start below Sunday wraps round too, so -1 starts the week on Saturday and Sunday is day 2. */
+void test_week_day_start_below_sunday_wraps(void)
+{
+    int result = progress_week_day(0, -1);
+
+    TEST_ASSERT_EQUAL_INT(2, result);
+}
+
 /** @brief New Year's Day at midnight is the start of the year. */
 void test_year_pct_jan1_midnight_is_0(void)
 {
@@ -243,6 +264,8 @@ int main(void)
     RUN_TEST(test_week_day_sunday_in_monday_week_is_7);
     RUN_TEST(test_week_day_sunday_first_day_is_1);
     RUN_TEST(test_week_day_monday_first_day_is_1);
+    RUN_TEST(test_week_day_start_past_saturday_wraps);
+    RUN_TEST(test_week_day_start_below_sunday_wraps);
     RUN_TEST(test_year_pct_jan1_midnight_is_0);
     RUN_TEST(test_year_pct_jul2_noon_2026_is_50);
     RUN_TEST(test_year_pct_jul2_noon_2024_is_49);

@@ -59,9 +59,9 @@ int pct = progress_year_pct(t->tm_year + 1900, t->tm_yday, t->tm_hour, t->tm_min
 
 **The Year.** February gets its leap day by the same rule as the day counts, so noon on the 2nd of July is 50% through 2026 and 49% through 2024.
 
-**The Day.** A day is 24 hours of wall clock, even on the day the clocks change. That day the bar reads a little ahead or behind rather than jumping.
+**The Day.** A day is 24 hours of wall clock, even on the day the clocks change. On the night they go forward an hour the bar jumps about 4% at once, and on the night they go back it drops about 4% and runs that hour again.
 
-**The Week.** The week counts from whichever day the face says it starts on, 0 Sunday to 6 Saturday, so a face passes the wearer's choice. `progress_week_day` gives the day of that week, counting its first day as day 1, so a Sunday in a week starting Monday is day 7:
+**The Week.** The week counts from whichever day the face says it starts on, 0 Sunday to 6 Saturday, so a face passes the wearer's choice. A day outside that wraps round, so 8 starts the week on Monday. `progress_week_day` gives the day of that week, counting its first day as day 1, so a Sunday in a week starting Monday is day 7:
 
 ```c
 int first = 1;   // weeks start on Monday

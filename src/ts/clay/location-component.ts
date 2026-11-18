@@ -19,7 +19,9 @@
  * to say the missing zone is on purpose.
  *
  * Each pick fires the row's Clay change event, so page code can read the pick with the row's `get` as
- * it lands.
+ * it lands. A place pick fires it a second time when the zone lookup writes the zone, and typing
+ * that clears a pick fires it too. Page code that fills a row from the pick fills it only when the
+ * place itself changes, so the second change never writes over the wearer's edit.
  *
  * IMPORTANT: `initialize` and the `manipulator` methods are serialized
  * (via .toString()) and run inside the Clay config webview, a separate JS
@@ -436,6 +438,13 @@ export default {
      * Looks up the selected place's zone and its offset today, and stores both alongside the
      * coordinates. The zone is the half that lasts, since the pkjs side reads the offset off it
      * again every time a timezone field goes to the watch.
+     *
+     * The row fires change again when the answer changes what is saved, so page code that read the
+     * pick as it landed, with no zone yet or a 0 offset, reads the whole pick.
+     *
+     * The row's `set` runs apart from this and cannot count as a pick, so an answer is also dropped
+     * once the row no longer holds this place. Page code that empties the row after a pick would
+     * otherwise get the place written back and a change saying so.
      */
     function resolveOffset(place: GeoPlace) {
       const myPick = picks;
@@ -444,6 +453,16 @@ export default {
 
       xhr.onload = function() {
         if (myPick !== picks) {
+          return;
+        }
+
+        let held: { lat?: unknown; lon?: unknown } | null = null;
+
+        try {
+          held = JSON.parse(hiddenEl.value || 'null');
+        } catch (error) {}
+
+        if (!held || held.lat !== place.latitude || held.lon !== place.longitude) {
           return;
         }
 
@@ -461,18 +480,25 @@ export default {
             // cannot look a zone up
             const zone = typeof data.timezone === 'string' && data.timezone ? data.timezone : (place.timezone || '');
 
-            hiddenEl.value = JSON.stringify({
+            const resolved = JSON.stringify({
               lat: place.latitude,
               lon: place.longitude,
               label: labelFor(place),
               offset: offsetMinutes,
               tz: zone,
             });
+            const changed = resolved !== hiddenEl.value;
+
+            hiddenEl.value = resolved;
 
             // a place the geocoder gave no zone for only gets one here. saving before this lands
             // keeps a place with no zone, which is the one thing the prompt is there to catch
             if (zone) {
               noteEl.style.display = 'none';
+            }
+
+            if (changed) {
+              self.trigger('change');
             }
           } catch (error) {}
         }
@@ -564,8 +590,8 @@ export default {
           closeList();
 
           // the pick lands from a tap on the list, which fires no change of its own, so the row says
-          // so itself for page code reading the pick. the zone lookup above changes only the offset
-          // and stays quiet, so a name filled in from the pick is not filled in again over an edit
+          // so itself for page code reading the pick. the zone lookup above says so again once it
+          // lands, for the same place
           self.trigger('change');
         });
         listEl.appendChild(item);
@@ -627,6 +653,8 @@ export default {
     }
 
     queryEl.addEventListener('input', function() {
+      const hadPick = hiddenEl.value !== '';
+
       hiddenEl.value = '';
       picks++;
       noteEl.style.display = 'none';
@@ -643,15 +671,22 @@ export default {
       if (query.length < 2) {
         seq++;
         zoneRows = [];
-        return hideList();
+        hideList();
+      } else {
+        // the zones need nothing from the network, so they are on screen while the geocoder is
+        // still being waited on
+        zoneRows = zoneMatches(query);
+        renderResults(zoneRows, []);
+
+        timer = setTimeout(function() { search(query); }, 300);
       }
 
-      // the zones need nothing from the network, so they are on screen while the geocoder is
-      // still being waited on
-      zoneRows = zoneMatches(query);
-      renderResults(zoneRows, []);
-
-      timer = setTimeout(function() { search(query); }, 300);
+      // page code showing the pick hears it go. only the keystroke that clears one says so, so
+      // typing on with nothing picked stays quiet. it goes last, so a page handler that throws
+      // cannot stop the search for what was typed
+      if (hadPick) {
+        self.trigger('change');
+      }
     });
 
     document.addEventListener('click', function(event) {

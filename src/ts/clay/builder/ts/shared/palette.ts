@@ -27,7 +27,10 @@ export interface PaletteModule {
   group?: string;
 }
 
-/** One group tab: its name, which the status line shows too, and its icon. */
+/**
+ * One group tab: its name, which the status line shows too, and its icon. The palette tells its tabs
+ * apart by name, and `All` and `Other` are its own tabs, so a face's group never takes either name.
+ */
 export interface PaletteGroup {
   name: string;
   icon: string;
@@ -98,7 +101,12 @@ export interface PaletteEnv<Module extends PaletteModule = PaletteModule> {
   container: HTMLElement;
   /** The placeable panels, in the order each group lists them. */
   modules: Module[];
-  /** The group tabs, in order. A face with one group, or none, gets no group row. */
+  /**
+   * The group tabs, in order. A face with one group, or none, gets no group row. `All` and `Other`
+   * are the palette's own names. A group called `All` shows every panel when picked. One called
+   * `Other` gets a second Other tab beside the palette's. Both show the face's group, so the panels
+   * nobody grouped only show under All.
+   */
   groups: PaletteGroup[];
   /** The size tabs, in order. A size no panel comes in gets no tab. */
   sizes: PaletteSize[];

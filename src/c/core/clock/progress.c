@@ -66,7 +66,9 @@ static int days_in_year(int year)
 
 int progress_week_day(int wday, int week_start)
 {
-    return (wday - week_start + 7) % 7 + 1;
+    // C keeps the sign of a negative remainder, so the second % 7 is what lands a week start past
+    // either end of 0 to 6 back inside the week rather than on day 0 or below
+    return ((wday - week_start) % 7 + 7) % 7 + 1;
 }
 
 int progress_hour_pct(int min, int sec)

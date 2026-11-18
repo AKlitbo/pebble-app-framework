@@ -4,8 +4,8 @@
  *
  * A builder cannot read the source selects itself, so this is the only way its warnings hear that a
  * stock panel's source is the plugin. Worth pinning are that every hooked builder hears the picked
- * sources once the page is built and again on each change, that a select missing from the page reads
- * as not picked, that the select keys and the plugin value written out here match the build's, and
+ * sources once the page is built and again on each change, that a kind with no select on the page reads
+ * as picked, which warns only for a kind the plugin source page left in the kinds row, that the select keys and the plugin value written out here match the build's, and
  * that the hook it calls is the one the warnings piece hangs. The test drives a stand-in page.
  */
 
@@ -13,9 +13,14 @@ import { describe, test, expect, beforeEach } from 'vitest';
 import builderPluginSources from './builder-plugin-sources-fn';
 import { combineCustomFns } from './custom-fn';
 import { createPluginWarnings } from './builder/ts/shared/plugin-warnings';
-import type { PickedKinds, PluginSourcesHost } from './builder/ts/shared/plugin-warnings';
-import { PLUGIN_VALUE } from '../plugin-sources/page';
+import type { PickedKinds, PluginKind, PluginSourcesHost } from './builder/ts/shared/plugin-warnings';
+import { pluginSourcePage, PLUGIN_KINDS_TYPE, PLUGIN_VALUE } from '../plugin-sources/page';
+import type { PluginSourceInputs } from '../plugin-sources/page';
 import { PLUGIN_KINDS_CLASS } from '../plugin-sources/kinds-component';
+import { CALENDAR_SOURCE_SELECT, CALENDAR_TEXTS } from '../plugin-sources/calendar';
+import { CALENDAR_STANDARD, WEATHER_STANDARD } from '../plugin-sources/standard';
+import buildConfig from '../pkjs/config-builder';
+import type { ClayConfigItem } from './types';
 import { PROVIDERS } from '../../tools/manifest/providers.ts';
 
 /** A stand-in Clay row over an element, holding a value and calling its change handlers when the spec picks one. */
@@ -62,6 +67,27 @@ function builder(): { row: FakeRow; heard: PickedKinds[] } {
   return { row: new FakeRow(element, ''), heard };
 }
 
+/**
+ * The warnings a builder shows for these panels, with the kinds row the plugin source page wrote for
+ * these inputs, on a page holding only the builder.
+ */
+function warningsUnder(page: ClayConfigItem[], inputs: PluginSourceInputs, panelKinds: Record<string, PluginKind>): string[] {
+  const kinds = document.createElement('input');
+  const root = document.createElement('div') as PluginSourcesHost;
+  const watch = document.createElement('div');
+  const store = pluginSourcePage(page, inputs).find((item) => item.type === PLUGIN_KINDS_TYPE);
+
+  kinds.className = PLUGIN_KINDS_CLASS;
+  kinds.value = String(store ? store.defaultValue : '');
+  document.body.appendChild(kinds);
+  root.appendChild(watch);
+  document.body.appendChild(root);
+  createPluginWarnings({ root, after: watch, panelKinds }).update(Object.keys(panelKinds));
+  makePage({ LAYOUT: new FakeRow(root, '') });
+
+  return [...root.querySelectorAll('.pf-plugin-warning')].map((warning) => String(warning.textContent));
+}
+
 /** A stand-in page over rows keyed by message key, built once the given page code has run. Returns the keys it was asked for. */
 function makePage(rows: Record<string, FakeRow>, code: typeof builderPluginSources = builderPluginSources): string[] {
   const asked: string[] = [];
@@ -86,6 +112,9 @@ function makePage(rows: Record<string, FakeRow>, code: typeof builderPluginSourc
   return asked;
 }
 
+/** A subscription that has saved nothing yet. */
+const NO_STATE = { pluginUuid: null, lastError: null, lastEmpty: false };
+
 beforeEach(() => {
   document.body.innerHTML = '';
 });
@@ -107,21 +136,62 @@ describe('builder plugin sources page code', () => {
     const hooked = builder();
     const stocks = select('finnhub');
 
-    makePage({ LAYOUT: hooked.row, STOCK_PROVIDER: stocks });
+    makePage({ LAYOUT: hooked.row, WEATHER_PROVIDER: select('openmeteo'), STOCK_PROVIDER: stocks, CALENDAR_SOURCE: select('ical') });
     stocks.pick(PLUGIN_VALUE);
     const result = hooked.heard[hooked.heard.length - 1];
 
     expect(result).toEqual({ weather: false, stocks: true, calendar: false });
   });
 
-  /** A face with no calendar has no select for it, and reading it as picked would warn about a source the face lacks. */
-  test('reads a select missing from the page as not picked', () => {
+  /**
+   * A face whose providers list is the plugin alone gets no select, and its panels read the plugin
+   * whatever the page shows. Reading that kind as not picked kept its panels quiet while the kinds row
+   * said the plugin was off or missing.
+   */
+  test('reads a kind with no select on the page as picked', () => {
     const hooked = builder();
 
     makePage({ LAYOUT: hooked.row });
     const result = hooked.heard;
 
-    expect(result).toEqual([{ weather: false, stocks: false, calendar: false }]);
+    expect(result).toEqual([{ weather: true, stocks: true, calendar: true }]);
+  });
+
+  /**
+   * The wearer of a face that only reads weather from the plugin has to hear that plugins are off, or
+   * the weather panels sit empty with nothing said. That face has no Data Source select, and its kind
+   * is in the kinds row the plugin source page wrote.
+   */
+  test('warns about the panels of a plugin only face with no select on the page', () => {
+    const inputs: PluginSourceInputs = { category: 'weather', item: 'location', plugins: [], messageKeys: {}, state: NO_STATE, standard: WEATHER_STANDARD, texts: {} };
+
+    const result = warningsUnder([{ type: 'submit', defaultValue: 'Save' }], inputs, { Temp: 'weather' });
+
+    expect(result).toEqual([expect.stringContaining('Temp')]);
+  });
+
+  /**
+   * With plugins off the calendar select drops to its one iCal option, and the face goes on reading its
+   * iCal link. The builder warned that the agenda needed plugins turned on while the agenda was filling
+   * from the link.
+   */
+  test('stays quiet for a face whose only select dropped while on its own source', () => {
+    const inputs: PluginSourceInputs = {
+      selectKey: 'CALENDAR_SOURCE',
+      category: 'calendar',
+      item: 'event',
+      plugins: [],
+      messageKeys: { CALENDAR_SOURCE: 1, CALENDAR_ICS_URL: 2 },
+      state: NO_STATE,
+      standard: CALENDAR_STANDARD,
+      texts: CALENDAR_TEXTS,
+      insert: { select: CALENDAR_SOURCE_SELECT, anchorKey: 'CALENDAR_ICS_URL' },
+      saved: 'ical',
+    };
+
+    const result = warningsUnder(buildConfig({ calendar: {} }), inputs, { Agenda: 'calendar' });
+
+    expect(result).toEqual([]);
   });
 
   /** A page with no builder on it has nothing to tell, so the selects are left alone. */
@@ -159,7 +229,7 @@ describe('builder plugin sources page code', () => {
     ]);
     const written = new Function('return ' + String(combined))() as typeof builderPluginSources;
 
-    makePage({ LAYOUT: hooked.row, WEATHER_PROVIDER: select(PLUGIN_VALUE) }, written);
+    makePage({ LAYOUT: hooked.row, WEATHER_PROVIDER: select(PLUGIN_VALUE), STOCK_PROVIDER: select('finnhub'), CALENDAR_SOURCE: select('ical') }, written);
     const result = hooked.heard;
 
     expect(result).toEqual([{ weather: true, stocks: false, calendar: false }]);

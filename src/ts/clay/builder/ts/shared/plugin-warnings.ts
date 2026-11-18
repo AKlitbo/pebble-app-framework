@@ -35,7 +35,7 @@ export type KindState = 'off' | 'missing' | 'served';
  */
 export const KINDS_ROW_CLASS = 'pf-plugin-kinds';
 
-/** Which kinds the wearer picked the plugin for, on the selects that offer a choice. */
+/** Which kinds read from the plugin, picked as the Data Source or the face's only source. */
 export type PickedKinds = Partial<Record<PluginKind, boolean>>;
 
 /**
@@ -72,7 +72,7 @@ export const KIND_NEEDS: ReadonlyArray<readonly [PluginKind, string]> = [
  * @param panels The names of the panels on the face, in any order, repeats allowed.
  * @param panelKinds The kind each panel reads, by its name. A panel left out reads no plugin.
  * @param states Where each kind's plugins stand. A kind left out reads no plugin on this face.
- * @param picked Which kinds the wearer picked the plugin for as the Data Source.
+ * @param picked Which kinds read from the plugin, picked as the Data Source or the face's only source.
  * @return The warnings, plugins off first and then one for each kind with no plugin, each naming its
  *   panels once in the order they were first placed. Empty when every placed panel can fill.
  */

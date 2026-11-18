@@ -1221,6 +1221,56 @@ describe('pluginSourcePage the plugin kinds store', () => {
     expect(result[0].messageKey).toBeUndefined();
   });
 
+  /**
+   * With plugins off the calendar select drops to its one iCal option, and the face goes on reading its
+   * iCal link. A builder reads a kind the store names with no select as plugin only, so the calendar
+   * left in the store warned that the agenda needed plugins turned on while it was reading the link.
+   */
+  test('leaves out a kind whose select drops while the face is on its own source', () => {
+    const page = pluginSourcePage(calendarPage(), calendarInputs({ plugins: [], saved: 'ical' }));
+
+    const result = JSON.parse(String(page[0].defaultValue));
+
+    expect(result).toEqual({});
+  });
+
+  /** The same drop with a phone listing other plugins leaves the calendar out too, since the face still reads its link. */
+  test('leaves out a kind whose select drops with no plugin serving it', () => {
+    const page = pluginSourcePage(calendarPage(), calendarInputs({ plugins: [WEATHER_PLUGIN] }));
+
+    const result = JSON.parse(String(page[0].defaultValue));
+
+    expect(result).toEqual({});
+  });
+
+  /** A face listing Open-Meteo and the plugin loses its select with plugins off, and goes on reading Open-Meteo. */
+  test('leaves out weather on a face with one own provider and the plugin off', () => {
+    const providers = faceProvidersFor({ weather: { offered: ['plugin', 'openmeteo'], needsKey: false } });
+    const page = pluginSourcePage(providers.narrow(buildConfig({ location: {}, weather: {} })), weatherInputs({ plugins: [], saved: 'openmeteo' }));
+
+    const result = JSON.parse(String(page[0].defaultValue));
+
+    expect(result).toEqual({});
+  });
+
+  /** A face whose calendar is the plugin alone has no select at all, and its builder has to hear that plugins are off. */
+  test('keeps a plugin only kind with no select', () => {
+    const page = pluginSourcePage(calendarPage(), calendarInputs({ selectKey: undefined, insert: undefined, plugins: [] }));
+
+    const result = JSON.parse(String(page[0].defaultValue));
+
+    expect(result).toEqual({ calendar: 'off' });
+  });
+
+  /** A kind whose select stays keeps its state, since the builder reads that select to know whether the plugin is picked. */
+  test('keeps a kind whose select stays on the page', () => {
+    const page = pluginSourcePage(calendarPage(), calendarInputs({ plugins: [], saved: PLUGIN_VALUE }));
+
+    const result = JSON.parse(String(page[0].defaultValue));
+
+    expect(result).toEqual({ calendar: 'off' });
+  });
+
   /** A face's builder matches its panels against the kind's name in the providers list, not the category the phone subscribes to. */
   test('names the kind as the providers list does', () => {
     const inputs = weatherInputs({ selectKey: undefined, category: 'finance', item: 'stock', rowKind: 'stocks', plugins: [] });

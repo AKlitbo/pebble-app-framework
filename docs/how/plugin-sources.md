@@ -211,7 +211,7 @@ The states sit in a `pluginKinds` row, a hidden input with the class `pf-plugin-
 | `missing` | plugins, and none of them serves the kind |
 | `served` | a plugin serving the kind, or a list the phone will not give, since the phone may still route to a plugin it does not list |
 
-The kinds are `weather`, `stocks`, `calendar`, `music`, and `phone`. A kind the face does not read from a plugin, such as one built without its define, is left out, and a page with no plugin kinds has no store. A component reads it in its `initialize`:
+The kinds are `weather`, `stocks`, `calendar`, `music`, and `phone`. A kind the face does not read from a plugin, such as one built without its define, is left out, and a page with no plugin kinds has no store. So is a kind whose select drops to one option, or is missing from the page, while the face is on a source of its own, since nothing on the page reads the plugin for it then. A page that leaves out every kind that way keeps the store, holding none. A component reads it in its `initialize`:
 
 ```js
 var store = document.querySelector('.pf-plugin-kinds');

@@ -6,8 +6,10 @@
  * and can be tested off the watch. Year is the full year (2026). Weekday is 0 Sunday to
  * 6 Saturday. Day of the year (yday) counts January 1st as 0, like tm_yday.
  *
- * Every answer runs on the wall clock, so a day is always 24 hours. On the one day a year the
- * clocks change, the day bar reads a little ahead or behind rather than jumping.
+ * Every answer runs on the wall clock, so a day is always 24 hours. On the night the clocks go
+ * forward an hour the day bar jumps about 4% at once, and on the night they go back it drops
+ * about 4% and runs that hour again. The week and year bars move by the same hour, which is
+ * under 1% of either.
  *
  * Each percent is rounded down and stops at 99, so a bar only reads full once the next period
  * has started and it is back at 0.
@@ -44,7 +46,8 @@ int progress_day_pct(int hour, int min, int sec);
  * @brief How far through the current week it is, counting from the day the week starts on.
  *
  * @param wday Today's weekday, 0 Sunday to 6 Saturday.
- * @param week_start The weekday the week begins on, 0 Sunday to 6 Saturday.
+ * @param week_start The weekday the week begins on, 0 Sunday to 6 Saturday. A value outside that
+ * wraps round, so 7 is Sunday and -1 is Saturday.
  * @param hour The hour, 0 to 23.
  * @param min The minute, 0 to 59.
  * @param sec The second, 0 to 59.
@@ -68,7 +71,8 @@ int progress_year_pct(int year, int yday, int hour, int min, int sec);
  * @brief How many days the week has run, counting the first day as day 1.
  *
  * @param wday Today's weekday, 0 Sunday to 6 Saturday.
- * @param week_start The weekday the week begins on, 0 Sunday to 6 Saturday.
+ * @param week_start The weekday the week begins on, 0 Sunday to 6 Saturday. A value outside that
+ * wraps round, so 7 is Sunday and -1 is Saturday.
  * @return The day number from 1 to 7.
  */
 int progress_week_day(int wday, int week_start);

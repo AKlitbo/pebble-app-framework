@@ -27,7 +27,9 @@ import { createRequire } from 'node:module';
 import esbuild from 'esbuild';
 import { combineCustomFns } from '../../ts/clay/custom-fn.ts';
 import dependentVisibility from '../../ts/clay/dependent-visibility.ts';
+import { borrowLooks } from '../../ts/clay/looks.ts';
 import pageStyleComponent from '../../ts/clay/page-style-component.ts';
+import { rowTypes, typesWithoutComponent } from '../../ts/clay/rows.ts';
 import pluginSettingsPage from '../../ts/plugin-app/page.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import { ENGINE, icaljsBundle, WORKSPACE } from '../shared/paths.ts';
@@ -57,11 +59,8 @@ export interface PluginPageSource {
   components?: unknown[];
 }
 
-/** The type of the framework's location search row, whose look comes from Clay's text box. */
+/** The type of the framework's location search row, which a refusal names the import for. */
 const LOCATION_SEARCH = 'locationsearch';
-
-/** The Clay type every row of a section is held in, which Clay draws itself rather than through a component. */
-const SECTION = 'section';
 
 /** Clay as the build uses it. */
 type PageClay = { meta: unknown; components?: Record<string, unknown>; generateUrl(): string; registerComponent(component: unknown): void };
@@ -72,21 +71,6 @@ type PageClayConstructor = new (config: unknown, customFn: unknown, options: unk
 /** The name a Clay component goes by, or undefined for anything that is not one. */
 function componentName(component: unknown): unknown {
   return isObject(component) ? component.name : undefined;
-}
-
-/** Every row type on the page, inside sections too, each once. */
-function rowTypes(items: ClayConfigItem[], into: string[] = []): string[] {
-  items.forEach((item) => {
-    if (!into.includes(item.type)) {
-      into.push(item.type);
-    }
-
-    if (item.items) {
-      rowTypes(item.items, into);
-    }
-  });
-
-  return into;
 }
 
 /** Whether any row on the page, inside sections too, matches. */
@@ -131,25 +115,15 @@ export function pluginPageItems(config: ClayConfigItem[], name: string): ClayCon
 }
 
 /**
- * Registers the plugin app's own components, with Clay's text box ahead of them for a location search
- * on a page that has no text box.
+ * Registers the plugin app's own components, with the Clay components the framework's rows take their
+ * look from ahead of them, as a face's page gets them.
  *
- * The search draws Clay's text box and takes its look from that component's style. Clay adds a
- * component's style only to a page that registers it, and registers its own only for the rows on the
- * page it was built with. So a page with no text box of its own gets Clay's from a spare Clay built
- * with one, or the search shows as a plain white field beside its label. A plugin app passing its own
- * text box keeps it.
+ * The location search draws Clay's text box and takes its look from that component's style, which a
+ * page with no text box of its own would never carry, so it gets Clay's from a spare Clay. borrowLooks
+ * in ts/clay/looks.ts does that for a face's page too. A plugin app passing its own text box keeps it.
  */
 function registerComponents(Clay: PageClayConstructor, clay: PageClay, items: ClayConfigItem[], components: unknown[]): void {
-  const passed = components.map(componentName);
-
-  if (anyItem(items, (item) => item.type === LOCATION_SEARCH) && !anyItem(items, (item) => item.type === 'input') && !passed.includes('input')) {
-    const input = (new Clay([{ type: 'input' }], null, { autoHandleEvents: false }).components || {}).input;
-
-    if (input) {
-      clay.registerComponent(input);
-    }
-  }
+  borrowLooks(Clay, clay, rowTypes(items), components.map(componentName));
 
   components.forEach((component) => clay.registerComponent(component));
 }
@@ -159,8 +133,7 @@ function registerComponents(Clay: PageClayConstructor, clay: PageClay, items: Cl
  * webview, so the wearer would open a blank page with nothing said.
  */
 function checkDrawn(clay: PageClay, items: ClayConfigItem[], name: string): void {
-  const registry = clay.components || {};
-  const missing = rowTypes(items).find((type) => type !== SECTION && !(type in registry));
+  const missing = typesWithoutComponent(items, clay.components || {})[0];
 
   if (missing === LOCATION_SEARCH) {
     throw new ToolError(`${name}'s settings page has a locationsearch row, which no component draws. Import the framework's location search from ts/clay/location-component.ts in src/config/index.ts and export it in components, as in export const components = [locationSearch]`);

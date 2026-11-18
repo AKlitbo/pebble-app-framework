@@ -3194,13 +3194,15 @@ describe('startPebbleApp settings page hooks', () => {
 
     /**
      * Runs the text Clay writes for a custom function on a stand-in page holding a builder that hooked
-     * the plugin sources and a weather select on the plugin, and gives back what the builder heard.
+     * the plugin sources, a weather select on the plugin, and stock and calendar selects on providers of
+     * their own, and gives back what the builder heard.
      */
     function heardOnPage(customFn: unknown): unknown[] {
       const heard: unknown[] = [];
       const element = { _pfPluginSources: (picked: unknown) => heard.push(picked) };
       const builderRow = { $element: [element], get: () => '', on: () => {} };
-      const selectRow = { $element: [{}], get: () => 'plugin', on: () => {} };
+      const selects: Record<string, string> = { WEATHER_PROVIDER: 'plugin', STOCK_PROVIDER: 'finnhub', CALENDAR_SOURCE: 'ical' };
+      const selectRows = Object.keys(selects).map((key) => ({ key, $element: [{}], get: () => selects[key], on: () => {} }));
       let afterBuild: (() => void) | null = null;
       const page = {
         EVENTS: { AFTER_BUILD: 'after_build' },
@@ -3209,8 +3211,8 @@ describe('startPebbleApp settings page hooks', () => {
             afterBuild = handler;
           }
         },
-        getAllItems: () => [builderRow, selectRow],
-        getItemByMessageKey: (key: string) => (key === 'WEATHER_PROVIDER' ? selectRow : undefined),
+        getAllItems: () => [builderRow, ...selectRows],
+        getItemByMessageKey: (key: string) => selectRows.find((row) => row.key === key),
       };
       const written = new Function('return ' + String(customFn))() as (this: unknown) => void;
 

@@ -2,7 +2,11 @@
  * Walking the rows of a settings page, sections and the rows inside them, and taking rows off it.
  *
  * The plugin source page, the supported plugins panel, and the face providers' passes all change a
- * page by finding rows wherever they sit, so they share these.
+ * page by finding rows wherever they sit, so they share these. The app and the plugin settings page
+ * build both check a page's rows against the components registered with the same walk.
+ *
+ * Node runs the plugin settings page build straight from its source, and it cannot load an import
+ * with no extension, so this file imports nothing but types.
  */
 
 import type { ClayConfigItem, ClayOption, VisibilityCondition } from './types';
@@ -228,4 +232,38 @@ export function settleIntro(page: ClayConfigItem[]): void {
   });
 }
 
-export default { allItems, conditionsOf, dropRow, dropRows, findRow, footIndex, listHolding, settleConditions, settleIntro };
+/**
+ * Every row type on the page, sections and the rows inside them, each once, in the order each first
+ * shows.
+ *
+ * @param items The page, or a section's rows.
+ * @param into The list to add the types to, a new one when left out.
+ * @return Each type once.
+ */
+export function rowTypes(items: ClayConfigItem[], into: string[] = []): string[] {
+  items.forEach((item) => {
+    if (into.indexOf(item.type) === -1) {
+      into.push(item.type);
+    }
+
+    if (item.items) {
+      rowTypes(item.items, into);
+    }
+  });
+  return into;
+}
+
+/**
+ * The row types on a page that no registered component draws. Clay lays out a section itself, so a
+ * section needs none. A row of any other type Clay holds no component for stops the page building
+ * there in the webview, with "is not registered" and nothing on screen to say so.
+ *
+ * @param page The settings page.
+ * @param components Every component registered, by name.
+ * @return The types nothing draws, in the order rowTypes gives them.
+ */
+export function typesWithoutComponent(page: ClayConfigItem[], components: Record<string, unknown>): string[] {
+  return rowTypes(page).filter((type) => type !== 'section' && !(type in components));
+}
+
+export default { allItems, conditionsOf, dropRow, dropRows, findRow, footIndex, listHolding, rowTypes, settleConditions, settleIntro, typesWithoutComponent };

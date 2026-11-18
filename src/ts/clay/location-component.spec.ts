@@ -466,10 +466,15 @@ describe('initialize', () => {
     expect(result).toEqual([[['change']], ['Phoenix, Arizona, United States']]);
   });
 
-  /** A second change when the zone lookup lands would fill a name in from the pick again, over the wearer's edit. */
-  test('stays quiet when the zone lookup lands', () => {
+  /**
+   * A place the geocoder names no zone for saves with no zone and a 0 offset at the tap. Page code that
+   * read the pick then, and never heard the lookup, kept a place with no clock.
+   */
+  test('fires change again once the zone lookup writes the zone', () => {
     const mounted = mount();
+    const seen: string[] = [];
 
+    mounted.ctx.trigger.mockImplementation(() => void seen.push(mounted.hidden.value));
     mounted.ctx.initialize();
     type(mounted.query, 'Phoenix');
     vi.advanceTimersByTime(300);
@@ -479,9 +484,88 @@ describe('initialize', () => {
     mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));
+    const result = seen.map((value) => [JSON.parse(value).tz, JSON.parse(value).offset]);
+
+    expect(result).toEqual([['', 0], ['America/Phoenix', -420]]);
+  });
+
+  /** A lookup that only agrees with the pick tells page code nothing new, so the row stays at the one change from the tap. */
+  test('stays quiet when the zone lookup changes nothing', () => {
+    const mounted = mount();
+
+    mounted.ctx.initialize();
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(200, JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112, timezone: 'America/Phoenix' },
+    ] }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));
     const result = mounted.ctx.trigger.mock.calls.length;
 
     expect(result).toBe(1);
+  });
+
+  /**
+   * Typing clears the saved place, and page code still showing the old pick would add a place the row
+   * no longer holds. Only the keystroke that clears it says so, so typing on stays quiet.
+   */
+  test('fires change once when typing clears a pick', () => {
+    const mounted = mount();
+    const seen: string[] = [];
+
+    mounted.ctx.trigger.mockImplementation(() => void seen.push(mounted.hidden.value));
+    mounted.ctx.initialize();
+    mounted.hidden.value = JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix' });
+
+    type(mounted.query, 'Phoeni');
+    type(mounted.query, 'Phoen');
+    const result = seen;
+
+    expect(result).toEqual(['']);
+  });
+
+  /**
+   * Page code that empties the row after a pick, as an Add button does, sets it with no pick of its
+   * own. A lookup still out then wrote the place back under an empty box and fired change, and the page
+   * filled its name in again from the place it had just added.
+   */
+  test('writes nothing and stays quiet for a lookup answering after the row was emptied', () => {
+    const mounted = mount();
+
+    mounted.ctx.initialize();
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(200, JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
+    ] }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.ctx.set('');
+
+    xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));
+    const result = [mounted.hidden.value, mounted.ctx.trigger.mock.calls.length];
+
+    expect(result).toEqual(['', 1]);
+  });
+
+  /**
+   * The change for a cleared pick runs page code, and a handler that throws stops the keystroke where
+   * it fires. Fired before the search was set going, it left the list for what was typed never coming
+   * up, so the search has to be waiting already when the row says so.
+   */
+  test('sets the search going before it fires change for a cleared pick', () => {
+    const mounted = mount();
+    const waiting: number[] = [];
+
+    mounted.ctx.trigger.mockImplementation(() => void waiting.push(vi.getTimerCount()));
+    mounted.ctx.initialize();
+    mounted.hidden.value = JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix' });
+
+    type(mounted.query, 'Phoeni');
+    const result = waiting;
+
+    expect(result).toEqual([1]);
   });
 
   /** An emptied box is how a place gets cleared on purpose, so it saves as nothing without a prompt. */

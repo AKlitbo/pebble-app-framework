@@ -106,6 +106,30 @@ function recordKindState(page: ClayConfigItem[], kind: string, state: PluginKind
   store.defaultValue = JSON.stringify({ ...readKindStates(store.defaultValue), [kind]: state });
 }
 
+/**
+ * Takes a kind back out of the plugin kinds store, for a kind left with no select while the face is on
+ * a source of its own. Nothing on the page reads the plugin for it then, and a kind with no select
+ * that the store still names reads as plugin only, so a builder would warn about a plugin the face is
+ * not using.
+ */
+function forgetKindState(page: ClayConfigItem[], kind: string): void {
+  const store = page.find((item) => item.type === PLUGIN_KINDS_TYPE);
+
+  if (!store) {
+    return;
+  }
+
+  const states = readKindStates(store.defaultValue);
+
+  delete states[kind];
+  store.defaultValue = JSON.stringify(states);
+}
+
+/** The kind's name in the providers list, which the plugin kinds store names it by. */
+function kindOf(inputs: PluginSourceInputs): string {
+  return inputs.rowKind || inputs.category;
+}
+
 /** The warning rows a feature shows under its select while a plugin is picked. A text left out gets no row. */
 export interface PluginSourceTexts {
   /** The row for a plugin that answered last but does not declare the standard readings. It gets the plugin's name. */
@@ -484,6 +508,11 @@ function placeChoice(page: ClayConfigItem[], select: ClayConfigItem, inputs: Plu
 
     dropRow(page, select);
     stripMarks(page, selectKey, used);
+
+    if (used !== PLUGIN_VALUE) {
+      forgetKindState(page, kindOf(inputs));
+    }
+
     return;
   }
 
@@ -610,7 +639,10 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  * panel at the foot of the page, whatever steps 3 to 7 made of the select.
  *
  * Before any of that, every kind records where its plugins stand in the plugin kinds store at the top
- * of the page, as `PLUGIN_KINDS_CLASS` describes, so a face's own components can read it.
+ * of the page, as `PLUGIN_KINDS_CLASS` describes, so a face's own components can read it. A kind left
+ * with no select while the face is on a source of its own comes back out of the store, since the
+ * face reads no plugin for it. So a kind the store names with no select on the page is one that reads
+ * the plugin whatever the page shows.
  *
  * A kind with no source choice passes no select key, and none of the steps above apply. It gets its
  * notes alone, always shown: where its data comes from, then the one saying to turn plugins on while
@@ -625,7 +657,7 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
 export function pluginSourcePage(page: ClayConfigItem[], inputs: PluginSourceInputs): ClayConfigItem[] {
   const { selectKey } = inputs;
 
-  recordKindState(page, inputs.rowKind || inputs.category, pluginKindState(inputs.plugins, inputs.category, inputs.item));
+  recordKindState(page, kindOf(inputs), pluginKindState(inputs.plugins, inputs.category, inputs.item));
 
   if (selectKey === undefined) {
     placeNotes(page, inputs);
@@ -648,6 +680,11 @@ export function pluginSourcePage(page: ClayConfigItem[], inputs: PluginSourceInp
   // hides its row for good
   if (!select) {
     stripMarks(page, selectKey);
+
+    if (inputs.saved !== PLUGIN_VALUE) {
+      forgetKindState(page, kindOf(inputs));
+    }
+
     return page;
   }
 

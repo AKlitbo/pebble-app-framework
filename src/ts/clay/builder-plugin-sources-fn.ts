@@ -8,15 +8,17 @@
  * the page is built it reads `WEATHER_PROVIDER`, `STOCK_PROVIDER`, and `CALENDAR_SOURCE`, and hands
  * the answer to every row whose element carries a `_pfPluginSources` hook, which the builder piece
  * `ts/shared/plugin-warnings` hangs there. It hands it over again whenever one of the selects
- * changes. A select missing from the page counts as not picked, and a page with no hooked row is left
- * as it is.
+ * changes. A kind with no select on the page counts as picked, since a face whose providers list is
+ * the plugin alone gets no select and its panels always read the plugin. A select that drops while
+ * the face is on a source of its own takes its kind out of the plugin kinds row, so a kind counted as
+ * picked that way warns about nothing. A page with no hooked row is left as it is.
  *
  * Clay serializes this and runs it again inside the config webview, so it reaches nothing outside
  * itself: no imports and no module-scope constants. The select keys and the `plugin` value are
  * written out again here, and a spec checks them against the build's plugin kinds table.
  */
 
-/** Which kinds the wearer picked the plugin for, by the kind's name in the providers list. */
+/** Which kinds read from the plugin, picked as the Data Source or the face's only source, by the kind's name in the providers list. */
 type PickedKinds = Record<string, boolean>;
 
 /** A row's element, with the hook a builder hangs on it. */
@@ -63,7 +65,9 @@ export default function builderPluginSources(this: ClayPage): void {
       kinds.forEach((kind) => {
         const select = this.getItemByMessageKey(selects[kind]);
 
-        picked[kind] = Boolean(select) && String((select as ClayRow).get()) === 'plugin';
+        // a kind with no select is plugin only or on the face's own source. the plugin source page
+        // leaves the second out of the plugin kinds row, so reading it as picked warns about nothing
+        picked[kind] = !select || String(select.get()) === 'plugin';
       });
 
       // each builder gets its own copy, so one that keeps and changes it cannot change another's

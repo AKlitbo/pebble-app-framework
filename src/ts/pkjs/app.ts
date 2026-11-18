@@ -19,7 +19,8 @@ import providerKeysFn from '../clay/provider-keys-fn';
 import builderPluginSources from '../clay/builder-plugin-sources-fn';
 import { combineCustomFns, customClayShape } from '../clay/custom-fn';
 import { copyPage } from '../clay/copy-page';
-import { settleIntro } from '../clay/rows';
+import { rowTypes, settleIntro, typesWithoutComponent } from '../clay/rows';
+import { BORROWED_LOOKS, borrowLooks, looksNeeded, spareClay } from '../clay/looks';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { createSettingsAsk } from './settings-ask';
@@ -112,8 +113,9 @@ function hasPluginKinds(items: ClayConfigItem[]): boolean {
  * customClay runs last, so the face's code can still change a row the framework showed or hid. A page
  * with none of them gets no custom function.
  *
- * A face that passes builderPluginSources as its own customClay has it left out, so it never runs
- * twice. The framework already runs it on every page where it can do anything.
+ * A face never passes builderPluginSources, since the framework already runs it on every page where
+ * it can do anything. Passed as the face's customClay it is left out, so it runs once. The check only
+ * knows that exact function, so a customClay of the face's own that calls it runs it a second time.
  */
 function pageCustomFn(page: ClayConfigItem[], customClay: unknown): unknown {
   const faceCode = customClay === builderPluginSources ? undefined : customClay;
@@ -251,10 +253,10 @@ export function prepareSettingsPage(clay: InstanceType<ClayConstructor>, options
     // adds to a page without the Clay row it takes its look from needs that one too. one spare Clay
     // built from the folded page, with a row of each look it lacks, registers each of its own the
     // page uses, and the real one takes what it lacks
-    const looks = looksNeeded(clay, folded);
+    const looks = looksNeeded(clay.components || {}, rowTypes(folded));
 
     if (typesWithoutComponent(folded, clay.components || {}).length || looks.length) {
-      const spare = spareClay([...folded, ...looks.map((type) => ({ type }))]);
+      const spare = spareClay(clayConstructor(), [...folded, ...looks.map((type) => ({ type }))]);
 
       Object.keys(spare.components || {}).forEach((name) => {
         if (!(name in (clay.components || {}))) {
@@ -324,29 +326,6 @@ function fitComponents(clay: InstanceType<ClayConstructor>, brought: unknown[], 
       delete registry[name];
     }
   });
-}
-
-/** Every item type on the page, sections and the rows inside them. */
-function typesOn(items: ClayConfigItem[], into: string[] = []): string[] {
-  items.forEach((item) => {
-    if (into.indexOf(item.type) === -1) {
-      into.push(item.type);
-    }
-
-    if (item.items) {
-      typesOn(item.items, into);
-    }
-  });
-  return into;
-}
-
-/**
- * The item types on a page that no registered component draws. A row of such a type stops the page
- * with "is not registered" in the webview.
- */
-function typesWithoutComponent(page: ClayConfigItem[], components: Record<string, unknown>): string[] {
-  // Clay lays out a section itself, so it has no component
-  return typesOn(page).filter((type) => type !== 'section' && !(type in components));
 }
 
 // the watch payload is already sanitized C-side but guard each copy anyway so
@@ -667,73 +646,12 @@ function fitHiddenStore(clay: InstanceType<ClayConstructor>, page: ClayConfigIte
 }
 
 /**
- * Builds a Clay only to take the components it registers for a page, without the listener its
- * constructor adds.
- *
- * Clay keeps its own components to itself and registers one only for a row on the page it is built
- * from, so a spare Clay is the way to reach one the real page lacks. Its constructor also adds a
- * ready listener that reads the watch info and the account and watch tokens into the spare, which
- * nothing reads. So the spare is built with Pebble.addEventListener swapped for a function that does
- * nothing, and the real one goes back straight after, even when the build throws. A bridge that will
- * not take the swap keeps its own and is left alone after, and the spare's listener then only fills
- * in fields nobody reads.
+ * Clay's constructor. It is required as a page is built rather than at module load, so the unit specs
+ * can use the shared helpers without loading Clay.
  */
-function spareClay(page: ClayConfigItem[]): InstanceType<ClayConstructor> {
+function clayConstructor(): ClayConstructor {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Clay = require('@rebble/clay/src/js/index') as ClayConstructor;
-  const bridge = typeof Pebble === 'undefined' ? null : Pebble;
-  const listen = bridge ? bridge.addEventListener : null;
-  const quiet = function () {} as PebbleBridge['addEventListener'];
-  let swapped = false;
-
-  // a bridge that refuses the swap keeps its listener, which still builds the spare. one whose
-  // listener is a getter with no setter throws here, since this file is strict, and putting the
-  // listener back after would throw the same way out of the settings page
-  try {
-    if (bridge) {
-      bridge.addEventListener = quiet;
-      swapped = bridge.addEventListener === quiet;
-    }
-  } catch {
-    swapped = false;
-  }
-
-  try {
-    return new Clay(page, null, { autoHandleEvents: false });
-  } finally {
-    if (bridge && listen && swapped) {
-      bridge.addEventListener = listen;
-    }
-  }
-}
-
-/**
- * The framework's rows that draw a Clay component's markup and take their look from its style, by the
- * row's type, with the type of the Clay component each one borrows.
- *
- * The location search draws Clay's text box, the dark rounded field with the label above it, and the
- * theme picker draws Clay's select, the chosen name with an arrow beside it over an unseen dropdown.
- * Clay adds a component's style only to a page that registers the component, and registers its own
- * only for the types on the page it was built with. Without it the search shows as a plain white
- * field beside its label on a page with no other text box, and the picker shows the bare dropdown on
- * a page with no other select.
- */
-const BORROWED_LOOKS: Record<string, string> = {
-  [locationComponent.name]: 'input',
-  [themePreviewComponent.name]: 'select',
-};
-
-/**
- * The Clay components a page's framework rows borrow their look from that nothing has registered. A
- * component already registered, Clay's own or a face's, is the one those rows use.
- */
-function looksNeeded(clay: InstanceType<ClayConstructor>, page: ClayConfigItem[]): string[] {
-  const registry = clay.components || {};
-
-  return Object.keys(BORROWED_LOOKS)
-    .filter((row) => usesComponent(page, row))
-    .map((row) => BORROWED_LOOKS[row])
-    .filter((type, index, all) => all.indexOf(type) === index && !(type in registry));
+  return require('@rebble/clay/src/js/index') as ClayConstructor;
 }
 
 /** A Clay component the framework took for a framework row's look, and whether a fold took it. */
@@ -768,18 +686,7 @@ function holdsTakenLook(clay: InstanceType<ClayConstructor>, name: string): bool
  * registered, from one spare Clay, and marks them as a fold's so a later open can take them off.
  */
 function fitLooks(clay: InstanceType<ClayConstructor>, page: ClayConfigItem[]): void {
-  const looks = looksNeeded(clay, page);
-
-  if (!looks.length) {
-    return;
-  }
-
-  const spare = spareClay(looks.map((type) => ({ type })));
-
-  looks.filter((type) => type in (spare.components || {})).forEach((type) => {
-    clay.registerComponent(spare.components[type]);
-    takeLook(clay, type, true);
-  });
+  borrowLooks(clayConstructor(), clay, rowTypes(page)).forEach((type) => takeLook(clay, type, true));
 }
 
 /**
@@ -827,10 +734,7 @@ function dropFoldLooks(clay: InstanceType<ClayConstructor>, page: ClayConfigItem
  * @return The Clay page, ready to open or to turn into a URL.
  */
 export function createClay(options: StartOptions): InstanceType<ClayConstructor> {
-  // required here (not at module load) so the unit specs can use the shared
-  // helpers without loading Clay
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Clay = require('@rebble/clay/src/js/index') as ClayConstructor;
+  const Clay = clayConstructor();
 
   // auto-handling off so we own the send path: Clay's own webviewclosed handler sends the settings
   // through Pebble.sendAppMessage directly, which bypasses queueSend and collides with any other
@@ -851,16 +755,8 @@ export function createClay(options: StartOptions): InstanceType<ClayConstructor>
   // on a page Clay drew one on. a face passing its own keeps the place it registers it in, and no
   // spare is built for it
   const facesOwn = (options.components || []).map((component) => (component as { name?: unknown } | null)?.name);
-  const looks = looksNeeded(clay, page).filter((type) => !facesOwn.includes(type));
 
-  if (looks.length) {
-    const spare = spareClay(looks.map((type) => ({ type })));
-
-    looks.filter((type) => type in (spare.components || {})).forEach((type) => {
-      clay.registerComponent(spare.components[type]);
-      takeLook(clay, type, false);
-    });
-  }
+  borrowLooks(Clay, clay, rowTypes(page), facesOwn).forEach((type) => takeLook(clay, type, false));
 
   // the location autocomplete goes next, before the settings page is built
   clay.registerComponent(locationComponent);
