@@ -191,7 +191,25 @@ import scenePalettePreviews from './clay/theme-previews-scene-palette.g';
 },
 ```
 
-A value under `mapsByKey` that is a path rather than a block is refused, since the picker would find no shots under any value of the other control. So is a name under both `maps` and `mapsByKey`, a `maps` or `mapsByKey` that names no map, an empty map, and an empty block. A manifest with no `maps` or `mapsByKey` is the main map alone and writes `theme-previews.g.js` even when it is empty. One that holds only named maps writes no main file. `maps` and `mapsByKey` are the two keys the manifest keeps for itself, so a picker cannot carry an option whose value is either word.
+**Listing the Options Once.** A picker whose shots differ only by which folder they sit in can list its options once. The map then holds `keys`, which maps each value of the other control to a name, and `previews`, which holds the options in any shape a map takes. Each option is read once per key, with `{key}` in every path swapped for that key's name:
+
+```json
+{
+  "mapsByKey": {
+    "scene-palette": {
+      "keys": { "0": "hills", "1": "coast" },
+      "previews": {
+        "0": "previews/{key}/dawn.png",
+        "1": { "emery": "previews/{key}/dusk.png", "gabbro": "previews/{key}/dusk-round.png" }
+      }
+    }
+  }
+}
+```
+
+That writes byte for byte the file the same map writes in full, with a block under `"0"` whose paths read `previews/hills/…` and a block under `"1"` whose paths read `previews/coast/…`. A map that holds either `keys` or `previews` is read this way, and has to hold both and nothing else. At least one path has to hold `{key}`, written exactly so, since without it every key gets the same pictures. A near miss such as `{Key}` stops the run, and so does `{key}` anywhere outside such a map, since nothing would swap it. A key's name has to be a string with no spaces at either end. The form only works under `mapsByKey`, so `keys` or `previews` in a map under `maps` stops the run too. A missing picture names the option, the key, and the path with the name swapped in, so it says which key's folder is short. `paf check` compares every key's pictures the same way.
+
+A value under `mapsByKey` that is a path rather than a block is refused, since the picker would find no shots under any value of the other control. So is a name under both `maps` and `mapsByKey`, a `maps` or `mapsByKey` that names no map, an empty map, and an empty block. A manifest with no `maps` or `mapsByKey` is the main map alone and writes `theme-previews.g.js` even when it is empty. One that holds only named maps writes no main file. `maps` and `mapsByKey` are the two keys the manifest keeps for itself, so a picker cannot carry an option whose value is either word. Inside a `mapsByKey` map, `keys` and `previews` are kept the same way, so the other control cannot have a value called either word.
 
 **Loading Only When the Page Opens.** A `themePreview` item's `previews`, and `buildConfig`'s `theme.previews`, can be a function in place of the map, and the framework calls it each time the settings page opens. A face that requires the generated file inside the function loads the pictures only then, rather than every time the phone code starts:
 

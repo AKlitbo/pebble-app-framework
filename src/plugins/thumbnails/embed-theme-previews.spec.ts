@@ -8,6 +8,9 @@
  * buildKeyedSource are what keep the committed assets stable run to run, so the staleness check
  * means something. build writes each map to its own file, and a manifest with no named maps has to
  * write theme-previews.g.js alone, byte for byte the same, or every face would need a fresh run.
+ *
+ * A mapsByKey map can list its options once under keys and previews. The name each key swaps into
+ * the paths is what sends each scene to its own folder, so a slip there shows one scene another's shots.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,6 +21,9 @@ import { ToolError } from '../../tools/shared/tool-error';
 import { openFaceWorkspace, pictureUrl, writeFace } from '../../ts/testing/preview-faces';
 
 const requireAsset = createRequire(import.meta.url);
+
+// the token a mapsByKey map with keys puts where each key's name goes
+const KEY = '{key}';
 
 // the faces live in a temp folder per spec, so build reads and writes there and never in the repo
 vi.mock('../../tools/shared/faces.ts', () => import('../../ts/testing/preview-faces'));
@@ -266,6 +272,124 @@ describe('readManifest', () => {
   });
 });
 
+describe('readManifest with keys in a mapsByKey map', () => {
+  /** A short-form map with the given previews and keys, as manifest text. */
+  function shortForm(previews: unknown, keys: unknown = { 0: 'ridge' }): string {
+    return JSON.stringify({ mapsByKey: { 'scene-palette': { keys, previews } } });
+  }
+
+  /** Horizon lists 8 palettes once for 11 scenes, so each scene's group has to get every option with its own folder in each path. */
+  test('reads a group per key with its name in every path', () => {
+    const manifest = { mapsByKey: { 'scene-palette': { keys: { 1: 'shore', 0: 'ridge' }, previews: { 0: { emery: `shots/${KEY}/e.png`, gabbro: [`shots/${KEY}/g.png`] }, 1: `shots/${KEY}/mono.png` } } } };
+
+    const result = readManifest(JSON.stringify(manifest), 'f.json');
+
+    expect(result).toEqual([
+      {
+        name: 'scene-palette',
+        kind: 'byKey',
+        groups: [
+          {
+            key: '0',
+            entries: [
+              { value: '0', kind: 'byPlatform', platforms: [{ platform: 'emery', files: ['shots/ridge/e.png'] }, { platform: 'gabbro', files: ['shots/ridge/g.png'] }] },
+              { value: '1', kind: 'flat', files: ['shots/ridge/mono.png'] },
+            ],
+          },
+          {
+            key: '1',
+            entries: [
+              { value: '0', kind: 'byPlatform', platforms: [{ platform: 'emery', files: ['shots/shore/e.png'] }, { platform: 'gabbro', files: ['shots/shore/g.png'] }] },
+              { value: '1', kind: 'flat', files: ['shots/shore/mono.png'] },
+            ],
+          },
+        ],
+      },
+    ]);
+  });
+
+  /** A key with no name has nothing to swap in, so every one of its pictures would point at the wrong folder. */
+  test('refuses a key whose name is empty', () => {
+    const result = () => readManifest(shortForm({ 0: `${KEY}/a.png` }, { 0: '' }), 'f.json');
+
+    expect(result).toThrow(/key "0" in map "scene-palette" has to name a string/);
+  });
+
+  /** A name with a space at one end would be swapped into the path as it is, into a folder that is not there. */
+  test('refuses a key whose name has spaces at its ends', () => {
+    const result = () => readManifest(shortForm({ 0: `${KEY}/a.png` }, { 0: ' ridge ' }), 'f.json');
+
+    expect(result).toThrow(/key "0" in map "scene-palette" has to name a string for \{key\} in its paths, not empty and with no spaces at either end/);
+  });
+
+  /** A field beside keys and previews is a slip, such as preview for previews, that would otherwise drop every picture. */
+  test('refuses a field beside keys and previews', () => {
+    const result = () => readManifest('{ "mapsByKey": { "scene-palette": { "keys": { "0": "ridge" }, "preview": { "0": "{key}/a.png" } } } }', 'f.json');
+
+    expect(result).toThrow(/holds keys and previews and nothing else, not "preview"/);
+  });
+
+  /** previews with keys misspelt would otherwise read as a group per option, and the picker would find no shots under any scene. */
+  test.each(['key', 'Keys'])('refuses previews beside "%s" rather than keys, saying keys is missing', (field) => {
+    const result = () => readManifest(JSON.stringify({ mapsByKey: { 'scene-palette': { [field]: { 0: 'ridge' }, previews: { 0: `${KEY}/a.png` } } } }), 'f.json');
+
+    expect(result).toThrow(/the map "scene-palette" holds previews but no keys/);
+  });
+
+  /** Keys with no options under them write an asset where no scene shows a picture. */
+  test('refuses keys without previews', () => {
+    const result = () => readManifest('{ "mapsByKey": { "scene-palette": { "keys": { "0": "ridge" } } } }', 'f.json');
+
+    expect(result).toThrow(/needs previews/);
+  });
+
+  /** An empty keys block nests the options under nothing, so the picker would never draw a picture. */
+  test('refuses an empty keys block', () => {
+    const result = () => readManifest(shortForm({ 0: `${KEY}/a.png` }, {}), 'f.json');
+
+    expect(result).toThrow(/keys in map "scene-palette" has to be an object naming at least one value/);
+  });
+
+  /** Paths with no token give every scene the same pictures, which is never what a map listed once means. */
+  test('refuses previews whose paths never hold the token', () => {
+    const result = () => readManifest(shortForm({ 0: 'shots/ridge/a.png' }), 'f.json');
+
+    expect(result).toThrow(/no path in map "scene-palette" holds \{key\}, so every key would get the same pictures/);
+  });
+
+  /** A token spelt with a capital or spaces is read as a folder name, so every scene would look in a folder that is not there. */
+  test.each(['{Key}', '{ key }'])('refuses the near miss %s', (token) => {
+    const result = () => readManifest(shortForm({ 0: `${KEY}/a.png`, 1: `${token}/b.png` }), 'f.json');
+
+    expect(result).toThrow(`holds ${token}, which is not {key}`);
+  });
+
+  /** The options get the same checks once the name is in, so a platform typo still names the key it sits under. */
+  test('checks the options under each key the same way', () => {
+    const result = () => readManifest(shortForm({ 0: { emry: `${KEY}/a.png` } }), 'f.json');
+
+    expect(result).toThrow(/"0" under "0" in map "scene-palette" names an unknown platform "emry"/);
+  });
+
+  /** keys and previews under maps would read as two options of a plain map, and the message would be about platforms rather than the section. */
+  test('refuses keys and previews under maps, saying they only work under mapsByKey', () => {
+    const result = () => readManifest(JSON.stringify({ maps: { layout: { keys: { 0: 'ridge' }, previews: { 0: `${KEY}/a.png` } } } }), 'f.json');
+
+    expect(result).toThrow(/the map "layout" under maps holds keys or previews, the form that lists its options once, which only works under mapsByKey/);
+  });
+
+  /** The token outside a map with keys is never swapped, so the path would point at a folder called {key}. */
+  test.each([
+    ['the main map', { 0: `${KEY}/a.png` }],
+    ['a plain map', { maps: { layout: { 0: `${KEY}/a.png` } } }],
+    ['a full mapsByKey map', { mapsByKey: { 'scene-palette': { 0: { 0: `${KEY}/a.png` } } } }],
+  ])('refuses the token in %s', (_where, manifest) => {
+    const result = () => readManifest(JSON.stringify(manifest), 'f.json');
+
+    expect(result).toThrow(/\{key\} only means something in a mapsByKey map that holds keys and previews/);
+  });
+});
+
 describe('buildSource', () => {
   /** An unchanged manifest has to write the same bytes, or the staleness check fails every run. */
   test('writes each value as a list of data urls in order', () => {
@@ -358,6 +482,29 @@ describe('build', () => {
     expect(requireAsset(outFile('my-face'))).toEqual({ 0: [pictureUrl(0)] });
     expect(requireAsset(outFile('my-face', 'layout'))).toEqual({ 0: [pictureUrl(1)] });
     expect(requireAsset(outFile('my-face', 'scene-palette'))).toEqual({ 1: { 0: [pictureUrl(2)] } });
+  });
+
+  /** A map that lists its options once has to write the very file the same map written out in full would, so the picker reads it the same way. */
+  test('writes a map with keys the same as the map written out in full', () => {
+    const pictures = ['shots/ridge/a.png', 'shots/ridge/b.png', 'shots/shore/a.png', 'shots/shore/b.png'];
+
+    writeFace('short-face', { mapsByKey: { 'scene-palette': { keys: { 0: 'ridge', 1: 'shore' }, previews: { 0: 'shots/{key}/a.png', 1: 'shots/{key}/b.png' } } } }, pictures);
+    writeFace('full-face', { mapsByKey: { 'scene-palette': { 0: { 0: pictures[0], 1: pictures[1] }, 1: { 0: pictures[2], 1: pictures[3] } } } }, pictures);
+    build('full-face');
+
+    build('short-face');
+
+    expect(fs.readFileSync(outFile('short-face', 'scene-palette'), 'utf8')).toBe(fs.readFileSync(outFile('full-face', 'scene-palette'), 'utf8'));
+    expect(requireAsset(outFile('short-face', 'scene-palette'))).toEqual({ 0: { 0: [pictureUrl(0)], 1: [pictureUrl(1)] }, 1: { 0: [pictureUrl(2)], 1: [pictureUrl(3)] } });
+  });
+
+  /** A scene missing one shot has to say which scene's folder is short, so the message names the option, the key, and the path with the name in it. */
+  test('names the option, the key, and the filled-in path for a missing picture under keys', () => {
+    writeFace('my-face', { mapsByKey: { 'scene-palette': { keys: { 0: 'ridge', 1: 'shore' }, previews: { 0: 'shots/{key}/a.png' } } } }, ['shots/ridge/a.png']);
+
+    const result = () => build('my-face');
+
+    expect(result).toThrow('"0" under "1" in map "scene-palette": shots/shore/a.png is missing');
   });
 
   /** A missing picture in a named map has to stop the run before any file is written, or the good main asset is replaced on the way to failing. */

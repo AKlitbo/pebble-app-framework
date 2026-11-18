@@ -62,6 +62,17 @@ describe('checkThemePreviews', () => {
     expect(result).toEqual(['my-face: theme-previews-scene-palette.g.js is stale, run paf gen my-face theme-previews']);
   });
 
+  /** A map that lists its options once still has every key's pictures compared, so a re-shot picture for one scene reads as stale. */
+  test('reports a map with keys whose picture changed under one key', async () => {
+    writeFace('my-face', { mapsByKey: { 'scene-palette': { keys: { 0: 'ridge', 1: 'shore' }, previews: { 0: 'shots/{key}/a.png' } } } }, ['shots/ridge/a.png', 'shots/shore/a.png']);
+    build('my-face');
+    fs.writeFileSync(path.join(faceDir('my-face'), 'shots', 'shore', 'a.png'), pictureBytes(9));
+
+    const result = await checkThemePreviews();
+
+    expect(result).toEqual(['my-face: theme-previews-scene-palette.g.js is stale, run paf gen my-face theme-previews']);
+  });
+
   /** A map taken out of the manifest leaves its asset shipping in the face's phone code with nothing to keep it current. */
   test('reports an asset whose map the manifest does not have', async () => {
     writeFace('my-face', MANIFEST, ['a.png', 'b.png', 'c.png']);

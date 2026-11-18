@@ -28,6 +28,15 @@
  * are the main map, written to theme-previews.g.js. A manifest holding only named maps writes no main
  * file.
  *
+ * A mapsByKey map can list its options once instead of once per value of the other control. It then
+ * holds keys, each value of that control mapped to a name, and previews, the options in any shape a
+ * map takes. The options are read once per key, with {key} in each path swapped for that key's name.
+ * So the other control cannot use keys or previews as a value, since a map holding either is read
+ * this way.
+ *
+ *   { "keys": { "0": "ridgeline", "1": "shoreline" },
+ *     "previews": { "0": { "emery": ["shots/{key}/emery_day.png", "shots/{key}/emery_night.png"] } } }
+ *
  * The keys are the option values the picker carries, as strings, since JSON keys are strings and
  * Clay sends the value as one anyway. A path is relative to the face folder, and may climb out of it
  * with .. since the whole repo is checked out when this runs. JS lists an object's integer keys
@@ -129,6 +138,15 @@ export const KNOWN_PLATFORMS = ['emery', 'gabbro', 'chalk', 'basalt', 'aplite', 
 /** The manifest keys that hold named maps rather than an option of the main map. */
 const MAP_KEYS = ['maps', 'mapsByKey'];
 
+/** What a path in a mapsByKey map that lists its options once writes for each key's name. */
+const KEY_TOKEN = '{key}';
+
+/** {key} however it is spelt, with any capitals or spaces, so a near miss is caught rather than read as a folder name. */
+const ANY_KEY_TOKEN = /\{\s*key\s*\}/i;
+
+/** The two fields of a mapsByKey map that lists its options once. */
+const SHORT_FORM = ['keys', 'previews'];
+
 /**
  * One manifest entry: the option value as its string key, and its pictures.
  *
@@ -166,6 +184,12 @@ function readPaths(picture: unknown, label: string, file: string): string[] {
 
     if (path.isAbsolute(one)) {
       throw new ToolError(`${file}: a path for ${label} has to be relative to the face folder, not absolute`);
+    }
+
+    // a mapsByKey map with keys swaps the name in before its paths get here, so a token left in a
+    // path sits where nothing swaps it and would be read as a folder called {key}
+    if (ANY_KEY_TOKEN.test(one)) {
+      throw new ToolError(`${file}: a path for ${label} holds ${one.match(ANY_KEY_TOKEN)?.[0]}, and ${KEY_TOKEN} only means something in a mapsByKey map that holds keys and previews`);
     }
   });
 
@@ -209,6 +233,97 @@ function readEntries(map: Record<string, unknown>, keys: string[], where: string
   });
 }
 
+/** A copy of a map's options with {key} in every path swapped for one key's name. */
+function withKeyName(value: unknown, name: string): unknown {
+  if (typeof value === 'string') {
+    return value.split(KEY_TOKEN).join(name);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((one) => withKeyName(one, name));
+  }
+
+  if (isObject(value)) {
+    const copy: Record<string, unknown> = {};
+
+    Object.keys(value).forEach((field) => {
+      copy[field] = withKeyName(value[field], name);
+    });
+
+    return copy;
+  }
+
+  return value;
+}
+
+/** Every string inside a map's options, which are its paths. */
+function pathsIn(value: unknown): string[] {
+  if (typeof value === 'string') {
+    return [value];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(pathsIn);
+  }
+
+  return isObject(value) ? Object.keys(value).flatMap((field) => pathsIn(value[field])) : [];
+}
+
+/** Whether a map holds either field of the form that lists its options once. */
+function isShortForm(map: Record<string, unknown>): boolean {
+  return SHORT_FORM.some((field) => Object.prototype.hasOwnProperty.call(map, field));
+}
+
+/** Reads a mapsByKey map that lists its options once, as a group per key with that key's name in
+ * every path. Each group is checked on its own, so a path the swap makes absolute is refused too. */
+function readKeyedGroups(map: Record<string, unknown>, name: string, file: string): Array<{ key: string; entries: PreviewEntry[] }> {
+  if (!Object.prototype.hasOwnProperty.call(map, 'keys')) {
+    throw new ToolError(`${file}: the map "${name}" holds previews but no keys. Add keys, each value of the other control mapped to the name ${KEY_TOKEN} stands for`);
+  }
+
+  const extra = Object.keys(map).filter((field) => SHORT_FORM.indexOf(field) === -1);
+
+  if (extra.length) {
+    throw new ToolError(`${file}: the map "${name}" holds keys, so it holds keys and previews and nothing else, not ${extra.map((field) => `"${field}"`).join(', ')}`);
+  }
+
+  const keys = map.keys;
+
+  if (!isObject(keys) || !Object.keys(keys).length) {
+    throw new ToolError(`${file}: keys in map "${name}" has to be an object naming at least one value of the other control, such as { "0": "ridgeline" }`);
+  }
+
+  const previews = map.previews;
+
+  if (!isObject(previews) || !Object.keys(previews).length) {
+    throw new ToolError(`${file}: the map "${name}" holds keys, so it needs previews, an object naming at least one option`);
+  }
+
+  const paths = pathsIn(previews);
+  const nearMiss = paths.map((one) => one.match(ANY_KEY_TOKEN)?.[0]).find((token) => token !== undefined && token !== KEY_TOKEN);
+
+  if (nearMiss) {
+    throw new ToolError(`${file}: a path in map "${name}" holds ${nearMiss}, which is not ${KEY_TOKEN}, so no name is swapped into it`);
+  }
+
+  // without the token every key reads the same pictures, which is a map written out in full by mistake
+  if (!paths.some((one) => one.indexOf(KEY_TOKEN) !== -1)) {
+    throw new ToolError(`${file}: no path in map "${name}" holds ${KEY_TOKEN}, so every key would get the same pictures. Put ${KEY_TOKEN} where each key's name goes`);
+  }
+
+  return Object.keys(keys).map((key) => {
+    const keyName = keys[key];
+
+    if (typeof keyName !== 'string' || keyName.trim() === '' || keyName.trim() !== keyName) {
+      throw new ToolError(`${file}: key "${key}" in map "${name}" has to name a string for ${KEY_TOKEN} in its paths, not empty and with no spaces at either end`);
+    }
+
+    const swapped = withKeyName(previews, keyName) as Record<string, unknown>;
+
+    return { key: key, entries: readEntries(swapped, Object.keys(swapped), ` under "${key}" in map "${name}"`, file) };
+  });
+}
+
 /** Reads the named maps under one of the manifest's map keys, checking each name and that each map
  * holds something. byKey reads each map as a group per value of the control it follows. */
 function readNamedMaps(section: unknown, key: string, byKey: boolean, file: string): PreviewMap[] {
@@ -237,8 +352,16 @@ function readNamedMaps(section: unknown, key: string, byKey: boolean, file: stri
       throw new ToolError(`${file}: the map "${name}" under ${key} has to be an object naming at least one value`);
     }
 
+    if (!byKey && isShortForm(map)) {
+      throw new ToolError(`${file}: the map "${name}" under ${key} holds keys or previews, the form that lists its options once, which only works under mapsByKey`);
+    }
+
     if (!byKey) {
       return { name: name, kind: 'plain', entries: readEntries(map, Object.keys(map), ` in map "${name}"`, file) };
+    }
+
+    if (isShortForm(map)) {
+      return { name: name, kind: 'byKey', groups: readKeyedGroups(map, name, file) };
     }
 
     const groups = Object.keys(map).map((group) => {
@@ -261,11 +384,12 @@ function readNamedMaps(section: unknown, key: string, byKey: boolean, file: stri
  *
  * The manifest parses as an object of option value to a path, a list of paths, or a map of a path or
  * list per platform. Those entries are the main map. Its maps and mapsByKey keys hold named maps of
- * the same entries, the second keyed first by another control's value. A value that is not any of
- * those shapes, a path that is absolute, a platform name Pebble does not build for, a map name that
- * cannot be a file name, or one name used twice is the author's mistake and stops the run naming the
- * key. A single path is normalised to a one-item list. Whether a file is there is left to
- * encodePreviews, since that is a separate thing from whether the manifest is well formed.
+ * the same entries, the second keyed first by another control's value, or listing its options once
+ * under keys and previews. A value that is not any of those shapes, a path that is absolute, a
+ * platform name Pebble does not build for, a map name that cannot be a file name, a key with an empty
+ * name, or one name used twice is the author's mistake and stops the run naming the key. A single
+ * path is normalised to a one-item list. Whether a file is there is left to encodePreviews, since
+ * that is a separate thing from whether the manifest is well formed.
  *
  * A manifest with no maps or mapsByKey is the main map alone, written even when it is empty. One with
  * named maps carries a main map only when it has entries outside them, so a face whose every picker
