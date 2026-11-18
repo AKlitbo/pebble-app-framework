@@ -18,6 +18,11 @@
 #include "wire/wire_caps.g.h"
 #include <limits.h>
 
+#if defined(DEV_MODE) && DEV_MODE
+// a dev build always lists the dev plugin, since paf build --dev refuses a unit that does not
+#include "dev/dev_config.h"
+#endif
+
 /**
  * @var s_handlers
  * @brief The registered channel handlers. Each one stays NULL until a consumer opts in.
@@ -564,7 +569,13 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // the unit the weather in hand was fetched in, to tell a switch from a save that kept it
     uint8_t unit_before = settings_u8(SETTING_TEMPERATURE_UNIT);
 
+#if defined(DEV_MODE) && DEV_MODE
+    // a dev build never saves, so the watch reads as fresh and the phone sends its saved settings back
+    // on every launch. the keys the dev config names keep the config's values through that
+    SettingsInbound settings = settings_apply_inbox_holding(iterator, dev_config_holds);
+#else
     SettingsInbound settings = settings_apply_inbox(iterator);
+#endif
     bool moved = settings.changed || custom_changed;
 
     // a custom colour change saves too. a face keeps its colours in storage-only schemas in the

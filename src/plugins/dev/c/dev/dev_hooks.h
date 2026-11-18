@@ -95,8 +95,9 @@ static inline void dev_stop(void)
 
 /**
  * @brief Sets a time to the pinned clock when dev mode is on, and to the pinned date when the config
- * has one. A panel that builds its own time, such as a second time zone, calls it so a screenshot
- * shows the same time and day in every panel.
+ * has one. Both follow the screen on show, so a step of a walk with a clock of its own moves them. A
+ * panel that builds its own time, such as a second time zone, calls it so a screenshot shows the same
+ * time and day in every panel.
  *
  * @param when The time to set, changed in place. Left alone with dev mode off.
  */

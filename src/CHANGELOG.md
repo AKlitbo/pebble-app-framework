@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Framework Changes
+
+#### Added
+
+- Added `clock`, `date`, and `stores` to a step of a step walk in `paf.dev.config.json`. A step that leaves one out takes the walk's, then the face's, then the file's, then the fixture's, and a store it names replaces the walk's whole. Each tap applies the step's settings, pins its clock, and seeds every store again, so a step draws the same screen whichever step came before it. `dev_force_time` follows the step's clock.
+- Added `each` to a step walk, which shows every step once at each value of one setting, such as `"each": { "APPEARANCE_SCENE": [0, 1, 2] }`. The value changes on every tap, and 16 steps through 11 values cost the memory of 16 steps rather than 176. A walk of `each` alone needs no `steps`, and a step that also sets that key stops the dev build.
+- Added `settings_apply_inbox_holding`, in a dev build only, which applies an inbox message the way `settings_apply_inbox` does but skips the keys a check holds.
+
+#### Changed
+
+- A step with nothing in it, `{}`, now stops a dev build. Give the step settings, a layout, or a clock, date, or stores of its own, or remove it.
+- A walk or a step that pins a clock earlier than the HRV log it takes on now stops the dev build, picked or not. Give it a health store of its own, or pin its clock at or after the log's last reading.
+- The dev header writes each set of readings and each store's seeds once, so steps that share them share the memory. More than 255 different sets, or more than 255 seeds for one store, stops the dev build.
+
+#### Fixed
+
+- Fixed the first screen of a dev build showing the phone's saved settings in place of the ones `paf.dev.config.json` names. A dev build never saves, so the phone sends its own back on every launch, and the AppMessage layer now skips every key the file names.
+- Fixed a step walk with no layouts needing the face to define `dev_show_layout` to link. The harness now calls it only when a step has a layout, so a face whose walks only change settings and readings can delete its stub.
+- Fixed `paf tool <face> thumbnails` on a step walk refusing the walk's first setting as undeclared, rather than saying to pick a panel walk.
+
 ## [6.3.2] - 2026-11-14
 
 ### Wearer-Visible Changes

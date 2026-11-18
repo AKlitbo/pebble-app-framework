@@ -4,7 +4,9 @@
  * The thumbnails tool names each screenshot by where it sits in the walk, so the order the steps come
  * in is the contract between the build and the crop. A walk of every panel has to go size by size and
  * name by name, a named list has to keep its own order, and a panel the C cannot show has to stop the
- * build rather than leave a gap that shifts every picture after it.
+ * build rather than leave a gap that shifts every picture after it. A step walk's `each` multiplies its
+ * screens, so the count a tap has to step through is worked out with it, and a step that sets the key
+ * each steps through has to stop the build, since its value would never show.
  */
 import { describe, expect, test } from 'vitest';
 import { panelSteps, readPanels, readWalks, thumbnailPanels } from './dev-walks.ts';
@@ -79,14 +81,50 @@ describe('readWalks', () => {
   test('refuses a step walk of one step', () => {
     const call = () => readWalks({ presets: { steps: [{ layout: '2,0,0,2,2' }] } }, FILE, '');
 
-    expect(call).toThrow('It takes a list of two or more screens');
+    expect(call).toThrow(`${FILE} sets walks.presets to one screen. A step walk takes two or more screens`);
   });
 
   /** A step's settings go through the same reader as the launch settings, so a toggle lands as 1. */
   test('reads a step walk\'s settings and layouts', () => {
     const result = readWalks({ night: { steps: [{ settings: { LAYOUT_NIGHT_START: 42 }, layout: '1,0,0,4,1' }, { settings: { APPEARANCE_QUIET_TIME_ICON: true } }] } }, FILE, '');
 
-    expect(result.night).toEqual({ kind: 'steps', steps: [{ settings: { LAYOUT_NIGHT_START: 42 }, layout: '1,0,0,4,1' }, { settings: { APPEARANCE_QUIET_TIME_ICON: 1 }, layout: null }], scene: null });
+    expect(result.night).toEqual({
+      kind: 'steps',
+      steps: [
+        { settings: { LAYOUT_NIGHT_START: 42 }, layout: '1,0,0,4,1', scene: null },
+        { settings: { APPEARANCE_QUIET_TIME_ICON: 1 }, layout: null, scene: null },
+      ],
+      each: null,
+      scene: null,
+    });
+  });
+
+  /** One layout through every analog style is a walk, since each value of each is a screen of its own. */
+  test('takes one step through two values of each as a walk', () => {
+    const result = readWalks({ analog: { each: { APPEARANCE_ANALOG_STYLE: [0, true] }, steps: [{ layout: '20,0,0,2,2' }] } }, FILE, '');
+
+    expect(result.analog).toMatchObject({ kind: 'steps', each: { key: 'APPEARANCE_ANALOG_STYLE', values: [0, 1] } });
+  });
+
+  /** The walk puts the value each is on over the step's own, so the step's would never show. */
+  test('refuses a step that sets the key each steps through', () => {
+    const call = () => readWalks({ previews: { each: { APPEARANCE_SCENE: [0, 1] }, steps: [{ settings: { APPEARANCE_SCENE: 3 } }] } }, FILE, '');
+
+    expect(call).toThrow(`${FILE} sets walks.previews.steps[0].settings.APPEARANCE_SCENE, which the walk's each steps through`);
+  });
+
+  /** each steps one setting, and two would leave the order they multiply in to guesswork. */
+  test('refuses each with two settings', () => {
+    const call = () => readWalks({ previews: { each: { APPEARANCE_SCENE: [0, 1], APPEARANCE_THEME: [0, 1] }, steps: [{ layout: 'a' }] } }, FILE, '');
+
+    expect(call).toThrow('It takes one setting and the values to step it through');
+  });
+
+  /** An empty step draws whatever the step before it left, which is never what the walk meant. */
+  test('refuses an empty step', () => {
+    const call = () => readWalks({ presets: { steps: [{ layout: 'a' }, {}] } }, FILE, '');
+
+    expect(call).toThrow(`${FILE} sets walks.presets.steps[1] to {}. A step takes settings, a layout, a clock, a date, stores, or any of them together`);
   });
 });
 

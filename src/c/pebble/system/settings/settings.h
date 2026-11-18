@@ -316,4 +316,17 @@ bool settings_serialize(DictionaryIterator *iter);
  */
 SettingsInbound settings_apply_inbox(DictionaryIterator *iter);
 
+#if defined(DEV_MODE) && DEV_MODE
+/**
+ * @brief Applies an inbox message the way settings_apply_inbox does, but leaves alone every key the
+ * check holds. Only a dev build has it, and the AppMessage layer sends the phone's settings through it
+ * so the ones the dev config names stay as the config set them.
+ *
+ * @param iter The dictionary iterator to decode from.
+ * @param held Says whether a message key is held, by its MESSAGE_KEY_ value.
+ * @return Which categories of setting changed.
+ */
+SettingsInbound settings_apply_inbox_holding(DictionaryIterator *iter, bool (*held)(uint32_t key));
+#endif
+
 /** @} */

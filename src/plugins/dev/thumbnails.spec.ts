@@ -13,7 +13,7 @@ import { describe, expect, test } from 'vitest';
 import { tempDir } from '../../ts/testing/temp-dir.ts';
 import { harnessFingerprint } from '../../tools/manifest/dev-header.ts';
 import { readDevHarness } from '../../tools/manifest/dev-switches.ts';
-import { checkBuild, cropPlan, cropShots, parseThumbnailArgs, pixelsOf, samePixels, shootSteps } from './thumbnails.ts';
+import { checkBuild, cropPlan, cropShots, panelWalkOf, parseThumbnailArgs, pixelsOf, samePixels, shootSteps } from './thumbnails.ts';
 import type { WalkIo } from './tap-walk.ts';
 
 /** Where a 1x2 and a 2x2 sit on Gridlock's screen when a panel is shown on its own. */
@@ -207,6 +207,21 @@ describe('harnessFingerprint', () => {
     const result = harnessFingerprint(switches, { kind: 'panels', steps: [step] });
 
     expect(result).not.toBe(both);
+  });
+});
+
+describe('panelWalkOf', () => {
+  /**
+   * The tool has no list of the face's keys, so working out a step walk refused its first setting as
+   * undeclared, which sent the reader to the face's keys rather than to the walk it picked.
+   */
+  test('refuses a step walk by saying to pick a panel walk', () => {
+    const file = { walk: 'presets', walks: { presets: { steps: [{ settings: { APPEARANCE_THEME: 1 } }, { settings: { APPEARANCE_THEME: 2 } }] } } };
+    const switches = readDevHarness(file, 'paf.dev.config.json', () => []).unit;
+
+    const call = () => panelWalkOf(switches, 'gridlock', []);
+
+    expect(call).toThrow("the thumbnails come from a panel walk, but gridlock's walk in paf.dev.config.json is presets");
   });
 });
 

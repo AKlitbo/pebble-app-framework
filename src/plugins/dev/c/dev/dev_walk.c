@@ -121,7 +121,7 @@ static int16_t shot_temp(int16_t celsius)
  *
  * A store the unit's paf.dev.config.json seeds takes the config's readings rather than the shot's, on
  * every shot, so the theme walk only moves the stores the config leaves to the fixture. The clock
- * takes the config's date too when it pins one.
+ * takes the clock and date of the screen on show, from the config.
  *
  * @param shot The shot to seed from.
  */
@@ -186,20 +186,133 @@ static void seed_shot_weather(const DevShot *shot)
 #endif
 }
 
-/**
- * @brief Move the walk onto one shot, Quiet Time mark included.
- *
- * @param index Which shot, wrapped to the table.
- */
-static void apply_shot(uint8_t index)
-{
-    const DevShot *shot = &s_shots[index % ARRAY_LENGTH(s_shots)];
+/** @brief The stores seeded once at launch, and again only when a screen picks another seed for one. */
+static const DevStore s_rest[] = {DEV_STORE_LOCATION, DEV_STORE_STOCKS, DEV_STORE_CALENDAR, DEV_STORE_PHONE, DEV_STORE_MUSIC};
 
+/// The seed each store in s_rest last took, by the same place, or DEV_NONE for the fixture
+static uint8_t s_rest_picks[ARRAY_LENGTH(s_rest)];
+
+/**
+ * @brief Seed one of the location, stock, calendar, phone battery, and now playing stores, from the
+ * config where it gives the screen on show readings, and from the fixture or empty otherwise.
+ *
+ * The stock and calendar stores start empty and pinned, so a settings save that reconfigures them live
+ * leaves them alone rather than fetching real quotes and agendas. A face without their keys skips them
+ * here, so the harness never drags their buffers into its dev build. The phone battery and now playing
+ * stores start empty and pinned too, since the seeded system store hears no link change and a live one
+ * would hold its reading through a drop.
+ *
+ * @param store The store.
+ */
+static void seed_rest_store(DevStore store)
+{
+    if (dev_config_seed(store))
+    {
+        return;
+    }
+
+    switch (store)
+    {
+        case DEV_STORE_LOCATION:
+#if defined(APPMESSAGE_HAS_LOCATION)
+        {
+            LocationSeed location = {.lat = s_fixed.lat, .lon = s_fixed.lon};
+            location_store_init((LocationConfig){.live = false}, &location);
+            break;
+        }
+#else
+            location_store_init((LocationConfig){.live = false}, NULL);
+            break;
+#endif
+#if defined(HAS_MESSAGE_KEY_STOCK_STRIP)
+        case DEV_STORE_STOCKS:
+            stock_store_init((StockConfig){.live = false, .poll_min = 0}, NULL);
+            break;
+#endif
+#if defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
+        case DEV_STORE_CALENDAR:
+            calendar_store_init((CalendarConfig){.live = false, .poll_min = 0}, NULL);
+            break;
+#endif
+#if defined(APPMESSAGE_HAS_PHONE)
+        case DEV_STORE_PHONE:
+            phone_store_init((PhoneConfig){.live = false}, NULL);
+            break;
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC)
+        case DEV_STORE_MUSIC:
+            music_store_init((MusicConfig){.live = false}, NULL);
+            break;
+#endif
+        default:
+            break;
+    }
+}
+
+/**
+ * @brief Seed the location, stock, calendar, phone battery, and now playing stores.
+ *
+ * Starting the phone battery or now playing store not live tells the phone the face no longer wants
+ * the reading, and each start arms its timers again, so after launch a store is only seeded again when
+ * the screen on show picks another seed for it.
+ *
+ * @param all True at launch, to seed every one of them.
+ */
+static void seed_rest(bool all)
+{
+    for (uint8_t index = 0; index < ARRAY_LENGTH(s_rest); index++)
+    {
+        uint8_t pick = dev_config_pick(s_rest[index]);
+
+        if (all || pick != s_rest_picks[index])
+        {
+            seed_rest_store(s_rest[index]);
+            s_rest_picks[index] = pick;
+        }
+    }
+}
+
+/** @brief Run the face's hook and repaint everything, once the settings and the stores are in place. */
+static void repaint(void)
+{
+    if (s_apply_theme) s_apply_theme();
+    engine_rebuild();
+}
+
+/**
+ * @brief Show the theme the theme walk is on, with the shot of the same number and its Quiet Time mark.
+ *
+ * The data moves with the theme, so a sheet of every palette is also a sheet of every battery level,
+ * both bluetooth states, and a range of weather.
+ */
+static void show_theme(void)
+{
+    const DevShot *shot = &s_shots[s_theme % ARRAY_LENGTH(s_shots)];
+
+    settings_set_u8(SETTING_THEME, s_theme);
     seed_shot(shot);
 
     // this does nothing on a face that never subscribed to the id
     // that is fine, since it only moves for the faces that actually draw the mark
     settings_set_u8(SETTING_QUIET_TIME_ICON, shot->quiet_icon ? 1 : 0);
+
+    repaint();
+}
+
+/**
+ * @brief Show the screen a walk the config lays out is on.
+ *
+ * The settings go first, since the weather seed takes the temperature unit they may set. Then the
+ * clock and the weather, health, and system stores are seeded again, from the screen's readings or the
+ * fixture's first shot, along with any other store whose seed the screen changes. So nothing an
+ * earlier screen seeded is left behind. Last the face's hook runs and the face repaints.
+ */
+static void show_step(void)
+{
+    dev_config_walk_show(s_step);
+    seed_shot(&s_shots[0]);
+    seed_rest(false);
+    repaint();
 }
 
 /**
@@ -214,27 +327,13 @@ static void tap_handler(AccelAxisType axis, int32_t direction)
     {
         uint16_t count = dev_config_walk_count();
         s_step = count ? (uint16_t)((s_step + 1) % count) : 0;
-
-        // a step that switches the temperature unit seeds the weather again, the way a launch applies
-        // the settings before it seeds, so the readings match the new unit
-        if (dev_config_walk_show(s_step) && !dev_config_seed(DEV_STORE_WEATHER))
-        {
-            seed_shot_weather(&s_shots[0]);
-        }
-
-        if (s_apply_theme) s_apply_theme();
-        engine_rebuild();
+        show_step();
     }
     else if (s_mode == DEV_WALK_THEMES)
     {
         uint8_t count = settings_enum_count(SETTING_THEME);
         s_theme = count ? (s_theme + 1) % count : 0;
-        settings_set_u8(SETTING_THEME, s_theme);
-        // the data moves with the theme, so a sheet of every palette is also a sheet of every
-        // battery level, both bluetooth states and a range of weather
-        apply_shot(s_theme);
-        if (s_apply_theme) s_apply_theme();
-        engine_rebuild();
+        show_theme();
     }
 }
 
@@ -244,47 +343,7 @@ void dev_walk_seed_stores(int hour, int min)
     s_minute = min;
 
     seed_shot(&s_shots[0]);
-
-    if (!dev_config_seed(DEV_STORE_LOCATION))
-    {
-#if defined(APPMESSAGE_HAS_LOCATION)
-        LocationSeed location = {.lat = s_fixed.lat, .lon = s_fixed.lon};
-        location_store_init((LocationConfig){.live = false}, &location);
-#else
-        location_store_init((LocationConfig){.live = false}, NULL);
-#endif
-    }
-
-    // the stock and calendar stores start empty and pinned, so a settings save that reconfigures
-    // them live leaves them alone rather than fetching real quotes and agendas. a face without their
-    // keys skips them here, so the harness never drags their buffers into its dev build
-#if defined(HAS_MESSAGE_KEY_STOCK_STRIP)
-    if (!dev_config_seed(DEV_STORE_STOCKS))
-    {
-        stock_store_init((StockConfig){.live = false, .poll_min = 0}, NULL);
-    }
-#endif
-#if defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
-    if (!dev_config_seed(DEV_STORE_CALENDAR))
-    {
-        calendar_store_init((CalendarConfig){.live = false, .poll_min = 0}, NULL);
-    }
-#endif
-
-    // the phone battery and now playing stores start empty and pinned too. the seeded system store
-    // hears no link change, so a live one would hold its reading through a drop
-#if defined(APPMESSAGE_HAS_PHONE)
-    if (!dev_config_seed(DEV_STORE_PHONE))
-    {
-        phone_store_init((PhoneConfig){.live = false}, NULL);
-    }
-#endif
-#if defined(APPMESSAGE_HAS_MUSIC)
-    if (!dev_config_seed(DEV_STORE_MUSIC))
-    {
-        music_store_init((MusicConfig){.live = false}, NULL);
-    }
-#endif
+    seed_rest(true);
 }
 
 void dev_walk_init(DevWalkMode mode, void (*apply_theme)(void))
@@ -296,17 +355,17 @@ void dev_walk_init(DevWalkMode mode, void (*apply_theme)(void))
 
     if (mode == DEV_WALK_THEMES)
     {
-        settings_set_u8(SETTING_THEME, 0);
-        apply_shot(0);
+        show_theme();
     }
-    else if (mode == DEV_WALK_CONFIG && dev_config_walk_show(0) && !dev_config_seed(DEV_STORE_WEATHER))
+    else if (mode == DEV_WALK_CONFIG)
     {
-        seed_shot_weather(&s_shots[0]);
+        show_step();
     }
-
-    // re-colour the zones and swap the frame for the current theme, then repaint everything
-    if (apply_theme) apply_theme();
-    engine_rebuild();
+    else
+    {
+        // re-colour the zones and swap the frame for the current theme, then repaint everything
+        repaint();
+    }
 
     if (mode != DEV_WALK_NONE)
     {

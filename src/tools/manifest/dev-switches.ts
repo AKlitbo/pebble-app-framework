@@ -31,10 +31,10 @@ import path from 'node:path';
 import { listFaceNames } from '../shared/faces.ts';
 import { ToolError } from '../shared/tool-error.ts';
 import { isObject } from '../shared/values.ts';
-import { clockMinutes } from './dev-fields.ts';
+import { clockMinutes, clockText } from './dev-fields.ts';
 import { NO_STORES, STORE_NAMES, readStores, type DevStores } from './dev-seeds.ts';
 import { readSettings, type DevValue } from './dev-settings.ts';
-import { SCENE_KEYS, readPanels, readWalks, type DevPanels, type DevWalk } from './dev-walks.ts';
+import { SCENE_KEYS, STEP_SCENE_KEYS, readPanels, readWalks, type DevPanels, type DevStep, type DevWalk } from './dev-walks.ts';
 
 /** The file beside a unit's paf.config.json that holds the dev harness. */
 export const DEV_CONFIG_FILE = 'paf.dev.config.json';
@@ -242,17 +242,54 @@ export function readDevHarness(settings: unknown, file: string, faces: () => str
     byFace[name] = readBlock(entry, file, `${name}'s `, FACE_SETTINGS, unit);
   }
 
-  // a walk's own clock, settings, and stores go over a face's only once the walk is picked, but a
-  // slip in any of them stops the build now, against every face that takes the walk
+  // a walk's own clock, settings, and stores go over a face's only once the walk is picked, and a
+  // step's over the walk's, but a slip in any of them stops the build now, against every face that
+  // takes the walk. that includes an earlier clock that the HRV log it takes on would run past
   for (const switches of [unit, ...Object.values(byFace)]) {
     for (const walk of Object.values(switches.walks)) {
+      const picked = walk.scene ? readBlock(walk.scene.block, walk.scene.file, walk.scene.owner, SCENE_KEYS, switches) : switches;
+
       if (walk.scene) {
-        readBlock(walk.scene.block, walk.scene.file, walk.scene.owner, SCENE_KEYS, switches);
+        checkHrvClock(picked, walk.scene.file, walk.scene.owner);
+      }
+
+      if (walk.kind === 'steps') {
+        for (const step of walk.steps) {
+          if (step.scene) {
+            checkHrvClock(withStepScene(step, picked), step.scene.file, step.scene.owner);
+          }
+        }
       }
     }
   }
 
   return { unit, faces: byFace };
+}
+
+/**
+ * Refuses an HRV log that runs past the clock a walk or a step pins.
+ *
+ * The watch dates each reading back from the pinned clock, so one after it would land in the future. A
+ * block's own log is held to its own clock as it is read, and this catches a block that pins an earlier
+ * clock while it takes on a log from the face or the walk.
+ */
+function checkHrvClock(switches: DevSwitches, file: string, owner: string): void {
+  const clock = switches.hour * 60 + switches.minute;
+  const late = switches.stores.health?.hrvLog?.find((reading) => reading.minute > clock);
+
+  if (late) {
+    throw new ToolError(`${file} pins ${owner}clock at ${clockText(clock)}, but the HRV log it shows has a reading at ${clockText(late.minute)}. Give it a health store of its own whose log ends by the clock`);
+  }
+}
+
+/**
+ * The walk the switches pick, when it is one the file lays out.
+ *
+ * @param switches A face's switches.
+ * @return The walk, or null for the theme walk, a face's own walk, or none.
+ */
+export function pickedWalk(switches: DevSwitches): DevWalk | null {
+  return switches.walk !== null && Object.prototype.hasOwnProperty.call(switches.walks, switches.walk) ? switches.walks[switches.walk] : null;
 }
 
 /**
@@ -266,13 +303,26 @@ export function readDevHarness(settings: unknown, file: string, faces: () => str
  * @return The switches the dev build runs with.
  */
 function withWalkScene(switches: DevSwitches): DevSwitches {
-  const walk = switches.walk !== null && Object.prototype.hasOwnProperty.call(switches.walks, switches.walk) ? switches.walks[switches.walk] : null;
+  const walk = pickedWalk(switches);
 
   if (!walk?.scene) {
     return switches;
   }
 
   return readBlock(walk.scene.block, walk.scene.file, walk.scene.owner, SCENE_KEYS, switches);
+}
+
+/**
+ * The switches one step of a step walk shows, with the step's own clock, date, and stores over the
+ * walk's. A store the step names stands in for that store whole, the way a face's entry goes on top of
+ * the file's, and its HRV log is held to the step's clock.
+ *
+ * @param step The step.
+ * @param switches The switches with the picked walk's own over them, from switchesFor.
+ * @return The switches the step shows, or the walk's for a step that sets none of its own.
+ */
+export function withStepScene(step: DevStep, switches: DevSwitches): DevSwitches {
+  return step.scene ? readBlock(step.scene.block, step.scene.file, step.scene.owner, STEP_SCENE_KEYS, switches) : switches;
 }
 
 /**
@@ -301,7 +351,7 @@ export function devDefines(switches: DevSwitches | null): Record<string, number>
     return { DEV_MODE: 0 };
   }
 
-  const listed = switches.walk !== null && Object.prototype.hasOwnProperty.call(switches.walks, switches.walk);
+  const listed = pickedWalk(switches) !== null;
 
   return {
     DEV_MODE: 1,

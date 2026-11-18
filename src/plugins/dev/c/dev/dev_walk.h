@@ -2,8 +2,13 @@
  * @file dev_walk.h
  * @brief Shared dev harness for screenshots. It seeds the clock, weather, health, system, and
  * location stores with a fixed fixture, and the stock and calendar stores empty, using the store
- * seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk".
- * Each tap steps to the next theme and the next fixed set of readings, on the same fixed clock.
+ * seed mechanism so no live source overwrites it. A store the unit's paf.dev.config.json gives
+ * readings for takes those instead.
+ *
+ * It drives an accelerometer-tap "walk". The theme walk steps to the next theme and the next fixed set
+ * of readings on each tap, on the same fixed clock. A walk the config lays out steps to its next screen
+ * on each tap, with the screen's own settings, clock, date, and readings, and the stores seeded again
+ * so nothing from the screen before is left behind.
  *
  * The dev plugin owns the walk, the fixture, and the switches, which the build sets from `--dev` and
  * the unit's paf.dev.config.json. A face calls it through the hooks in `dev/dev_hooks.h` rather
@@ -48,7 +53,7 @@ void dev_walk_seed_stores(int hour, int min);
 
 /**
  * @brief Starts the walk. A theme walk forces the first theme and subscribes the accelerometer
- * tap, and a walk the config lays out shows its first step and subscribes it. Every mode then
+ * tap, and a walk the config lays out shows its first screen and subscribes it. Every mode then
  * paints. Call after `engine_init`.
  *
  * @param mode Which walk to run.

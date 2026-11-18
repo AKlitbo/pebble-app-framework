@@ -51,3 +51,13 @@ export function clockMinutes(value: unknown): number | null {
 
   return time ? Number(time[1]) * 60 + Number(time[2]) : null;
 }
+
+/**
+ * Minutes past midnight as a 24-hour `HH:MM`, the way the file writes a clock.
+ *
+ * @param minute Minutes past midnight, 0 to 1439.
+ * @return The clock, such as `08:05`.
+ */
+export function clockText(minute: number): string {
+  return `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
+}

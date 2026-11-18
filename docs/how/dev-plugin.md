@@ -12,11 +12,11 @@ A unit lists the plugin under `plugins` in its `paf.config.json`, as `"dev": {}`
 
 ## Fixed Readings for Screenshots
 
-`dev_walk_seed_stores(hour, minute)` starts the time, weather, health, system, and location stores from one fixture, with `live` false and the clock pinned. The `dev_seed_stores` hook calls it on the clock the switches pin, in place of those stores' live inits. The stock and calendar stores start empty with `live` false on a face that declares `STOCK_STRIP` or `CALENDAR_STRIP`, so a face that shows quotes or an agenda seeds its own after the call. The phone battery and now playing stores start empty the same way on a face that declares their keys, since the seeded system store tells them nothing about the link. Call it after `settings_init`, since the weather seed takes the wearer's temperature unit. A store the unit's `paf.dev.config.json` gives readings for takes those in place of the fixture, as [Readings from the Config](#readings-from-the-config) covers. A seeded store shows its seed and nothing else, and [How the Stores Work](stores.md#seeded-for-screenshots) covers why nothing from the phone or the watch's services can replace it.
+`dev_walk_seed_stores(hour, minute)` starts the time, weather, health, system, and location stores from one fixture, with `live` false and the clock pinned. The `dev_seed_stores` hook calls it on the clock the switches pin, in place of those stores' live inits. The stock and calendar stores start empty with `live` false on a face that declares `STOCK_STRIP` or `CALENDAR_STRIP`, so a face that shows quotes or an agenda gives them in the file's `stores` block. The phone battery and now playing stores start empty the same way on a face that declares their keys, since the seeded system store tells them nothing about the link. Call it after `settings_init`, since the weather seed takes the wearer's temperature unit. A store the unit's `paf.dev.config.json` gives readings for takes those in place of the fixture, as [Readings from the Config](#readings-from-the-config) covers. A seeded store shows its seed and nothing else, and [How the Stores Work](stores.md#seeded-for-screenshots) covers why nothing from the phone or the watch's services can replace it.
 
 **The Fixture.** The readings come from a table of shots, one per step of the theme walk below, and the first shot is what a face shows with no walk running: 21 degrees Celsius and partly cloudy, a heart rate of 72, 8,431 steps, the battery at 64 percent, the phone connected, and the Quiet Time mark down. Every shot also carries the same 420 calories, 7 hours 11 minutes of sleep, 52 active minutes, and 5.3 km walked. The battery never reads as charging, and the system store has no next alarm. On a watch set to Fahrenheit each temperature goes in converted, so 21 degrees shows as 70F.
 
-**The Pinned Clock.** The time store gets the hour and minute the switches pin with the seconds at 0, and no ticker runs. Without a `date` in the file the date is not pinned. It comes from the watch's clock when the stores are seeded, so a face that shows the date draws the day it runs, and a screenshot taken tomorrow differs in the date alone. A `date` pins it too, as [Turning It On for a Dev Build](#turning-it-on-for-a-dev-build) covers.
+**The Pinned Clock.** The time store gets the hour and minute the switches pin with the seconds at 0, and no ticker runs. Without a `date` in the file the date is not pinned. It comes from the watch's clock when the stores are seeded, so a face that shows the date draws the day it runs, and a screenshot taken tomorrow differs in the date alone. A `date` pins it too, as [Turning It On for a Dev Build](#turning-it-on-for-a-dev-build) covers. A step of a walk the file lays out can pin a clock and a date of its own, as [Walks the Config Lists](#walks-the-config-lists) covers, and `dev_force_time` follows the step on show.
 
 **Everything Else Reads as Missing.** The weather seed starts from `WEATHER_SEED_EMPTY` and sets only the temperature and the condition. Humidity, wind, UV, sunrise, sunset, the high and low, and the forecast all keep their no-data values, so a panel showing one draws dashes rather than a 0 that looks real. A face whose screenshots need those readings gives them in the file's `stores` block.
 
@@ -43,6 +43,8 @@ flowchart LR
 **The Number of Themes.** The walk asks the settings layer how many values the theme setting allows, which is the same count that caps a theme sent from the phone. Every theme the watch accepts is in the walk, without the walk being told how many there are. A face with no theme setting gets a count of 0, so every tap redraws the first theme and the walk never moves.
 
 **Nothing Is Saved.** The harness writes the theme and the Quiet Time mark with `settings_set_u8`, which changes the value in memory and never touches flash. A dev build never saves settings at all, so a save that lands on top of the walk, such as one from the emulator's phone or the time zone push the phone sends when it is ready, leaves the settings the face had saved there as they were. A save made on the settings page against a dev build is not kept either. On a face that has no Quiet Time setting, the write does nothing.
+
+**The Phone Leaves the File's Settings Alone.** A dev build never saves, so the watch always reads as fresh, and the emulator's phone sends its own saved settings back on every launch. In a dev build the AppMessage layer hands the phone's settings to `settings_apply_inbox_holding`, which skips every key the file names, at the top, in a face's entry, in any step of the picked walk, or in its `each`. So the first screen after a launch shows what the file says with no tap first, and a key the file does not name takes whatever the phone sends. The theme walk's theme and Quiet Time mark are not keys the file names, so the phone's restore can still land over them until the next tap. A release build has no such function and applies everything the phone sends.
 
 **A Face's Own Walks.** A walk through panels, layouts, or a list of settings is best laid out in the file, as [Walks the Config Lists](#walks-the-config-lists) covers, and leaves the face one small hook. A walk the file cannot express is a tap handler that changes one thing and rebuilds, so a face can still write its own beside the plugin's, such as one that steps the weather condition through every icon, day and night. It lives in the face's own `src/c/dev/` and seeds the stores the same way, and `tap-walk` drives it like the theme walk. It reads its own name from the build, as [A Face's Own Switches](#a-faces-own-switches) covers, so the unit or the face's own entry picks it by its name and the plugin's theme walk stays off.
 
@@ -88,8 +90,10 @@ The build turns them into C defines for every face it builds. `DEV_MODE` is 1 wi
 - a setting whose value the face's settings page would not take, such as text for a colour, a number for a text box, or a choice past the ones the page offers
 - a store the plugin does not seed, a reading the store does not take, a number outside what the store holds, text longer than the watch keeps, or a weather condition the watch has no icon for
 - a store the face cannot show, such as stocks on a face without `STOCK_STRIP`, or HRV on a face built without `HEALTH_HRV`
-- an HRV reading after the pinned clock, or runs of them out of time order
-- a listed walk named `themes`, a step walk of fewer than two steps, or a panel walk with no panels block, a size the block does not list, or a panel it gives no id
+- an HRV reading after the pinned clock, the walk's, or a step's, or runs of them out of time order
+- a listed walk named `themes`, a step walk of fewer than two screens counting each value of `each`, a step with nothing in it, or a panel walk with no panels block, a size the block does not list, or a panel it gives no id
+- an `each` that names more than one setting or no values, or a step that sets the key its walk's `each` steps through
+- a step walk that shows more than 255 different sets of clock, date, and readings, or more than 255 different seeds for one store
 - a step walk whose later steps set a key that neither the settings nor its first step sets, or whose first step has no layout while a later one does
 - a `faces` that is not an object, or an entry in it that is not one
 - an entry for a name the unit has no face by, with a line listing the faces it has, since a renamed or mistyped face would otherwise take the top's settings without a word
@@ -164,7 +168,7 @@ A temperature goes in the unit the settings hold, since the watch draws a seed a
 
 ### Walks the Config Lists
 
-`walks` lays out walks as lists, by a lowercase name, and `walk` picks one the same way it picks `themes`. The build sets `DEV_WALK_FROM_CONFIG`, and `dev_start` shows the first step and moves to the next on each tap, then runs the face's hook and rebuilds. After the last step a tap comes back to the first, and draws exactly the first screen again. A walk is one of two kinds.
+`walks` lays out walks as lists, by a lowercase name, and `walk` picks one the same way it picks `themes`. The build sets `DEV_WALK_FROM_CONFIG`, and `dev_start` shows the first step and moves to the next on each tap. Each screen applies its settings first, then pins its clock and date and seeds the stores again, then runs the face's hook and rebuilds. The weather, health, and system stores are seeded again on every screen, and the location, stock, calendar, phone battery, and now playing stores only when the screen picks another seed for them, since starting the phone battery or now playing store tells the phone the face no longer wants the reading. After the last step a tap comes back to the first, and draws exactly the first screen again. A walk is one of two kinds.
 
 **A Panel Walk.** `panels` names panels by size, or is `"all"`, and the watch shows one panel a step:
 
@@ -192,17 +196,40 @@ void dev_show_panel(int panel, int size)
 #endif
 ```
 
-**A Step Walk.** `steps` lists screens, each with the settings it applies and a layout, either one optional. A walk of the starter layouts, or of day and night, is a step walk:
+**A Step Walk.** `steps` lists screens, each with the settings it applies, a layout, and a `clock`, `date`, and `stores` of its own, each one optional. A walk of the starter layouts, or of day and night, is a step walk:
 
 ```json
 { "walks": { "presets": { "steps": [{ "settings": { "APPEARANCE_THEME": 1 }, "layout": "2,0,0,2,2;12,0,2,2,1" }, { "layout": "1,0,0,4,1" }] } } }
 ```
 
-A step's settings go through the catalogue the way the launch settings do. A step with a layout hands it to the face's `dev_show_layout(layout)`, whose shape is the face's own, so a face can carry more than the layout in it, such as custom colours after a mark of its choosing. A step walk takes two steps or more, since a tap has to have somewhere to go.
+A step's settings go through the catalogue the way the launch settings do. A step with a layout hands it to the face's `dev_show_layout(layout)`, whose shape is the face's own, so a face can carry more than the layout in it, such as custom colours after a mark of its choosing. A step walk takes two screens or more, since a tap has to have somewhere to go, and a step with nothing in it stops the build.
 
-**Each Step Stands on Its Own.** The build gives every step every setting the walk touches, so a step draws the same screen whichever step came before it. A setting a step leaves out takes the launch setting, or the first step's value when the launch settings leave the key out too, since the build cannot know what the emulator had saved. So a key only later steps set stops the build, and so does a walk whose first step has no layout while a later one has one. A step with no layout shows the layout of the step before it.
+**A Step's Own Readings.** A step's `clock`, `date`, and `stores` take the same shape as the walk's and the top of the file's, and stand in for the walk's on that step. A store the step names replaces the walk's store whole, the way a face's entry replaces the top's. A step that leaves one out takes the walk's, then the face's, then the top of the file's, and a store none of them names takes the fixture. So one dev build can shoot a set of pictures that each need their own time, weather, battery, or link:
 
-**A Step That Switches Units.** A step that changes the temperature unit seeds the weather again, the way a launch applies the settings before it seeds. The fixture converts on every seed, and the file's own readings are written in the unit the launch settings hold, so the harness converts them to the step's unit the way the store converts a reading in hand when the wearer switches.
+```json
+{
+  "walks": {
+    "previews": {
+      "steps": [
+        { "clock": "08:05", "settings": { "APPEARANCE_THEME": 0 }, "stores": { "weather": { "temp": 14, "cond": "CLEAR" }, "system": { "battery": 80 } } },
+        { "clock": "23:10", "settings": { "APPEARANCE_THEME": 1 }, "stores": { "weather": { "temp": 12, "cond": "CLEAR" }, "system": { "battery": 60, "bluetooth": false } } }
+      ]
+    }
+  }
+}
+```
+
+The build writes each set of clock, date, and readings once, however many steps show it, and each store's seeds the same way, so steps that share them cost the watch nothing more. A walk can carry up to 255 different sets, and up to 255 different seeds for one store.
+
+**Every Value of One Setting.** `each` names one setting and the values to step it through, and every step is then shown once at each value. The value changes on every tap and the step moves on after the last value, so 16 steps through 11 values tap through 176 screens. The build writes the 16 steps and the 11 values once each, rather than 176 steps, which keeps the dev build small. A step that sets the same key stops the build, since the value `each` is on would always win. A walk of `each` alone needs no `steps`, and steps one setting over the face's own screen. Give it one step when that screen needs a layout of its own:
+
+```json
+{ "walks": { "analog": { "each": { "APPEARANCE_ANALOG_STYLE": [0, 1, 2, 3] }, "steps": [{ "layout": "20,0,0,2,2" }] } } }
+```
+
+**Each Step Stands on Its Own.** The build gives every step every setting the walk touches, and the harness seeds each store again from the step's own seed or the fixture, so a step draws the same screen whichever step came before it. A setting a step leaves out takes the launch setting, or the first step's value when the launch settings leave the key out too, since the build cannot know what the emulator had saved. So a key only later steps set stops the build, and so does a walk whose first step has no layout while a later one has one. A step with no layout shows the layout of the step before it.
+
+**A Step That Switches Units.** A step's settings go in before the stores are seeded, the way a launch applies the settings before it seeds, so a step that changes the temperature unit seeds the weather in the new one. The fixture converts on every seed, and the file's own readings are written in the unit the launch settings hold, so the harness converts them to the step's unit the way the store converts a reading in hand when the wearer switches.
 
 **A Walk's Own Clock.** A walk can carry `clock`, `date`, `settings`, and `stores` beside its panels or steps, and they stand in for the face's while the walk is picked. Its settings and stores go on top of the face's one by one. So pictures shot on a clock of their own, such as a face's clock panels, come from a walk that says so, and picking it is the one edit:
 
@@ -210,9 +237,9 @@ A step's settings go through the catalogue the way the launch settings do. A ste
 { "walks": { "clocks": { "clock": "10:09", "date": "2026-07-13", "panels": { "1x2": ["time"], "2x2": ["analog"] } } } }
 ```
 
-A walk that pins a clock earlier than the face's HRV log stops the build, since the log would run into the future, so it gives a health store of its own. A slip in any walk stops a dev build of every face that takes the walk, picked or not.
+A walk or a step that pins a clock earlier than the HRV log it shows stops the build, since the log would run into the future, so it gives a health store of its own. A slip in any walk stops a dev build of every face that takes the walk, picked or not.
 
-A dev build whose walk needs a hook the face does not define stops at the link, naming it. The hooks go in a file of the face's own inside `#if DEV_MODE`, so a release build carries neither.
+A dev build whose walk needs a hook the face does not define stops at the link, naming it. Only a walk with a step that has a layout calls `dev_show_layout`, so a face whose walks only change settings and readings defines neither hook. The hooks go in a file of the face's own inside `#if DEV_MODE`, so a release build carries neither.
 
 ### The Panels Block
 

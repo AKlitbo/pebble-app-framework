@@ -7,10 +7,16 @@
  *
  *     { "panels": { "1x2": ["phone-battery", "battery-battery"], "2x2": ["phone-battery"] } }
  *
- * A step walk lists screens, each with the settings it applies through the settings catalogue and a
- * layout the face's `dev_show_layout` hook shows, either one optional:
+ * A step walk lists screens, each with the settings it applies through the settings catalogue, a
+ * layout the face's `dev_show_layout` hook shows, and a clock, a date, and readings of its own, each one
+ * optional:
  *
- *     { "steps": [{ "settings": { "APPEARANCE_THEME": 0 }, "layout": "2,0,0,2,2;12,0,2,2,1" }] }
+ *     { "steps": [{ "settings": { "APPEARANCE_THEME": 0 }, "layout": "2,0,0,2,2;12,0,2,2,1", "clock": "08:05" }] }
+ *
+ * A step walk can also take `each`, one setting and the values to step it through. Every step is then
+ * shown once at each value, so a walk of 16 steps through 11 values taps through 176 screens:
+ *
+ *     { "each": { "APPEARANCE_SCENE": [0, 1, 2] }, "steps": [{ "settings": { "APPEARANCE_THEME": 0 } }] }
  *
  * The panels block says what each panel and size is to the face's C, and where a size sits on the
  * screen for the thumbnails tool to crop it:
@@ -29,27 +35,38 @@ import { isObject } from '../shared/values.ts';
 import { onlyKnown, sets, type Where } from './dev-fields.ts';
 import { readSettings, type DevValue } from './dev-settings.ts';
 
+/**
+ * The clock, date, settings, and stores a walk or a step sets for itself, as the file writes them, with
+ * where they sit for a message. dev-switches.ts reads them over the face's own once the walk is picked.
+ */
+export type WalkScene = { block: Record<string, unknown>; file: string; owner: string };
+
 /** One screen of a step walk. */
 export type DevStep = {
   /** The settings it applies, by message key. */
   settings: Record<string, DevValue>;
   /** The layout the face's dev_show_layout hook shows, or null to leave the layout as it is. */
   layout: string | null;
+  /** The clock, date, and stores it sets for itself, or null to take the walk's. */
+  scene: WalkScene | null;
 };
 
-/**
- * The clock, date, settings, and stores a walk sets for itself, as the file writes them, with where
- * they sit for a message. dev-switches.ts reads them over the face's own once the walk is picked.
- */
-export type WalkScene = { block: Record<string, unknown>; file: string; owner: string };
+/** The one setting a step walk steps through at every step, with its values in order. */
+export type DevEach = { key: string; values: DevValue[] };
 
 /** A walk the config lays out, with the scene it sets for itself, or null for none. */
 export type DevWalk =
   | { kind: 'panels'; panels: 'all' | Record<string, string[]>; scene: WalkScene | null }
-  | { kind: 'steps'; steps: DevStep[]; scene: WalkScene | null };
+  | { kind: 'steps'; steps: DevStep[]; each: DevEach | null; scene: WalkScene | null };
 
 /** What a walk can set for itself beside its panels or steps, which stand in for the face's while it is picked. */
 export const SCENE_KEYS = ['clock', 'date', 'settings', 'stores'];
+
+/** What a step can set for itself beside its settings and its layout, which stand in for the walk's on that step. */
+export const STEP_SCENE_KEYS = ['clock', 'date', 'stores'];
+
+/** What a step takes, each one optional. */
+const STEP_KEYS = ['settings', 'layout', ...STEP_SCENE_KEYS];
 
 /** Where one size sits on the screen when the face shows a panel of it on its own. */
 export type CropRect = { left: number; top: number; width: number; height: number };
@@ -111,9 +128,50 @@ function readPanelList(value: unknown, where: Where, field: string): 'all' | Rec
   return bySize;
 }
 
+/** The setting `each` steps through, as `{ "APPEARANCE_SCENE": [0, 1, 2] }`. */
+function readEach(value: unknown, where: Where, field: string): DevEach {
+  if (!isObject(value) || Object.keys(value).length !== 1) {
+    throw new ToolError(`${sets(where, field, value)}. It takes one setting and the values to step it through, such as { "APPEARANCE_SCENE": [0, 1, 2] }`);
+  }
+
+  const [key, values] = Object.entries(value)[0];
+
+  if (!Array.isArray(values) || values.length === 0) {
+    throw new ToolError(`${sets(where, `${field}.${key}`, values)}. It takes a list of the values to step through, such as [0, 1, 2]`);
+  }
+
+  // each value goes through the same reader as a step's settings, so a toggle lands as 1
+  return { key, values: values.map((setting) => readSettings({ [key]: setting }, where.file, where.owner, field)[key]) };
+}
+
+/** One step of a step walk. */
+function readStep(step: unknown, each: DevEach | null, where: Where, at: string): DevStep {
+  if (!isObject(step) || Object.keys(step).length === 0) {
+    throw new ToolError(`${sets(where, at, step)}. A step takes settings, a layout, a clock, a date, stores, or any of them together`);
+  }
+
+  walkFields(step, STEP_KEYS, where, at);
+
+  if (step.layout !== undefined && (typeof step.layout !== 'string' || step.layout === '')) {
+    throw new ToolError(`${sets(where, `${at}.layout`, step.layout)}. It takes the layout as the face's dev_show_layout reads it`);
+  }
+
+  const settings = 'settings' in step ? readSettings(step.settings, where.file, where.owner, `${at}.settings`) : {};
+
+  // the walk puts the value each is on over the step's own, so a step setting it too would never show
+  if (each && each.key in settings) {
+    throw new ToolError(`${where.file} sets ${where.owner}${at}.settings.${each.key}, which the walk's each steps through. Leave it to each`);
+  }
+
+  const sceneKeys = STEP_SCENE_KEYS.filter((key) => key in step);
+  const scene = sceneKeys.length > 0 ? { block: Object.fromEntries(sceneKeys.map((key) => [key, step[key]])), file: where.file, owner: `${where.owner}${at}.` } : null;
+
+  return { settings, layout: typeof step.layout === 'string' ? step.layout : null, scene };
+}
+
 /** One walk out of `walks`. */
 function readWalk(value: unknown, where: Where, field: string): DevWalk {
-  if (!isObject(value) || ('panels' in value) === ('steps' in value)) {
+  if (!isObject(value) || ('panels' in value) === ('steps' in value || 'each' in value)) {
     throw new ToolError(`${sets(where, field, value)}. A walk takes either panels, such as { "panels": "all" }, or steps, such as { "steps": [{ "settings": { "APPEARANCE_THEME": 1 } }] }`);
   }
 
@@ -126,29 +184,22 @@ function readWalk(value: unknown, where: Where, field: string): DevWalk {
     return { kind: 'panels', panels: readPanelList(value.panels, where, `${field}.panels`), scene };
   }
 
-  walkFields(value, ['steps', ...SCENE_KEYS], where, field);
+  walkFields(value, ['steps', 'each', ...SCENE_KEYS], where, field);
 
-  if (!Array.isArray(value.steps) || value.steps.length < 2) {
+  const each = 'each' in value ? readEach(value.each, where, `${field}.each`) : null;
+
+  if ('steps' in value && (!Array.isArray(value.steps) || value.steps.length === 0)) {
     throw new ToolError(`${sets(where, `${field}.steps`, value.steps)}. It takes a list of two or more screens, since a tap has to have somewhere to step to`);
   }
 
-  const steps = value.steps.map((step, index) => {
-    const at = `${field}.steps[${index}]`;
+  // a walk of each alone steps the one setting over the face's own screen
+  const steps = Array.isArray(value.steps) ? value.steps.map((step, index) => readStep(step, each, where, `${field}.steps[${index}]`)) : [{ settings: {}, layout: null, scene: null }];
 
-    if (!isObject(step)) {
-      throw new ToolError(`${sets(where, at, step)}. A step takes settings, a layout, or both`);
-    }
+  if (steps.length * (each ? each.values.length : 1) < 2) {
+    throw new ToolError(`${where.file} sets ${where.owner}${field} to one screen. A step walk takes two or more screens, counting a step once for each value of each, since a tap has to have somewhere to step to`);
+  }
 
-    walkFields(step, ['settings', 'layout'], where, at);
-
-    if (step.layout !== undefined && (typeof step.layout !== 'string' || step.layout === '')) {
-      throw new ToolError(`${sets(where, `${at}.layout`, step.layout)}. It takes the layout as the face's dev_show_layout reads it`);
-    }
-
-    return { settings: 'settings' in step ? readSettings(step.settings, where.file, where.owner, `${at}.settings`) : {}, layout: typeof step.layout === 'string' ? step.layout : null };
-  });
-
-  return { kind: 'steps', steps, scene };
+  return { kind: 'steps', steps, each, scene };
 }
 
 /**

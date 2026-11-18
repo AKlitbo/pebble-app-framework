@@ -28,7 +28,7 @@ import { spawnSync } from 'node:child_process';
 import sharp, { type Sharp } from 'sharp';
 import { faceTargetNames } from '../../tools/manifest/build-manifests.ts';
 import { DEV_HEADER, harnessFingerprint, headerFingerprint, resolveWalk } from '../../tools/manifest/dev-header.ts';
-import { unitDevSwitches } from '../../tools/manifest/dev-switches.ts';
+import { pickedWalk, unitDevSwitches, type DevSwitches } from '../../tools/manifest/dev-switches.ts';
 import { thumbnailFiles, type CropRect, type PanelStep } from '../../tools/manifest/dev-walks.ts';
 import { faceDir } from '../../tools/shared/faces.ts';
 import { WORKSPACE } from '../../tools/shared/paths.ts';
@@ -291,7 +291,29 @@ function runGenerator(face: string): void {
   }
 }
 
-/** The face's panel walk steps, its sizes, and the fingerprint of what it shows, refusing a walk that is not a panel walk. */
+/**
+ * The panel walk a face's switches pick: its steps, its sizes, and the fingerprint of what it shows.
+ *
+ * Any other walk is refused before its steps are worked out, since working out a step walk checks its
+ * settings against the face's keys, which this has no copy of, and that refusal would name a key
+ * rather than the walk.
+ *
+ * @param switches The face's switches for a dev build.
+ * @param face The face, which a refusal names.
+ * @param thumbnails The face's thumbnail file names, which a walk of all its panels steps through.
+ * @return The steps, the sizes, and the fingerprint.
+ */
+export function panelWalkOf(switches: DevSwitches, face: string, thumbnails: string[]): { steps: PanelStep[]; sizes: Record<string, { crop: CropRect }>; fingerprint: string } {
+  const walk = pickedWalk(switches)?.kind === 'panels' ? resolveWalk(switches, { face, keys: [], defines: {}, thumbnails }) : null;
+
+  if (walk === null || walk.kind !== 'panels' || !switches.panels) {
+    throw new ToolError(`the thumbnails come from a panel walk, but ${face}'s walk in paf.dev.config.json is ${switches.walk === null ? 'none' : switches.walk}. Pick a walk that lists panels, such as { "panels": "all" }, and build with paf build ${face} --dev`);
+  }
+
+  return { steps: walk.steps, sizes: switches.panels.sizes, fingerprint: harnessFingerprint(switches, walk) };
+}
+
+/** The face's panel walk, from the unit's paf.dev.config.json. */
 function panelWalk(face: string): { steps: PanelStep[]; sizes: Record<string, { crop: CropRect }>; fingerprint: string } {
   const switches = unitDevSwitches(WORKSPACE, face, true);
 
@@ -299,13 +321,7 @@ function panelWalk(face: string): { steps: PanelStep[]; sizes: Record<string, { 
     throw new ToolError(`${face} has no dev switches`);
   }
 
-  const walk = resolveWalk(switches, { face, keys: [], defines: {}, thumbnails: thumbnailFiles(face) });
-
-  if (walk === null || walk.kind !== 'panels' || !switches.panels) {
-    throw new ToolError(`the thumbnails come from a panel walk, but ${face}'s walk in paf.dev.config.json is ${switches.walk === null ? 'none' : switches.walk}. Pick a walk that lists panels, such as { "panels": "all" }, and build with paf build ${face} --dev`);
-  }
-
-  return { steps: walk.steps, sizes: switches.panels.sizes, fingerprint: harnessFingerprint(switches, walk) };
+  return panelWalkOf(switches, face, thumbnailFiles(face));
 }
 
 /** A file's last write in ms, or null when there is no file. */

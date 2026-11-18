@@ -256,6 +256,36 @@ describe('a face entry over the top of the file', () => {
     expect(call).toThrow(`${FILE} sets gridlock's walks.clocks.clock to "10:9". It takes a 24-hour HH:MM`);
   });
 
+  /** A step's own readings are only read once its walk is picked, so a slip in them has to stop the build before then. */
+  test('refuses a slip in a step\'s own readings in a walk that is not picked', () => {
+    const file = { walks: { shots: { steps: [{ layout: 'a' }, { layout: 'b', stores: { system: { battery: 140 } } }] } } };
+
+    const call = () => readDevHarness(file, FILE, () => []);
+
+    expect(call).toThrow(`${FILE} sets walks.shots.steps[1].stores.system.battery to 140. It takes a whole number from 0 to 100`);
+  });
+
+  /**
+   * The watch dates each HRV reading back from the pinned clock. A walk that pins an earlier clock and
+   * takes on the face's log would put it in the future, and was only caught once someone picked it.
+   */
+  test('refuses a walk not picked whose earlier clock the face\'s HRV log runs past', () => {
+    const file = { clock: '20:42', stores: { health: { hrvLog: [{ from: '20:00', ms: [40] }] } }, walks: { clocks: { clock: '10:09', panels: 'all' } } };
+
+    const call = () => readDevHarness(file, FILE, () => []);
+
+    expect(call).toThrow(`${FILE} pins walks.clocks.clock at 10:09, but the HRV log it shows has a reading at 20:00`);
+  });
+
+  /** A step that pins an earlier clock and takes on the walk's log would put it in the future the same way. */
+  test('refuses a step whose earlier clock the HRV log it takes on runs past', () => {
+    const file = { clock: '20:42', stores: { health: { hrvLog: [{ from: '20:00', ms: [40] }] } }, walks: { shots: { steps: [{ layout: 'a' }, { clock: '09:00', layout: 'b' }] } } };
+
+    const call = () => readDevHarness(file, FILE, () => []);
+
+    expect(call).toThrow(`${FILE} pins walks.shots.steps[1].clock at 09:00, but the HRV log it shows has a reading at 20:00`);
+  });
+
   /** The HRV log has to end by the clock the face runs on, which its own entry can move later than the top's. */
   test('checks a face\'s HRV log against the face\'s own clock', () => {
     const file = { faces: { gridlock: { clock: '20:42', stores: { health: { hrvLog: [{ from: '20:00', ms: [40] }] } } } } };

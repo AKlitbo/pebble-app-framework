@@ -4,13 +4,16 @@
  * The header is C written from JSON, so what is worth pinning is what the C would get wrong without a
  * word: text that has to land on the watch byte for byte, the slice of the settings table each step
  * reads, a heart rate curve that has to end on the latest minute, and a struct tm date the watch never
- * works out for itself. A header left behind by a dev build must not survive a release build either.
+ * works out for itself. Each step's set of readings has to fall back from the step to the walk to the
+ * fixture, or a store an earlier step seeded would stay on screen, and sets that come out the same have
+ * to be written once, since each costs the watch memory. A header left behind by a dev build must not
+ * survive a release build either.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { tempDir } from '../../ts/testing/temp-dir.ts';
-import { DEV_HEADER, cString, completeSteps, renderDevHeader, writeDevHeader, type HeaderFacts } from './dev-header.ts';
+import { DEV_HEADER, appliedSettings, cString, completeSteps, renderDevHeader, writeDevHeader, type HeaderFacts } from './dev-header.ts';
 import { readDevHarness, switchesFor, type DevSwitches } from './dev-switches.ts';
 
 const FILE = 'mosaic/paf.dev.config.json';
@@ -50,9 +53,10 @@ describe('renderDevHeader', () => {
 
   /** A struct tm counts years from 1900 and months from 0, and the watch never works out the weekday itself. */
   test('writes a pinned date the way a struct tm counts it', () => {
-    const result = renderDevHeader(switches({ date: '2026-07-13' }), FACTS);
+    const result = renderDevHeader(switches({ date: '2026-07-13', clock: '10:42' }), FACTS);
 
-    expect(result).toContain('#define DEV_CONFIG_YEAR 126 ///< years since 1900, as a struct tm counts them\n#define DEV_CONFIG_MONTH 6 ///< 0 for January\n#define DEV_CONFIG_DAY 13\n#define DEV_CONFIG_WEEKDAY 1 ///< 0 for Sunday\n#define DEV_CONFIG_YEAR_DAY 193');
+    expect(result).toContain('static const DevDate s_dev_dates[] = {\n    { 126, 6, 13, 1, 193 }, // 2026-07-13\n};');
+    expect(result).toContain('    { 642, 0, { DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE } }, // 10:42\n');
   });
 
   /** Each step reads its own slice of one settings table, so an offset one out applies the next step's settings. */
@@ -61,14 +65,25 @@ describe('renderDevHeader', () => {
 
     const result = renderDevHeader(switches(file), FACTS);
 
-    expect(result).toContain('static const DevStep s_dev_steps[] = {\n    { 0, 1, "1,0,0,4,1" },\n    { 1, 1, "2,0,0,2,2" },\n    { 2, 1, "2,0,0,2,2" },\n};');
+    expect(result).toContain('static const DevStep s_dev_steps[] = {\n    { 0, 1, "1,0,0,4,1", 0 },\n    { 1, 1, "2,0,0,2,2", 0 },\n    { 2, 1, "2,0,0,2,2", 0 },\n};');
+  });
+
+  /** A face that shows no layout defines no dev_show_layout, so a call built in anyway stops its build at the link. */
+  test('builds the layout call only for a walk with a step that has a layout', () => {
+    const laid = { walk: 'presets', walks: { presets: { steps: [{ layout: 'a' }, { layout: 'b' }] } } };
+    const plain = { settings: { APPEARANCE_THEME: 0 }, walk: 'themes2', walks: { themes2: { steps: [{ settings: { APPEARANCE_THEME: 1 } }, { settings: { APPEARANCE_THEME: 2 } }] } } };
+
+    const result = [renderDevHeader(switches(laid), FACTS), renderDevHeader(switches(plain), FACTS)];
+
+    expect(result[0]).toContain('#define DEV_CONFIG_WALK_LAYOUTS 1\n');
+    expect(result[1]).not.toContain('DEV_CONFIG_WALK_LAYOUTS');
   });
 
   /** The store keeps the last hour newest last, so a shorter curve has to be the latest minutes, not the earliest. */
   test('pads a short heart rate curve at the front', () => {
     const result = renderDevHeader(switches({ stores: { health: { hrHistory: [90, 91] } } }), FACTS);
 
-    expect(result).toContain(`static const uint8_t s_dev_hr_history[60] = { ${'0, '.repeat(58)}90, 91 };`);
+    expect(result).toContain(`static const uint8_t s_dev_hr_history_0[60] = { ${'0, '.repeat(58)}90, 91 };`);
   });
 
   /** A panel walk's ids are the face's C names, so the header has to include where they come from. */
@@ -93,12 +108,12 @@ describe('renderDevHeader', () => {
     expect(call).toThrow("sets gridlock's walks.presets.steps[0].settings.APPEARANCE_ANALOG_STYLE, which gridlock does not declare");
   });
 
-  /** The watch dates each HRV reading back from the pinned clock, so a walk's earlier clock would put the face's log in the future. */
-  test('refuses an HRV log past the clock a walk pins', () => {
-    const file = { clock: '20:42', stores: { health: { hrvLog: [{ from: '20:00', ms: [40] }] } }, walk: 'clocks', walks: { clocks: { clock: '10:09', steps: [{ layout: 'a' }, { layout: 'b' }] } } };
-    const picked = switchesFor(readDevHarness(file, FILE, () => ['gridlock']), 'gridlock');
+  /** The watch dates each HRV reading back from the pinned clock, so a face's earlier clock would put the top's log in the future. */
+  test('refuses an HRV log past the clock a face pins', () => {
+    const file = { clock: '20:42', stores: { health: { hrvLog: [{ from: '20:00', ms: [40] }] } }, faces: { gridlock: { clock: '10:09' } } };
+    const face = switchesFor(readDevHarness(file, FILE, () => ['gridlock']), 'gridlock');
 
-    const call = () => renderDevHeader(picked, { ...FACTS, defines: { HEALTH_HRV: 1 } });
+    const call = () => renderDevHeader(face, { ...FACTS, defines: { HEALTH_HRV: 1 } });
 
     expect(call).toThrow("pins gridlock's clock at 10:09, but its HRV log has a reading at 20:00");
   });
@@ -108,6 +123,76 @@ describe('renderDevHeader', () => {
     const call = () => renderDevHeader(switches({ walk: 'new', walks: { new: { panels: 'all' } } }), FACTS);
 
     expect(call).toThrow("walks gridlock's new through panels, but has no panels block");
+  });
+});
+
+describe('step readings', () => {
+  /** A face with the weather keys and a scene setting, so a walk can seed weather and step a scene. */
+  const SCENES: HeaderFacts = { ...FACTS, keys: [...FACTS.keys, 'APPEARANCE_SCENE', 'WEATHER_TEMPERATURE'] };
+
+  /** The rows of the table of readings sets, which the watch picks a screen's clock and seeds from. */
+  function readingRows(header: string): string[] {
+    const table = /static const DevReadings s_dev_readings\[\] = \{\n([\s\S]*?)\n\};/.exec(header);
+
+    return table ? table[1].split('\n').map((row) => row.trim()) : [];
+  }
+
+  /**
+   * A step that left a store out would keep whatever the step before it seeded, so it has to fall back
+   * to the walk's, and a store nobody names to the fixture, to draw the same screen from any step.
+   */
+  test('gives a step its own clock and stores over the walk\'s, and the fixture for a store none names', () => {
+    const file = {
+      walk: 'shots',
+      walks: { shots: { clock: '10:42', stores: { weather: { temp: 21 } }, steps: [{ settings: { APPEARANCE_THEME: 0 } }, { clock: '23:10', stores: { weather: { temp: 3 }, system: { battery: 15 } } }] } },
+    };
+    const picked = switchesFor(readDevHarness(file, FILE, () => ['gridlock']), 'gridlock');
+
+    const result = readingRows(renderDevHeader(picked, SCENES));
+
+    expect(result).toEqual([
+      '{ 642, DEV_NONE, { 0, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE } }, // 10:42',
+      '{ 1390, DEV_NONE, { 1, DEV_NONE, 0, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE, DEV_NONE } }, // 23:10',
+    ]);
+  });
+
+  /** Every set of readings costs the watch memory, so steps that show the same readings share one. */
+  test('writes a set of readings once however many steps show it', () => {
+    const shot = { clock: '08:05', stores: { system: { battery: 80 } } };
+    const file = { walk: 'shots', walks: { shots: { steps: [{ ...shot, settings: { APPEARANCE_THEME: 0 } }, { ...shot, settings: { APPEARANCE_THEME: 1 } }, { settings: { APPEARANCE_THEME: 2 } }] } } };
+
+    const result = renderDevHeader(switches(file), SCENES);
+
+    expect(readingRows(result)).toHaveLength(2);
+    expect(result).toContain('static const DevStep s_dev_steps[] = {\n    { 0, 1, NULL, 1 },\n    { 1, 1, NULL, 1 },\n    { 2, 1, NULL, 0 },\n};');
+  });
+
+  /**
+   * each multiplies the screens without multiplying the table, so 16 shots through 11 scenes cost the
+   * watch 16 steps and 11 values. The dictionary has to hold a step's settings and the value together.
+   */
+  test('writes each step and each value once, and counts every pairing as a screen', () => {
+    const file = { walk: 'previews', walks: { previews: { each: { APPEARANCE_SCENE: [0, 1, 2] }, steps: [{ settings: { APPEARANCE_THEME: 0 } }, { settings: { APPEARANCE_THEME: 1 } }] } } };
+
+    const result = renderDevHeader(switches(file), SCENES);
+
+    expect(result).toContain('#define DEV_CONFIG_WALK_COUNT 6\n');
+    expect(result).toContain('#define DEV_CONFIG_EACH_COUNT 3\nstatic const DevSetting s_dev_each[] = {\n    { &MESSAGE_KEY_APPEARANCE_SCENE, DEV_VALUE_NUMBER, 0, NULL },\n    { &MESSAGE_KEY_APPEARANCE_SCENE, DEV_VALUE_NUMBER, 1, NULL },\n    { &MESSAGE_KEY_APPEARANCE_SCENE, DEV_VALUE_NUMBER, 2, NULL },\n};');
+    expect(result).toContain('#define DEV_CONFIG_DICT_SIZE 23\n');
+  });
+});
+
+describe('appliedSettings', () => {
+  /** A value each steps through goes through the catalogue like any setting, so the page check has to see it. */
+  test('hands each value each steps through to the settings page check', () => {
+    const file = { walk: 'previews', walks: { previews: { each: { APPEARANCE_SCENE: [0, 11] }, steps: [{ layout: 'a' }] } } };
+
+    const result = appliedSettings(switches(file));
+
+    expect(result.slice(-2)).toEqual([
+      { where: 'walks.previews.each', settings: { APPEARANCE_SCENE: 0 } },
+      { where: 'walks.previews.each', settings: { APPEARANCE_SCENE: 11 } },
+    ]);
   });
 });
 

@@ -643,6 +643,19 @@ bool settings_serialize(DictionaryIterator *iter)
     return true;
 }
 
+#if defined(DEV_MODE) && DEV_MODE
+/// The keys the message being applied leaves alone, set only while settings_apply_inbox_holding runs
+static bool (*s_held)(uint32_t key);
+
+SettingsInbound settings_apply_inbox_holding(DictionaryIterator *iter, bool (*held)(uint32_t key))
+{
+    s_held = held;
+    SettingsInbound result = settings_apply_inbox(iter);
+    s_held = NULL;
+    return result;
+}
+#endif
+
 SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
 {
     SettingsInbound result = {false, false, false};
@@ -658,6 +671,14 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
             {
                 continue;
             }
+
+#if defined(DEV_MODE) && DEV_MODE
+            // a key the dev config names keeps the config's value whatever the phone sends
+            if (s_held && s_held(*field->message_key))
+            {
+                continue;
+            }
+#endif
 
             void *ptr = field_ptr(schema, field);
 
