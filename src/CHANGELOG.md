@@ -10,9 +10,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Added
 
-- Added `clock`, `date`, and `stores` to a step of a step walk in `paf.dev.config.json`. A step that leaves one out takes the walk's, then the face's, then the file's, then the fixture's, and a store it names replaces the walk's whole. Each tap applies the step's settings, pins its clock, and seeds every store again, so a step draws the same screen whichever step came before it. `dev_force_time` follows the step's clock.
-- Added `each` to a step walk, which shows every step once at each value of one setting, such as `"each": { "APPEARANCE_SCENE": [0, 1, 2] }`. The value changes on every tap, and 16 steps through 11 values cost the memory of 16 steps rather than 176. A walk of `each` alone needs no `steps`, and a step that also sets that key stops the dev build.
-- Added `settings_apply_inbox_holding`, in a dev build only, which applies an inbox message the way `settings_apply_inbox` does but skips the keys a check holds.
 - Added `components` to a plugin app's settings page. `src/config/index.ts` can export a list of Clay components for the build to register, such as the framework's location search from `ts/clay/location-component.ts`. The search reaches Open-Meteo, so list `open-meteo.com` under Internet in the plugin app's `usesPermissions`. Listing `geocoding-api.open-meteo.com` and `api.open-meteo.com` by name works too. The build stops on a search whose plugin app does not reach both hosts, and names the one left off, since on Android the search would find no place.
 - Added a `change` event to the location search. The row fires it when a place or a zone is picked, again when the time zone lookup for a place writes its zone, and when typing clears a pick, so page code can read the pick with the row's `get`.
 - Added the `ts/shared/palette` builder piece and its `css/palette.css`. `createPalette` draws a tab for each panel size, a row of group tabs under it, the panel tiles, and a status line naming the group on show, from the groups, sizes, and panels the builder passes in.
@@ -21,17 +18,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Changed
 
-- A step with nothing in it, `{}`, now stops a dev build. Give the step settings, a layout, or a clock, date, or stores of its own, or remove it.
-- A walk or a step that pins a clock earlier than the HRV log it takes on now stops the dev build, picked or not. Give it a health store of its own, or pin its clock at or after the log's last reading.
-- The dev header writes each set of readings and each store's seeds once, so steps that share them share the memory. More than 255 different sets, or more than 255 seeds for one store, stops the dev build.
 - The plugin kinds row now leaves out a kind whose select drops to its one option, or is missing from the page, while the face is on a source of its own, such as the calendar on its iCal link with plugins off. A face's own component reading the row gets no state for that kind, the same as for a kind the face does not read from a plugin.
 - The build now stops on a row of a plugin app's settings page that no registered component draws, and names the row's type, or on a row with no type. Clay stops drawing the page at that row, so the page would open blank on the phone. Export the component that draws it in `components` from `src/config/index.ts`, or take the row off the page.
 
+### Plugin Changes
+
+#### Added
+
+- **Dev Plugin:** Added `clock`, `date`, and `stores` to a step of a step walk in `paf.dev.config.json`. A step that leaves one out takes the walk's, then the face's, then the file's, then the fixture's, and a store it names replaces the walk's whole. Each tap applies the step's settings, pins its clock, and seeds every store again, so a step draws the same screen whichever step came before it. `dev_force_time` follows the step's clock.
+- **Dev Plugin:** Added `each` to a step walk, which shows every step once at each value of one setting, such as `"each": { "APPEARANCE_SCENE": [0, 1, 2] }`. The value changes on every tap, and 16 steps through 11 values cost the memory of 16 steps rather than 176. A walk of `each` alone needs no `steps`, and a step that also sets that key stops the dev build.
+- **Dev Plugin:** Added `settings_apply_inbox_holding`, in a dev build only, which applies an inbox message the way `settings_apply_inbox` does but skips the keys a check holds.
+
+#### Changed
+
+- **Dev Plugin:** A step with nothing in it, `{}`, now stops a dev build. Give the step settings, a layout, or a clock, date, or stores of its own, or remove it.
+- **Dev Plugin:** A walk or a step that pins a clock earlier than the HRV log it takes on now stops the dev build, picked or not. Give it a health store of its own, or pin its clock at or after the log's last reading.
+- **Dev Plugin:** The dev header writes each set of readings and each store's seeds once, so steps that share them share the memory. More than 255 different sets, or more than 255 seeds for one store, stops the dev build.
+
 #### Fixed
 
-- Fixed the first screen of a dev build showing the phone's saved settings in place of the ones `paf.dev.config.json` names. A dev build never saves, so the phone sends its own back on every launch, and the AppMessage layer now skips every key the file names.
-- Fixed a step walk with no layouts needing the face to define `dev_show_layout` to link. The harness now calls it only when a step has a layout, so a face whose walks only change settings and readings can delete its stub.
-- Fixed `paf tool <face> thumbnails` on a step walk refusing the walk's first setting as undeclared, rather than saying to pick a panel walk.
+- **Dev Plugin:** Fixed the first screen of a dev build showing the phone's saved settings in place of the ones `paf.dev.config.json` names. A dev build never saves, so the phone sends its own back on every launch, and the AppMessage layer now skips every key the file names.
+- **Dev Plugin:** Fixed a step walk with no layouts needing the face to define `dev_show_layout` to link. The harness now calls it only when a step has a layout, so a face whose walks only change settings and readings can delete its stub.
+- **Dev Plugin:** Fixed `paf tool <face> thumbnails` on a step walk refusing the walk's first setting as undeclared, rather than saying to pick a panel walk.
 
 ### Wearer-Visible Changes
 
@@ -71,17 +79,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a plugin kinds store to the settings page of a face built with a plugin define. It is a hidden `pluginKinds` row with the class `pf-plugin-kinds`, first on the page and never saved, whose value maps each plugin kind the face reads to `off`, `missing`, or `served`, so a face's own components can warn about a panel whose plugin the phone lacks.
 - Added album art for now playing. Start the music feature as `music.withArtwork({ w, h })` with the largest size the face draws, and the build adds the `MUSIC_ARTWORK` key. The watch reads the art from `music_store_artwork()` as a 4-bit palettized `GBitmap`, and a face calls the new `music_store_deinit()` from its deinit to free it. Each side is held to 100 pixels, and the face's inbox has to hold `3 + colours + ceil(w / 2) * h` bytes and about 8 more, such as about 2,080 for a 64 square.
 - Added `phone_store_no_plugin` and `music_store_no_plugin`, which say the phone reported no plugin serving that reading, such as with plugins off. The phone sends -2 for it, `WIRE_NO_PLUGIN` in `wire_caps.g.h`, as the battery level or as `MUSIC_PLAYING`. The battery still reads -1, `readout_phone_battery` still writes `--`, and the track reads as nothing playing, so a face that wants to say why checks the new call. A face that registers its own now playing handler hears it through the new `appmessage_on_music_no_plugin`, just before each music message.
-- Added `date`, `settings`, `stores`, `walks`, and `panels` to `paf.dev.config.json`. A dev build pins the date, applies the settings through the settings catalogue in memory, and seeds each store the file gives readings for in place of the fixture. The build writes them into `page/dev_harness.h` for a dev build alone.
-- Added walks laid out as lists in `walks`, which `walk` picks by name, and which set `DEV_WALK_FROM_CONFIG` in place of `DEV_TAP_WALK_<NAME>`. A panel walk shows one panel a step through the face's `dev_show_panel(panel, size)`, and a step walk applies each step's settings and hands its layout to `dev_show_layout(layout)`. A face defines the hook its walk needs inside `#if DEV_MODE`. A walk can carry its own `clock`, `date`, `settings`, and `stores`, which stand in for the face's while it is picked.
-- Added the `thumbnails` tool to the `dev` plugin. `paf tool <face> thumbnails` installs the face's dev build once its fingerprint matches `paf.dev.config.json`, shoots its panel walk, crops each panel into `resources/thumbnails/` where its pixels changed, and runs the thumbnails generator. `--shots` crops screenshots already taken. The plugin now depends on `sharp`.
 
 #### Changed
 
 - The phone battery and now playing features end the subscription when a store started not live sends `PHONE_REQUEST` or `MUSIC_REQUEST` as 0, and subscribe again when it sends 1. The phone keeps the last answer under a `pf-wanted-` key, which a face leaves alone, and subscribes at ready unless that answer was 0. Start each store live only while a panel shows its reading.
-- `dev_seed_stores` now applies the file's settings before it seeds the stores, and `dev_force_time` also sets the pinned date and zeroes the seconds.
-- A dev build now never saves settings, so a save on top of the dev settings leaves the emulator's own on flash.
 - `buildConfig`'s temperature and wind unit rows now carry `pluginSourceHides`. A face that builds its own Weather section adds `pluginSourceHides: 'WEATHER_PROVIDER'` to its unit selects so they hide while the plugin is picked.
 - The watch now applies a message's settings before its readings, so a reading that carries its own unit is not converted twice.
+
+### Plugin Changes
+
+#### Added
+
+- **Dev Plugin:** Added `date`, `settings`, `stores`, `walks`, and `panels` to `paf.dev.config.json`. A dev build pins the date, applies the settings through the settings catalogue in memory, and seeds each store the file gives readings for in place of the fixture. The build writes them into `page/dev_harness.h` for a dev build alone.
+- **Dev Plugin:** Added walks laid out as lists in `walks`, which `walk` picks by name, and which set `DEV_WALK_FROM_CONFIG` in place of `DEV_TAP_WALK_<NAME>`. A panel walk shows one panel a step through the face's `dev_show_panel(panel, size)`, and a step walk applies each step's settings and hands its layout to `dev_show_layout(layout)`. A face defines the hook its walk needs inside `#if DEV_MODE`. A walk can carry its own `clock`, `date`, `settings`, and `stores`, which stand in for the face's while it is picked.
+- **Dev Plugin:** Added the `thumbnails` tool to the `dev` plugin. `paf tool <face> thumbnails` installs the face's dev build once its fingerprint matches `paf.dev.config.json`, shoots its panel walk, crops each panel into `resources/thumbnails/` where its pixels changed, and runs the thumbnails generator. `--shots` crops screenshots already taken. The plugin now depends on `sharp`.
+
+#### Changed
+
+- **Dev Plugin:** `dev_seed_stores` now applies the file's settings before it seeds the stores, and `dev_force_time` also sets the pinned date and zeroes the seconds.
+- **Dev Plugin:** A dev build now never saves settings, so a save on top of the dev settings leaves the emulator's own on flash.
 
 ### Wearer-Visible Changes
 
@@ -200,7 +216,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - A face built with `PLUGIN_WEATHER` and no `WEATHER_TEMPERATURE_UNIT` key now gets its weather in the unit the wearer picked in the Pebble app. `readout_weather_temp` then writes the temperature with no unit letter.
 - Added plugin only weather for a face with no settings page of its own. Pass `clayConfig: []` to `startPebbleApp` and list `"providers": { "weather": ["plugin"] }`.
 - Added the supported plugins panel, which lists the plugins each of a face's kinds can read from, with links to their appstore listings, at the foot of the settings page of a face built with a plugin define.
-- Added `--plugins=<file>` and `--out=<file>` to `clay-preview`, to open the page on a phone with the plugins the file lists and to write the page to another file.
 - `startPebbleApp` now logs a warning at startup when a face's `customClay` is not written as a `function`, since Clay hands it the page as `this` and an arrow cannot take that.
 - Added the `--pf-accent`, `--pf-on-accent`, `--pf-surface`, `--pf-ink`, and `--pf-line` custom properties, which colour the location search and the supported plugins panel, and a keyboard focus ring on both. Set them on `:root` from the face's own component CSS. Each falls back to Clay's own colour.
 - Added `WxCond` and `wx_cond_parse` in `c/core/weather/wx_cond.h`, which turn the condition token into a number from `WX_COND_CLEAR` to `WX_COND_STRM`, or `WX_COND_UNKNOWN`. `WX_COND_EACH(X)` hands each condition's name to a face's macro, so an art table built from it stops the build when a new condition has no art.
@@ -236,10 +251,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** `paf build` now adds the message keys a face's features and plugin defines need, and fills in `sdkVersion`, `enableMultiJS`, and the `location` and `configurable` capabilities. Delete them from the face's appinfo and build with `--clean` once. A key the face still lists keeps its place. `build-manifests.ts` now takes only `--targets <face>`.
 - The phone now sends the watch its settings when the settle at launch rewrites a saved provider the face no longer lists, so a later restore from the watch brings back the settled provider.
 - **Breaking:** Only a store's init now decides whether it is live, so a store started with `live` false stays seeded through every reconfigure. Pass `live = true` at init for any store that has to start later, with `poll_min` 0 for a polling store, or with `minute_tick`, `beats`, and `hourly` all false for a clock, so it waits for the reconfigure.
-- **Breaking:** Dev mode is now a build flag. Build with `paf build <face> --dev`, and commit the harness in a `paf.dev.config.json` beside the unit's `paf.config.json`, such as `{ "walk": "themes", "clock": "08:00" }`. The unit still lists `"dev": {}`. Delete any `DEV_MODE`, `DEV_TIME_HOUR`, `DEV_TIME_MIN`, or `DEV_TAP_WALK_<NAME>` a face defines itself, with any `dev/dev_walk.h` include or walk mode macro of its own, and include the plugin's `dev/dev_hooks.h` in place of a face's own `dev_seed_stores`, `dev_start`, `dev_stop`, or `dev_force_time` declarations.
 - The provider pickers on the settings page now offer only the providers a face lists. A picker left with one provider is dropped, and a plugin only kind loses its picker and its custom rows. A saved provider the face no longer offers is rewritten to the default at launch. When a face moves weather or the calendar to `["plugin"]`, say so under Notes in its own changelog, since that deletes the wearer's saved city and API key, or the iCal link.
 - The location search's notes now take their colours from `--pf-note-accent`, as the plugin notes do.
-- `dev_walk_seed_stores` now also starts the stock, calendar, phone battery, and now playing stores seeded and empty on a face that declares `STOCK_STRIP`, `CALENDAR_STRIP`, the phone battery keys, or the now playing keys. A face that seeds one of those stores itself calls that store's init after `dev_walk_seed_stores`. Its weather seed now follows the wearer's temperature unit.
 - `system_store_add_link_listener` now also exists on a face that declares `WEATHER_REQUEST`, `STOCK_REQUEST`, or `CALENDAR_REQUEST`, and its list keeps one slot spare for a listener of the face's own.
 - The framework now registers `hiddenStoreComponent` for a page that holds a `hiddenStore` row, so a face can drop it from `components`.
 - A page from `buildConfig`, `weatherSection`, or `stocksSection` with weather or stocks now carries the framework's show and hide code, `dependentVisibility`, for its API key row's `visibleWhen`.
@@ -253,6 +266,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Fixed a weather, stock, calendar, location, or system store seeded with `live` false after a live start showing real readings over its seed, as in a screenshot build.
 - `time_store_reconfigure` now does nothing when the new `TimeConfig` runs the same tickers, so a settings save no longer runs an extra tick and repaint. `TimeConfig` now lives in `clock/time_config.h`, which `time_store.h` still brings in.
+
+### Plugin Changes
+
+#### Added
+
+- **Dev Plugin:** Added `--plugins=<file>` and `--out=<file>` to `clay-preview`, to open the page on a phone with the plugins the file lists and to write the page to another file.
+
+#### Changed
+
+- **Dev Plugin:** **Breaking:** Dev mode is now a build flag. Build with `paf build <face> --dev`, and commit the harness in a `paf.dev.config.json` beside the unit's `paf.config.json`, such as `{ "walk": "themes", "clock": "08:00" }`. The unit still lists `"dev": {}`. Delete any `DEV_MODE`, `DEV_TIME_HOUR`, `DEV_TIME_MIN`, or `DEV_TAP_WALK_<NAME>` a face defines itself, with any `dev/dev_walk.h` include or walk mode macro of its own, and include the plugin's `dev/dev_hooks.h` in place of a face's own `dev_seed_stores`, `dev_start`, `dev_stop`, or `dev_force_time` declarations.
+- **Dev Plugin:** `dev_walk_seed_stores` now also starts the stock, calendar, phone battery, and now playing stores seeded and empty on a face that declares `STOCK_STRIP`, `CALENDAR_STRIP`, the phone battery keys, or the now playing keys. A face that seeds one of those stores itself calls that store's init after `dev_walk_seed_stores`. Its weather seed now follows the wearer's temperature unit.
 
 ### Wearer-Visible Changes
 
@@ -297,13 +321,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** Removed `WeatherOpts.place` and the WeatherAPI provider's place-name lookup. Pass `coords` to a provider called directly, since WeatherAPI given only a place now answers No Location. The weather feature always passes `coords`, so a face using it needs no change.
 - **Breaking:** Removed `labelShort` from `ConditionEntry` and `ConditionFallback`. Nothing read it, since the watch's `wx_label_short` shows the token itself. Take it out of a face's own condition rows.
 - **Breaking:** Removed `layout/layout_role.h` with `layout_role_pick`, `LayoutRole`, and the `LAYOUT_ROLE_*` constants. Include `role/role.h` and call `role_pick`, which takes the same arguments. `LayoutRole` becomes `Role`, and `LAYOUT_ROLE_DAY` becomes `ROLE_DAY`, and likewise for `NIGHT`, `QUIET`, and `COUNT`.
-- **Breaking:** Removed the `wi`, `ux`, and `sr` keys at the start of an icon's `svg` in `resources/icons.json`. Every name is now read as a path from the sources folder. Write the folder in place of the key, so `wi/wi-day-sunny` becomes `weather-icons/svg/wi-day-sunny`, `ux/` becomes `uxwing/`, and `sr/` becomes `svgrepo/`. A name left on a key reads as a missing SVG, so the icon keeps its PNG with a warning, and a run where every SVG is missing stops.
 - **Breaking:** Removed the limit names with `MAX` in the middle. In C, use `ENGINE_SLOTS_MAX` for `ENGINE_MAX_SLOTS`, `STOCK_SLOTS_MAX` for `STOCK_MAX_SLOTS`, and `CALENDAR_SLOTS_MAX` for `CALENDAR_MAX_SLOTS`. In TypeScript, `WIRE_CAPS.FORECAST_MAX_COLS`, `WIRE_CAPS.STOCK_MAX_SLOTS`, and `WIRE_CAPS.CALENDAR_MAX_SLOTS` become `FORECAST_COLS_MAX`, `STOCK_SLOTS_MAX`, and `CALENDAR_SLOTS_MAX`, and the wire module's default export drops `STOCK_MAX_SLOTS`. A face that still defines `ENGINE_MAX_SLOTS`, in its appinfo's `defines` or in its own C, stops the build with a message naming `ENGINE_SLOTS_MAX`.
 - The face actions no longer point out an appinfo still in `config/`, where framework 3 kept it. A face they cannot find now stops with only its name.
 
 #### Fixed
 
 - Fixed a health store started again with `live` false still taking health events. The next heart rate or movement event replaced its seed with a live reading, so a face switching to its screenshot fixture could show real numbers. `health_store_init` now unsubscribes when it goes from live to seeded, and the first read of the hourly steps queued by a live start no longer lands on the seed.
+
+### Plugin Changes
+
+#### Removed
+
+- **Icons Plugin:** **Breaking:** Removed the `wi`, `ux`, and `sr` keys at the start of an icon's `svg` in `resources/icons.json`. Every name is now read as a path from the sources folder. Write the folder in place of the key, so `wi/wi-day-sunny` becomes `weather-icons/svg/wi-day-sunny`, `ux/` becomes `uxwing/`, and `sr/` becomes `svgrepo/`. A name left on a key reads as a missing SVG, so the icon keeps its PNG with a warning, and a run where every SVG is missing stops.
 
 ## [4.6.0] - 2026-10-16
 
@@ -342,18 +371,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Added
 
 - Added a theme picker that shows a picture of each theme. Pass `previews` to the `theme` section of `buildConfig`, a map from a theme's option value to a list of data URLs. The picker then keeps the dropdown and draws the chosen theme's pictures under it, a theme with a day and a night shot getting both side by side. It still saves under `APPEARANCE_THEME` exactly as the plain select. The `themePreview` component is registered only when a page holds one, so a face without previews is unchanged.
-- Added a `theme-previews` generator and check to the `thumbnails` plugin. A face lists the plugin and keeps a `resources/theme-previews.json`, which maps each theme's value to a picture path or a list of paths relative to the face folder. `paf gen <face> theme-previews` base64-encodes them into `src/pkjs/clay/theme-previews.g.js`, which the face's `config.ts` imports and passes as `theme.previews`. `paf check` fails when the committed file is stale or a path is missing or is not a PNG.
 - Added `role_pick` and the `Role` enum in `role/role.h`, for a face that shows a different look by day, after dark, and during Quiet Time. It takes each trigger as a pair, whether it is firing and whether a look is assigned to it, and returns `ROLE_DAY`, `ROLE_NIGHT`, or `ROLE_QUIET`, with Quiet Time winning over night and a trigger with nothing assigned falling through to the next. It is host-tested and touches no SDK.
 - Added `rotate_index` in `clock/rotate.h`, which picks which of a set is up now on a timed rotation. Pass it the clock's `tm_year`, `tm_yday`, `tm_hour`, and `tm_min`, how many minutes each one is shown for, and how many there are, and it returns the index, worked out from the time rather than a saved counter so it survives a restart. It holds steady through a slot and steps by one on each boundary, except at a non-leap new year, which it counts as a 366-day year so the one boundary there jumps by more than a step.
 - Added `visibleWhen` on a Clay config item, which shows it only while another control holds one of the given values. Pass one condition `{ key, in }` or a list that all have to hold, with `key` the controlling item's messageKey and `in` the values that reveal the row (a toggle's are `true`/`false`). A page that declares any gets the framework's show and hide as its custom function, so a row that does nothing under the current choice is off the page rather than sitting there looking live. A face that passes its own `customClay` owns the page and wires the showing itself.
 
-#### Changed
-
-- The `thumbnails` plugin now offers two generators, `thumbnails` for the layout builder's panel pictures and `theme-previews` for the theme picker. A face lists the plugin for either.
-
 #### Deprecated
 
 - Deprecated `layout_role_pick`, `LayoutRole`, and the `LAYOUT_ROLE_*` constants in `layout/layout_role.h`. They are now thin aliases for `role_pick`, `Role`, and the `ROLE_*` constants in `role/role.h`, which do the same job for any face rather than only a layout one. The old names still work and go at the next major release. Move to `role_pick` and `Role` when convenient.
+
+### Plugin Changes
+
+#### Added
+
+- **Thumbnails Plugin:** Added a `theme-previews` generator and check to the `thumbnails` plugin. A face lists the plugin and keeps a `resources/theme-previews.json`, which maps each theme's value to a picture path or a list of paths relative to the face folder. `paf gen <face> theme-previews` base64-encodes them into `src/pkjs/clay/theme-previews.g.js`, which the face's `config.ts` imports and passes as `theme.previews`. `paf check` fails when the committed file is stale or a path is missing or is not a PNG.
+
+#### Changed
+
+- **Thumbnails Plugin:** The `thumbnails` plugin now offers two generators, `thumbnails` for the layout builder's panel pictures and `theme-previews` for the theme picker. A face lists the plugin for either.
 
 ## [4.3.0] - 2026-10-11
 
@@ -385,25 +419,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `beats_has_token` and `beats_expand_token` find the .beats token with `strncmp`, which the firmware exports, rather than `strstr`, which it does not. A face that references the date readout no longer links about 1.4 KB of newlib for it.
 - `setup-pebble` now warns when a `node-version` it ignores differs from the Node the face's framework records, the same as for the SDK and pebble-tool, and when the Node on the path before it, normally the one `paf sync` installed the unit under, is a different major from the one the build runs on. Its `node-version` input now defaults to empty, which takes 24 when there is no face.
-- The icons plugin's check, which `paf check` runs, now also fails when a committed icon PNG is missing, is not a PNG, or is not the size `resources/icons.json` asks for. A size changed in `icons.json` without a `paf gen <face> icons` no longer passes and ships the old icon. It reads the size from each PNG's header, so it still needs no sources folder. Its line in the output is now `icons:` rather than `icon media:`.
-- The `dev` plugin's `clay-preview` now stops on an argument it does not know and names it, rather than ignoring it. So `--settings saved.json`, with a space in place of the `=`, no longer previews a fresh install. `-h` and `--help` print the usage, which now lists `--settings=<file>`.
-- The icons generator now reads an icon's `svg` in `resources/icons.json` as a path from the `sources` folder, without the `.svg`, so `status/bluetooth-on` reads `status/bluetooth-on.svg`. The SVGs can sit in any folder under `sources`, at any depth, and a name that leads outside `sources` stops the run. The run stops when `sources` holds none of the SVGs a run's icons read, rather than none of the three fixed sets. So `paf gen <face> icons` on a face whose SVGs are all missing now stops, where it kept every PNG with a warning each.
 
 #### Deprecated
 
 - Deprecated `WeatherOpts.place` and the WeatherAPI place-name lookup it feeds. The weather feature always passes `coords`, so nothing sets it. It goes at the next major release. Pass `coords` to a provider called directly.
 - Deprecated `labelShort` on `ConditionEntry` and `ConditionFallback`. Nothing reads it, since the watch's `wx_label_short` shows the token itself, so it is now optional and the framework's rows leave it out. It goes at the next major release.
-- Deprecated the `wi`, `ux`, and `sr` keys at the start of an icon's `svg`. They still read from `weather-icons/svg/`, `uxwing/`, and `svgrepo/`, and `paf gen <face> icons` warns once for each key a face uses. Write the folder in place of the key, so `wi/wi-day-sunny` becomes `weather-icons/svg/wi-day-sunny`. The keys go at the next major release. A name whose SVG is there as written, such as `ux/thermometer-icon` with a real `ux/` folder holding it, reads from there instead.
 - Deprecated the limits named with `MAX` in the middle, for names that end in `MAX` like `FONT_SLOTS_MAX` and `ICON_CACHE_MAX`. In C, `ENGINE_MAX_SLOTS` is now `ENGINE_SLOTS_MAX`. In C and in `WIRE_CAPS`, `STOCK_MAX_SLOTS` is now `STOCK_SLOTS_MAX` and `CALENDAR_MAX_SLOTS` is `CALENDAR_SLOTS_MAX`. `WIRE_CAPS.FORECAST_MAX_COLS` is `WIRE_CAPS.FORECAST_COLS_MAX`, and the wire module's default export carries `STOCK_SLOTS_MAX` beside the deprecated `STOCK_MAX_SLOTS`. The old names still work, including `ENGINE_MAX_SLOTS` in a face's `defines`, and go at the next major release. A face that sets both engine names has to set them to the same value. Move to the new names when convenient.
 
 #### Fixed
 
-- Fixed a `url()` in a theme's `frame/css/theme_<name>.css` breaking in `paf gen <face> background`. The bake inlined the sheet, so the address resolved from `frame/` rather than `frame/css/`. The sheet is now added as a link, the same as a browser loads it.
-- Fixed `paf gen <face> icons` stopping on an SVG whose root sets its own `stroke` but no `fill`. Making it white gave the root a second `stroke`, which sharp refuses. A root now gets only the white attributes it does not already set, as an attribute or in its `style`, and gets a white `color` so a glyph drawn with `currentColor` comes out white rather than black. A black `color`, and a black colour inside a `style`, is now whitened like a black `fill` or `stroke`.
-- Fixed `paf check` and `paf gen <face> thumbnails` saying a thumbnail PNG names no module when the module exists and only its size is not one the face lists in `thumbnailSizes`. The line now names the size and the sizes the face lists, a PNG named for a module with no size after it gets a line of its own, and neither is also reported as a module with no thumbnail. A `thumbnailSizes` entry that is empty or holds a dash now stops the run, since no thumbnail's name can carry it.
-- Fixed `clay-preview` showing a working settings page for a face that leaves a component out of `startPebbleApp`, where the phone stops with "The component: X is not registered" and the page never opens. The preview now loads the face's `src/pkjs/index.ts` and takes the page, the components, and `customClay` from what it hands `startPebbleApp`, and registers only those and the location component, as the phone does. A face with no `src/pkjs/index.ts`, or one whose `index.ts` never calls `startPebbleApp`, stops the preview.
 - Fixed a settings struct that could not be saved whole going unnoticed. `settings_init` now logs an error naming the key for a struct over 256 bytes, and `settings_save` logs one when a struct is not written whole, which also happens when the app's persist storage is full. A failed save is not tried again.
 - Fixed a text slot with a `zone` and no `text` function crashing the watch on its first repaint. The slot now stays empty, the same as a draw slot with no `draw`.
+
+### Plugin Changes
+
+#### Changed
+
+- **Icons Plugin:** The icons plugin's check, which `paf check` runs, now also fails when a committed icon PNG is missing, is not a PNG, or is not the size `resources/icons.json` asks for. A size changed in `icons.json` without a `paf gen <face> icons` no longer passes and ships the old icon. It reads the size from each PNG's header, so it still needs no sources folder. Its line in the output is now `icons:` rather than `icon media:`.
+- **Dev Plugin:** The `dev` plugin's `clay-preview` now stops on an argument it does not know and names it, rather than ignoring it. So `--settings saved.json`, with a space in place of the `=`, no longer previews a fresh install. `-h` and `--help` print the usage, which now lists `--settings=<file>`.
+- **Icons Plugin:** The icons generator now reads an icon's `svg` in `resources/icons.json` as a path from the `sources` folder, without the `.svg`, so `status/bluetooth-on` reads `status/bluetooth-on.svg`. The SVGs can sit in any folder under `sources`, at any depth, and a name that leads outside `sources` stops the run. The run stops when `sources` holds none of the SVGs a run's icons read, rather than none of the three fixed sets. So `paf gen <face> icons` on a face whose SVGs are all missing now stops, where it kept every PNG with a warning each.
+
+#### Deprecated
+
+- **Icons Plugin:** Deprecated the `wi`, `ux`, and `sr` keys at the start of an icon's `svg`. They still read from `weather-icons/svg/`, `uxwing/`, and `svgrepo/`, and `paf gen <face> icons` warns once for each key a face uses. Write the folder in place of the key, so `wi/wi-day-sunny` becomes `weather-icons/svg/wi-day-sunny`. The keys go at the next major release. A name whose SVG is there as written, such as `ux/thermometer-icon` with a real `ux/` folder holding it, reads from there instead.
+
+#### Fixed
+
+- **Frame Plugin:** Fixed a `url()` in a theme's `frame/css/theme_<name>.css` breaking in `paf gen <face> background`. The bake inlined the sheet, so the address resolved from `frame/` rather than `frame/css/`. The sheet is now added as a link, the same as a browser loads it.
+- **Icons Plugin:** Fixed `paf gen <face> icons` stopping on an SVG whose root sets its own `stroke` but no `fill`. Making it white gave the root a second `stroke`, which sharp refuses. A root now gets only the white attributes it does not already set, as an attribute or in its `style`, and gets a white `color` so a glyph drawn with `currentColor` comes out white rather than black. A black `color`, and a black colour inside a `style`, is now whitened like a black `fill` or `stroke`.
+- **Thumbnails Plugin:** Fixed `paf check` and `paf gen <face> thumbnails` saying a thumbnail PNG names no module when the module exists and only its size is not one the face lists in `thumbnailSizes`. The line now names the size and the sizes the face lists, a PNG named for a module with no size after it gets a line of its own, and neither is also reported as a module with no thumbnail. A `thumbnailSizes` entry that is empty or holds a dash now stops the run, since no thumbnail's name can carry it.
+- **Dev Plugin:** Fixed `clay-preview` showing a working settings page for a face that leaves a component out of `startPebbleApp`, where the phone stops with "The component: X is not registered" and the page never opens. The preview now loads the face's `src/pkjs/index.ts` and takes the page, the components, and `customClay` from what it hands `startPebbleApp`, and registers only those and the location component, as the phone does. A face with no `src/pkjs/index.ts`, or one whose `index.ts` never calls `startPebbleApp`, stops the preview.
 
 ### Wearer-Visible Changes
 
@@ -426,7 +471,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `io/appmessage/appmessage_features.h`, which defines `APPMESSAGE_HAS_WEATHER` and `APPMESSAGE_HAS_LOCATION` from the face's message keys. A face's own C can read them in place of testing the `HAS_MESSAGE_KEY_*` defines itself.
 - Added `isMainScript` in `tools/shared/entry.ts`, which a tool calls as `if (isMainScript(import.meta))` to run only when started as the script. A face's own tools can use it in place of reading `import.meta.main`.
 - Added `tools/clay-components/check-components.ts`, `plugins/icons/check-icons.ts`, and `plugins/thumbnails/check-thumbnails.ts`, which `paf check` runs to find a face's committed Clay components, icon media, and thumbnails that are out of date. Each checks every face on its own, so one broken face is reported without hiding the rest, and a check that finds no faces to look at fails rather than passing.
-- Added the `code-style` plugin, which holds the house ESLint style and the ESLint packages, with `jiti` so an editor's ESLint can load a `.ts` config. List it under `plugins` and `paf lint` lints the unit with it, so a unit needs no `eslint.config.ts`, no `lint` script, and no ESLint packages of its own. A unit that adds rules keeps a `config/eslint.config.ts` that spreads the default export of `paf/plugins/code-style/eslint.config.ts` and adds to it. One at the unit's root is read too, which is where an editor's ESLint looks, and the one in `config/` wins when a unit has both. `paf lint` prints which config it used. `paf format` runs Prettier over a unit's CSS, JSON, and YAML once the unit sets `"plugins": { "code-style": { "prettier": true } }`, and prints one line and passes until then. It never touches a generated file, `pebble.appinfo.json`, `package.json`, `package-lock.json`, `paf.config.json`, `resources/icons.json`, or a folder whose name starts with a dot other than `.github/`. A unit with no TypeScript passes `paf lint` with one line saying so.
 - Added `tsconfig.spec.json` and `tsconfig.tools.json`, which hold the compiler options for a face's specs and for its tools and configs that run under Node. A face's own spec and tools tsconfigs extend them from `paf/` and set their own `include` and `exclude`. The spec one brings in `ts/pkjs/pebble.d.ts` through its `files`, so a face's spec tsconfig no longer lists it and sets no `files` of its own.
 - **Breaking:** Added `ts/generated.d.ts`, which types every `*.g` module, whether a framework generator or the unit's own wrote it. The pkjs build takes it in from `paf/ts/`, and so does a face tsconfig that includes `paf/ts/**/*.d.ts`. Delete the face's own `declare module '*.g'`, since two copies clash and stop the build.
 
@@ -438,24 +482,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** A face's appinfo is now `pebble.appinfo.json` at the face's own root rather than `config/pebble.appinfo.json`, and a face is a folder holding one, at the unit's root or beside a family's `core/`. Move each face's appinfo up a folder. The face actions at this tag name one still in `config/`. A unit whose root is a face is that one face, so a face folder beside a `core/` under it is no longer found. A unit's `config/` is left for its own tool configs, such as its tsconfigs and `vitest.config.ts`.
 - **Breaking:** `tools/faces.ts`, `tools/paths.ts`, and `tools/files.ts` are now in `tools/shared/`, beside the new `checks.ts` and `tool-error.ts`. Point a face tool's imports there, as in `paf/tools/shared/faces.ts`.
 - **Breaking:** The frame, icons, and thumbnails generators and the dev tools are now plugins, each in its own folder with its own `package.json`: `plugins/frame/`, `plugins/icons/`, `plugins/thumbnails/`, and `plugins/dev/`. List the ones a unit uses under `plugins` in `paf.config.json`. `paf gen <face> <kind>` runs a generator, so drop a face's `gen:frame`, `gen:icons`, `gen:thumbnails`, and `gen:clay` scripts. Each plugin's dependencies install with it, so a unit without `frame` no longer installs Playwright.
-- **Breaking:** `css/pebble-colors.css` is now part of the `frame` plugin, at `plugins/frame/css/pebble-colors.css`. Point each frame HTML's stylesheet link there.
-- **Breaking:** The Clay preview and the tap walk are now part of the `dev` plugin, as `plugins/dev/clay-preview.ts` and `plugins/dev/tap-walk.ts`, and run as `paf tool <face> clay-preview` and `paf tool <face> tap-walk`. Drop the face's `dev:clay` script. The preview page lands at `paf/plugins/dev/clay-preview.html`. The tap walk takes the face as its first argument and walks whatever is on the emulator. `--install` puts the face's latest build there first rather than building one. Run `paf build <face>` before it. `--target` picks the build for a face that ships several targets, and is refused without `--install`.
-- **Breaking:** The dev harness's C now comes with the `dev` plugin, at `plugins/dev/c/dev/`. The waf build stages each folder under a plugin's `c/` beside the framework's own C, so `#include "dev/dev_walk.h"` resolves as before. A face without the plugin still builds while its `DEV_MODE` is 0. List `dev` under `plugins` to turn `DEV_MODE` on.
-- **Breaking:** The icons generator now reads its SVG folder from the `icons` plugin's `sources` setting in the unit's `paf.config.json`, relative to the unit, or from the `ICON_SOURCES` environment variable. It no longer reads `framework.iconSources` from the unit's `package.json`, so move the path to `"plugins": { "icons": { "sources": "<folder>" } }`.
 - **Breaking:** `module-thumbnails.g.js` and each generated Clay component now open with a header naming the `paf gen` command that makes them, rather than the generator's own file path, so the header stays the same wherever the generator lives. A face's committed copies read as stale until they are generated again.
 - **Breaking:** A face that declares only one of `LOCATION_LATITUDE` and `LOCATION_LONGITUDE` now fails to build, with the missing key named. Declare both, or neither.
 - **Breaking:** `resolveTargets` in `tools/manifest/build-manifests.ts` takes the face's name as its second argument, which its errors name. Pass it wherever a face's own tool calls it, or call the new `faceTargetNames(face)`, which reads the appinfo too.
-- **Breaking:** `buildMedia`, `replaceMediaArray`, `resourceName`, `IconManifest`, and `IconSpec` are now exported from `plugins/icons/media.ts` rather than `plugins/icons/generate-icons.ts`. Import them from there.
-- **Breaking:** `iconSourcesDir` in `plugins/icons/generate-icons.ts` takes the unit's parsed `paf.config.json`, typed `IconSourcesConfig`, in place of its `package.json` and `IconSourcesPkg`.
-- The tap walk refuses a `--target` the face does not declare, and an `--out` outside the unit or holding files the walk did not write, since the folder is emptied first. It stops with the dev switch to check when the first tap changes nothing. A pebble step that fails stops the walk with pebble's own message and exit code. A step still running after 30 seconds stops it too, or after 3 minutes for the install or the first screenshot, either of which may boot the emulator, so a stuck emulator cannot hang the walk.
-- The dev harness now fills the weather and location stores only for a face that declares their keys, and sets them up empty otherwise, so a face without weather no longer boots the harness with a reading it cannot show.
 - The waf build stops when two plugins have a `c/` folder of the same name, when a plugin has a `c/core` or `c/pebble` folder, when a plugin has a C source or header straight inside its `c/`, or when a plugin's C file has the same path as one of the face's own, the framework's, or the family core's. Other files straight inside a plugin's `c/` are skipped.
 - `project/toolchain.json` is now `toolchain.json` at the top of the framework, and the `setup-pebble` action at this tag reads it there.
 - **Breaking:** `config/tsconfig.pkjs.json` is now `tsconfig.pkjs.json` at the top of the framework. Point a unit tsconfig that extends it at `paf/tsconfig.pkjs.json`.
-- **Breaking:** The house ESLint style now wants a blank line before and after every block, and after a run of `const` or `let` declarations. Run `paf lint --fix` to add them.
-- **Breaking:** The `frame` plugin's generator is now `background`, named after what it writes like the other generators, and its script is `generate-background.ts`. Run `paf gen <face> background` wherever a script or a README runs `paf gen <face> frame`. The plugin, a face's `frame/` folder, and `frame/frame.config.json` keep their names.
-- **Breaking:** The background generator takes its frame and theme as flags. Pass the frame as `--frame <name>`, since a frame named without the flag now stops the run. Pass `--theme <name>` or `--theme all` on a face with themes, which no longer bakes without one. Each flag takes a name or `all`, and `all` bakes every one the face has. `paf gen <face> all` passes `--frame all --theme all`.
-- The background generator now stops on a frame or a theme the face does not have and names the ones it has. It also stops on a named theme for a face without themes, and on a frame page or a theme sheet called `all`. A face with themes bakes one frame, since a themed background is named after its theme alone, so `--frame all` stops on one with more. Only a frame with a page for a platform the face targets counts.
 
 #### Removed
 
@@ -465,13 +497,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** Removed `tools/typecheck.ts` from what ships. It now checks only the framework's own projects, and `paf typecheck` runs `tsc -p` on each tsconfig a unit holds outside `paf/`. Add a tsconfig for any builder, tools, or spec code the face wants checked, and give each its own `include` and `exclude`. A spec or tools one extends `paf/tsconfig.spec.json` or `paf/tsconfig.tools.json` for the compiler options it needs. One that extends `paf/tsconfig.json` without an `include` checks the framework's `ts/` rather than the face, and one without an `exclude` takes the framework's, which leaves the face's specs in.
 - **Breaking:** Removed `tools/build-conditions.ts` from what ships. It writes headers into the framework's own `c/` tree, and those are committed in the framework, so a face never needs it. Drop the `build:conditions` script from a face's `package.json`.
 - **Breaking:** Removed `build.sh`. Replace anything that runs `bash lib/build.sh <face>` with `paf build <face>`.
-- **Breaking:** Removed `tools/dev/tap-walk.sh`. Replace anything that runs it with `paf tool <face> tap-walk`.
 - **Breaking:** Removed `listFaces` from `tools/shared/faces.ts` and the `--faces` option of `tools/manifest/build-manifests.ts`. Use `listFaceNames` for either. Also removed the `builderDir`, `resolveIn`, `overlayPlugin`, `bundleInitialize`, `generateAll`, `indentBlock`, `buildTemplate`, and `buildStyle` exports of `tools/clay-components/generate-components.ts`, which only the generator itself uses.
 - **Breaking:** Removed the framework's specs from a face's test run, including the ones that checked a face's committed Clay components, icon media, and thumbnails. Those checks are now scripts, so add `paf check` to a face repo's CI beside `paf test`, `paf lint`, and `paf typecheck`.
 
 #### Fixed
 
 - Fixed every framework tool exiting 0 having done nothing under a Node with no `import.meta.main`, which is 22 before 22.18, any 23, and 24 before 24.2. A generator reported success with nothing written, and `build.sh` stopped saying the unit had no faces. Each tool now stops with exit code 1 and names the Nodes that have it.
+
+### Plugin Changes
+
+#### Added
+
+- **Code Style Plugin:** Added the `code-style` plugin, which holds the house ESLint style and the ESLint packages, with `jiti` so an editor's ESLint can load a `.ts` config. List it under `plugins` and `paf lint` lints the unit with it, so a unit needs no `eslint.config.ts`, no `lint` script, and no ESLint packages of its own. A unit that adds rules keeps a `config/eslint.config.ts` that spreads the default export of `paf/plugins/code-style/eslint.config.ts` and adds to it. One at the unit's root is read too, which is where an editor's ESLint looks, and the one in `config/` wins when a unit has both. `paf lint` prints which config it used. `paf format` runs Prettier over a unit's CSS, JSON, and YAML once the unit sets `"plugins": { "code-style": { "prettier": true } }`, and prints one line and passes until then. It never touches a generated file, `pebble.appinfo.json`, `package.json`, `package-lock.json`, `paf.config.json`, `resources/icons.json`, or a folder whose name starts with a dot other than `.github/`. A unit with no TypeScript passes `paf lint` with one line saying so.
+
+#### Changed
+
+- **Frame Plugin:** **Breaking:** `css/pebble-colors.css` is now part of the `frame` plugin, at `plugins/frame/css/pebble-colors.css`. Point each frame HTML's stylesheet link there.
+- **Dev Plugin:** **Breaking:** The Clay preview and the tap walk are now part of the `dev` plugin, as `plugins/dev/clay-preview.ts` and `plugins/dev/tap-walk.ts`, and run as `paf tool <face> clay-preview` and `paf tool <face> tap-walk`. Drop the face's `dev:clay` script. The preview page lands at `paf/plugins/dev/clay-preview.html`. The tap walk takes the face as its first argument and walks whatever is on the emulator. `--install` puts the face's latest build there first rather than building one. Run `paf build <face>` before it. `--target` picks the build for a face that ships several targets, and is refused without `--install`.
+- **Dev Plugin:** **Breaking:** The dev harness's C now comes with the `dev` plugin, at `plugins/dev/c/dev/`. The waf build stages each folder under a plugin's `c/` beside the framework's own C, so `#include "dev/dev_walk.h"` resolves as before. A face without the plugin still builds while its `DEV_MODE` is 0. List `dev` under `plugins` to turn `DEV_MODE` on.
+- **Icons Plugin:** **Breaking:** The icons generator now reads its SVG folder from the `icons` plugin's `sources` setting in the unit's `paf.config.json`, relative to the unit, or from the `ICON_SOURCES` environment variable. It no longer reads `framework.iconSources` from the unit's `package.json`, so move the path to `"plugins": { "icons": { "sources": "<folder>" } }`.
+- **Icons Plugin:** **Breaking:** `buildMedia`, `replaceMediaArray`, `resourceName`, `IconManifest`, and `IconSpec` are now exported from `plugins/icons/media.ts` rather than `plugins/icons/generate-icons.ts`. Import them from there.
+- **Icons Plugin:** **Breaking:** `iconSourcesDir` in `plugins/icons/generate-icons.ts` takes the unit's parsed `paf.config.json`, typed `IconSourcesConfig`, in place of its `package.json` and `IconSourcesPkg`.
+- **Dev Plugin:** The tap walk refuses a `--target` the face does not declare, and an `--out` outside the unit or holding files the walk did not write, since the folder is emptied first. It stops with the dev switch to check when the first tap changes nothing. A pebble step that fails stops the walk with pebble's own message and exit code. A step still running after 30 seconds stops it too, or after 3 minutes for the install or the first screenshot, either of which may boot the emulator, so a stuck emulator cannot hang the walk.
+- **Dev Plugin:** The dev harness now fills the weather and location stores only for a face that declares their keys, and sets them up empty otherwise, so a face without weather no longer boots the harness with a reading it cannot show.
+- **Code Style Plugin:** **Breaking:** The house ESLint style now wants a blank line before and after every block, and after a run of `const` or `let` declarations. Run `paf lint --fix` to add them.
+- **Frame Plugin:** **Breaking:** The `frame` plugin's generator is now `background`, named after what it writes like the other generators, and its script is `generate-background.ts`. Run `paf gen <face> background` wherever a script or a README runs `paf gen <face> frame`. The plugin, a face's `frame/` folder, and `frame/frame.config.json` keep their names.
+- **Frame Plugin:** **Breaking:** The background generator takes its frame and theme as flags. Pass the frame as `--frame <name>`, since a frame named without the flag now stops the run. Pass `--theme <name>` or `--theme all` on a face with themes, which no longer bakes without one. Each flag takes a name or `all`, and `all` bakes every one the face has. `paf gen <face> all` passes `--frame all --theme all`.
+- **Frame Plugin:** The background generator now stops on a frame or a theme the face does not have and names the ones it has. It also stops on a named theme for a face without themes, and on a frame page or a theme sheet called `all`. A face with themes bakes one frame, since a themed background is named after its theme alone, so `--frame all` stops on one with more. Only a frame with a page for a platform the face targets counts.
+
+#### Removed
+
+- **Dev Plugin:** **Breaking:** Removed `tools/dev/tap-walk.sh`. Replace anything that runs it with `paf tool <face> tap-walk`.
 
 ## [3.0.0] - 2026-09-27
 
