@@ -387,15 +387,19 @@ async function openBuilt(dir: string): Promise<JSDOM> {
   return dom;
 }
 
-/** A plugin app whose page config is this source, in a folder of its own. */
-function pluginWithConfig(source: string): string {
+/** A plugin app whose page config is this source, in a folder of its own, with these usesPermissions in its appinfo. */
+function pluginWithConfig(source: string, usesPermissions?: unknown): string {
   const dir = tempDir('paf-plugin-components-');
 
   fs.mkdirSync(path.join(dir, 'src', 'config'), { recursive: true });
   fs.writeFileSync(path.join(dir, 'src', 'config', 'index.ts'), source);
+  fs.writeFileSync(path.join(dir, 'pebble.appinfo.json'), JSON.stringify(usesPermissions === undefined ? {} : { usesPermissions }));
 
   return dir;
 }
+
+/** The Internet entry a plugin app with a location search lists, as an appinfo writes it. */
+const OPEN_METEO = [{ name: 'Internet', parameters: { domains: ['open-meteo.com'] }, reason: 'To search for places', required: true }];
 
 /** The framework's location search, as a plugin app's config imports it. */
 const LOCATION_SEARCH = path.join(import.meta.dirname, '..', '..', 'ts', 'clay', 'location-component.ts').split(path.sep).join('/');
@@ -403,13 +407,13 @@ const LOCATION_SEARCH = path.join(import.meta.dirname, '..', '..', 'ts', 'clay',
 /** A page holding one location search row. */
 const SEARCH_PAGE: ClayConfigItem[] = [{ type: 'locationsearch', id: 'where', label: 'Place' }];
 
-/** A plugin app whose page holds a location search and passes the framework's. */
-function searchPlugin(): string {
+/** A plugin app whose page holds a location search and passes the framework's, listing Open-Meteo unless told otherwise. */
+function searchPlugin(usesPermissions: unknown = OPEN_METEO): string {
   return pluginWithConfig([
     `import locationSearch from '${LOCATION_SEARCH}';`,
     `export const clayConfig = ${JSON.stringify(SEARCH_PAGE)};`,
     'export const components = [locationSearch];',
-  ].join('\n'));
+  ].join('\n'), usesPermissions);
 }
 
 describe('components on a plugin page', () => {
@@ -441,9 +445,46 @@ describe('components on a plugin page', () => {
 
   /** The search borrows Clay's text box look, which a page with no text box of its own would never carry, so it showed as a plain white field. */
   test("brings Clay's text box style to a page with no text box", () => {
-    const result = renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent] }, 'search-plugin');
+    const result = renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent], usesPermissions: OPEN_METEO }, 'search-plugin');
 
     expect(result).toContain('.component-input .label {');
+  });
+
+  /**
+   * On Android the Pebble app holds a plugin's page to the sites its appinfo lists, so a search with
+   * Open-Meteo left off found no city at all and nothing told the developer why.
+   */
+  test('refuses a location search whose appinfo does not list open-meteo.com', async () => {
+    const source = await readPluginPage(searchPlugin([{ name: 'Internet', parameters: { domains: ['example.com'] } }]), 'search-plugin');
+
+    const result = () => renderPluginPage(source, 'search-plugin');
+
+    expect(result).toThrow(/search-plugin's settings page has a locationsearch row, which calls geocoding-api.open-meteo.com and api.open-meteo.com, but its appinfo usesPermissions does not reach geocoding-api.open-meteo.com or api.open-meteo.com under Internet/);
+  });
+
+  /** The two hosts the search calls, listed by name, work on the phone, so refusing them would stop a page that works. */
+  test('takes the two hosts the search calls listed by name', () => {
+    const usesPermissions = [{ name: 'Internet', parameters: { domains: ['geocoding-api.open-meteo.com', 'api.open-meteo.com'] } }];
+
+    const result = () => renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent], usesPermissions }, 'search-plugin');
+
+    expect(result).not.toThrow();
+  });
+
+  /** With only the geocoder listed the search finds places, but a pick never gets its time zone, so the build names the host left off. */
+  test('refuses a search with one of its two hosts listed and names the other', () => {
+    const usesPermissions = [{ name: 'Internet', parameters: { domains: ['geocoding-api.open-meteo.com'] } }];
+
+    const result = () => renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent], usesPermissions }, 'search-plugin');
+
+    expect(result).toThrow(/does not reach api.open-meteo.com under Internet/);
+  });
+
+  /** An Internet entry naming no site lets the phone reach every site, Open-Meteo included, so refusing it would stop a page that works. */
+  test('takes an Internet entry naming no site as reaching open-meteo.com', () => {
+    const result = () => renderPluginPage({ clayConfig: SEARCH_PAGE, components: [locationComponent], usesPermissions: ['Internet'] }, 'search-plugin');
+
+    expect(result).not.toThrow();
   });
 
   /** A row nothing draws builds without a word and opens as a blank page on the phone. */
@@ -451,6 +492,42 @@ describe('components on a plugin page', () => {
     const result = () => renderPluginPage({ clayConfig: SEARCH_PAGE }, 'search-plugin');
 
     expect(result).toThrow(/search-plugin's settings page has a locationsearch row, which no component draws. Import the framework's location search/);
+  });
+
+  /** A row with no type ahead of the search hid the search from the check, so the page built and then opened blank. */
+  test('names the undrawn row past one with no type', () => {
+    const clayConfig = [{ label: 'x' }, ...SEARCH_PAGE] as ClayConfigItem[];
+
+    const result = () => renderPluginPage({ clayConfig }, 'search-plugin');
+
+    expect(result).toThrow(/search-plugin's settings page has a locationsearch row, which no component draws/);
+  });
+
+  /** Clay builds the rows of a list that sits where a row goes, so a page holding one opens as it should and the build has to let it through. */
+  test('builds a page holding a list of rows where a row goes', () => {
+    const clayConfig = [[{ type: 'heading', defaultValue: 'Place' }, ...SEARCH_PAGE]] as unknown as ClayConfigItem[];
+
+    const result = renderPluginPage({ clayConfig, components: [locationComponent], usesPermissions: OPEN_METEO }, 'search-plugin');
+
+    expect(result).toContain('pf-loc-search');
+  });
+
+  /** A search inside such a list reaches Open-Meteo the same way, so its plugin app's permissions are checked there too. */
+  test('checks the permissions of a search inside a list of rows', () => {
+    const clayConfig = [[...SEARCH_PAGE]] as unknown as ClayConfigItem[];
+
+    const result = () => renderPluginPage({ clayConfig, components: [locationComponent] }, 'search-plugin');
+
+    expect(result).toThrow(/does not reach geocoding-api.open-meteo.com or api.open-meteo.com/);
+  });
+
+  /** Clay stops the page at a row with no type as it does at one nothing draws, so the build stops on it too. */
+  test('refuses a row with no type', () => {
+    const clayConfig = [{ label: 'x' }] as ClayConfigItem[];
+
+    const result = () => renderPluginPage({ clayConfig }, 'search-plugin');
+
+    expect(result).toThrow(/search-plugin's settings page has a row with no type/);
   });
 
   /** Clay registers each component by its name, so anything else stops the page in the webview rather than the build. */

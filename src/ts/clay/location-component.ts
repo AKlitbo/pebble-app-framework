@@ -466,6 +466,8 @@ export default {
           return;
         }
 
+        let changed = false;
+
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
             const data = JSON.parse(xhr.responseText);
@@ -487,8 +489,8 @@ export default {
               offset: offsetMinutes,
               tz: zone,
             });
-            const changed = resolved !== hiddenEl.value;
 
+            changed = resolved !== hiddenEl.value;
             hiddenEl.value = resolved;
 
             // a place the geocoder gave no zone for only gets one here. saving before this lands
@@ -496,11 +498,13 @@ export default {
             if (zone) {
               noteEl.style.display = 'none';
             }
-
-            if (changed) {
-              self.trigger('change');
-            }
           } catch (error) {}
+        }
+
+        // outside the catch, which is only there for an answer that is not JSON, so a page handler
+        // that throws is not swallowed with it
+        if (changed) {
+          self.trigger('change');
         }
       };
 

@@ -55,7 +55,7 @@ The page's storage is not the plugin's, so the page asks the plugin for the save
 
 A row that names watch capabilities is refused, since a plugin's page opens with no watch behind it.
 
-`src/config/index.ts` can also export `components`, the Clay components its rows need beyond Clay's own, the way a face passes `components` to `startPebbleApp`. The build registers them after the framework's page rules, and stops on a row that no component draws, since Clay would leave the page blank at that row. The framework's location search is one, for a `locationsearch` row:
+`src/config/index.ts` can also export `components`, the Clay components its rows need beyond Clay's own, the way a face passes `components` to `startPebbleApp`. The build registers them after the framework's page rules, and stops on a row that no component draws, or a row with no type, since Clay would leave the page blank at that row. The framework's location search is one, for a `locationsearch` row:
 
 ```ts
 import locationSearch from '../../paf/ts/clay/location-component';
@@ -63,7 +63,7 @@ import locationSearch from '../../paf/ts/clay/location-component';
 export const components = [locationSearch];
 ```
 
-The build brings Clay's own text box with the search on a page that has none, for its look, as [The Location Search](settings-page.md#the-location-search) covers, and Clay's own select with a `themePreview` row on a page that has no select, the same way a face's page gets them. A plugin app that exports its own text box or select keeps it. The search asks Open-Meteo for its places, so a plugin app with one lists `open-meteo.com` under Internet in its `usesPermissions`. A search row with no `messageKey` stays out of the saved settings, and page code reads the pick with the row's `get` when the row fires `change`.
+The build brings Clay's own text box with the search on a page that has none, for its look, as [The Location Search](settings-page.md#the-location-search) covers, and Clay's own select with a `themePreview` row on a page that has no select, the same way a face's page gets them. A plugin app that exports its own text box or select keeps it. The search asks Open-Meteo for its places, so a plugin app with one lists `open-meteo.com` under Internet in its `usesPermissions`. The search calls `geocoding-api.open-meteo.com` for places and `api.open-meteo.com` for a place's time zone, so listing those two hosts by name works as well, and so does an Internet entry naming no site. On Android the Pebble app holds the page to the sites listed there, so the build stops on a search whose plugin app does not reach both hosts, and names the one left off. A search row with no `messageKey` stays out of the saved settings, and page code reads the pick with the row's `get` when the row fires `change`.
 
 On the plugin side, `handleSettings` from `ts/plugin-app/settings.ts` answers the page, and `readSettings` reads the settings back in a source handler:
 

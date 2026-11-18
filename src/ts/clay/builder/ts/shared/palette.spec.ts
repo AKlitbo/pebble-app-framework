@@ -102,6 +102,19 @@ describe('groupsForSize', () => {
     expect(result).toEqual(['Mystery', 'Orphan']);
   });
 
+  /**
+   * A face that lists a group name twice showed each of its tiles twice under All, counted them twice
+   * in the status line, and drew two tabs that pressed together.
+   */
+  test('merges a group name the face lists twice into one group holding each panel once', () => {
+    const result = groupsForSize(modules, [{ name: 'Weather', icon: 'W' }, { name: 'Weather', icon: 'X' }], '1x2').map((section) => [section.group.name, section.group.icon, section.modules.map((entry) => entry.label)]);
+
+    expect(result).toEqual([
+      ['Weather', 'W', ['Weather', 'Temperature']],
+      ['Other', '·', ['Battery', 'Steps', 'Date', 'Mystery', 'Orphan']],
+    ]);
+  });
+
   /** A face with no groups at all still gets every panel, all under Other. */
   test('puts every panel under Other for a face with no groups', () => {
     const result = groupsForSize(modules, [], '2x2');

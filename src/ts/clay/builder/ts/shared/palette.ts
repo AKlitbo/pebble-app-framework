@@ -56,8 +56,9 @@ export interface PaletteSection<Module extends PaletteModule = PaletteModule> {
 
 /**
  * The groups a size tab shows, in the order the face lists them, each holding its panels in the
- * order the module list has them. A group with no panel at this size is left out. A panel with no
- * known group lands in Other at the end, so a new panel nobody grouped still shows.
+ * order the module list has them. A group with no panel at this size is left out, and a name the face
+ * lists twice is one group, where it first comes. A panel with no known group lands in Other at the
+ * end, so a new panel nobody grouped still shows.
  *
  * @param modules The placeable panels.
  * @param groups The face's groups, in tab order.
@@ -73,6 +74,13 @@ export function groupsForSize<Module extends PaletteModule>(modules: Module[], g
 
   for (let index = 0; index < groups.length; index++) {
     const group = groups[index];
+
+    // a name the face lists twice is one group, at its first place and with its first icon, or each
+    // panel in it would show twice under All and the two tabs would press together
+    if (known[group.name]) {
+      continue;
+    }
+
     const members = atSize.filter(function (module) {
       return module.group === group.name;
     });
@@ -106,6 +114,7 @@ export interface PaletteEnv<Module extends PaletteModule = PaletteModule> {
    * are the palette's own names. A group called `All` shows every panel when picked. One called
    * `Other` gets a second Other tab beside the palette's. Both show the face's group, so the panels
    * nobody grouped only show under All.
+   * A name listed twice is one group, where it first comes.
    */
   groups: PaletteGroup[];
   /** The size tabs, in order. A size no panel comes in gets no tab. */

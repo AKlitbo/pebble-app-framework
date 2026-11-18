@@ -40,6 +40,16 @@ export const BORROWED_LOOKS: Record<string, string> = {
 };
 
 /**
+ * The name a Clay component goes by.
+ *
+ * @param component Anything a face, a feature, or a plugin app passes as a component.
+ * @return Its name, or undefined for anything that is not an object.
+ */
+export function componentName(component: unknown): unknown {
+  return component !== null && typeof component === 'object' ? (component as { name?: unknown }).name : undefined;
+}
+
+/**
  * Builds a Clay only to take the components it registers for a page, without the listener its
  * constructor adds.
  *
@@ -103,23 +113,34 @@ export function looksNeeded(components: Record<string, unknown>, types: string[]
  * face or a plugin app passing its own text box keeps the place it registers it in, and no spare is
  * built for it.
  *
+ * The same spare can bring Clay's own component for each other type the page has that nothing draws,
+ * such as a text row a fold adds to a page built without one. Clay registers its own only for the
+ * types on the page it is built with, in page order, so the spare is built from a row of each type in
+ * the page's order with the looks after them, and each component lands in the order the spare holds it.
+ *
  * @param Clay Clay's constructor, which the spare is built with.
  * @param clay The Clay the page is built on.
  * @param types Every row type on the page, as rowTypes in rows.ts gives them.
- * @param own The names of the components the page's owner registers itself.
- * @return The types it registered, in the order it registered them.
+ * @param own The components the page's owner registers itself.
+ * @param lacking The page's types that nothing draws, as typesWithoutComponent in rows.ts gives them.
+ * @return The look types it registered, in the order it registered them.
  */
-export function borrowLooks<Built extends { components?: Record<string, unknown> }>(Clay: SpareClayConstructor<Built>, clay: LookClay, types: string[], own: unknown[] = []): string[] {
-  const looks = looksNeeded(clay.components || {}, types).filter((type) => own.indexOf(type) === -1);
+export function borrowLooks<Built extends { components?: Record<string, unknown> }>(Clay: SpareClayConstructor<Built>, clay: LookClay, types: string[], own: unknown[] = [], lacking: string[] = []): string[] {
+  const ownNames = own.map(componentName);
+  const looks = looksNeeded(clay.components || {}, types).filter((type) => ownNames.indexOf(type) === -1);
+  const wanted = lacking.concat(looks).filter((type, index, all) => all.indexOf(type) === index);
 
-  if (!looks.length) {
+  if (!wanted.length) {
     return [];
   }
 
-  const lent = spareClay(Clay, looks.map((type) => ({ type }))).components || {};
-  const taken = looks.filter((type) => type in lent);
+  const lent = spareClay(Clay, wanted.map((type) => ({ type }))).components || {};
 
-  taken.forEach((type) => clay.registerComponent(lent[type]));
+  Object.keys(lent).forEach((name) => {
+    if (!(name in (clay.components || {}))) {
+      clay.registerComponent(lent[name]);
+    }
+  });
 
-  return taken;
+  return looks.filter((type) => type in lent);
 }

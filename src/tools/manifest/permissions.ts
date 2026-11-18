@@ -148,6 +148,28 @@ function opensEverySite(entry: Permission): boolean {
 }
 
 /**
+ * Whether a usesPermissions list lets the phone reach a site. An Internet entry reaches each site it
+ * names and their subdomains, and one naming no site reaches every site, as on the phone.
+ *
+ * @param declared The entries, as readOwn gives them.
+ * @param site The site, such as `open-meteo.com`.
+ * @return Whether the phone lets a request to the site through.
+ */
+export function reachesSite(declared: Permission[], site: string): boolean {
+  return declared.some((entry) => {
+    if (opensEverySite(entry)) {
+      return true;
+    }
+
+    if (typeof entry === 'string' || entry.name !== 'Internet' || entry.plugin !== undefined) {
+      return false;
+    }
+
+    return (entry.parameters?.domains ?? []).some((domain) => site === domain || site.endsWith('.' + domain));
+  });
+}
+
+/**
  * Refuses the face's own usesPermissions entries the build cannot use, from the appinfo alone.
  *
  * Each entry has to read the way the Pebble app expects, and calendar hosts beside an entry of the

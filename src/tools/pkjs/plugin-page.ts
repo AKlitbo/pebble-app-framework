@@ -27,16 +27,19 @@ import { createRequire } from 'node:module';
 import esbuild from 'esbuild';
 import { combineCustomFns } from '../../ts/clay/custom-fn.ts';
 import dependentVisibility from '../../ts/clay/dependent-visibility.ts';
-import { borrowLooks } from '../../ts/clay/looks.ts';
+import { borrowLooks, componentName } from '../../ts/clay/looks.ts';
 import pageStyleComponent from '../../ts/clay/page-style-component.ts';
 import { rowTypes, typesWithoutComponent } from '../../ts/clay/rows.ts';
 import pluginSettingsPage from '../../ts/plugin-app/page.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
-import { ENGINE, icaljsBundle, WORKSPACE } from '../shared/paths.ts';
+import { APPINFO_REL, ENGINE, icaljsBundle, WORKSPACE } from '../shared/paths.ts';
 import { ToolError } from '../shared/tool-error.ts';
 import { isObject } from '../shared/values.ts';
 import { icaljsPlugin } from './build-plugin.ts';
 import { checkCustomClay, installHost } from './settings-page.ts';
+import { reachesSite, readOwn } from '../manifest/permissions.ts';
+import { LOCATION_SEARCH_HOSTS } from '../../ts/clay/location-hosts.ts';
+import type { Permission } from '../manifest/permissions.ts';
 import type { ClayConfigItem } from '../../ts/clay/types.ts';
 
 /** Where a plugin app's settings page config starts, relative to the plugin app's folder. */
@@ -57,6 +60,8 @@ export interface PluginPageSource {
   customClay?: unknown;
   /** Clay components the page's rows need beyond Clay's own, such as the framework's location search. */
   components?: unknown[];
+  /** The plugin app's own usesPermissions, from its appinfo, which a location search needs Open-Meteo in. */
+  usesPermissions?: Permission[];
 }
 
 /** The type of the framework's location search row, which a refusal names the import for. */
@@ -68,14 +73,10 @@ type PageClay = { meta: unknown; components?: Record<string, unknown>; generateU
 /** Clay's constructor, as the build loads it. */
 type PageClayConstructor = new (config: unknown, customFn: unknown, options: unknown) => PageClay;
 
-/** The name a Clay component goes by, or undefined for anything that is not one. */
-function componentName(component: unknown): unknown {
-  return isObject(component) ? component.name : undefined;
-}
-
 /** Whether any row on the page, inside sections too, matches. */
 function anyItem(items: ClayConfigItem[], test: (item: ClayConfigItem) => boolean): boolean {
-  return items.some((item) => test(item) || (item.items ? anyItem(item.items, test) : false));
+  // Clay builds the rows of a list sitting where a row goes, so the list is looked into
+  return items.some((item) => (Array.isArray(item) ? anyItem(item, test) : test(item) || (item.items ? anyItem(item.items, test) : false)));
 }
 
 /** Puts the status row just above the first Save button, inside a section too, and says whether there was one. */
@@ -123,7 +124,7 @@ export function pluginPageItems(config: ClayConfigItem[], name: string): ClayCon
  * in ts/clay/looks.ts does that for a face's page too. A plugin app passing its own text box keeps it.
  */
 function registerComponents(Clay: PageClayConstructor, clay: PageClay, items: ClayConfigItem[], components: unknown[]): void {
-  borrowLooks(Clay, clay, rowTypes(items), components.map(componentName));
+  borrowLooks(Clay, clay, rowTypes(items), components);
 
   components.forEach((component) => clay.registerComponent(component));
 }
@@ -131,9 +132,13 @@ function registerComponents(Clay: PageClayConstructor, clay: PageClay, items: Cl
 /**
  * Stops on a row no registered component draws. Clay stops building the page at that row in the
  * webview, so the wearer would open a blank page with nothing said.
+ *
+ * A row with no type stops Clay the same way. It is named after any row type nothing draws, since
+ * that one says which component to export.
  */
 function checkDrawn(clay: PageClay, items: ClayConfigItem[], name: string): void {
-  const missing = typesWithoutComponent(items, clay.components || {})[0];
+  const undrawn = typesWithoutComponent(items, clay.components || {});
+  const missing = undrawn.find((type) => typeof type === 'string');
 
   if (missing === LOCATION_SEARCH) {
     throw new ToolError(`${name}'s settings page has a locationsearch row, which no component draws. Import the framework's location search from ts/clay/location-component.ts in src/config/index.ts and export it in components, as in export const components = [locationSearch]`);
@@ -142,12 +147,35 @@ function checkDrawn(clay: PageClay, items: ClayConfigItem[], name: string): void
   if (missing !== undefined) {
     throw new ToolError(`${name}'s settings page has a ${missing} row, which no component draws, so the page would open blank. Export the component that draws it in components from src/config/index.ts, or take the row off the page`);
   }
+
+  if (undrawn.length) {
+    throw new ToolError(`${name}'s settings page has a row with no type, which Clay stops the page at, so the page would open blank. Give the row a type, or take it off the page`);
+  }
+}
+
+/**
+ * Stops on a location search the plugin app's usesPermissions give no way out to. The search calls
+ * Open-Meteo's hosts from inside the page, and on Android the Pebble app holds the page to the sites
+ * the plugin lists, so a host left off finds no place there with nothing said. Each host the search
+ * calls is checked on its own, so `open-meteo.com`, each host by name, or an Internet entry naming no
+ * site all pass.
+ */
+function checkPickerSites(items: ClayConfigItem[], permissions: Permission[], name: string): void {
+  if (!anyItem(items, (item) => item.type === LOCATION_SEARCH)) {
+    return;
+  }
+
+  const missing = LOCATION_SEARCH_HOSTS.filter((host) => !reachesSite(permissions, host));
+
+  if (missing.length) {
+    throw new ToolError(`${name}'s settings page has a locationsearch row, which calls ${LOCATION_SEARCH_HOSTS.join(' and ')}, but its appinfo usesPermissions does not reach ${missing.join(' or ')} under Internet, so on Android the search finds nothing. List "open-meteo.com", which covers both, or each host the search calls, in the domains of an Internet entry`);
+  }
 }
 
 /**
  * Builds a plugin app's settings page as one self-contained HTML file.
  *
- * @param source The plugin app's Clay config, its optional customClay, and its optional components.
+ * @param source The plugin app's Clay config, its optional customClay and components, and its own usesPermissions.
  * @param name The plugin app's name, which a refusal names.
  * @return The page's HTML.
  */
@@ -177,6 +205,7 @@ export function renderPluginPage(source: PluginPageSource, name: string): string
     // its own at the same weight still wins
     registerComponents(Clay, clay, items, source.components || []);
     checkDrawn(clay, items, name);
+    checkPickerSites(items, source.usesPermissions || [], name);
 
     // a plugin's page opens with no watch behind it
     clay.meta = { activeWatchInfo: null, accountToken: '', watchToken: '', userData: {} };
@@ -204,7 +233,8 @@ export function renderPluginPage(source: PluginPageSource, name: string): string
  *
  * @param pluginDir The plugin app's folder.
  * @param name The plugin app's name, which a refusal names.
- * @return The Clay config and the optional customClay and components it exports.
+ * @return The Clay config and the optional customClay and components it exports, with the plugin
+ * app's own usesPermissions from its appinfo.
  */
 export async function readPluginPage(pluginDir: string, name: string): Promise<PluginPageSource> {
   const entry = path.resolve(pluginDir, PLUGIN_CONFIG_ENTRY);
@@ -246,5 +276,9 @@ export async function readPluginPage(pluginDir: string, name: string): Promise<P
     throw new ToolError(`${name}'s ${shown} exports components that are not a list of Clay components, each with a name. Export a list such as [locationSearch], or leave components out`);
   }
 
-  return { clayConfig: exported.clayConfig as ClayConfigItem[], customClay: exported.customClay, components: exported.components as unknown[] | undefined };
+  // the build checks the rest of the appinfo, so only its permissions are read here
+  const appinfo = path.join(pluginDir, APPINFO_REL);
+  const declared = fs.existsSync(appinfo) ? (JSON.parse(fs.readFileSync(appinfo, 'utf8')) as { usesPermissions?: unknown }).usesPermissions : undefined;
+
+  return { clayConfig: exported.clayConfig as ClayConfigItem[], customClay: exported.customClay, components: exported.components as unknown[] | undefined, usesPermissions: readOwn(declared, name) };
 }

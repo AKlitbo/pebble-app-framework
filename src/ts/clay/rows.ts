@@ -236,12 +236,20 @@ export function settleIntro(page: ClayConfigItem[]): void {
  * Every row type on the page, sections and the rows inside them, each once, in the order each first
  * shows.
  *
+ * Clay takes a list of rows anywhere a row can go and builds the rows inside it, so a list is walked
+ * into rather than read as a row with no type.
+ *
  * @param items The page, or a section's rows.
  * @param into The list to add the types to, a new one when left out.
  * @return Each type once.
  */
 export function rowTypes(items: ClayConfigItem[], into: string[] = []): string[] {
   items.forEach((item) => {
+    if (Array.isArray(item)) {
+      rowTypes(item, into);
+      return;
+    }
+
     if (into.indexOf(item.type) === -1) {
       into.push(item.type);
     }

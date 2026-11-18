@@ -17,6 +17,7 @@ import component from './location-component';
 import { offsetMinutes } from '../pkjs/timezone';
 import type { ClayComponentContext } from './location-component';
 import { fetchRequest } from '../testing/fetch-request';
+import { LOCATION_SEARCH_HOSTS } from './location-hosts';
 import { installFakeXhr } from '../testing/xhr';
 import * as harness from './builder/ts/testing/harness';
 import type { ClayComponentDefinition } from './builder/ts/testing/harness';
@@ -71,6 +72,21 @@ describe('the style', () => {
       '.pf-loc-search .pf-loc-note { position: relative; margin: 0.7rem 0 0.15rem; padding: 0.5rem 0.6rem 0.5rem 2.1rem; background: rgba(255, 71, 0, 0.1); background: color-mix(in srgb, var(--pf-note-accent, #ff4700) 10%, transparent); border-left: 3px solid var(--pf-note-accent, #ff4700); font-size: 0.85em; line-height: 1.4; }',
       '.pf-loc-search .pf-loc-note:before { content: "!"; position: absolute; left: 0.6rem; top: 0.65rem; width: 1.15em; height: 1.15em; border: 1px solid var(--pf-note-accent, #ff4700); border-radius: 50%; color: var(--pf-note-accent, #ff4700); font-size: 0.95em; font-weight: 700; line-height: 1.1em; text-align: center; }',
     ].join(''));
+  });
+});
+
+describe('the hosts it calls', () => {
+  /**
+   * The plugin page build checks a plugin app's permissions against this list, and the search writes
+   * its URLs out in full. A host the search calls that the list left out would pass the build and find
+   * no place on Android.
+   */
+  test('names every host the search calls', () => {
+    const named = String(component.initialize).match(/https:\/\/[^/'"]+/g) || [];
+
+    const result = [...new Set(named.map((url) => url.slice('https://'.length)))].sort();
+
+    expect(result).toEqual([...LOCATION_SEARCH_HOSTS].sort());
   });
 });
 
@@ -487,6 +503,30 @@ describe('initialize', () => {
     const result = seen.map((value) => [JSON.parse(value).tz, JSON.parse(value).offset]);
 
     expect(result).toEqual([['', 0], ['America/Phoenix', -420]]);
+  });
+
+  /**
+   * The change from the zone lookup runs page code. Fired inside the catch kept for an answer that is
+   * not JSON, a handler that threw was swallowed with nothing said, so the page went on as if its own
+   * code had run.
+   */
+  test('lets a change handler that throws on the zone lookup be heard', () => {
+    const mounted = mount();
+
+    mounted.ctx.initialize();
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(200, JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
+    ] }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.ctx.trigger.mockImplementation(() => {
+      throw new Error('page handler');
+    });
+
+    const result = () => xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -25200, timezone: 'America/Phoenix' }));
+
+    expect(result).toThrow('page handler');
   });
 
   /** A lookup that only agrees with the pick tells page code nothing new, so the row stays at the one change from the tap. */

@@ -20,7 +20,7 @@ import builderPluginSources from '../clay/builder-plugin-sources-fn';
 import { combineCustomFns, customClayShape } from '../clay/custom-fn';
 import { copyPage } from '../clay/copy-page';
 import { rowTypes, settleIntro, typesWithoutComponent } from '../clay/rows';
-import { BORROWED_LOOKS, borrowLooks, looksNeeded, spareClay } from '../clay/looks';
+import { BORROWED_LOOKS, borrowLooks, componentName } from '../clay/looks';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { createSettingsAsk } from './settings-ask';
@@ -72,13 +72,15 @@ export function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
 
 /**
  * Whether any item on the page, sections and their nested items included, is of one component type.
+ * Clay builds the rows of a list that sits where a row goes, so a list is looked into, the way
+ * rowTypes in clay/rows.ts walks it.
  *
  * @param items The Clay config items to walk.
  * @param type The component type name to look for, such as 'themePreview'.
  * @return True when any item carries that type.
  */
 export function usesComponent(items: ClayConfigItem[], type: string): boolean {
-  return items.some((item) => item.type === type || (item.items ? usesComponent(item.items, type) : false));
+  return items.some((item) => (Array.isArray(item) ? usesComponent(item, type) : item.type === type || (item.items ? usesComponent(item.items, type) : false)));
 }
 
 /**
@@ -97,14 +99,12 @@ function hasProviderKeys(items: ClayConfigItem[]): boolean {
 }
 
 /**
- * Whether a page holds the plugin kinds row. The row's type is `PLUGIN_KINDS_TYPE` in
- * plugin-sources/kinds-component.ts. It is written out here because a value import of that folder
- * would break a face built without plugin defines, and app.spec.ts opens a page the plugin page
- * really made, so the two cannot drift apart unnoticed.
+ * The type of the plugin kinds row, `PLUGIN_KINDS_TYPE` in plugin-sources/kinds-component.ts. It is
+ * written out here because a value import of that folder would break a face built without plugin
+ * defines, and app.spec.ts opens a page the plugin page really made, so the two cannot drift apart
+ * unnoticed.
  */
-function hasPluginKinds(items: ClayConfigItem[]): boolean {
-  return items.some((item) => item.type === 'pluginKinds' || (item.items ? hasPluginKinds(item.items) : false));
-}
+const PLUGIN_KINDS_ROW = 'pluginKinds';
 
 /**
  * The custom function Clay gets for one page. The framework's show and hide comes first when the
@@ -113,18 +113,15 @@ function hasPluginKinds(items: ClayConfigItem[]): boolean {
  * customClay runs last, so the face's code can still change a row the framework showed or hid. A page
  * with none of them gets no custom function.
  *
- * A face never passes builderPluginSources, since the framework already runs it on every page where
- * it can do anything. Passed as the face's customClay it is left out, so it runs once. The check only
- * knows that exact function, so a customClay of the face's own that calls it runs it a second time.
+ * The framework runs builderPluginSources on its own on every page with the plugin kinds row, so a
+ * face never passes it.
  */
 function pageCustomFn(page: ClayConfigItem[], customClay: unknown): unknown {
-  const faceCode = customClay === builderPluginSources ? undefined : customClay;
-
   return combineCustomFns([
     { code: hasVisibleWhen(page) ? dependentVisibility : undefined, label: 'the framework\'s show and hide' },
     { code: hasProviderKeys(page) ? providerKeysFn : undefined, label: 'the framework\'s key for each provider' },
-    { code: hasPluginKinds(page) ? builderPluginSources : undefined, label: 'the framework\'s plugin sources for builders' },
-    { code: faceCode, label: 'the face\'s customClay' },
+    { code: usesComponent(page, PLUGIN_KINDS_ROW) ? builderPluginSources : undefined, label: 'the framework\'s plugin sources for builders' },
+    { code: customClay, label: 'the face\'s customClay' },
   ]);
 }
 
@@ -251,24 +248,11 @@ export function prepareSettingsPage(clay: InstanceType<ClayConstructor>, options
     // Clay registers its own components only for the types on the page it was built with, so a
     // fold that adds a text row to a page without one needs it registered. a framework row a fold
     // adds to a page without the Clay row it takes its look from needs that one too. one spare Clay
-    // built from the folded page, with a row of each look it lacks, registers each of its own the
-    // page uses, and the real one takes what it lacks
-    const looks = looksNeeded(clay.components || {}, rowTypes(folded));
-
-    if (typesWithoutComponent(folded, clay.components || {}).length || looks.length) {
-      const spare = spareClay(clayConstructor(), [...folded, ...looks.map((type) => ({ type }))]);
-
-      Object.keys(spare.components || {}).forEach((name) => {
-        if (!(name in (clay.components || {}))) {
-          clay.registerComponent(spare.components[name]);
-        }
-      });
-
-      // a look the page also has a row of its own for stays like any other type the fold adds
-      looks.filter((type) => !usesComponent(folded, type) && type in (clay.components || {})).forEach((type) => {
-        takeLook(clay, type, true);
-      });
-    }
+    // brings both, and a look the page also has a row of its own for stays like any other type the
+    // fold adds
+    borrowLooks(clayConstructor(), clay, rowTypes(folded), [], typesWithoutComponent(folded, clay.components || {}))
+      .filter((type) => !usesComponent(folded, type))
+      .forEach((type) => takeLook(clay, type, true));
 
     const missing = typesWithoutComponent(folded, clay.components || {});
 
@@ -312,7 +296,7 @@ function fitComponents(clay: InstanceType<ClayConstructor>, brought: unknown[], 
   const registry = clay.components || {};
 
   brought.forEach((component) => {
-    const name = component && typeof component === 'object' ? (component as { name?: unknown }).name : undefined;
+    const name = componentName(component);
 
     if (typeof name !== 'string') {
       return;
@@ -754,9 +738,7 @@ export function createClay(options: StartOptions): InstanceType<ClayConstructor>
   // the Clay components the framework's rows take their look from go ahead of those rows, as they sit
   // on a page Clay drew one on. a face passing its own keeps the place it registers it in, and no
   // spare is built for it
-  const facesOwn = (options.components || []).map((component) => (component as { name?: unknown } | null)?.name);
-
-  borrowLooks(Clay, clay, rowTypes(page), facesOwn).forEach((type) => takeLook(clay, type, false));
+  borrowLooks(Clay, clay, rowTypes(page), options.components || []).forEach((type) => takeLook(clay, type, false));
 
   // the location autocomplete goes next, before the settings page is built
   clay.registerComponent(locationComponent);

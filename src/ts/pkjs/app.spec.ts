@@ -486,6 +486,15 @@ describe('usesComponent', () => {
     expect(result).toBe(true);
   });
 
+  /** Clay builds the rows of a list that sits where a row goes, so a picker inside one has to count or it draws with no component. */
+  test('finds a component type inside a list of rows', () => {
+    const items = [{ type: 'heading' }, [{ type: 'text' }, [{ type: 'themePreview', messageKey: 'APPEARANCE_THEME' }]]] as unknown as ClayConfigItem[];
+
+    const result = usesComponent(items, 'themePreview');
+
+    expect(result).toBe(true);
+  });
+
   /** A page without the type must report false, or every face would carry the component's code. */
   test('returns false when no item is of the type', () => {
     const items = [{ type: 'section', items: [{ type: 'select', messageKey: 'APPEARANCE_THEME' }] }];
@@ -879,6 +888,18 @@ describe('createClay', () => {
 
     expect(result.registered).toEqual([pageStyleComponent, CLAY_SELECT, locationComponent, themePreviewComponent]);
     expect(RecordingClay.made).toBe(2);
+  });
+
+  /**
+   * Clay builds the rows of a list that sits where a row goes. A theme picker inside one was missed,
+   * so the page carried no picker component and Clay stopped the page at that row.
+   */
+  test('registers the theme picker and Clay\'s select for a picker inside a list of rows', () => {
+    const clayConfig = [[{ type: 'heading', defaultValue: 'Theme' }, PICKER]] as unknown as ClayConfigItem[];
+
+    const result = createClay({ clayConfig }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, CLAY_SELECT, locationComponent, themePreviewComponent]);
   });
 
   /** A page holding both rows takes both looks from one spare Clay rather than one each. */
@@ -3245,15 +3266,6 @@ describe('startPebbleApp settings page hooks', () => {
       expect(result[1]).toBeGreaterThan(result[0]);
     });
 
-    /** A face that still passes it would hand every builder the sources twice on each change. */
-    test('runs it once for a face that passes it as its own customClay', () => {
-      openSettings(buildConfig({ location: {}, weather: {} }), [pageFeature((config) => pluginSourcePage(config, inputs))], builderPluginSources);
-
-      const result = heardOnPage(PageClay.opened[0].customFn);
-
-      expect(result).toHaveLength(1);
-    });
-
     /** A face that reads no plugin has nothing to warn about, so its page text stays as Clay writes it. */
     test('leaves it off a page with no plugin kinds row', () => {
       const customClay = function () {};
@@ -3402,6 +3414,22 @@ describe('startPebbleApp settings page hooks', () => {
     expect(PageClay.heard).toEqual([PageClay.built[0]]);
     expect(Object.keys(PageClay.built[0].components)).toEqual(expect.arrayContaining(['select', 'input']));
     expect(Pebble.addEventListener).toBe(listen);
+  });
+
+  /**
+   * Clay writes each component's style in the order it holds them, so a fold's Clay types land in the
+   * order the folded page has them, with the search's text box after them, as on a page Clay was
+   * built with them all.
+   */
+  test('registers the Clay types a fold adds in page order and the borrowed text box after them', () => {
+    const search: ClayConfigItem = { type: 'locationsearch', messageKey: 'LOCATION_NAME' };
+    const flip: ClayConfigItem = { type: 'toggle', messageKey: 'FLIP' };
+    const pick: ClayConfigItem = { type: 'select', messageKey: 'NEW', options: [{ label: 'A', value: 'a' }] };
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config, search, flip, pick])]);
+    const result = Object.keys(PageClay.built[0].components).filter((name) => ['toggle', 'select', 'input'].includes(name));
+
+    expect(result).toEqual(['toggle', 'select', 'input']);
   });
 
   /** The page's own spare for the search's text box must not leave a listener on the bridge either. */
