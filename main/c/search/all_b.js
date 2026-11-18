@@ -3,11 +3,11 @@ var searchData=
   ['last_5fat_0',['last_at',['../structHrvRun.html#ad9b69963930bf29a2ee1ba9aaacb171d',1,'HrvRun']]],
   ['last_5fms_1',['last_ms',['../structHrvRun.html#ab97d22d055ef0b60e635d6dc9b4054ec',1,'HrvRun']]],
   ['last_5fstart_2',['last_start',['../structHourLatch.html#af42cb17bd6a6dfea7d7c95e87eb8f37a',1,'HourLatch']]],
-  ['last_5fsync_3',['last_sync',['../structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a',1,'WeatherState::last_sync'],['../structCalendarPersist.html#a9ba0dbe5f0bd8c2114bacc0be1385f11',1,'CalendarPersist::last_sync'],['../struct_0fstruct_0e_8s__state.html#a76fab064443fccad957cca54b5bf2c27',1,'[struct].s_state::last_sync'],['../struct_0fstruct_0e_8s__state.html#a71acacf736c0662ae8a364a757778e46',1,'[struct].s_state::last_sync']]],
+  ['last_5fsync_3',['last_sync',['../structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a',1,'WeatherState::last_sync'],['../structCalendarPersist.html#a9ba0dbe5f0bd8c2114bacc0be1385f11',1,'CalendarPersist::last_sync'],['../struct_0fstruct_0e_8s__state.html#a71acacf736c0662ae8a364a757778e46',1,'[struct].s_state::last_sync'],['../struct_0fstruct_0e_8s__state.html#a76fab064443fccad957cca54b5bf2c27',1,'[struct].s_state::last_sync']]],
   ['last_5fx_4',['last_x',['../structHrvMotion.html#a41c7172c7306a847903028be8a6c1fea',1,'HrvMotion']]],
   ['last_5fy_5',['last_y',['../structHrvMotion.html#a6e5f5c3c8c361ee8cf0f65cdc3d19be3',1,'HrvMotion']]],
   ['last_5fz_6',['last_z',['../structHrvMotion.html#af87e0721177b9e093cc6c190baabec62',1,'HrvMotion']]],
-  ['lat_7',['lat',['../structLocationSeed.html#a58307502423dcd0ab844df491022d3a5',1,'LocationSeed::lat'],['../struct_0fstruct_0e_8s__fixed.html#a74b97d14e2be5e70d0ad5e79dd53e265',1,'[struct].s_fixed::lat'],['../struct_0fstruct_0e_8s__state.html#a49d22b97f22f8f3b5f52e9c3f5320abd',1,'[struct].s_state::lat']]],
+  ['lat_7',['lat',['../structLocationSeed.html#a58307502423dcd0ab844df491022d3a5',1,'LocationSeed::lat'],['../struct_0fstruct_0e_8s__state.html#a49d22b97f22f8f3b5f52e9c3f5320abd',1,'[struct].s_state::lat'],['../struct_0fstruct_0e_8s__fixed.html#a74b97d14e2be5e70d0ad5e79dd53e265',1,'[struct].s_fixed::lat']]],
   ['layout_8',['layout',['../structDevStep.html#a2151d57fec4baa9aa9e7f0700af79ec1',1,'DevStep']]],
   ['layout_5fchanged_9',['layout_changed',['../structSettingsInbound.html#a0191358313d7d00799bd893bc58e491f',1,'SettingsInbound']]],
   ['layout_5fhas_5fany_5fblock_10',['layout_has_any_block',['../group__lib__core.html#gadb8a7e98c9c67c5167942ae96433c21f',1,'layout_has_any_block(const char *layout, int type_count):&#160;layout_string.c'],['../group__lib__core.html#gadb8a7e98c9c67c5167942ae96433c21f',1,'layout_has_any_block(const char *layout, int type_count):&#160;layout_string.c']]],
@@ -39,6 +39,6 @@ var searchData=
   ['locationconfig_36',['LocationConfig',['../structLocationConfig.html',1,'']]],
   ['locationseed_37',['LocationSeed',['../structLocationSeed.html',1,'']]],
   ['log_38',['log',['../structHrvSaved.html#a0724c369de7401a1acd54d5d05f67e52',1,'HrvSaved']]],
-  ['lon_39',['lon',['../structLocationSeed.html#a525f72325d8cad6c0317e6b0d4ce469f',1,'LocationSeed::lon'],['../struct_0fstruct_0e_8s__fixed.html#aededa9781856985a2837fa0d086a38ef',1,'[struct].s_fixed::lon'],['../struct_0fstruct_0e_8s__state.html#ab9a6be89c66daedb8c2c8cf463e543e9',1,'[struct].s_state::lon']]],
+  ['lon_39',['lon',['../structLocationSeed.html#a525f72325d8cad6c0317e6b0d4ce469f',1,'LocationSeed::lon'],['../struct_0fstruct_0e_8s__state.html#ab9a6be89c66daedb8c2c8cf463e543e9',1,'[struct].s_state::lon'],['../struct_0fstruct_0e_8s__fixed.html#aededa9781856985a2837fa0d086a38ef',1,'[struct].s_fixed::lon']]],
   ['low_40',['low',['../structHrHour.html#acc0ce007509ea40c9fe818e314e29a82',1,'HrHour']]]
 ];

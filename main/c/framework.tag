@@ -10326,38 +10326,45 @@
     <name>[struct].s_state</name>
     <filename>struct_0fstruct_0e_8s__state.html</filename>
     <member kind="variable">
-      <type>uint8_t</type>
-      <name>tag</name>
+      <type>int</type>
+      <name>hr</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
+      <anchor>a69dfa550f32ab21f5c6c5d378d8acd7f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>char</type>
-      <name>lat</name>
+      <type>int</type>
+      <name>steps</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>char</type>
-      <name>lon</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>CalendarStrip</type>
-      <name>strip</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
+      <anchor>ae463a880e2607355d222974f60b31907</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>time_t</type>
-      <name>last_sync</name>
+      <type>int</type>
+      <name>calories</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
+      <anchor>a87fa654bed2286d1a29fa1d3815c44d2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>sleep_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a4ff82846014207e0597ba097ec0aa0c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>active_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a11d0ef78d29da6a774cd888998da275f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>distance_m</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a6bae943d352d4ea4b1a3f3085e626110</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -10403,45 +10410,38 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
-      <name>hr</name>
+      <type>uint8_t</type>
+      <name>tag</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a69dfa550f32ab21f5c6c5d378d8acd7f</anchor>
+      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
-      <name>steps</name>
+      <type>char</type>
+      <name>lat</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>ae463a880e2607355d222974f60b31907</anchor>
+      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lon</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarStrip</type>
+      <name>strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
-      <name>calories</name>
+      <type>time_t</type>
+      <name>last_sync</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a87fa654bed2286d1a29fa1d3815c44d2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>sleep_min</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a4ff82846014207e0597ba097ec0aa0c8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>active_min</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a11d0ef78d29da6a774cd888998da275f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>distance_m</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a6bae943d352d4ea4b1a3f3085e626110</anchor>
+      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -15387,8 +15387,8 @@
     <class kind="struct">SystemSeed</class>
     <class kind="struct">WeatherConfig</class>
     <class kind="struct">WeatherSeed</class>
-    <class kind="struct">[struct].s_hours</class>
     <class kind="struct">[struct].s_state</class>
+    <class kind="struct">[struct].s_hours</class>
     <class kind="struct">[struct].s_window</class>
     <member kind="define">
       <type>#define</type>

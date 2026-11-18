@@ -3,7 +3,7 @@ var searchData=
   ['accel_5fstart_0',['accel_start',['../health__hrv_8c.html#aef7990c4ff7e2751ac00c521ca69e9c5',1,'health_hrv.c']]],
   ['accel_5fstop_1',['accel_stop',['../health__hrv_8c.html#aff955dd46087bcc8cf70260712acfd28',1,'health_hrv.c']]],
   ['active_2',['active',['../structHealthConfig.html#a843879d7b5ad5103735e75d662e3781b',1,'HealthConfig']]],
-  ['active_5fmin_3',['active_min',['../structHealthSeed.html#a8be3ae0a2c011bad8f9bec3c4328b687',1,'HealthSeed::active_min'],['../struct_0fstruct_0e_8s__fixed.html#acbb3138223564be2d44b7f7cd1abd26f',1,'[struct].s_fixed::active_min'],['../struct_0fstruct_0e_8s__state.html#a11d0ef78d29da6a774cd888998da275f',1,'[struct].s_state::active_min']]],
+  ['active_5fmin_3',['active_min',['../structHealthSeed.html#a8be3ae0a2c011bad8f9bec3c4328b687',1,'HealthSeed::active_min'],['../struct_0fstruct_0e_8s__state.html#a11d0ef78d29da6a774cd888998da275f',1,'[struct].s_state::active_min'],['../struct_0fstruct_0e_8s__fixed.html#acbb3138223564be2d44b7f7cd1abd26f',1,'[struct].s_fixed::active_min']]],
   ['add_5frecord_5fhr_4',['add_record_hr',['../health__hr__day_8c.html#af161a06c28e6fcaef55b01b2e08d1fe0',1,'health_hr_day.c']]],
   ['add_5frecord_5fsteps_5',['add_record_steps',['../health__step__history_8c.html#a3fb4ed9255723df69b4c5e0238be8b26',1,'health_step_history.c']]],
   ['affects_5flayout_6',['affects_layout',['../structSettingField.html#ab9b0ae808d778bce54ba249994d87728',1,'SettingField']]],
