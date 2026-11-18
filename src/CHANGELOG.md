@@ -28,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Dev Plugin:** Added `clock`, `date`, and `stores` to a step of a step walk in `paf.dev.config.json`. A step that leaves one out takes the walk's, then the face's, then the file's, then the fixture's, and a store it names replaces the walk's whole. Each tap applies the step's settings, pins its clock, and seeds every store again, so a step draws the same screen whichever step came before it. `dev_force_time` follows the step's clock.
 - **Dev Plugin:** Added `each` to a step walk, which shows every step once at each value of one setting, such as `"each": { "APPEARANCE_SCENE": [0, 1, 2] }`. The value changes on every tap, and 16 steps through 11 values cost the memory of 16 steps rather than 176. A walk of `each` alone needs no `steps`, and a step that also sets that key stops the dev build.
 - **Dev Plugin:** Added `settings_apply_inbox_holding`, in a dev build only, which applies an inbox message the way `settings_apply_inbox` does but skips the keys a check holds.
+- **Frame Plugin:** Added baking every frame of a face with themes. Once its `frame.config.json` sets `frameThemes`, `paf gen <face> background --frame all --theme all`, and so `paf gen <face> all`, bakes `defaultFrame` under each theme to `background-<theme>` and each other frame to `background-<frame>-<theme>`. Without `frameThemes` the run still stops on a face with more than one frame, and says to set it.
+- **Frame Plugin:** Added `frameThemes` and `bareFrameTheme` to `frame/frame.config.json`. `frameThemes` lists the themes a frame other than `defaultFrame` bakes under, and under `bareFrameTheme` such a frame leaves the theme out of its name, as `background-<frame>`. The generator stops on two bakes that would land on one file and names both.
 
 #### Changed
 
@@ -40,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Dev Plugin:** Fixed the first screen of a dev build showing the phone's saved settings in place of the ones `paf.dev.config.json` names. A dev build never saves, so the phone sends its own back on every launch, and the AppMessage layer now skips every key the file names.
 - **Dev Plugin:** Fixed a step walk with no layouts needing the face to define `dev_show_layout` to link. The harness now calls it only when a step has a layout, so a face whose walks only change settings and readings can delete its stub.
 - **Dev Plugin:** Fixed `paf tool <face> thumbnails` on a step walk refusing the walk's first setting as undeclared, rather than saying to pick a panel walk.
+- **Frame Plugin:** Fixed a frame other than `defaultFrame`, baked on its own with `--frame <frame> --theme dark`, writing over the default frame's `background-dark`. It now lands on `background-<frame>-dark`, so a script that bakes such a frame to `--out` and copies it into place can drop the copy.
 
 ### Wearer-Visible Changes
 

@@ -1,6 +1,6 @@
 # The Frame Plugin
 
-The `frame` plugin turns a face's frame, drawn as an HTML page with CSS, into the background picture the watch shows behind its readouts. `paf gen <face> background` opens the page in Firefox, empties out the live text the watch draws for itself, takes a picture of the screen area at several times its size, shrinks it to the watch's screen, and writes one PNG for each frame or theme on each platform the face targets. It can fold a bake down to sixteen colours, which halves the memory the watch needs to hold it, and it carries the Pebble palette as CSS variables so a frame's fills land on colours the watch can show.
+The `frame` plugin turns a face's frame, drawn as an HTML page with CSS, into the background picture the watch shows behind its readouts. `paf gen <face> background` opens the page in Firefox, empties out the live text the watch draws for itself, takes a picture of the screen area at several times its size, shrinks it to the watch's screen, and writes one PNG for each frame and theme on each platform the face targets. It can fold a bake down to sixteen colours, which halves the memory the watch needs to hold it, and it carries the Pebble palette as CSS variables so a frame's fills land on colours the watch can show.
 
 The generator is [`generate-background.ts`](../../src/plugins/frame/generate-background.ts), and the plugin's [`package.json`](../../src/plugins/frame/package.json) tells `paf` how to run it. The palette is [`pebble-colors.css`](../../src/plugins/frame/css/pebble-colors.css), beside it under `src/plugins/frame/`.
 
@@ -80,6 +80,8 @@ resources/images/
 | `hideSelectors` | elements taken out of the layout before the picture |
 | `unpaintSelectors` | elements that keep their space but draw nothing |
 | `maxColors` | the most colours the bake may keep, left out for no cap |
+| `frameThemes` | on a face with themes and more than one frame, the themes each frame other than `defaultFrame` bakes under, needed for `--frame all` |
+| `bareFrameTheme` | on a face with themes and more than one frame, the theme under which a frame other than `defaultFrame` leaves the theme out of its file name, left out or `null` for none |
 
 ## Frames and Themes
 
@@ -101,7 +103,28 @@ paf gen my-themed-face background --theme all  # every theme
 
 `--frame` also takes the page's file name, so `night~emery.html` picks `night`. The platform tag is dropped and picks nothing, since every platform the face targets is baked whichever page is named. The generator refuses a frame or theme the face does not have and lists the names it has. It refuses a word given without its flag too, so a stray name never bakes the default frame over its background.
 
-**What Each Kind of Face Takes.** A face without themes takes `--theme all` and bakes each frame as it stands, and refuses a named theme. A face with themes has to be told which, since a bake with no theme writes a file no theme loads. It also bakes one frame per run, since a themed background is named after its theme alone and a second frame would be written over the first. So a face with themes and more than one frame refuses `--frame all`, and `paf gen <face> all` stops on it. A frame page or theme sheet called `all` is refused wherever it comes from, since the word already means every one.
+**What Each Kind of Face Takes.** A face without themes takes `--theme all` and bakes each frame as it stands, and refuses a named theme. A face with themes has to be told which, since a bake with no theme writes a file no theme loads. A frame page or theme sheet called `all` is refused wherever it comes from, since the word already means every one.
+
+**More than One Frame with Themes.** A face with themes can hold more pages beside its main one, such as a second desktop drawn in its own style. Each page links its own stylesheets under names without `theme_` in them, so the theme swap leaves them alone, and a theme sheet can `@import` a page's colours for that theme. The generator bakes `defaultFrame` under every theme and names each PNG after the theme alone. It bakes every other frame under the themes `frameThemes` lists, and names each PNG after the frame and the theme. A face lists the looks its other frames have:
+
+```json
+{
+  "defaultFrame": "editor",
+  "defaultScale": 1,
+  "supportsTheme": true,
+  "bareBackgroundBase": null,
+  "frameThemes": ["dark", "light", "terminal"],
+  "bareFrameTheme": "light",
+  "clearTextSelectors": [".time", ".data"],
+  "hideSelectors": []
+}
+```
+
+`bareFrameTheme` only changes the file name. Under that theme a frame other than `defaultFrame` leaves the theme out of its PNG's name, so `retro` bakes to `background-retro` under `light` and to `background-retro-dark` under `dark`. The bake under it still swaps in that theme's sheet like any other, so a frame that should keep its page's own colours there needs a theme sheet that sets none of the variables the frame reads.
+
+`--frame all --theme all`, and so `paf gen <face> all`, bakes every frame under each of its themes. `--frame all --theme dark` bakes each frame that takes `dark`, and a named frame asked for under a theme it does not take is refused. A face that sets no `frameThemes` refuses `--frame all` and says to set it, and `bareFrameTheme` if one theme leaves the name bare, since baking each other frame under every theme would leave PNGs beside the real ones that nothing loads. A frame named with `--frame` still bakes on its own, under every theme when `frameThemes` is left out. Both settings are only read on a face with a frame other than `defaultFrame`, so a face with one frame never trips over them. With more than one frame, `defaultFrame` has to be one of them, since it is the frame the theme backgrounds are named after. A face with themes and one frame names that frame after the theme alone whatever `defaultFrame` says.
+
+Before baking, the generator works out the file name for every frame under every theme it takes, and refuses two that land on one file, such as a frame called `dark` under `bareFrameTheme` beside the main frame under a theme called `dark`. It names both and writes neither.
 
 ## Baking a Page
 
@@ -142,7 +165,7 @@ The SDK stores a bitmap in the smallest form its colours allow. Up to two palett
 
 Emery and gabbro give an app 128 KB in all, for its code, its static data, and its heap together. A background at eight bits takes over a third of that on emery and over half on gabbro, before the face has loaded a font or an icon. The jump from sixteen colours to seventeen costs another 22 KB on emery, and the seventeenth is usually a few edge pixels off a curve. On a face that is already full, that is the difference between the background loading and `gbitmap_create_with_resource` handing back NULL.
 
-Four of IDE VSCode's six themes land on twenty or more palette colours, and its config sets no cap, so those ship at eight bits.
+A face whose themes land on twenty or more palette colours, with no cap set in its config, ships those themes at eight bits.
 
 ## Keeping to Sixteen Colours
 
@@ -166,11 +189,13 @@ Every PNG carries its platform as a `~<platform>` tag, and its name comes from w
 
 | Bake | File |
 | :-- | :-- |
-| a theme | `background-<theme>~<platform>.png` |
-| the `bareBackgroundBase` frame | `background~<platform>.png` |
-| any other frame | `background-<frame>~<platform>.png` |
+| the `bareBackgroundBase` frame of a face without themes | `background~<platform>.png` |
+| any other frame of a face without themes | `background-<frame>~<platform>.png` |
+| the `defaultFrame` of a face with themes, or its only frame, under a theme | `background-<theme>~<platform>.png` |
+| another frame of a face with themes, under a theme | `background-<frame>-<theme>~<platform>.png` |
+| another frame of a face with themes, under `bareFrameTheme` | `background-<frame>~<platform>.png` |
 
-`--out` writes somewhere else, with its path from the unit's root. The platform tag is added to the name. A run that bakes several frames or several themes also adds the frame or theme to each name, so they land beside each other rather than over each other or over the committed backgrounds.
+`--out` writes somewhere else, with its path from the unit's root. The platform tag is added to the name. A run that bakes several frames or several themes also adds the frame, the theme, or both to each name, so they land beside each other rather than over each other or over the committed backgrounds.
 
 **How the Build Finds Them.** The face lists each background in its appinfo without the tag, and the SDK picks the file tagged for the platform it is building:
 
