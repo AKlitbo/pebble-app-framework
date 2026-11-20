@@ -30,6 +30,7 @@
 import ICAL from './icaljs';
 import { plainDescription } from './description';
 import { horizonFor, upcomingWindow } from './window';
+import { SOURCE_LIMIT_MAX } from '../plugin-app/source-limit';
 
 /**
  * One upcoming event. The watch shows its window, all-day flag, title, and place. `uid`, `calendar`,
@@ -84,6 +85,12 @@ export interface IcalOptions {
    * ends do not count.
    */
   wearerAddresses?: readonly string[];
+  /**
+   * The most events to keep, a whole number from 1 up, for a plugin that serves more than a watchface
+   * shows. A count past `SOURCE_LIMIT_MAX`, the most a plugin can be asked for, keeps that many, and
+   * anything else keeps 64.
+   */
+  maxEvents?: number;
 }
 
 /** The fields an occurrence takes from its VEVENT beyond its times and text, only the ones set. */
@@ -109,8 +116,23 @@ const DAY_SECONDS = 24 * 60 * 60;
 const HOUR_SECONDS = 60 * 60;
 
 // no watchface shows more than a handful of events, so a feed with a very busy rule stops here
-// rather than building a list nothing will ever read
+// rather than building a list nothing will ever read. a plugin that serves more asks for more
 const MAX_EVENTS = 64;
+
+/**
+ * The most events a parse keeps, and the most each repeating event's walk gathers, from the
+ * `maxEvents` asked for. With no usable count both are 64. With one, the parse keeps that many but
+ * each walk gathers up to `SOURCE_LIMIT_MAX`. A walk cut at the count would stop on the first few
+ * occurrences it reached, and one of those can be an occurrence moved later in the week, which leaves
+ * a sooner one out of the soonest few.
+ */
+function eventCaps(maxEvents: number | undefined): { keep: number; walk: number } {
+  if (typeof maxEvents !== 'number' || !Number.isInteger(maxEvents) || maxEvents < 1) {
+    return { keep: MAX_EVENTS, walk: MAX_EVENTS };
+  }
+
+  return { keep: Math.min(maxEvents, SOURCE_LIMIT_MAX), walk: SOURCE_LIMIT_MAX };
+}
 
 // a rule is walked from its very first occurrence, so a daily one set up years ago spends a step
 // per day just reaching the window. this covers about twenty-seven years of that, but a rule that
@@ -351,7 +373,7 @@ function readOccurrence(event: ICAL.Event, time: ICAL.Time, duration: number, de
  * landed. One moved from the past to later in the week is still to come, and one moved into the
  * week from further out still shows.
  */
-function occurrencesOf(event: ICAL.Event, now: number, horizon: number, detailsOf: BlockReader): CalendarEvent[] {
+function occurrencesOf(event: ICAL.Event, now: number, horizon: number, detailsOf: BlockReader, cap: number): CalendarEvent[] {
   const duration = durationOf(event);
   const extras = detailsOf(event.component).extras;
 
@@ -411,7 +433,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number, detailsO
     // be sooner than most of these
     out.push(occurrence);
 
-    if (out.length >= MAX_EVENTS) {
+    if (out.length >= cap) {
       finished = true;
       break;
     }
@@ -446,7 +468,8 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number, detailsO
  * the window is the week. A rule's walk stops at the same day, so a weekly event past the week
  * still shows in a longer window.
  * @param options What to read beyond what the agenda needs, the notes and the free, tentative, and
- * declined marks. Left out or null, the events are exactly what the agenda reads, with no notes or marks.
+ * declined marks, and how many events to keep. Left out or null, the events are exactly what the
+ * agenda reads, with no notes or marks and at most 64 of them.
  * @return The upcoming events in the window, soonest first. An empty list means the feed read clean
  * with nothing coming up. Null means the text was not a calendar at all, such as an error page,
  * which says nothing about what is on.
@@ -454,6 +477,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number, detailsO
 function parseIcal(text: string, nowEpoch?: number, days?: number, options: IcalOptions | null = {}): CalendarEvent[] | null {
   const now = nowEpoch || Math.floor(Date.now() / 1000);
   const detailsOf = blockReader(options || {});
+  const caps = eventCaps((options || {}).maxEvents);
   // a rule's walk stops at the window's last second, and upcomingWindow is handed the same one
   const horizon = horizonFor(now, { days });
 
@@ -514,7 +538,7 @@ function parseIcal(text: string, nowEpoch?: number, days?: number, options: Ical
     try {
       const event = new ICAL.Event(block, { exceptions: own });
 
-      events.push(...withUid(occurrencesOf(event, now, horizon, detailsOf), event.uid));
+      events.push(...withUid(occurrencesOf(event, now, horizon, detailsOf, caps.walk), event.uid));
     } catch (error) {
       console.error('calendar: skipped an event it could not read', error);
     }
@@ -537,7 +561,7 @@ function parseIcal(text: string, nowEpoch?: number, days?: number, options: Ical
     }
   });
 
-  return upcomingWindow(events, now, horizon).slice(0, MAX_EVENTS);
+  return upcomingWindow(events, now, horizon).slice(0, caps.keep);
 }
 
 export default { parseIcal };

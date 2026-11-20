@@ -71,7 +71,7 @@ export interface ChoiceOptions {
   properties: string[];
   /** The size the kind wants images at, which asks the plugin for them. Left out, none. */
   iconPixelSize?: ImageSize;
-  /** The most instances the kind wants back, from 1 to 200. Left out, the phone gives its own number. */
+  /** The most instances the kind wants back, from 1 to `SOURCE_LIMIT_MAX`. Left out, the phone gives its own number. */
   limit?: number;
   /** Whether the plugin is the face's only source, so it is picked whatever is saved. */
   only: boolean;

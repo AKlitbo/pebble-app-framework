@@ -172,9 +172,9 @@ export interface SubscriptionOptions {
    */
   iconPixelSize?: ImageSize;
   /**
-   * The most instances the feature wants back, from 1 to 200. Left out, the request carries none, and
-   * the phone gives its own number for the item, such as the next 10 calendar events. A Pebble app from
-   * before 2.0.0 reads no limit and leaves it alone.
+   * The most instances the feature wants back, from 1 to `SOURCE_LIMIT_MAX` in ts/plugin-app/source-limit.ts.
+   * Left out, the request carries none, and the phone gives its own number for the item, such as the
+   * next 10 calendar events. A Pebble app from before 2.0.0 reads no limit and leaves it alone.
    */
   limit?: number;
   /** Gets each update the plugin sends. */

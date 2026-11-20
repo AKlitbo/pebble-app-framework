@@ -8,7 +8,7 @@
  */
 
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { FETCH_FAILED, pluginRequest, fetchText } from './request';
+import { FETCH_FAILED, FETCH_FAILURE_KINDS, fetchFailure, pluginRequest, fetchText } from './request';
 import { NETWORK_ERROR } from '../pkjs/request';
 
 /** Runs the request with a stand-in fetch and returns what the callback heard. */
@@ -131,5 +131,60 @@ describe('fetchText', () => {
     const result = fetchText('https://example.com/feed.ics');
 
     await expect(result).rejects.toThrow('HTTP 404');
+  });
+});
+
+describe('fetchFailure', () => {
+  /** A plugin keeps the kind and shows it on its settings page, so each failure the runtime raises has to land on its own kind. */
+  test.each([
+    ['a non-2xx from fetchText', new Error('HTTP 404'), { kind: 'HTTP', status: 404 }],
+    ['the Pebble app giving up', new TypeError('fetch timeout: https://example.com/feed.ics'), { kind: 'TIMEOUT' }],
+    ['an aborted fetch', Object.assign(new Error('aborted'), { name: 'AbortError' }), { kind: 'TIMEOUT' }],
+    ['a host the wearer has not allowed', Object.assign(new Error('denied'), { name: 'NotAllowedError' }), { kind: 'NOT_ALLOWED' }],
+    ['no network', new TypeError('fetch failed: https://example.com/feed.ics'), { kind: 'FAILED' }],
+    ['something that is not an error', null, { kind: 'FAILED' }],
+  ])('sorts %s', (label, error, expected) => {
+    const result = fetchFailure(error);
+
+    expect(result).toEqual(expected);
+  });
+
+  /** A refused host is the one failure the wearer can fix, so a message that reads like a timeout must not hide it. */
+  test('reads a refused host as not allowed whatever its message', () => {
+    const result = fetchFailure(Object.assign(new Error('fetch timeout: https://example.com'), { name: 'NotAllowedError' }));
+
+    expect(result).toEqual({ kind: 'NOT_ALLOWED' });
+  });
+
+  /** What fetchText throws for a 503 has to sort back to its status, or the page shows a server fault as no network. */
+  test('sorts what fetchText throws back to its status', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => answer(503, 'down')));
+
+    const result = await fetchText('https://example.com/feed.ics').catch((error: unknown) => fetchFailure(error));
+
+    expect(result).toEqual({ kind: 'HTTP', status: 503 });
+  });
+
+  /**
+   * A plugin keeping what `pluginRequest` answered has its error as text. Read as an error message, a
+   * 429 read as a failed fetch and the page showed no network rather than the provider's limit.
+   */
+  test.each([
+    ['http 429', { kind: 'HTTP', status: 429 }],
+    ['HTTP 503', { kind: 'HTTP', status: 503 }],
+    ['timeout', { kind: 'TIMEOUT' }],
+    [NETWORK_ERROR, { kind: 'NOT_ALLOWED' }],
+    [FETCH_FAILED, { kind: 'FAILED' }],
+  ])('sorts the pluginRequest answer %j', (answered, expected) => {
+    const result = fetchFailure(answered);
+
+    expect(result).toEqual(expected);
+  });
+
+  /** A plugin checks a kept code against the list before showing it, so the list has to hold every kind. */
+  test('lists every kind', () => {
+    const result = FETCH_FAILURE_KINDS;
+
+    expect(result).toEqual(['HTTP', 'TIMEOUT', 'NOT_ALLOWED', 'FAILED']);
   });
 });

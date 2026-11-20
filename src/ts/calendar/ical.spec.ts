@@ -584,6 +584,54 @@ describe('parseIcal busy series', () => {
   });
 });
 
+describe('parseIcal maxEvents', () => {
+  // a meeting every half hour from now, about 300 of them in the week the window holds
+  const halfHourly = feed('BEGIN:VEVENT\r\nUID:ping@example.com\r\nDTSTART:20260710T120000Z\r\nDTEND:20260710T121000Z\r\nRRULE:FREQ=MINUTELY;INTERVAL=30\r\nSUMMARY:Ping\r\nEND:VEVENT\r\n');
+
+  /** A face's agenda reads the same 64 it always did when nothing is asked. */
+  test('keeps 64 when no count is asked for', () => {
+    const result = ical.parseIcal(halfHourly, NOW).length;
+
+    expect(result).toBe(64);
+  });
+
+  /** The count has to reach the walk as well as the final cut, or one busy rule still stops at 64 and the plugin serves short. */
+  test('keeps the count asked for, from a single rule', () => {
+    const result = ical.parseIcal(halfHourly, NOW, undefined, { maxEvents: 100 }).length;
+
+    expect(result).toBe(100);
+  });
+
+  /**
+   * A walk cut at the count stopped on the first occurrences it reached. Today's was moved to day 6,
+   * so a count of 3 kept it in place of day 3, and the soonest three read days 1, 2, and 6.
+   */
+  test('keeps the soonest of a series when an early occurrence moved later', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nDTSTART:20260710T150000Z\r\nDTEND:20260710T153000Z\r\nRRULE:FREQ=DAILY\r\nSUMMARY:Sync\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nRECURRENCE-ID:20260710T150000Z\r\nDTSTART:20260716T090000Z\r\nDTEND:20260716T093000Z\r\nSUMMARY:Sync moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { maxEvents: 3 }).map((event) => new Date(event.startEpoch * 1000).getUTCDate());
+
+    expect(result).toEqual([11, 12, 13]);
+  });
+
+  /** No plugin can be asked for more than 200, so a larger count only builds a list nothing will read. */
+  test('holds a larger count to 200', () => {
+    const result = ical.parseIcal(halfHourly, NOW, undefined, { maxEvents: 500 }).length;
+
+    expect(result).toBe(200);
+  });
+
+  /** A count read from a setting can arrive as nothing usable, and the agenda must not come back empty. */
+  test.each([0, -3, 1.5, Number.NaN])('keeps 64 for a count of %s', (maxEvents) => {
+    const result = ical.parseIcal(halfHourly, NOW, undefined, { maxEvents }).length;
+
+    expect(result).toBe(64);
+  });
+});
+
 describe('parseIcal all-day events', () => {
   /** An all-day date must flag allDay and span a full day, or the agenda tries to show a time. */
   test('reads a date-only event as all-day spanning 24h', () => {

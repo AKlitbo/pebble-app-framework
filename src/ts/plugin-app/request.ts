@@ -31,25 +31,107 @@ function errorParts(error: unknown): { name: string; message: string } {
 }
 
 /**
- * The answer for a fetch that rejected.
+ * The kinds of failure `fetchFailure` sorts a fetch into, each a code a plugin app can keep and show
+ * on its settings page:
  *
- * The Pebble app's own fetch rejects every failure as a `TypeError` whose message is `fetch failed:`,
- * `fetch timeout:`, or `fetch abort:` and the URL, with no `TimeoutError` or `AbortError` name, so the
- * message is read as well as the name. A timeout or an abort answers `timeout`. Its refusal of a site
- * the wearer has not allowed is an `Error` named `NotAllowedError`, raised before the request leaves,
- * so only that answers `NETWORK_ERROR`. A plain `fetch failed:` comes both from a request that never
- * left and from a body the host could not read after the provider answered, and nothing tells the two
- * apart. It answers `FETCH_FAILED`, which keeps the stamp, since counting a call that never left costs
- * one call of room where missing one the provider counted can run a plan past its limit.
+ * - `HTTP`, an answer with a status other than 2xx, which `fetchFailure` carries beside it, so it reads `HTTP 404`
+ * - `TIMEOUT`, a fetch given up or aborted before the answer came
+ * - `NOT_ALLOWED`, a host the Pebble app refused because the wearer has not allowed it
+ * - `FAILED`, anything else, such as no network or a body that could not be read
  */
-function rejection(error: unknown): string {
+export type FetchFailureKind = 'HTTP' | 'TIMEOUT' | 'NOT_ALLOWED' | 'FAILED';
+
+/** Every `FetchFailureKind`, for a plugin app that checks a kept code before showing it. */
+export const FETCH_FAILURE_KINDS: readonly FetchFailureKind[] = ['HTTP', 'TIMEOUT', 'NOT_ALLOWED', 'FAILED'];
+
+/** What went wrong with a fetch, as `fetchFailure` sorts it. */
+export interface FetchFailure {
+  kind: FetchFailureKind;
+  /** The answer's status, for `HTTP` alone. */
+  status?: number;
+}
+
+/**
+ * The kind for the error text `pluginRequest` hands its callback. `http <status>` in either case is
+ * `HTTP` and the status, and `timeout` is `TIMEOUT`. `NETWORK_ERROR` is `NOT_ALLOWED`, which holds for
+ * `pluginRequest` alone, since it answers that only for a host the wearer has not allowed. The face's
+ * request answers the same text for a request that threw before it left.
+ */
+function requestFailure(text: string): FetchFailure {
+  const http = /^http (\d{3})$/i.exec(text.trim());
+
+  if (http) {
+    return { kind: 'HTTP', status: Number(http[1]) };
+  }
+
+  if (text === 'timeout') {
+    return { kind: 'TIMEOUT' };
+  }
+
+  if (text === NETWORK_ERROR) {
+    return { kind: 'NOT_ALLOWED' };
+  }
+
+  return { kind: 'FAILED' };
+}
+
+/**
+ * Sorts what `fetchText` threw, what the runtime's `fetch` rejected with, or the error text
+ * `pluginRequest` answered, into one of the `FetchFailureKind`s.
+ *
+ * `fetchText` throws `HTTP <status>` for an answer that is not 2xx, which reads as `HTTP` and the
+ * status. The Pebble app's own fetch rejects every failure as a `TypeError` whose message is
+ * `fetch failed:`, `fetch timeout:`, or `fetch abort:` and the URL, with no `TimeoutError` or
+ * `AbortError` name, so the message is read as well as the name. A timeout or an abort is `TIMEOUT`.
+ * Its refusal of a site the wearer has not allowed is an `Error` named `NotAllowedError`, raised before
+ * the request leaves, which is `NOT_ALLOWED`. Anything else is `FAILED`.
+ *
+ * Text is read as `pluginRequest`'s answer. `http 429` in either case is `HTTP` and the status,
+ * `timeout` is `TIMEOUT`, `NETWORK_ERROR` is `NOT_ALLOWED`, and any other text, `FETCH_FAILED`
+ * included, is `FAILED`. The `NETWORK_ERROR` reading holds for `pluginRequest` alone.
+ *
+ * @param error What was thrown or answered, which may be anything.
+ * @return The kind, and the status for `HTTP`.
+ */
+export function fetchFailure(error: unknown): FetchFailure {
+  if (typeof error === 'string') {
+    return requestFailure(error);
+  }
+
   const { name, message } = errorParts(error);
+  const http = /^HTTP (\d{3})$/.exec(message);
+
+  if (http) {
+    return { kind: 'HTTP', status: Number(http[1]) };
+  }
 
   if (name === 'NotAllowedError') {
-    return NETWORK_ERROR;
+    return { kind: 'NOT_ALLOWED' };
   }
 
   if (name === 'TimeoutError' || name === 'AbortError' || /^fetch (timeout|abort):/.test(message)) {
+    return { kind: 'TIMEOUT' };
+  }
+
+  return { kind: 'FAILED' };
+}
+
+/**
+ * The answer `pluginRequest` gives for a fetch that rejected, from the kind `fetchFailure` sorts it
+ * into. A timeout answers `timeout`, and only a refused host answers `NETWORK_ERROR`, since it is
+ * raised before the request leaves. Anything else answers `FETCH_FAILED`, which keeps the stamp. A
+ * plain `fetch failed:` comes both from a request that never left and from a body the host could not
+ * read after the provider answered, and nothing tells the two apart. Counting a call that never left
+ * costs one call of room, where missing one the provider counted can run a plan past its limit.
+ */
+function rejection(error: unknown): string {
+  const { kind } = fetchFailure(error);
+
+  if (kind === 'NOT_ALLOWED') {
+    return NETWORK_ERROR;
+  }
+
+  if (kind === 'TIMEOUT') {
     return 'timeout';
   }
 
@@ -108,7 +190,7 @@ export const pluginRequest: RequestFn = (url, callback) => {
  *
  * @param url The address to fetch.
  * @return The body of a 2xx answer.
- * @throws An `Error` whose message is `HTTP <status>` for any other answer, or the runtime's own error when the fetch fails.
+ * @throws An `Error` whose message is `HTTP <status>` for any other answer, or the runtime's own error when the fetch fails. `fetchFailure` sorts either into a code to keep.
  */
 export async function fetchText(url: string): Promise<string> {
   const signal = timeoutSignal();

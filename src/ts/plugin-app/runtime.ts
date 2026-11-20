@@ -22,7 +22,7 @@ export interface SourceRequest {
   plugin?: string;
   properties?: string[];
   iconPixelSize?: { w: number; h: number };
-  /** The most instances the caller wants back, from 1 to 200. A source that caps its own count lets this raise it. */
+  /** The most instances the caller wants back, from 1 to `SOURCE_LIMIT_MAX` in ts/plugin-app/source-limit.ts. A source that caps its own count lets this raise it. */
   limit?: number;
   /** What made the Pebble app run the handler again, when a source it reads changed. */
   trigger?: unknown;

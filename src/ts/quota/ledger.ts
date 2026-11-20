@@ -12,6 +12,8 @@
  * time and weight pair, so a ledger of plain calls stays a list of times.
  */
 
+import { fingerprint } from '../pkjs/fingerprint';
+
 /** How long a limit counts over. */
 export type QuotaWindow = 'minute' | 'hour' | 'day' | 'month';
 
@@ -91,19 +93,14 @@ const WINDOW_MS: Record<QuotaWindow, number> = { minute: MINUTE_MS, hour: HOUR_M
 const ROUNDING = 1e-9;
 
 /**
- * A short fingerprint of an API key, so the ledger knows a key changed without keeping the key.
+ * A short fingerprint of an API key, so the ledger knows a key changed without keeping the key. It is
+ * `fingerprint` from ts/pkjs/fingerprint.ts, which a plugin app uses for its own keys and links.
  *
  * @param key The API key.
  * @return The fingerprint.
  */
 export function keyPrint(key: string): string {
-  let hash = 5381;
-
-  for (let index = 0; index < key.length; index++) {
-    hash = ((hash * 33) ^ key.charCodeAt(index)) >>> 0;
-  }
-
-  return hash.toString(36);
+  return fingerprint(key);
 }
 
 /**
