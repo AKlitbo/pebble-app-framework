@@ -3,7 +3,7 @@
  *
  * It is what hides a row that does nothing under the current choice, so the behaviours worth pinning
  * are that a condition that does not hold hides its row, that a row with several conditions needs
- * all of them, that a `notIn` row shows for a value its list leaves out, a blank one included, and
+ * all of them, that an `anyOf` entry needs only one, that a `notIn` row shows for a value its list leaves out, a blank one included, and
  * that a change on a control restages the rows. A section marked to hide when empty
  * has to go and come back with its rows, and one without the mark has to stay as Clay drew it. It
  * reads the rules off the page's items and listens to the controls, so the test drives a stand-in
@@ -12,11 +12,13 @@
 import { describe, test, expect } from 'vitest';
 import dependentVisibility from './dependent-visibility';
 
-interface Rule {
+interface Condition {
   key: string;
   in?: Array<string | number | boolean>;
   notIn?: Array<string | number | boolean>;
 }
+
+type Rule = Condition | { anyOf: Condition[] };
 
 /** A stand-in section card, the element Clay wraps a section's rows in. */
 class FakeCard {
@@ -178,6 +180,45 @@ describe('dependentVisibility', () => {
     page.fireChange('NIGHT_ON');
 
     expect(rows.NIGHT.shown).toBe(true);
+  });
+
+  /**
+   * One box can serve two switches. An `anyOf` entry shows it while either is on, and only hides it
+   * once both are off, rather than following one switch and missing the other.
+   */
+  test('shows an anyOf row while any of its conditions holds', () => {
+    const rows = {
+      HIDE_DECLINED: new FakeRow({}, false),
+      HIDE_TENTATIVE: new FakeRow({}, false),
+      EMAIL: new FakeRow({ visibleWhen: { anyOf: [{ key: 'HIDE_DECLINED', in: [true] }, { key: 'HIDE_TENTATIVE', in: [true] }] } }),
+    };
+    const page = makePage(rows);
+    const seen: boolean[] = [];
+
+    page.build();
+    seen.push(rows.EMAIL.shown);
+    page.setValue('HIDE_TENTATIVE', true);
+    page.fireChange('HIDE_TENTATIVE');
+    seen.push(rows.EMAIL.shown);
+    page.setValue('HIDE_DECLINED', true);
+    page.setValue('HIDE_TENTATIVE', false);
+    page.fireChange('HIDE_TENTATIVE');
+    seen.push(rows.EMAIL.shown);
+
+    expect(seen).toEqual([false, true, true]);
+  });
+
+  /** An anyOf entry sits beside plain ones in a list, and the list still needs every entry. */
+  test('needs every entry when an anyOf sits in a list', () => {
+    const rows = {
+      FEEDS_ON: new FakeRow({}, false),
+      HIDE_DECLINED: new FakeRow({}, true),
+      EMAIL: new FakeRow({ visibleWhen: [{ key: 'FEEDS_ON', in: [true] }, { anyOf: [{ key: 'HIDE_DECLINED', in: [true] }] }] }),
+    };
+
+    makePage(rows).build();
+
+    expect(rows.EMAIL.shown).toBe(false);
   });
 
   /** A change on a control restages its rows, or the page would freeze on its first-shown state. */

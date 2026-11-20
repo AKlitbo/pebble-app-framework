@@ -498,7 +498,7 @@ describe('stock plugin page', () => {
 
     const conditions = [rowOf(openedPage(hooks), key)?.visibleWhen].flat();
 
-    const result = conditions.some((condition) => condition?.key === 'STOCK_PROVIDER' && 'in' in condition && !condition.in.includes('plugin'));
+    const result = conditions.some((condition) => condition !== undefined && 'key' in condition && condition.key === 'STOCK_PROVIDER' && 'in' in condition && !condition.in.includes('plugin'));
 
     expect(result).toBe(true);
   });

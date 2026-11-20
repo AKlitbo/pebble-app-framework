@@ -8,8 +8,8 @@
  * provider that needs a key and has none takes the spare, or a blank row. The row keeps its own message
  * key, so the save still carries the key of the provider picked, and the features read it as before.
  *
- * A key is never filed under a provider the row hides for, read off the row's own visibleWhen on the
- * select as the page's show and hide reads it, such as Yahoo or Open-Meteo, nor under the plugin
+ * A key is never filed under a provider the row hides for, read off the row's plain visibleWhen
+ * conditions on the select as the page's show and hide reads them, such as Yahoo or Open-Meteo, nor under the plugin
  * choice or a blank select. A key on the row there becomes the spare instead. A blank select shows the
  * spare on the row, so a save that touches nothing keeps it. The phone files a saved row by the same
  * rules, in provider-keys.ts.
@@ -90,10 +90,11 @@ export default function providerKeys(this: ClayPage): void {
     }
   };
 
-  // whether the row takes a key for a value of the select. it reads the row's own conditions on the
-  // select exactly as dependent-visibility.ts does, as text with its case and a notIn ahead of an in,
-  // so a row this counts as hidden is the row the page hides. the plugin takes no key, and nor does a
-  // blank select, which is no provider at all
+  // whether the row takes a key for a value of the select. it reads only the row's plain conditions on
+  // the select, each the way dependent-visibility.ts reads a condition, as text with its case and a
+  // notIn ahead of an in. an anyOf entry has no key of its own, so it is left out, and a key row hides
+  // on its select with plain conditions only. the plugin takes no key, and nor does a blank select,
+  // which is no provider at all
   const takesKeyOf = (row: ClayRow, select: string) => (value: string): boolean => {
     const rule = row.config.visibleWhen;
     const conditions = (Array.isArray(rule) ? rule : rule ? [rule] : []).filter((condition) => condition && condition.key === select);

@@ -9,7 +9,7 @@
  * with no extension, so this file imports nothing but types.
  */
 
-import type { ClayConfigItem, ClayOption, VisibilityCondition } from './types';
+import type { ClayConfigItem, ClayOption, VisibilityCondition, VisibilityRule } from './types';
 
 /**
  * A select's options with Clay's option groups opened up, in the order the select lists them. Clay
@@ -150,17 +150,29 @@ export function dropRow(page: ClayConfigItem[], target: ClayConfigItem): void {
 }
 
 /**
- * A row's visibleWhen as a list, whichever of its two forms it takes.
+ * A row's visibleWhen as a list of entries, whichever of its two forms it takes. Each entry is a
+ * condition or an `anyOf` list of them.
  *
  * @param item The row.
- * @return Its conditions, empty for a row with none.
+ * @return Its entries, empty for a row with none.
  */
-export function conditionsOf(item: ClayConfigItem): VisibilityCondition[] {
+export function conditionsOf(item: ClayConfigItem): VisibilityRule[] {
   if (Array.isArray(item.visibleWhen)) {
     return item.visibleWhen;
   }
 
   return item.visibleWhen ? [item.visibleWhen] : [];
+}
+
+/**
+ * Whether an entry of a visibleWhen reads a control, itself or inside its `anyOf`.
+ *
+ * @param rule The entry.
+ * @param key The control's messageKey.
+ * @return Whether the entry names it.
+ */
+export function ruleNames(rule: VisibilityRule, key: string): boolean {
+  return 'anyOf' in rule ? (rule.anyOf || []).some((condition) => condition.key === key) : rule.key === key;
 }
 
 /**
@@ -188,9 +200,19 @@ export function settleConditions(page: ClayConfigItem[], key: string, onlyValue?
     return 'notIn' in condition ? named(condition.notIn) : !named(condition.in);
   };
 
+  // an anyOf entry goes once one of its conditions on the control holds, since the entry then always
+  // holds. one whose conditions on the control all fail stays, and its other conditions still decide
+  const keeps = (rule: VisibilityRule) => {
+    if ('anyOf' in rule) {
+      return !(rule.anyOf || []).some((condition) => condition.key === key && !fails(condition));
+    }
+
+    return rule.key !== key || fails(rule);
+  };
+
   allItems(page).forEach((item) => {
     const conditions = conditionsOf(item);
-    const kept = conditions.filter((condition) => condition.key !== key || fails(condition));
+    const kept = conditions.filter(keeps);
 
     if (kept.length === conditions.length) {
       return;

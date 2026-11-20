@@ -28,7 +28,7 @@ import { addPluginsPanel, PANEL_TITLE, PANEL_TYPE } from './panel';
 import type { PluginPanelTexts } from './panel';
 import { pluginTexts } from '../pkjs/plugin-texts';
 import { PLUGIN_KINDS_CLASS, PLUGIN_KINDS_TYPE } from './kinds-component';
-import { allItems, conditionsOf, dropRow, dropRows, findRow, footIndex, listHolding, settleConditions } from '../clay/rows';
+import { allItems, conditionsOf, dropRow, dropRows, findRow, footIndex, listHolding, ruleNames, settleConditions } from '../clay/rows';
 import type { StandardReadings } from './standard';
 import type { PluginSummary, SourceState } from './types';
 import type { ClayConfigItem } from '../clay/types';
@@ -366,7 +366,7 @@ function putSelectFirst(page: ClayConfigItem[], select: ClayConfigItem, selectKe
   const below = rows.slice(at + 1);
   const above = rows.slice(top, leadStart);
   const belongs = (item: ClayConfigItem) => {
-    return item.pluginSourceHides === selectKey || conditionsOf(item).some((condition) => condition.key === selectKey);
+    return item.pluginSourceHides === selectKey || conditionsOf(item).some((rule) => ruleNames(rule, selectKey));
   };
 
   rows.splice(0, rows.length, ...rows.slice(0, top), ...rows.slice(leadStart, at), select, ...below, ...above.filter(belongs), ...above.filter((item) => !belongs(item)));

@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `insertTimelinePin`, `deleteTimelinePin`, `showNotification`, and `registerActionHandler` to `PluginPebble`, with the action request and responder types. `ts/plugin-app/timeline.ts` types a pin as `TimelinePin`, and `insertPin` and `deletePin` resolve to whether the call was handed over, never throwing. The Pebble app drops a pin it refuses without a word, such as one with no `Timeline` grant, so make pin calls before answering the request.
 - Added `handleActions(actions)` in `ts/plugin-app/actions.ts`, which routes a plugin app's actions by name and answers `INVALID_REQUEST` for one it does not have. `fakePluginPebble` in `ts/testing/plugin-pebble.ts` stands in for the runtime in a spec of pins and actions.
 - Added `keywordMatcher(list)`, `matchesKeyword(title, keywords)`, and `parseKeywords(list)` in `ts/calendar/keywords.ts`, which match a title against a comma-separated list the wearer types, from the start of a word and ignoring case.
+- Added `anyOf` to `visibleWhen`. An entry `{ anyOf: [...] }` holds when any one of its conditions does, so a row can show while either of two controls allows it. `VisibilityRule` types an entry, and `ruleNames` in `ts/clay/rows.ts` says whether one reads a control.
 
 #### Changed
 
@@ -37,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** The Manual Location and Alternate Time Zone searches now hint Tokyo. Pass the new `location.placeholder` and `clock.timeZonePlaceholder` to keep other hints.
 - **Breaking:** The build now stops on an option for a text `KNOWN_*` setting that is too long for its buffer, such as a `date.options` value over 15 bytes, which built before and was cut short on the watch. Keep each date option to 15 bytes.
 - **Breaking:** `KNOWN_DATE_FORMAT` now takes the struct and the member rather than an offset. Pass `KNOWN_DATE_FORMAT(MySettings, date_format)`. The build stops on a member that is not 16 bytes.
+- **Breaking:** `conditionsOf` in `ts/clay/rows.ts` now returns `VisibilityRule[]` rather than `VisibilityCondition[]`, so an entry can be `{ anyOf }`. Narrow each with `'anyOf' in rule`, or test whether one reads a control with `ruleNames(rule, key)`.
 - `handleSettings` now finishes the `onSaved` hook, and the refresh after it, before answering the page. The Pebble app ends the plugin's run once the page is answered, so a hook still running, such as one deleting pins, could be cut off. The page gives up on a save after about five seconds, so it hears the save as kept after `SAVE_HOOK_LIMIT_MS`, 4 seconds, even when the hook has not finished. Keep the hook short.
 - The theme picker's frames now read `--pf-preview-backing`, `--pf-preview-border`, and `--pf-preview-size`, which a face sets on `:root`. They fall back to the black backing, `#3d434d` border, and 8rem width the picker had.
 

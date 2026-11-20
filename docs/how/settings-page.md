@@ -348,6 +348,17 @@ visibleWhen: [
 ]
 ```
 
+**One of Several.** An entry of `anyOf` with a list of conditions holds when any one of them does. It suits a row two switches both need, such as an email box shown while either of two filters is on. It sits in a list beside plain conditions like any other entry:
+
+```ts
+visibleWhen: { anyOf: [
+  { key: 'HIDE_DECLINED', in: [true] },
+  { key: 'HIDE_TENTATIVE', in: [true] },
+] }
+```
+
+A key row with `providerKeys` hides on its select with plain conditions only. The phone and the page read only those to work out which providers take an API key, so an `anyOf` naming the select does not decide it.
+
 **How It Works.** When a page has any `visibleWhen` row, the framework runs its own custom function to show and hide the rows, once as the page opens and again whenever a named control changes. A hidden row keeps its saved value, so a control turning a section back on brings the earlier choices back. This runs before a face's own `customClay`, so `visibleWhen` works on every face, and a face's function can still change a row after it. The rows ride on the page as plain config, so a hand-built page uses `visibleWhen` the same way.
 
 Put `visibleWhen` on a control, not a `section`, since Clay gives a section no row to hide. A row whose named control is dropped from a watch by its own `capabilities` is hidden along with it on that watch, since the value it waits on is not there to read.

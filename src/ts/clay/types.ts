@@ -15,6 +15,9 @@ export type ClayOption = { label: string; value: string | number };
  * left blank by a saved choice it no longer offers, hides an `in` row and shows a `notIn` one. */
 export type VisibilityCondition = { key: string; in: Array<string | number | boolean> } | { key: string; notIn: Array<string | number | boolean> };
 
+/** One entry of a `visibleWhen`: a condition, or `anyOf`, a list of conditions of which one holding is enough. */
+export type VisibilityRule = VisibilityCondition | { anyOf: VisibilityCondition[] };
+
 /** The pictures a themePreview draws for one option. A plain list is drawn on every watch. A map
  * keyed by platform name (emery, gabbro, and so on) draws that watch's own list, so a round watch
  * shows its round shots and a rectangular one shows its. The generator writes whichever shape the
@@ -85,9 +88,10 @@ export interface ClayConfigItem {
   /** Shows this item only while another control holds one of the given values, so a row that does
    * nothing under the current choice is hidden rather than left on the page. One condition, or a
    * list of them that all have to hold. `key` is a control's messageKey and `in` the values that
-   * reveal this item (a toggle's are `true`/`false`), or `notIn` the values that hide it. The
+   * reveal this item (a toggle's are `true`/`false`), or `notIn` the values that hide it. An entry
+   * can also be `{ anyOf: [...] }`, a list of conditions that holds when any one of them does. The
    * framework wires the showing and hiding when a page has any, ahead of the face's own customClay. */
-  visibleWhen?: VisibilityCondition | VisibilityCondition[];
+  visibleWhen?: VisibilityRule | VisibilityRule[];
   /** select only: the Pebble app plugin source this choice can read from instead, by category and
    * item, such as weather and location. A face built with plugin sources adds a "Pebble App:
    * Preferred Source" option to it when a plugin on the phone serves that item. Clay ignores the

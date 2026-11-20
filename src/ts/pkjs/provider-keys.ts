@@ -159,11 +159,12 @@ function rowsOf(page: ClayConfigItem[]): ClayConfigItem[] {
 }
 
 /**
- * Whether a key row hides for a value of its select, read off its own visibleWhen conditions on the
- * select, such as `notIn: ['yahoo']`, exactly as the page's show and hide in dependent-visibility.ts
- * reads them. The value is compared as text and with its case, and a condition holding both `in` and
- * `notIn` goes by its `notIn`. Conditions on other controls are left out, since they say nothing
- * about the provider.
+ * Whether a key row hides for a value of its select, read off the plain visibleWhen conditions it
+ * puts on the select, such as `notIn: ['yahoo']`. Each one is read the way the page's show and hide
+ * in dependent-visibility.ts reads a condition. The value is compared as text and with its case, and
+ * a condition holding both `in` and `notIn` goes by its `notIn`. An `anyOf` entry is left out, even
+ * one naming the select, and so are conditions on other controls, since they say nothing about the
+ * provider. A key row hides on its select with plain conditions only.
  *
  * @param page The page the row is on.
  * @param select The select's message key.
@@ -173,7 +174,8 @@ function rowsOf(page: ClayConfigItem[]): ClayConfigItem[] {
 export function rowHidesFor(page: ClayConfigItem[], select: string, key: string): (value: string) => boolean {
   const row = rowsOf(page).find((item) => item.messageKey === key);
   const rule = row ? row.visibleWhen : undefined;
-  const conditions = (Array.isArray(rule) ? rule : rule ? [rule] : []).filter((condition) => condition.key === select) as Array<{ in?: unknown[]; notIn?: unknown[] }>;
+  // the key rows hide on the select with a plain condition, so an anyOf entry never decides a provider here
+  const conditions = (Array.isArray(rule) ? rule : rule ? [rule] : []).filter((condition) => !('anyOf' in condition) && condition.key === select) as Array<{ in?: unknown[]; notIn?: unknown[] }>;
 
   return (value) => {
     const named = (list: unknown[]) => list.some((wanted) => String(wanted) === String(value));

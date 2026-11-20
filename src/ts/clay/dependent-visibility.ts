@@ -3,8 +3,9 @@
  *
  * An item declares a `visibleWhen` in its config, one condition or a list that all have to hold, and
  * this hides it whenever the condition does not, so a row that does nothing under the current choice
- * is off the page rather than sitting there looking live. The framework runs this on a page that has
- * any such item, ahead of the face's own customClay when it passes one.
+ * is off the page rather than sitting there looking live. An entry of the list can be `anyOf`, a list
+ * of conditions of which one holding is enough, and an empty one never holds. The framework runs this
+ * on a page that has any such item, ahead of the face's own customClay when it passes one.
  *
  * Clay serialises this and re-runs it inside the config webview, so it reaches nothing outside
  * itself: no imports and no module-scope constants. It reads the rules off the items on the page
@@ -22,6 +23,9 @@ interface Condition {
   in?: Array<string | number | boolean>;
   notIn?: Array<string | number | boolean>;
 }
+
+/** One entry of a `visibleWhen`: a test, or `anyOf`, a list of tests of which one holding is enough. */
+type Rule = Condition | { anyOf: Condition[] };
 
 /** The bits of an element this reaches, a row's own or the section card around it. */
 interface PageElement {
@@ -42,7 +46,7 @@ interface PageItem {
 
 /** The bits of a Clay row this reaches. */
 interface ClayRow {
-  config: { visibleWhen?: Condition | Condition[] };
+  config: { visibleWhen?: Rule | Rule[] };
   // the row's own element, so its `hide` class can be toggled straight. the manipulator's hide/show
   // only exist on Clay's built-in controls, not on a locationsearch or a face's own component, and
   // the class is what those methods set anyway
@@ -70,11 +74,14 @@ export default function dependentVisibility(this: ClayPage): void {
       return;
     }
 
-    const conditionsOf = (item: ClayRow): Condition[] => {
+    const rulesOf = (item: ClayRow): Rule[] => {
       const rule = item.config.visibleWhen;
 
       return Array.isArray(rule) ? rule : rule ? [rule] : [];
     };
+
+    // every test an entry holds, its own or the ones inside its anyOf
+    const testsOf = (rule: Rule): Condition[] => ('anyOf' in rule ? rule.anyOf || [] : [rule]);
 
     // compared as strings so a stored "1" matches an option value of 1, and a toggle's true matches true
     const holds = (condition: Condition): boolean => {
@@ -91,6 +98,9 @@ export default function dependentVisibility(this: ClayPage): void {
       return condition.notIn ? !named(condition.notIn) : named(condition.in || []);
     };
 
+    // an anyOf entry holds when one of its tests does, so an empty one never does
+    const ruleHolds = (rule: Rule): boolean => ('anyOf' in rule ? (rule.anyOf || []).some(holds) : holds(rule));
+
     const update = () => {
       dependents.forEach((item) => {
         const root = item.$element && item.$element[0];
@@ -99,7 +109,7 @@ export default function dependentVisibility(this: ClayPage): void {
           return;
         }
 
-        if (conditionsOf(item).every(holds)) {
+        if (rulesOf(item).every(ruleHolds)) {
           root.classList.remove('hide');
         } else {
           root.classList.add('hide');
@@ -148,7 +158,7 @@ export default function dependentVisibility(this: ClayPage): void {
     const listened: Record<string, boolean> = {};
 
     dependents.forEach((item) => {
-      conditionsOf(item).forEach((condition) => {
+      rulesOf(item).reduce((tests: Condition[], rule) => tests.concat(testsOf(rule)), []).forEach((condition) => {
         if (listened[condition.key]) {
           return;
         }
