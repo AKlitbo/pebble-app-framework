@@ -13,6 +13,7 @@
  */
 
 import type { SourceEnvelope, SourceInstance } from '../plugin-sources/types';
+import type { PluginNotification, TimelinePin } from './timeline';
 
 /** What a source handler is asked for, and what a plugin passes to read another plugin's source. */
 export interface SourceRequest {
@@ -34,6 +35,36 @@ export interface SourceResponder {
   error(code: string, message?: string): void;
 }
 
+/** What an action handler is asked: the action's name and its arguments. */
+export interface ActionRequest {
+  action: string;
+  args: Record<string, unknown>;
+}
+
+/**
+ * What an action answers when it worked. The Pebble app turns down an answer with a field of the
+ * wrong type as `UNKNOWN`, "malformed plugin response".
+ */
+export interface ActionResult {
+  /** The words the watch shows, or the caller reads. Left out, the watch shows `Done`. */
+  text?: string;
+  /** A short result for an app that invoked the action, as text. */
+  semanticResult?: string;
+  /** The sources the action changed, such as `calendar/event`, which the Pebble app reads again straight away. */
+  refreshed?: string[];
+}
+
+/**
+ * How an action handler answers. The Pebble app takes the first answer and ignores any after it,
+ * waits 20 seconds for one, and ends the plugin's run as soon as it has one. A handler that throws or
+ * rejects before answering is answered `UNKNOWN` with the error as text.
+ */
+export interface ActionResponder {
+  ok(result?: ActionResult): void;
+  /** An error code, such as `INVALID_REQUEST`, `INVALID_ARGS`, `AUTH_REQUIRED`, or `UNKNOWN`. */
+  error(code: string, message?: string): void;
+}
+
 /** The plugin's own encrypted storage, which only the plugin can read and which goes when the app is removed. */
 export interface SecureStorage {
   getItem(key: string): Promise<string | null>;
@@ -48,10 +79,29 @@ export interface PluginPebble {
   subscribeSource(request: SourceRequest): void;
   readSource(request: SourceRequest): Promise<SourceEnvelope>;
   refreshSources(sources: string[]): void;
+  registerActionHandler(handler: (request: ActionRequest, respond: ActionResponder) => void | Promise<void>): void;
+  /**
+   * Hands a pin to the Pebble app, to put on the timeline or to change the one with its id. It answers
+   * nothing and never rejects. A pin the plugin has no `Timeline` grant for, or one that does not parse,
+   * is dropped without a word, so a pin handed over is not a pin on the watch. It throws only when the
+   * pin cannot be turned into JSON. Left out on a Pebble app from before 1.18.0. `insertPin` in
+   * ts/plugin-app/timeline.ts calls it safely.
+   */
+  insertTimelinePin?(pin: TimelinePin): unknown;
+  /** Hands the Pebble app a pin id to take off the timeline. An unknown id is dropped without a word. Left out as `insertTimelinePin` is. */
+  deleteTimelinePin?(id: string): unknown;
+  /**
+   * Shows a notification on the watch, with a pin's layout and actions. Needs `ShowNotifications`, and
+   * answers nothing. Left out as `insertTimelinePin` is.
+   */
+  showNotification?(notification: PluginNotification): unknown;
   secureStorage: SecureStorage;
   /**
-   * Asks whether the wearer granted a permission the appinfo lists, such as `Internet/finnhub.io`. It
-   * answers `granted`, `denied`, or `prompt`. Left out on a Pebble app too old to have it.
+   * Asks whether one of the plugin's own permissions works right now, taking it as the appinfo declares
+   * it, such as `Timeline` or `Internet/finnhub.io`. It answers `granted` when using it will work,
+   * `prompt` when the wearer has to allow it first in the Pebble app, and `denied` when the wearer
+   * turned it off. It does not count as using the permission, and the answer can change without the
+   * wearer doing anything. Left out on a Pebble app too old to have it.
    */
   permissions?: { query(permission: string): Promise<string> };
 }
@@ -67,6 +117,25 @@ export function pluginPebble(): PluginPebble {
 
 /** The reason a failed read gives when the runtime named none. */
 export const NO_REASON = 'NO_REASON';
+
+/**
+ * A code that names something, as the runtime gives one: a string with words in it, trimmed, or a
+ * number other than 0 that is finite, as its digits. Anything else names nothing.
+ *
+ * @param value The code, which may be anything.
+ * @return The code as text, or undefined when it names nothing.
+ */
+export function namedCode(value: unknown): string | undefined {
+  if (typeof value === 'string' && value.trim()) {
+    return value.trim();
+  }
+
+  if (typeof value === 'number' && Number.isFinite(value) && value !== 0) {
+    return String(value);
+  }
+
+  return undefined;
+}
 
 /**
  * The words for why a read of a source failed, as the plugin runtime gave them, such as
@@ -86,13 +155,11 @@ export function failureReason(error: unknown): string {
 
   // the code wins, then the message, each only when it says something, so a blank code never hides a
   // real message. a code given as a number reads as itself, unless it is 0 or not a real number
-  for (const named of candidates) {
-    if (typeof named === 'string' && named.trim()) {
-      return named.trim();
-    }
+  for (const candidate of candidates) {
+    const named = namedCode(candidate);
 
-    if (typeof named === 'number' && Number.isFinite(named) && named !== 0) {
-      return String(named);
+    if (named !== undefined) {
+      return named;
     }
   }
 

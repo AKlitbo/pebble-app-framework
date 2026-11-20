@@ -39,33 +39,49 @@ function isWordCharacter(character: string): boolean {
 }
 
 /**
- * Whether any keyword matches the title. Case is ignored, and a keyword matches only where it starts
- * at the start of a word, which is the title's start or a place after anything that is not a letter
- * or a digit. So `Canceled:` matches "Canceled: Standup".
+ * Prepares a keyword list once, for a caller that checks many titles against it.
+ *
+ * Case is ignored, and a keyword matches only where it starts at the start of a word, which is the
+ * title's start or a place after anything that is not a letter or a digit. So `Lunch` matches
+ * "Team Lunch" but not "Brunch", and `Canceled:` matches "Canceled: Standup".
+ *
+ * @param keywords The list as the wearer typed it, or a list of keywords, such as the one
+ *   `parseKeywords` gave for it. Each keyword in a list is trimmed and lowered too, so a list built by
+ *   hand matches the same.
+ * @return Says whether any keyword matches a title. An empty list matches nothing.
+ */
+export function keywordMatcher(keywords: string | readonly string[]): (title: string) => boolean {
+  const list = (typeof keywords === 'string' ? parseKeywords(keywords) : keywords.map(plainKeyword)).filter((keyword) => keyword.length > 0);
+
+  return (title) => {
+    const lowered = String(title || '').toLowerCase();
+
+    return list.some((keyword) => {
+      let at = lowered.indexOf(keyword);
+
+      while (at !== -1) {
+        if (at === 0 || !isWordCharacter(lowered.charAt(at - 1))) {
+          return true;
+        }
+
+        at = lowered.indexOf(keyword, at + 1);
+      }
+
+      return false;
+    });
+  };
+}
+
+/**
+ * Whether any keyword matches the title, by the rules `keywordMatcher` keeps. A caller checking many
+ * titles against one list prepares it once with `keywordMatcher` instead.
  *
  * @param title The event's title.
- * @param keywords The list as the wearer typed it, or a list of keywords, such as the one
- *   `parseKeywords` gave for it, for a caller that checks many titles against one list. Each keyword in
- *   a list is trimmed and lowered too, so a list built by hand matches the same.
+ * @param keywords The list as the wearer typed it, or a list of keywords.
  * @return True when a keyword matches. An empty list matches nothing.
  */
 export function matchesKeyword(title: string, keywords: string | readonly string[]): boolean {
-  const list = typeof keywords === 'string' ? parseKeywords(keywords) : keywords.map(plainKeyword);
-  const lowered = String(title || '').toLowerCase();
-
-  return list.some((keyword) => {
-    let at = keyword ? lowered.indexOf(keyword) : -1;
-
-    while (at !== -1) {
-      if (at === 0 || !isWordCharacter(lowered.charAt(at - 1))) {
-        return true;
-      }
-
-      at = lowered.indexOf(keyword, at + 1);
-    }
-
-    return false;
-  });
+  return keywordMatcher(keywords)(title);
 }
 
-export default { parseKeywords, matchesKeyword };
+export default { parseKeywords, keywordMatcher, matchesKeyword };

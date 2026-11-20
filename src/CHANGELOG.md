@@ -21,7 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `maxEvents` to `parseIcal`'s options, the most events it keeps, up to `SOURCE_LIMIT_MAX`. Left out, it keeps 64.
 - Added `fetchFailure(error)` in `ts/plugin-app/request.ts`, which sorts what `fetchText` throws, or what `pluginRequest` answers, into a kind a plugin app can keep and show: `HTTP` with the status, `TIMEOUT`, `NOT_ALLOWED`, or `FAILED`. `FETCH_FAILURE_KINDS` lists them.
 - Added `fingerprint(text)` in `ts/pkjs/fingerprint.ts`, the short fingerprint `keyPrint` gives a quota ledger's key, for a plugin app that notices a changed key or link without keeping it.
-- Added `matchesKeyword(title, keywords)` and `parseKeywords(list)` in `ts/calendar/keywords.ts`, which match a title against a comma-separated list the wearer types, from the start of a word and ignoring case.
+- Added `insertTimelinePin`, `deleteTimelinePin`, `showNotification`, and `registerActionHandler` to `PluginPebble`, with the action request and responder types. `ts/plugin-app/timeline.ts` types a pin as `TimelinePin`, and `insertPin` and `deletePin` resolve to whether the call was handed over, never throwing. The Pebble app drops a pin it refuses without a word, such as one with no `Timeline` grant, so make pin calls before answering the request.
+- Added `handleActions(actions)` in `ts/plugin-app/actions.ts`, which routes a plugin app's actions by name and answers `INVALID_REQUEST` for one it does not have. `fakePluginPebble` in `ts/testing/plugin-pebble.ts` stands in for the runtime in a spec of pins and actions.
+- Added `keywordMatcher(list)`, `matchesKeyword(title, keywords)`, and `parseKeywords(list)` in `ts/calendar/keywords.ts`, which match a title against a comma-separated list the wearer types, from the start of a word and ignoring case.
 
 #### Changed
 
