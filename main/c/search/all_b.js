@@ -3,7 +3,7 @@ var searchData=
   ['last_5fat_0',['last_at',['../structHrvRun.html#ad9b69963930bf29a2ee1ba9aaacb171d',1,'HrvRun']]],
   ['last_5fms_1',['last_ms',['../structHrvRun.html#ab97d22d055ef0b60e635d6dc9b4054ec',1,'HrvRun']]],
   ['last_5fstart_2',['last_start',['../structHourLatch.html#af42cb17bd6a6dfea7d7c95e87eb8f37a',1,'HourLatch']]],
-  ['last_5fsync_3',['last_sync',['../structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a',1,'WeatherState::last_sync'],['../structCalendarPersist.html#a9ba0dbe5f0bd8c2114bacc0be1385f11',1,'CalendarPersist::last_sync'],['../struct_0fstruct_0e_8s__state.html#a76fab064443fccad957cca54b5bf2c27',1,'[struct].s_state::last_sync'],['../struct_0fstruct_0e_8s__state.html#a71acacf736c0662ae8a364a757778e46',1,'[struct].s_state::last_sync']]],
+  ['last_5fsync_3',['last_sync',['../structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a',1,'WeatherState::last_sync'],['../structCalendarPersist.html#a9ba0dbe5f0bd8c2114bacc0be1385f11',1,'CalendarPersist::last_sync'],['../struct_0fstruct_0e_8s__state.html#a71acacf736c0662ae8a364a757778e46',1,'[struct].s_state::last_sync'],['../struct_0fstruct_0e_8s__state.html#a76fab064443fccad957cca54b5bf2c27',1,'[struct].s_state::last_sync']]],
   ['last_5fx_4',['last_x',['../structHrvMotion.html#a41c7172c7306a847903028be8a6c1fea',1,'HrvMotion']]],
   ['last_5fy_5',['last_y',['../structHrvMotion.html#a6e5f5c3c8c361ee8cf0f65cdc3d19be3',1,'HrvMotion']]],
   ['last_5fz_6',['last_z',['../structHrvMotion.html#af87e0721177b9e093cc6c190baabec62',1,'HrvMotion']]],
@@ -40,5 +40,15 @@ var searchData=
   ['locationseed_37',['LocationSeed',['../structLocationSeed.html',1,'']]],
   ['log_38',['log',['../structHrvSaved.html#a0724c369de7401a1acd54d5d05f67e52',1,'HrvSaved']]],
   ['lon_39',['lon',['../structLocationSeed.html#a525f72325d8cad6c0317e6b0d4ce469f',1,'LocationSeed::lon'],['../struct_0fstruct_0e_8s__fixed.html#aededa9781856985a2837fa0d086a38ef',1,'[struct].s_fixed::lon'],['../struct_0fstruct_0e_8s__state.html#ab9a6be89c66daedb8c2c8cf463e543e9',1,'[struct].s_state::lon']]],
-  ['low_40',['low',['../structHrHour.html#acc0ce007509ea40c9fe818e314e29a82',1,'HrHour']]]
+  ['long_5ftext_2ec_40',['long_text.c',['../long__text_8c.html',1,'']]],
+  ['long_5ftext_2eh_41',['long_text.h',['../long__text_8h.html',1,'']]],
+  ['long_5ftext_5farrived_42',['long_text_arrived',['../group__lib__io.html#gae41cbb38ef15413be76eead3aa97d4f5',1,'long_text_arrived(const LongText *slot, const char *text):&#160;long_text.c'],['../group__lib__io.html#gae41cbb38ef15413be76eead3aa97d4f5',1,'long_text_arrived(const LongText *slot, const char *text):&#160;long_text.c']]],
+  ['long_5ftext_5fcap_5fmax_43',['LONG_TEXT_CAP_MAX',['../group__lib__io.html#ga342e9f4df8f2a749f12bfd1dba4a05b3',1,'long_text.h']]],
+  ['long_5ftext_5ffits_44',['long_text_fits',['../group__lib__io.html#ga8d4c5f00c23e024894270391fb1f75aa',1,'long_text_fits(uint32_t text_bytes, uint32_t reply_bytes, uint32_t outbox_max, uint32_t inbox_room):&#160;long_text.c'],['../group__lib__io.html#ga8d4c5f00c23e024894270391fb1f75aa',1,'long_text_fits(uint32_t text_bytes, uint32_t reply_bytes, uint32_t outbox_max, uint32_t inbox_room):&#160;long_text.c']]],
+  ['long_5ftext_5fheld_45',['long_text_held',['../group__lib__io.html#gafe9a63bc1dca334c9b7e8a191ad638d9',1,'long_text_held(const LongText *slot, char *out):&#160;long_text.c'],['../group__lib__io.html#gafe9a63bc1dca334c9b7e8a191ad638d9',1,'long_text_held(const LongText *slot, char *out):&#160;long_text.c']]],
+  ['long_5ftext_5fset_46',['long_text_set',['../group__lib__io.html#ga0cb475e40797328cd99e356a3412e8c5',1,'long_text_set(LongText *slot, uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver, bool opened):&#160;long_text.c'],['../group__lib__io.html#ga0cb475e40797328cd99e356a3412e8c5',1,'long_text_set(LongText *slot, uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver, bool opened):&#160;long_text.c']]],
+  ['longtext_47',['LongText',['../structLongText.html',1,'']]],
+  ['longtextprovider_48',['LongTextProvider',['../group__lib__io.html#ga9b2a1b8b90fa7cf1728ca359af72042c',1,'long_text.h']]],
+  ['longtextreceiver_49',['LongTextReceiver',['../group__lib__io.html#ga0f8e59f3f412d280af3f7e20dff33fd1',1,'long_text.h']]],
+  ['low_50',['low',['../structHrHour.html#acc0ce007509ea40c9fe818e314e29a82',1,'HrHour']]]
 ];

@@ -85,7 +85,7 @@
 <p>A face&#39;s name has to be unique across the whole repo, since commands like <code>paf build</code> take a face by name alone.</p>
 <p>A plugin app is a face too, one whose appinfo sets <code>&quot;projectType&quot;: &quot;plugin&quot;</code>. A unit holding one needs framework 6 or later, and <a href="../../how/plugin-apps/">Plugin Apps</a> covers the rest.</p>
 <h2 id="one-face-at-the-root">One Face at the Root</h2>
-<p>A repo that is a single face, such as the LCARS face:</p>
+<p>A repo that is a single face:</p>
 <pre><code>my-face/
   paf.config.json
   package.json          workspaces: [&quot;paf&quot;, &quot;paf/plugins/*&quot;]

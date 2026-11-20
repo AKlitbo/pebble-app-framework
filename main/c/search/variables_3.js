@@ -5,7 +5,7 @@ var searchData=
   ['daily_5flen_2',['daily_len',['../structWeatherMessage.html#a2246248b9662e9e1bd5ca6c8ed1a4096',1,'WeatherMessage']]],
   ['data_3',['data',['../structEngineSlot.html#a42d96fd8327f37c24cb80e76386ecd45',1,'EngineSlot']]],
   ['date_4',['date',['../structDevReadings.html#a888ddc655ec4521bfc6034d8276ff825',1,'DevReadings']]],
-  ['day_5',['day',['../structDevDate.html#aeaf318f0b3e08719a24fc1baa93d7ca5',1,'DevDate']]],
+  ['day_5',['day',['../structGoalLatch.html#aa1fe6067f1e0c7bf2c4996a531502f97',1,'GoalLatch::day'],['../structDevDate.html#aeaf318f0b3e08719a24fc1baa93d7ca5',1,'DevDate::day']]],
   ['day_5fstart_6',['day_start',['../structWeatherClock.html#a3ae8fad6167ba4194d754c420fed06cb',1,'WeatherClock']]],
   ['default_5fnum_7',['default_num',['../structSettingField.html#ab9dc0056bfc6811d5be0dd8600042c14',1,'SettingField']]],
   ['default_5fstr_8',['default_str',['../structSettingField.html#a3a2055d62a14725d4f8b08a50d6546d1',1,'SettingField']]],

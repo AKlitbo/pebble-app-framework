@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['weatherhandler_0',['WeatherHandler',['../group__lib__io.html#ga5e383acfcc7c48eb2dd8caac176bf5cb',1,'appmessage.h']]]
+  ['unitchangedhandler_0',['UnitChangedHandler',['../group__lib__io.html#ga6fb408316f6f72341bf67751cdbd36d9',1,'appmessage.h']]]
 ];

@@ -68,8 +68,9 @@ Clay ignores both, so the page is unchanged on a face without plugin sources. On
 them, the weather, stock, and calendar features turn the marks into the Preferred Source option and hide
 those rows while it is picked.</p>
 <p>Top-level fields:
-heading, intro        page title and lead paragraph (both optional). The default intro
-mentions weather while the page has a Weather section</p>
+heading, intro        page title and lead paragraph (both optional). The default title is
+the app's displayName, or Settings where the build wrote none
+introWithoutWeather   the lead paragraph for a page left with no Weather section</p>
 <p>Section objects (each section is customized through its own fields):
 appearanceItems [ClayConfigItem]            extra controls inside the Appearance section, which
 shows when there is a theme, one of these, or quietTime
@@ -79,12 +80,18 @@ date     { label?, description?, default?, beats?, options? }</p>
 <p>Optional sections (present = included, omitted = excluded):
 steps       { label?, description?, capabilities? }  the steps control in the Health section
 battery     { label?, description? }         the battery readout control in the Health section
+goals       { heartRate?, distanceUnit?, alerts? }  the daily goals and the goal buzz in the
+Health section. heartRate { description?,
+capabilities? } adds the Heart Rate Limit.
+distanceUnit { description? } and alerts
+{ description?, vibePicks?, custom? } are on
+unless set to false
 theme       { label?, description?, options?, previews? }  the theme picker. options is the theme
 list, and a picker given none has nothing to offer.
 previews shows a picture beside each name, and
 can be a function the page calls as it opens
-clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
-location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
+clock       { timeZone?, timeZonePlaceholder? }  adds the alternate time zone picker to the Clock section
+location    { gpsDefault?, placeholder? }    the GPS toggles and the manual city, which weather reads
 weather     {}                               marker, adds the provider picker to the Weather section
 temperature {}                               marker, adds the unit dropdown to the Weather section
 wind        {}                               marker, adds the wind speed unit to the Weather section
@@ -100,7 +107,7 @@ stocks      { description?, items? }         the data source, key, and tickers, 
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The assembled Clay config array, ready to hand to Clay.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/pkjs/config-builder.ts#L717">pkjs/config-builder.ts:717</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/pkjs/config-builder.ts#L787">pkjs/config-builder.ts:787</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -118,12 +125,12 @@ stocks      { description?, items? }         the data source, key, and tickers, 
 <h3 class="tsd-anchor-link" id="beatsdateoptions"><span>beats<wbr/>Date<wbr/>Options</span><a href="#beatsdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">beatsDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/pkjs/config-builder.ts#L754">pkjs/config-builder.ts:754</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/pkjs/config-builder.ts#L824">pkjs/config-builder.ts:824</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="defaultdateoptions"><span>default<wbr/>Date<wbr/>Options</span><a href="#defaultdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">defaultDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/pkjs/config-builder.ts#L753">pkjs/config-builder.ts:753</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/pkjs/config-builder.ts#L823">pkjs/config-builder.ts:823</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

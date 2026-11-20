@@ -71,9 +71,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.89% </span>
+                <span class="strong">94.79% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>93/98</span>
+                <span class='fraction'>91/96</span>
             </div>
         
             
@@ -597,7 +597,9 @@
 <a name='L491'></a><a href='#L491'>491</a>
 <a name='L492'></a><a href='#L492'>492</a>
 <a name='L493'></a><a href='#L493'>493</a>
-<a name='L494'></a><a href='#L494'>494</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L494'></a><a href='#L494'>494</a>
+<a name='L495'></a><a href='#L495'>495</a>
+<a name='L496'></a><a href='#L496'>496</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -644,10 +646,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -667,7 +669,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -675,10 +677,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -736,7 +738,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-yes">112x</span>
 <span class="cline-any cline-yes">112x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1026,10 +1028,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">89x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1246,7 +1250,7 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
     // a face that shows coordinates asks for the place's too, and its source note says only some
     // plugins serve them. with one that serves none its coordinate readouts show no fix
     const properties = [...mapping.properties(fields, wantForecast), ...(controls.withCoords ? ['latitude', 'longitude'] : [])];
-    const texts = controls.withCoords &amp;&amp; mapping.coordsText ? { ...mapping.texts, source: [mapping.texts.source, mapping.coordsText].filter(Boolean).join(' ') } : mapping.texts;
+    const sourceExtra = controls.withCoords ? mapping.coordsText : undefined;
 &nbsp;
     // a save is told apart by which of these moved. the provider switches between the plugin and a
     // fetch, the unit converts the kept update again, and the rest only mean something to a fetch
@@ -1515,7 +1519,8 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
         messageKeys,
         state: subscription.state(),
         standard: WEATHER_STANDARD,
-        texts,
+        texts: mapping.texts,
+        sourceExtra,
         panel: true,
       });
 &nbsp;
@@ -1530,7 +1535,8 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       messageKeys,
       state: subscription.state(),
       standard: WEATHER_STANDARD,
-      texts,
+      texts: mapping.texts,
+      sourceExtra,
       panel: true,
       saved: readValue(getConfig().WEATHER_PROVIDER, undefined),
       pluginByDefault: freshPlugin(getConfig(), 'WEATHER_PROVIDER', () =&gt; choice.serves()),
@@ -1590,7 +1596,7 @@ export default { createWeatherDriver, fetchKeys, PROVIDER_KEYS, UNIT_KEYS };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-18T21:22:55.617Z
+                at 2026-11-20T17:04:52.945Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,0 +1,307 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/core/health/goals.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('goals_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">goals.c File Reference<div class="ingroups"><a class="el" href="group__lib__core.html">Core Helpers</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The daily goal tables, host-testable off-device.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="goals_8h_source.html">health/goals.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a22694a347b9d7d76cf428fa274a1ae79" id="r_a22694a347b9d7d76cf428fa274a1ae79"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a22694a347b9d7d76cf428fa274a1ae79">goal_at</a> (const int16_t *table, uint8_t count, uint8_t index)</td></tr>
+<tr class="memdesc:a22694a347b9d7d76cf428fa274a1ae79"><td class="mdescLeft">&#160;</td><td class="mdescRight">A table's entry for a menu choice, or its first entry for a choice past the end.  <br /></td></tr>
+<tr class="memitem:ga939207e2d703833e67cbf48382d0b193" id="r_ga939207e2d703833e67cbf48382d0b193"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga939207e2d703833e67cbf48382d0b193">goals_steps</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga939207e2d703833e67cbf48382d0b193"><td class="mdescLeft">&#160;</td><td class="mdescRight">The step goal for a menu choice.  <br /></td></tr>
+<tr class="memitem:ga945d507078b2a1f1bcffb2d1bfaff6f5" id="r_ga945d507078b2a1f1bcffb2d1bfaff6f5"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga945d507078b2a1f1bcffb2d1bfaff6f5">goals_distance_m</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga945d507078b2a1f1bcffb2d1bfaff6f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The distance goal for a menu choice, in metres.  <br /></td></tr>
+<tr class="memitem:gab5c0649f6d8925d8d5cb553a21570d3b" id="r_gab5c0649f6d8925d8d5cb553a21570d3b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gab5c0649f6d8925d8d5cb553a21570d3b">goals_calories</a> (uint8_t index)</td></tr>
+<tr class="memdesc:gab5c0649f6d8925d8d5cb553a21570d3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active calorie goal for a menu choice.  <br /></td></tr>
+<tr class="memitem:ga279f4876566255df40de92a7d4fc2ffb" id="r_ga279f4876566255df40de92a7d4fc2ffb"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga279f4876566255df40de92a7d4fc2ffb">goals_active_min</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga279f4876566255df40de92a7d4fc2ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active minutes goal for a menu choice.  <br /></td></tr>
+<tr class="memitem:ga8e28810a14d36a4ca94f3edf51d6f2bb" id="r_ga8e28810a14d36a4ca94f3edf51d6f2bb"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga8e28810a14d36a4ca94f3edf51d6f2bb">goals_sleep_min</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga8e28810a14d36a4ca94f3edf51d6f2bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sleep goal for a menu choice, in minutes.  <br /></td></tr>
+<tr class="memitem:gad0ddb61383b9a9bcd75c95f13ea1a8f7" id="r_gad0ddb61383b9a9bcd75c95f13ea1a8f7"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gad0ddb61383b9a9bcd75c95f13ea1a8f7">goals_hr_limit</a> (uint8_t index)</td></tr>
+<tr class="memdesc:gad0ddb61383b9a9bcd75c95f13ea1a8f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The heart rate limit for a menu choice, the top of a heart rate bar.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a51761b810364e32dca06e45df6c140ed" id="r_a51761b810364e32dca06e45df6c140ed"><td class="memItemLeft"><a id="a51761b810364e32dca06e45df6c140ed" name="a51761b810364e32dca06e45df6c140ed"></a>
+static const int16_t&#160;</td><td class="memItemRight"><b>s_steps</b> [] = {5000, 7500, 10000, 12500, 15000, 20000, 25000}</td></tr>
+<tr class="memdesc:a51761b810364e32dca06e45df6c140ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">step goals <br /></td></tr>
+<tr class="memitem:a6658312a7158aac2e2b485fbeafac80e" id="r_a6658312a7158aac2e2b485fbeafac80e"><td class="memItemLeft"><a id="a6658312a7158aac2e2b485fbeafac80e" name="a6658312a7158aac2e2b485fbeafac80e"></a>
+static const int16_t&#160;</td><td class="memItemRight"><b>s_distance_m</b> [] = {2000, 3000, 5000, 8000, 10000, 15000, 20000}</td></tr>
+<tr class="memdesc:a6658312a7158aac2e2b485fbeafac80e"><td class="mdescLeft">&#160;</td><td class="mdescRight">distance goals in metres, from the page's km <br /></td></tr>
+<tr class="memitem:ab4b957ca34aed100b129f45501e6a8e3" id="r_ab4b957ca34aed100b129f45501e6a8e3"><td class="memItemLeft"><a id="ab4b957ca34aed100b129f45501e6a8e3" name="ab4b957ca34aed100b129f45501e6a8e3"></a>
+static const int16_t&#160;</td><td class="memItemRight"><b>s_calories</b> [] = {500, 1000, 1500, 2000, 2500, 3000}</td></tr>
+<tr class="memdesc:ab4b957ca34aed100b129f45501e6a8e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">active calorie goals in kcal <br /></td></tr>
+<tr class="memitem:a63f094770bba938f7e3da5b2bcccd0e8" id="r_a63f094770bba938f7e3da5b2bcccd0e8"><td class="memItemLeft"><a id="a63f094770bba938f7e3da5b2bcccd0e8" name="a63f094770bba938f7e3da5b2bcccd0e8"></a>
+static const int16_t&#160;</td><td class="memItemRight"><b>s_active_min</b> [] = {15, 30, 45, 60, 90}</td></tr>
+<tr class="memdesc:a63f094770bba938f7e3da5b2bcccd0e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">active minute goals <br /></td></tr>
+<tr class="memitem:a58dc799937a849ec40d39be07d13bf8e" id="r_a58dc799937a849ec40d39be07d13bf8e"><td class="memItemLeft"><a id="a58dc799937a849ec40d39be07d13bf8e" name="a58dc799937a849ec40d39be07d13bf8e"></a>
+static const int16_t&#160;</td><td class="memItemRight"><b>s_sleep_h</b> [] = {6, 7, 8, 9, 10}</td></tr>
+<tr class="memdesc:a58dc799937a849ec40d39be07d13bf8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">sleep goals in hours <br /></td></tr>
+<tr class="memitem:ad73c96fd98656fc25c74a3891793d99b" id="r_ad73c96fd98656fc25c74a3891793d99b"><td class="memItemLeft"><a id="ad73c96fd98656fc25c74a3891793d99b" name="ad73c96fd98656fc25c74a3891793d99b"></a>
+static const int16_t&#160;</td><td class="memItemRight"><b>s_hr_limits</b> [] = {150, 160, 170, 180, 190, 200}</td></tr>
+<tr class="memdesc:ad73c96fd98656fc25c74a3891793d99b"><td class="mdescLeft">&#160;</td><td class="mdescRight">heart rate limits in bpm <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The daily goal tables, host-testable off-device. </p>
+<p>goal-rows.spec.ts reads these tables as text and checks them against the page's, so each one stays a plain list of numbers. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a22694a347b9d7d76cf428fa274a1ae79" name="a22694a347b9d7d76cf428fa274a1ae79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22694a347b9d7d76cf428fa274a1ae79">&#9670;&#160;</a></span>goal_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goal_at </td>
+          <td>(</td>
+          <td class="paramtype">const int16_t *</td>          <td class="paramname"><span class="paramname"><em>table</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>A table's entry for a menu choice, or its first entry for a choice past the end. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td>The goals, in menu order. </td></tr>
+    <tr><td class="paramname">count</td><td>How many the table holds. </td></tr>
+    <tr><td class="paramname">index</td><td>The saved choice. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The goal. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>health</b></li><li class="navelem"><a href="goals_8c.html">goals.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,5 +1,11 @@
 var dir_cafc11a01ebecf3c23bafbdd3321a45f =
 [
+    [ "goal_latch.c", "goal__latch_8c.html", "goal__latch_8c" ],
+    [ "goal_latch.h", "goal__latch_8h.html", "goal__latch_8h" ],
+    [ "goal_vibe_pattern.c", "goal__vibe__pattern_8c.html", "goal__vibe__pattern_8c" ],
+    [ "goal_vibe_pattern.h", "goal__vibe__pattern_8h.html", "goal__vibe__pattern_8h" ],
+    [ "goals.c", "goals_8c.html", "goals_8c" ],
+    [ "goals.h", "goals_8h.html", "goals_8h" ],
     [ "hr_day.c", "hr__day_8c.html", "hr__day_8c" ],
     [ "hr_day.h", "hr__day_8h.html", "hr__day_8h" ],
     [ "hrv_log.c", "hrv__log_8c.html", "hrv__log_8c" ],

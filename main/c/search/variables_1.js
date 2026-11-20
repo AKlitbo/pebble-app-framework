@@ -5,9 +5,10 @@ var searchData=
   ['battery_2',['battery',['../structPhoneSeed.html#a89def13debe62b82f2e4843a1b3cf63e',1,'PhoneSeed::battery'],['../structSystemSeed.html#a51e6c8c9c417fce174a71a3ba8d3994d',1,'SystemSeed::battery'],['../structDevShot.html#a071b035c65394ce86dc044d4aa3517bf',1,'DevShot::battery']]],
   ['battery_5flevel_3',['battery_level',['../struct_0fstruct_0e_8s__state.html#a5342d9c4d055ae70b79f91132fa02d4b',1,'[struct].s_state']]],
   ['beats_4',['beats',['../structTimeConfig.html#a9f051ec76f4f1a95058f5ec52506aabc',1,'TimeConfig']]],
-  ['blob_5',['blob',['../structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b',1,'SettingsSchema']]],
-  ['blob_5fsize_6',['blob_size',['../structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb',1,'SettingsSchema']]],
-  ['bluetooth_7',['bluetooth',['../structSystemSeed.html#aace126b5167d9b3e1b8b6caa82717dee',1,'SystemSeed::bluetooth'],['../structDevShot.html#a36e1570c506bfeec9d9e8f527a4d1123',1,'DevShot::bluetooth']]],
-  ['bmp_8',['bmp',['../structIconEntry.html#afe492534dca5b03d015294388fe33d3e',1,'IconEntry']]],
-  ['bpm_9',['bpm',['../structDevHourReading.html#a41b83546cbfe7a884d68041dffd78c6c',1,'DevHourReading']]]
+  ['below_5',['below',['../structGoalLatch.html#afd53127cf3c70a6fcd39987e5fc05ccc',1,'GoalLatch']]],
+  ['blob_6',['blob',['../structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b',1,'SettingsSchema']]],
+  ['blob_5fsize_7',['blob_size',['../structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb',1,'SettingsSchema']]],
+  ['bluetooth_8',['bluetooth',['../structSystemSeed.html#aace126b5167d9b3e1b8b6caa82717dee',1,'SystemSeed::bluetooth'],['../structDevShot.html#a36e1570c506bfeec9d9e8f527a4d1123',1,'DevShot::bluetooth']]],
+  ['bmp_9',['bmp',['../structIconEntry.html#afe492534dca5b03d015294388fe33d3e',1,'IconEntry']]],
+  ['bpm_10',['bpm',['../structDevHourReading.html#a41b83546cbfe7a884d68041dffd78c6c',1,'DevHourReading']]]
 ];

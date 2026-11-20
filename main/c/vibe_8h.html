@@ -221,6 +221,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga9b510de5a24f5136dfb470f5aa6aafd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default bluetooth-transition buzz: fire the pattern the user picked in settings for a connect or disconnect. A face installs this as system_store's vibe policy so the store itself never has to know about settings or buzzing.  <br /></td></tr>
 <tr class="memitem:ga984f91ed1f50b63098f92155a219cc56" id="r_ga984f91ed1f50b63098f92155a219cc56"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__system.html#ga984f91ed1f50b63098f92155a219cc56">vibe_hourly</a> (const struct tm *tick, uint8_t choice)</td></tr>
 <tr class="memdesc:ga984f91ed1f50b63098f92155a219cc56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buzz once at the top of each hour. A face calls this from its time callback on every tick, and it buzzes on the first tick of each hour's minute 0.  <br /></td></tr>
+<tr class="memitem:ga7d39417dac99e4859ff926a73df9e8bd" id="r_ga7d39417dac99e4859ff926a73df9e8bd"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__system.html#ga7d39417dac99e4859ff926a73df9e8bd">vibe_goal</a> (void)</td></tr>
+<tr class="memdesc:ga7d39417dac99e4859ff926a73df9e8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buzz the first time each day a movement goal is met. A face calls this once at startup, after both health_store_init and time_store_init, and from its health store callback on every reading.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The haptic feedback wrapper. </p>

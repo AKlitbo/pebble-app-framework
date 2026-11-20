@@ -64,9 +64,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.5% </span>
+                <span class="strong">97.5% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>37/40</span>
+                <span class='fraction'>39/40</span>
             </div>
         
             
@@ -78,16 +78,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.77% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>7/9</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.5% </span>
+                <span class="strong">97.5% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>37/40</span>
+                <span class='fraction'>39/40</span>
             </div>
         
             
@@ -313,10 +313,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -425,7 +425,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -449,9 +449,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -463,7 +463,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -632,12 +632,12 @@ export function stockErrorStatus(code: string | null | undefined): string | unde
  * with plugins off still gets the line saying to turn them on, from the page and the panel.
  */
 export const STOCK_TEXTS: PluginSourceTexts = {
-<span class="fstat-no" title="function not covered" >  notStandard: (p</span>luginName) =&gt; <span class="cstat-no" title="statement not covered" >`${pluginName} sends quotes this watchface cannot read. Pick another stock plugin under Preferred Sources in the Pebble app, or another data source here.`,</span>
-<span class="fstat-no" title="function not covered" >  notStandardNoSelect: (p</span>luginName) =&gt; <span class="cstat-no" title="statement not covered" >`${pluginName} sends quotes this watchface cannot read. Pick another stock plugin under Preferred Sources in the Pebble app.`,</span>
-  permissionDenied: 'The Pebble app is not letting this watchface read its stock plugin. Allow it for this watchface in the Pebble app.',
+  notStandard: (pluginName) =&gt; `${pluginName} sends quotes this face cannot read. Pick another stock plugin under Preferred Sources in the Pebble app, or another data source here.`,
+  notStandardNoSelect: (pluginName) =&gt; `${pluginName} sends quotes this face cannot read. Pick another stock plugin under Preferred Sources in the Pebble app.`,
+  permissionDenied: 'The Pebble app is not letting this face read its stock plugin. Allow it for this face in the Pebble app.',
   empty: 'Your stock plugin sent no quotes last time. The phone may have been offline, or the plugin may have no tickers set up in its own settings in the Pebble app.',
   source: `Your watch shows the first ${wire.STOCK_SLOTS_MAX} tickers your stock plugin sends, the ones set up in that plugin's own settings in the Pebble app.`,
-  noPlugin: 'This watchface needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under Plugins This Watchface Supports, then pick it under Preferred Sources in the Pebble app.',
+  noPlugin: 'This face needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under {panel}, then pick it under Preferred Sources in the Pebble app.',
   notInstalledLabel: 'Pebble App: Preferred Source (No Stock Plugin)',
 };
 &nbsp;
@@ -657,7 +657,7 @@ export default { stocksFromUpdate, stockErrorStatus, STOCK_PROPERTIES, STOCK_TEX
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-18T21:22:55.617Z
+                at 2026-11-20T17:04:52.945Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

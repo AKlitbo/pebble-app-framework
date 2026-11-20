@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['night_5fsched_5ffixed_0',['NIGHT_SCHED_FIXED',['../group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be',1,'nightsched.h']]],
-  ['night_5fsched_5foff_1',['NIGHT_SCHED_OFF',['../group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a6a8c99fc2f822c3b640066f69ce2d997',1,'nightsched.h']]],
-  ['night_5fsched_5fsolar_2',['NIGHT_SCHED_SOLAR',['../group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73',1,'nightsched.h']]]
+  ['link_5fdropped_0',['LINK_DROPPED',['../group__lib__core.html#ggae74178abed5fae945e1364010e009448a8d4fd3f7d66697a5ec2983845f66e644',1,'link_change.h']]],
+  ['link_5freconnected_1',['LINK_RECONNECTED',['../group__lib__core.html#ggae74178abed5fae945e1364010e009448a26d88e62a7d3a8a7278e8825d95f56b6',1,'link_change.h']]],
+  ['link_5fsame_2',['LINK_SAME',['../group__lib__core.html#ggae74178abed5fae945e1364010e009448a432b1d29bb1f587e2c7bbc80f36164aa',1,'link_change.h']]]
 ];

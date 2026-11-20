@@ -248,7 +248,7 @@ static void&#160;</td><td class="memItemRight"><b>hold_drop</b> (void)</td></tr>
 <tr class="memitem:a50a51e28dd5c0c6eb1e1c5a0856ed882" id="r_a50a51e28dd5c0c6eb1e1c5a0856ed882"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a50a51e28dd5c0c6eb1e1c5a0856ed882">hold_end</a> (uint32_t now_sec)</td></tr>
 <tr class="memdesc:a50a51e28dd5c0c6eb1e1c5a0856ed882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lets the sensor go back to the face's period once a burst is measured.  <br /></td></tr>
 <tr class="memitem:a4a4b4d4148f1efa19b86b8ef9c2f9087" id="r_a4a4b4d4148f1efa19b86b8ef9c2f9087"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a4a4b4d4148f1efa19b86b8ef9c2f9087">end_quiet_burst</a> (uint32_t now_sec)</td></tr>
-<tr class="memdesc:a4a4b4d4148f1efa19b86b8ef9c2f9087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends a burst whose beats went quiet: files what it measured, or notes it as dropped on a tuning panel, and lets the sensor go.  <br /></td></tr>
+<tr class="memdesc:a4a4b4d4148f1efa19b86b8ef9c2f9087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends a burst whose beats went quiet: files what it measured, or notes it as dropped for a readout that shows each burst, and lets the sensor go.  <br /></td></tr>
 <tr class="memitem:ga223234c2f0122059fd1706b2ff12e987" id="r_ga223234c2f0122059fd1706b2ff12e987"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>health_hrv_on_gap</b> (void)</td></tr>
 <tr class="memdesc:ga223234c2f0122059fd1706b2ff12e987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads one beat gap from the watch. The health store calls it for each HRV event. <br /></td></tr>
@@ -353,7 +353,7 @@ static bool&#160;</td><td class="memItemRight"><b>s_keep_all</b></td></tr>
 <tr class="memdesc:a3a2392ea513225daa7078cdb71928cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a burst that cannot count is measured anyway, for a panel that shows it. <br /></td></tr>
 <tr class="memitem:a6c33dbe33460784c1fab01e4cbfe9070" id="r_a6c33dbe33460784c1fab01e4cbfe9070"><td class="memItemLeft"><a id="a6c33dbe33460784c1fab01e4cbfe9070" name="a6c33dbe33460784c1fab01e4cbfe9070"></a>
 static bool&#160;</td><td class="memItemRight"><b>s_live_redraw</b></td></tr>
-<tr class="memdesc:a6c33dbe33460784c1fab01e4cbfe9070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the face is redrawn once a second while a burst is held, for a tuning panel. <br /></td></tr>
+<tr class="memdesc:a6c33dbe33460784c1fab01e4cbfe9070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the face is redrawn once a second while a burst is held, for a readout that shows each burst. <br /></td></tr>
 <tr class="memitem:a99dc978dbb9ca13788c701c4143b0893" id="r_a99dc978dbb9ca13788c701c4143b0893"><td class="memItemLeft"><a id="a99dc978dbb9ca13788c701c4143b0893" name="a99dc978dbb9ca13788c701c4143b0893"></a>
 static int32_t&#160;</td><td class="memItemRight"><b>s_steps_start</b> = -1</td></tr>
 <tr class="memdesc:a99dc978dbb9ca13788c701c4143b0893"><td class="mdescLeft">&#160;</td><td class="mdescRight">The day's step count when the hold started, or -1 when not known. <br /></td></tr>
@@ -362,7 +362,7 @@ static uint8_t&#160;</td><td class="memItemRight"><b>s_hold_gaps</b></td></tr>
 <tr class="memdesc:a7eb962c39b492de944d2b3484dd3b8e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gaps added to the run since the hold started. <br /></td></tr>
 <tr class="memitem:a84f02e0024684d850d01e63ed2e54c8c" id="r_a84f02e0024684d850d01e63ed2e54c8c"><td class="memItemLeft"><a id="a84f02e0024684d850d01e63ed2e54c8c" name="a84f02e0024684d850d01e63ed2e54c8c"></a>
 static <a class="el" href="structHrvBurst.html">HrvBurst</a>&#160;</td><td class="memItemRight"><b>s_recent</b> [<a class="el" href="group__lib__core.html#ga29d5cfdac8f3395b7cb700ab9408c1d6">HRV_RECENT</a>]</td></tr>
-<tr class="memdesc:a84f02e0024684d850d01e63ed2e54c8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest bursts, for a tuning panel, kept in memory only. <br /></td></tr>
+<tr class="memdesc:a84f02e0024684d850d01e63ed2e54c8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest bursts, for a readout that shows each burst, kept in memory only. <br /></td></tr>
 <tr class="memitem:aae56ad3fcfd0ab68a634d6709ee6a043" id="r_aae56ad3fcfd0ab68a634d6709ee6a043"><td class="memItemLeft"><a id="aae56ad3fcfd0ab68a634d6709ee6a043" name="aae56ad3fcfd0ab68a634d6709ee6a043"></a>
 static uint8_t&#160;</td><td class="memItemRight"><b>s_recent_head</b></td></tr>
 <tr class="memdesc:aae56ad3fcfd0ab68a634d6709ee6a043"><td class="mdescLeft">&#160;</td><td class="mdescRight">The slot the next burst goes in. <br /></td></tr>
@@ -456,7 +456,7 @@ static <a class="el" href="structHrvLog.html">HrvLog</a>&#160;</td><td class="me
 </table>
 </div><div class="memdoc">
 
-<p>Ends a burst whose beats went quiet: files what it measured, or notes it as dropped on a tuning panel, and lets the sensor go. </p>
+<p>Ends a burst whose beats went quiet: files what it measured, or notes it as dropped for a readout that shows each burst, and lets the sensor go. </p>
 <p>Beats that came outside a hold have no score and never make a reading, so their run is only emptied.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

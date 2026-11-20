@@ -53,7 +53,7 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="pluginsourcepage"><span class="tsd-kind-call-signature">pluginSourcePage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">page</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">inputs</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/plugin-sources_page.PluginSourceInputs.html" class="tsd-signature-type tsd-kind-interface">PluginSourceInputs</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><a href="#pluginsourcepage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="pluginsourcepage"><span class="tsd-kind-call-signature">pluginSourcePage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">page</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">given</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/plugin-sources_page.PluginSourceInputs.html" class="tsd-signature-type tsd-kind-interface">PluginSourceInputs</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><a href="#pluginsourcepage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Adds a feature's plugin choice to the settings page, with the rows that go with it.</p>
 <ol>
@@ -101,15 +101,17 @@ the face marks with <code>pluginSourceRows</code> for the kind, or at the foot o
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">page</span>: <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></span>
-<div class="tsd-comment tsd-typography"><p>The settings page so far, the page hook's own copy. It is changed in place.</p>
+<div class="tsd-comment tsd-typography"><p>The settings page so far, the page hook's own copy. It is changed in place.
+Every row and the panel take the face's own wording from <code>pluginTexts</code> in <code>ts/pkjs/plugin-texts.ts</code>,
+which faceStart keeps from what the face passed startPebbleApp, laid over the feature's.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">inputs</span>: <a href="../interfaces/plugin-sources_page.PluginSourceInputs.html" class="tsd-signature-type tsd-kind-interface">PluginSourceInputs</a></span>
+<li><span><span class="tsd-kind-parameter">given</span>: <a href="../interfaces/plugin-sources_page.PluginSourceInputs.html" class="tsd-signature-type tsd-kind-interface">PluginSourceInputs</a></span>
 <div class="tsd-comment tsd-typography"><p>The select, the plugin list, the saved state and value, and the feature's wording.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The page, changed.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L657">plugin-sources/page.ts:657</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L718">plugin-sources/page.ts:718</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

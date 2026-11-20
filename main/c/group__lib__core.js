@@ -30,6 +30,12 @@ var group__lib__core =
     [ "weekday.h", "weekday_8h.html", null ],
     [ "zone_setting.c", "zone__setting_8c.html", null ],
     [ "zone_setting.h", "zone__setting_8h.html", null ],
+    [ "goal_latch.c", "goal__latch_8c.html", null ],
+    [ "goal_latch.h", "goal__latch_8h.html", null ],
+    [ "goal_vibe_pattern.c", "goal__vibe__pattern_8c.html", null ],
+    [ "goal_vibe_pattern.h", "goal__vibe__pattern_8h.html", null ],
+    [ "goals.c", "goals_8c.html", null ],
+    [ "goals.h", "goals_8h.html", null ],
     [ "hr_day.h", "hr__day_8h.html", null ],
     [ "hrv_log.c", "hrv__log_8c.html", null ],
     [ "hrv_log.h", "hrv__log_8h.html", null ],
@@ -114,6 +120,11 @@ var group__lib__core =
       [ "clipped_start", "structTimeBandSpan.html#a9a878a11dc8dcb894f60e121ffb50c20", null ],
       [ "from", "structTimeBandSpan.html#a3e97f13ab587ef30e42ededc9f0a595b", null ],
       [ "to", "structTimeBandSpan.html#a0520d74d4aa34d60477daf1e2845e6e7", null ]
+    ] ],
+    [ "GoalLatch", "structGoalLatch.html", [
+      [ "below", "structGoalLatch.html#afd53127cf3c70a6fcd39987e5fc05ccc", null ],
+      [ "day", "structGoalLatch.html#aa1fe6067f1e0c7bf2c4996a531502f97", null ],
+      [ "met", "structGoalLatch.html#aec3f86af2a26b9286a93735151fc81e6", null ]
     ] ],
     [ "HrHour", "structHrHour.html", [
       [ "count", "structHrHour.html#a79afcfd92db39ce28cd2403870d003c2", null ],
@@ -286,6 +297,17 @@ var group__lib__core =
       [ "col", "structWeatherDaily.html#a989f24bc5dd7bd2740be75a9b1be6904", null ],
       [ "count", "structWeatherDaily.html#abbd4a49f7df11b0756e1418e49fb391b", null ]
     ] ],
+    [ "GOAL_LATCH_BIT", "group__lib__core.html#ga28950c5df4ab807d7d67670be557c6a6", null ],
+    [ "GOAL_LATCH_EMPTY", "group__lib__core.html#gabcf2faf3c7b9b8317e27def352a2baa6", null ],
+    [ "GOAL_VIBE_PATTERN_MAX", "group__lib__core.html#gac243a4f6f24739af981d774ec0239a18", null ],
+    [ "GOAL_VIBE_PATTERN_MAX_MS", "group__lib__core.html#gaba4f24cfae659b3e529708a6f70c61c3", null ],
+    [ "GOAL_VIBE_PATTERN_MIN_MS", "group__lib__core.html#gab54a874b6049feca8ae295ccb128b029", null ],
+    [ "GOALS_ACTIVE_COUNT", "group__lib__core.html#ga9aa2223ab51a75abd6ea2770d3b5b306", null ],
+    [ "GOALS_CALORIES_COUNT", "group__lib__core.html#gababbb2d611b78a66c6555ba6deb9c311", null ],
+    [ "GOALS_DISTANCE_COUNT", "group__lib__core.html#ga78f05df0753fd059e6071abb1fd9b4f2", null ],
+    [ "GOALS_HR_COUNT", "group__lib__core.html#gac1411d018ff4bd6f7fc23ec4b5be7b65", null ],
+    [ "GOALS_SLEEP_COUNT", "group__lib__core.html#gaa47b70e875f3592b0e9282c2052c97e1", null ],
+    [ "GOALS_STEPS_COUNT", "group__lib__core.html#ga81537884077e3b192bd08a30c00059f6", null ],
     [ "HOUR_LATCH_EMPTY", "group__lib__core.html#ga9462df08933e714a6f14495ba12c19e4", null ],
     [ "HR_DAY_HOURS", "group__lib__core.html#gae3dd69cb6828ef994edacf5f710a0707", null ],
     [ "HRV_DIFFS_FULL", "group__lib__core.html#ga524644e6318004787bb4db9ecf847255", null ],
@@ -334,6 +356,21 @@ var group__lib__core =
       [ "FONT_SLOT_UNOWNED", "group__lib__core.html#ggabd8aa4927cda7d0e7c6d41f16b59773ca6ed032047afedb5d59c723e1eebe67d1", null ],
       [ "FONT_SLOT_OWNED", "group__lib__core.html#ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef", null ],
       [ "FONT_SLOT_LOADED", "group__lib__core.html#ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e", null ]
+    ] ],
+    [ "GoalLatchGoal", "group__lib__core.html#ga7b98b8d053da1e5e427ee85865aa164b", [
+      [ "GOAL_LATCH_STEPS", "group__lib__core.html#gga7b98b8d053da1e5e427ee85865aa164ba2b5fb3c246dd8bb2ce7500002f2275ae", null ],
+      [ "GOAL_LATCH_CALORIES", "group__lib__core.html#gga7b98b8d053da1e5e427ee85865aa164baab050e5c8ce6442dc2f80a046b973c13", null ],
+      [ "GOAL_LATCH_DISTANCE", "group__lib__core.html#gga7b98b8d053da1e5e427ee85865aa164ba9bbe2015af481b16ea0936b2cf59a489", null ],
+      [ "GOAL_LATCH_ACTIVE", "group__lib__core.html#gga7b98b8d053da1e5e427ee85865aa164ba0c8c56df75ba916cf3079e5b0cec7b02", null ],
+      [ "GOAL_LATCH_COUNT", "group__lib__core.html#gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906", null ]
+    ] ],
+    [ "GoalVibeKind", "group__lib__core.html#gae7e078308f50a757752f931a40ca9d0a", [
+      [ "GOAL_VIBE_KIND_NONE", "group__lib__core.html#ggae7e078308f50a757752f931a40ca9d0aabd3b3b42cd08ae79230f6d576d6412d8", null ],
+      [ "GOAL_VIBE_KIND_SHORT", "group__lib__core.html#ggae7e078308f50a757752f931a40ca9d0aa0e006ae6aa83ed1835c0bf7a56899b3f", null ],
+      [ "GOAL_VIBE_KIND_LONG", "group__lib__core.html#ggae7e078308f50a757752f931a40ca9d0aa1771dff8456963d3dfbfd7b25a6adeed", null ],
+      [ "GOAL_VIBE_KIND_DOUBLE", "group__lib__core.html#ggae7e078308f50a757752f931a40ca9d0aa24a749dff25eb1115d2b7b4a8263fc79", null ],
+      [ "GOAL_VIBE_KIND_CUSTOM", "group__lib__core.html#ggae7e078308f50a757752f931a40ca9d0aaee115debe7704d7fa2602f4186843875", null ],
+      [ "GOAL_VIBE_KIND_LIST", "group__lib__core.html#ggae7e078308f50a757752f931a40ca9d0aa81e48d38494e60b9591907b81c5e89b2", null ]
     ] ],
     [ "HrvCount", "group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a", [
       [ "HRV_COUNT_NOT_WALKING", "group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc", null ],
@@ -415,6 +452,7 @@ var group__lib__core =
     [ "date_iso_week", "group__lib__core.html#gaee874b4db4f19a63aec92cf2c57defd2", null ],
     [ "date_iso_week_year", "group__lib__core.html#ga0c190d7c5d5f7d46fc36c3f04bd3e56a", null ],
     [ "date_iso_weeks_in_year", "group__lib__core.html#ga70f355976c89a7190d80f6d344631710", null ],
+    [ "date_weeks_left_in_year", "group__lib__core.html#ga8892a0d27efd802c98dfb09c52acf19b", null ],
     [ "distance_format", "group__lib__core.html#gadf1a4e77db17b89d4d0e81dc25c9bcf2", null ],
     [ "distance_format_value", "group__lib__core.html#ga93901c7cecf40133c250e13cf5cdb4bd", null ],
     [ "distance_unit", "group__lib__core.html#gadad9778fe90b71058c77ee83f2f26e2e", null ],
@@ -430,6 +468,15 @@ var group__lib__core =
     [ "forecast_days_past", "group__lib__core.html#ga2f750b53c34d89db9ce79a2a252ebf02", null ],
     [ "forecast_hours_past", "group__lib__core.html#ga39e6efbba632aacf61875379354b1c38", null ],
     [ "fraction_px", "group__lib__core.html#ga9ed357804da26e96f0ae19aa3d02873f", null ],
+    [ "goal_latch_update", "group__lib__core.html#ga69f228c432109fc798b2eb1a81e4c391", null ],
+    [ "goal_vibe_pattern_kind", "group__lib__core.html#ga194d670c0cb59a0cd7826e2bb3b15ead", null ],
+    [ "goal_vibe_pattern_parse", "group__lib__core.html#ga53d668bbd2ebdbe269acceb161a9f223", null ],
+    [ "goals_active_min", "group__lib__core.html#ga279f4876566255df40de92a7d4fc2ffb", null ],
+    [ "goals_calories", "group__lib__core.html#gab5c0649f6d8925d8d5cb553a21570d3b", null ],
+    [ "goals_distance_m", "group__lib__core.html#ga945d507078b2a1f1bcffb2d1bfaff6f5", null ],
+    [ "goals_hr_limit", "group__lib__core.html#gad0ddb61383b9a9bcd75c95f13ea1a8f7", null ],
+    [ "goals_sleep_min", "group__lib__core.html#ga8e28810a14d36a4ca94f3edf51d6f2bb", null ],
+    [ "goals_steps", "group__lib__core.html#ga939207e2d703833e67cbf48382d0b193", null ],
     [ "hour_latch_seed", "group__lib__core.html#ga3cbf613cf79116cd37b00238914036f8", null ],
     [ "hour_latch_start", "group__lib__core.html#ga7c35b1a9c0faafc665826130832ddf52", null ],
     [ "hour_latch_take", "group__lib__core.html#gaafead0993ab7c57e2ae8a7b8fe65d6d7", null ],

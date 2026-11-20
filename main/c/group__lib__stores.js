@@ -169,9 +169,9 @@ var group__lib__stores =
       [ "wind_dir", "structWeatherSeed.html#abe78d980ed72ae675e9e9c4aac94baf5", null ],
       [ "wind_kmh", "structWeatherSeed.html#a709b8a2cb2aa19136736b221aa2b600d", null ]
     ] ],
-    [ "[struct].s_hours", "struct_0fstruct_0e_8s__hours.html", [
-      [ "step_hourly", "struct_0fstruct_0e_8s__hours.html#abd059fa328e9264564b60957fb56696f", null ],
-      [ "step_hours", "struct_0fstruct_0e_8s__hours.html#a848ed5523b067bf05dd5907529261202", null ]
+    [ "[struct].s_window", "struct_0fstruct_0e_8s__window.html", [
+      [ "hr_history", "struct_0fstruct_0e_8s__window.html#a4d76d9a5f88589d6d9c83fab6cb4be15", null ],
+      [ "hr_last_min", "struct_0fstruct_0e_8s__window.html#a9b95b17d3bad6b5c13592bb635aab58f", null ]
     ] ],
     [ "[struct].s_state", "struct_0fstruct_0e_8s__state.html", [
       [ "active_min", "struct_0fstruct_0e_8s__state.html#a11d0ef78d29da6a774cd888998da275f", null ],
@@ -192,9 +192,9 @@ var group__lib__stores =
       [ "tag", "struct_0fstruct_0e_8s__state.html#a6b42b043dd8aa439301e3ef7f088d97e", null ],
       [ "tag", "struct_0fstruct_0e_8s__state.html#aa3436b4f53e574810565c9b29d0042d5", null ]
     ] ],
-    [ "[struct].s_window", "struct_0fstruct_0e_8s__window.html", [
-      [ "hr_history", "struct_0fstruct_0e_8s__window.html#a4d76d9a5f88589d6d9c83fab6cb4be15", null ],
-      [ "hr_last_min", "struct_0fstruct_0e_8s__window.html#a9b95b17d3bad6b5c13592bb635aab58f", null ]
+    [ "[struct].s_hours", "struct_0fstruct_0e_8s__hours.html", [
+      [ "step_hourly", "struct_0fstruct_0e_8s__hours.html#abd059fa328e9264564b60957fb56696f", null ],
+      [ "step_hours", "struct_0fstruct_0e_8s__hours.html#a848ed5523b067bf05dd5907529261202", null ]
     ] ],
     [ "HEALTH_HR_DAY", "group__lib__stores.html#ga5f959c79f659728bb1df249db66cefaf", null ],
     [ "HEALTH_HR_HISTORY", "group__lib__stores.html#gaf58a7b0cae4bb710b1c4834cd90df0ba", null ],

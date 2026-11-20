@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['musicart_0',['MusicArt',['../structMusicArt.html',1,'']]],
-  ['musicconfig_1',['MusicConfig',['../structMusicConfig.html',1,'']]],
-  ['musicseed_2',['MusicSeed',['../structMusicSeed.html',1,'']]],
-  ['musictrack_3',['MusicTrack',['../structMusicTrack.html',1,'']]]
+  ['linkstate_0',['LinkState',['../structLinkState.html',1,'']]],
+  ['locationconfig_1',['LocationConfig',['../structLocationConfig.html',1,'']]],
+  ['locationseed_2',['LocationSeed',['../structLocationSeed.html',1,'']]],
+  ['longtext_3',['LongText',['../structLongText.html',1,'']]]
 ];

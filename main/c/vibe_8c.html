@@ -200,7 +200,12 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('vibe_8c.html',
 <div class="textblock"><code>#include &quot;<a class="el" href="vibe_8h_source.html">system/vibe/vibe.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="setting__values_8h_source.html">system/settings/setting_values.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="health__store_8h_source.html">io/stores/health_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="time__store_8h_source.html">io/stores/time_store.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="hour__latch_8h_source.html">clock/hour_latch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="goal__latch_8h_source.html">health/goal_latch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="goal__vibe__pattern_8h_source.html">health/goal_vibe_pattern.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="goals_8h_source.html">health/goals.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -216,6 +221,12 @@ Functions</h2></td></tr>
 <tr class="memdesc:ac6e503c7200a4d17d92d72bf022b100a"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the current local hour began.  <br /></td></tr>
 <tr class="memitem:ga984f91ed1f50b63098f92155a219cc56" id="r_ga984f91ed1f50b63098f92155a219cc56"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__system.html#ga984f91ed1f50b63098f92155a219cc56">vibe_hourly</a> (const struct tm *tick, uint8_t choice)</td></tr>
 <tr class="memdesc:ga984f91ed1f50b63098f92155a219cc56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buzz once at the top of each hour. A face calls this from its time callback on every tick, and it buzzes on the first tick of each hour's minute 0.  <br /></td></tr>
+<tr class="memitem:a30771a4e67e5bb79d03814e09fb440ec" id="r_a30771a4e67e5bb79d03814e09fb440ec"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a30771a4e67e5bb79d03814e09fb440ec">play_goal_pattern</a> (const char *text)</td></tr>
+<tr class="memdesc:a30771a4e67e5bb79d03814e09fb440ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays a list of milliseconds such as "100,80,300". A list with no numbers stays silent.  <br /></td></tr>
+<tr class="memitem:acd58165798d67fa4f4acb85710a50876" id="r_acd58165798d67fa4f4acb85710a50876"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#acd58165798d67fa4f4acb85710a50876">goal_target</a> (<a class="el" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a> id, int(*lookup)(uint8_t index))</td></tr>
+<tr class="memdesc:acd58165798d67fa4f4acb85710a50876"><td class="mdescLeft">&#160;</td><td class="mdescRight">The goal the wearer picked for one setting, or 0 when the face does not keep that setting.  <br /></td></tr>
+<tr class="memitem:ga7d39417dac99e4859ff926a73df9e8bd" id="r_ga7d39417dac99e4859ff926a73df9e8bd"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__system.html#ga7d39417dac99e4859ff926a73df9e8bd">vibe_goal</a> (void)</td></tr>
+<tr class="memdesc:ga7d39417dac99e4859ff926a73df9e8bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buzz the first time each day a movement goal is met. A face calls this once at startup, after both health_store_init and time_store_init, and from its health store callback on every reading.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -225,6 +236,9 @@ static <a class="el" href="structHourLatch.html">HourLatch</a>&#160;</td><td cla
 <tr class="memitem:a1a5df4ca02d3ced1f6fa3bb20fd17006" id="r_a1a5df4ca02d3ced1f6fa3bb20fd17006"><td class="memItemLeft"><a id="a1a5df4ca02d3ced1f6fa3bb20fd17006" name="a1a5df4ca02d3ced1f6fa3bb20fd17006"></a>
 static bool&#160;</td><td class="memItemRight"><b>s_hourly_seeded</b></td></tr>
 <tr class="memdesc:a1a5df4ca02d3ced1f6fa3bb20fd17006"><td class="mdescLeft">&#160;</td><td class="mdescRight">whether the first call has remembered its hour <br /></td></tr>
+<tr class="memitem:ae71f4e05149e24ebda565f2336ce1806" id="r_ae71f4e05149e24ebda565f2336ce1806"><td class="memItemLeft"><a id="ae71f4e05149e24ebda565f2336ce1806" name="ae71f4e05149e24ebda565f2336ce1806"></a>
+static <a class="el" href="structGoalLatch.html">GoalLatch</a>&#160;</td><td class="memItemRight"><b>s_goal_latch</b> = <a class="el" href="group__lib__core.html#gabcf2faf3c7b9b8317e27def352a2baa6">GOAL_LATCH_EMPTY</a></td></tr>
+<tr class="memdesc:ae71f4e05149e24ebda565f2336ce1806"><td class="mdescLeft">&#160;</td><td class="mdescRight">the goals the goal buzz has already met today <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The haptic feedback wrapper implementation. </p>
@@ -255,6 +269,78 @@ static bool&#160;</td><td class="memItemRight"><b>s_hourly_seeded</b></td></tr>
 <p>When the current local hour began. </p>
 <p>It reads the clock once and breaks that same reading apart. Pairing a fresh time(NULL) with an older tick's minutes and seconds would give one hour two starts whenever a second turns over between them.</p>
 <dl class="section return"><dt>Returns</dt><dd>The start of the current hour, as seconds since the epoch. </dd></dl>
+
+</div>
+</div>
+<a id="acd58165798d67fa4f4acb85710a50876" name="acd58165798d67fa4f4acb85710a50876"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd58165798d67fa4f4acb85710a50876">&#9670;&#160;</a></span>goal_target()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goal_target </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int(*</td>          <td class="paramname"><span class="paramname"><em>lookup&#160;</em></span>)(uint8_t index)&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The goal the wearer picked for one setting, or 0 when the face does not keep that setting. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The goal's setting, such as SETTING_GOAL_STEPS. </td></tr>
+    <tr><td class="paramname">lookup</td><td>The table lookup that turns its menu choice into the goal, such as goals_steps. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The goal, or 0 for none. </dd></dl>
+
+</div>
+</div>
+<a id="a30771a4e67e5bb79d03814e09fb440ec" name="a30771a4e67e5bb79d03814e09fb440ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30771a4e67e5bb79d03814e09fb440ec">&#9670;&#160;</a></span>play_goal_pattern()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void play_goal_pattern </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Plays a list of milliseconds such as "100,80,300". A list with no numbers stays silent. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>The list. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

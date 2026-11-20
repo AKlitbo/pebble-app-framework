@@ -260,6 +260,18 @@ Files</h2></td></tr>
 <tr class="memdesc:zone__setting_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a time zone setting the way the phone sends it. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fclock_2Fzone_5Fsetting_2Eh" id="r_src_2Fc_2Fcore_2Fclock_2Fzone_5Fsetting_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="zone__setting_8h.html">src/c/core/clock/zone_setting.h</a></td></tr>
 <tr class="memdesc:zone__setting_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a time zone setting the way the phone sends it, the minutes ahead of UTC then a comma and the place's name, as in "60,London". An empty setting means no zone is picked, which is what the phone sends once the wearer clears the picker. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fgoal_5Flatch_2Ec" id="r_src_2Fc_2Fcore_2Fhealth_2Fgoal_5Flatch_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="goal__latch_8c.html">src/c/core/health/goal_latch.c</a></td></tr>
+<tr class="memdesc:goal__latch_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The goal-met latch, host-testable off-device. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fgoal_5Flatch_2Eh" id="r_src_2Fc_2Fcore_2Fhealth_2Fgoal_5Flatch_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="goal__latch_8h.html">src/c/core/health/goal_latch.h</a></td></tr>
+<tr class="memdesc:goal__latch_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decides when a daily movement goal has just been met, so the watch cheers once per goal per day. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fgoal_5Fvibe_5Fpattern_2Ec" id="r_src_2Fc_2Fcore_2Fhealth_2Fgoal_5Fvibe_5Fpattern_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="goal__vibe__pattern_8c.html">src/c/core/health/goal_vibe_pattern.c</a></td></tr>
+<tr class="memdesc:goal__vibe__pattern_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Goal Met Vibration pick and pattern reader, host-testable off-device. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fgoal_5Fvibe_5Fpattern_2Eh" id="r_src_2Fc_2Fcore_2Fhealth_2Fgoal_5Fvibe_5Fpattern_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="goal__vibe__pattern_8h.html">src/c/core/health/goal_vibe_pattern.h</a></td></tr>
+<tr class="memdesc:goal__vibe__pattern_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the Goal Met Vibration pick, and turns a comma list of milliseconds into a rhythm the watch can buzz. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fgoals_2Ec" id="r_src_2Fc_2Fcore_2Fhealth_2Fgoals_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="goals_8c.html">src/c/core/health/goals.c</a></td></tr>
+<tr class="memdesc:goals_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The daily goal tables, host-testable off-device. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fgoals_2Eh" id="r_src_2Fc_2Fcore_2Fhealth_2Fgoals_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="goals_8h.html">src/c/core/health/goals.h</a></td></tr>
+<tr class="memdesc:goals_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The daily goals a wearer picks on the settings page, turned from a menu choice into the real target. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fhr_5Fday_2Eh" id="r_src_2Fc_2Fcore_2Fhealth_2Fhr_5Fday_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="hr__day_8h.html">src/c/core/health/hr_day.h</a></td></tr>
 <tr class="memdesc:hr__day_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's heart rate by the hour, for a panel that charts the day with its low, average, and high. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fhealth_2Fhrv_5Flog_2Ec" id="r_src_2Fc_2Fcore_2Fhealth_2Fhrv_5Flog_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="hrv__log_8c.html">src/c/core/health/hrv_log.c</a></td></tr>
@@ -403,12 +415,14 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The stretch of day a band shows: where it starts and how long it runs.  <a href="structTimeBand.html#details">More...</a><br /></td></tr>
 <tr class="memitem:TimeBandSpan" id="r_TimeBandSpan"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structTimeBandSpan.html">TimeBandSpan</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A span clipped to the window, in minutes past the window's start.  <a href="structTimeBandSpan.html#details">More...</a><br /></td></tr>
+<tr class="memitem:GoalLatch" id="r_GoalLatch"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structGoalLatch.html">GoalLatch</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remembers which goals were met today.  <a href="structGoalLatch.html#details">More...</a><br /></td></tr>
 <tr class="memitem:HrHour" id="r_HrHour"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHrHour.html">HrHour</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The readings that landed in one hour.  <a href="structHrHour.html#details">More...</a><br /></td></tr>
 <tr class="memitem:HrDay" id="r_HrDay"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHrDay.html">HrDay</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's heart rate, one entry an hour from midnight.  <a href="structHrDay.html#details">More...</a><br /></td></tr>
 <tr class="memitem:HrvBurst" id="r_HrvBurst"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHrvBurst.html">HrvBurst</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One burst as a tuning panel shows it: what the wearer did and what came of it.  <a href="structHrvBurst.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One burst, for a readout that shows each burst: what the wearer did and what came of it.  <a href="structHrvBurst.html#details">More...</a><br /></td></tr>
 <tr class="memitem:HrvLog" id="r_HrvLog"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHrvLog.html">HrvLog</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The readings kept, in the shape that goes to flash. Start it with hrv_log_reset.  <a href="structHrvLog.html#details">More...</a><br /></td></tr>
 <tr class="memitem:HrvMotion" id="r_HrvMotion"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHrvMotion.html">HrvMotion</a></td></tr>
@@ -465,6 +479,38 @@ Macros</h2></td></tr>
 <tr class="memitem:gad3c2b297779efc19aa0c02f2e8635917" id="r_gad3c2b297779efc19aa0c02f2e8635917"><td class="memItemLeft"><a id="gad3c2b297779efc19aa0c02f2e8635917" name="gad3c2b297779efc19aa0c02f2e8635917"></a>
 #define&#160;</td><td class="memItemRight"><b>TIMEBAND_DAY_MINUTES</b>&#160;&#160;&#160;1440</td></tr>
 <tr class="memdesc:gad3c2b297779efc19aa0c02f2e8635917"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes in a day, the modulus every wrap here is taken over. <br /></td></tr>
+<tr class="memitem:ga28950c5df4ab807d7d67670be557c6a6" id="r_ga28950c5df4ab807d7d67670be557c6a6"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga28950c5df4ab807d7d67670be557c6a6">GOAL_LATCH_BIT</a>(goal)</td></tr>
+<tr class="memdesc:ga28950c5df4ab807d7d67670be557c6a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The bit a goal takes in the mask goal_latch_update hands back.  <br /></td></tr>
+<tr class="memitem:gabcf2faf3c7b9b8317e27def352a2baa6" id="r_gabcf2faf3c7b9b8317e27def352a2baa6"><td class="memItemLeft"><a id="gabcf2faf3c7b9b8317e27def352a2baa6" name="gabcf2faf3c7b9b8317e27def352a2baa6"></a>
+#define&#160;</td><td class="memItemRight"><b>GOAL_LATCH_EMPTY</b>&#160;&#160;&#160;{.day = -1}</td></tr>
+<tr class="memdesc:gabcf2faf3c7b9b8317e27def352a2baa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">a latch that has not looked yet <br /></td></tr>
+<tr class="memitem:gac243a4f6f24739af981d774ec0239a18" id="r_gac243a4f6f24739af981d774ec0239a18"><td class="memItemLeft"><a id="gac243a4f6f24739af981d774ec0239a18" name="gac243a4f6f24739af981d774ec0239a18"></a>
+#define&#160;</td><td class="memItemRight"><b>GOAL_VIBE_PATTERN_MAX</b>&#160;&#160;&#160;40</td></tr>
+<tr class="memdesc:gac243a4f6f24739af981d774ec0239a18"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most steps a pattern plays. Any past it are dropped. <br /></td></tr>
+<tr class="memitem:gab54a874b6049feca8ae295ccb128b029" id="r_gab54a874b6049feca8ae295ccb128b029"><td class="memItemLeft"><a id="gab54a874b6049feca8ae295ccb128b029" name="gab54a874b6049feca8ae295ccb128b029"></a>
+#define&#160;</td><td class="memItemRight"><b>GOAL_VIBE_PATTERN_MIN_MS</b>&#160;&#160;&#160;10</td></tr>
+<tr class="memdesc:gab54a874b6049feca8ae295ccb128b029"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shortest step, so a 0 still buzzes or pauses a moment. <br /></td></tr>
+<tr class="memitem:gaba4f24cfae659b3e529708a6f70c61c3" id="r_gaba4f24cfae659b3e529708a6f70c61c3"><td class="memItemLeft"><a id="gaba4f24cfae659b3e529708a6f70c61c3" name="gaba4f24cfae659b3e529708a6f70c61c3"></a>
+#define&#160;</td><td class="memItemRight"><b>GOAL_VIBE_PATTERN_MAX_MS</b>&#160;&#160;&#160;10000</td></tr>
+<tr class="memdesc:gaba4f24cfae659b3e529708a6f70c61c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The longest step the firmware plays. <br /></td></tr>
+<tr class="memitem:ga81537884077e3b192bd08a30c00059f6" id="r_ga81537884077e3b192bd08a30c00059f6"><td class="memItemLeft"><a id="ga81537884077e3b192bd08a30c00059f6" name="ga81537884077e3b192bd08a30c00059f6"></a>
+#define&#160;</td><td class="memItemRight"><b>GOALS_STEPS_COUNT</b>&#160;&#160;&#160;7</td></tr>
+<tr class="memdesc:ga81537884077e3b192bd08a30c00059f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many step goals the page offers, from 5,000 to 25,000. <br /></td></tr>
+<tr class="memitem:ga78f05df0753fd059e6071abb1fd9b4f2" id="r_ga78f05df0753fd059e6071abb1fd9b4f2"><td class="memItemLeft"><a id="ga78f05df0753fd059e6071abb1fd9b4f2" name="ga78f05df0753fd059e6071abb1fd9b4f2"></a>
+#define&#160;</td><td class="memItemRight"><b>GOALS_DISTANCE_COUNT</b>&#160;&#160;&#160;7</td></tr>
+<tr class="memdesc:ga78f05df0753fd059e6071abb1fd9b4f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many distance goals the page offers, from 2 km to 20 km. <br /></td></tr>
+<tr class="memitem:gababbb2d611b78a66c6555ba6deb9c311" id="r_gababbb2d611b78a66c6555ba6deb9c311"><td class="memItemLeft"><a id="gababbb2d611b78a66c6555ba6deb9c311" name="gababbb2d611b78a66c6555ba6deb9c311"></a>
+#define&#160;</td><td class="memItemRight"><b>GOALS_CALORIES_COUNT</b>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:gababbb2d611b78a66c6555ba6deb9c311"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many calorie goals the page offers, from 500 to 3,000 kcal. <br /></td></tr>
+<tr class="memitem:ga9aa2223ab51a75abd6ea2770d3b5b306" id="r_ga9aa2223ab51a75abd6ea2770d3b5b306"><td class="memItemLeft"><a id="ga9aa2223ab51a75abd6ea2770d3b5b306" name="ga9aa2223ab51a75abd6ea2770d3b5b306"></a>
+#define&#160;</td><td class="memItemRight"><b>GOALS_ACTIVE_COUNT</b>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:ga9aa2223ab51a75abd6ea2770d3b5b306"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many active minute goals the page offers, from 15 to 90 minutes. <br /></td></tr>
+<tr class="memitem:gaa47b70e875f3592b0e9282c2052c97e1" id="r_gaa47b70e875f3592b0e9282c2052c97e1"><td class="memItemLeft"><a id="gaa47b70e875f3592b0e9282c2052c97e1" name="gaa47b70e875f3592b0e9282c2052c97e1"></a>
+#define&#160;</td><td class="memItemRight"><b>GOALS_SLEEP_COUNT</b>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:gaa47b70e875f3592b0e9282c2052c97e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many sleep goals the page offers, from 6 to 10 hours. <br /></td></tr>
+<tr class="memitem:gac1411d018ff4bd6f7fc23ec4b5be7b65" id="r_gac1411d018ff4bd6f7fc23ec4b5be7b65"><td class="memItemLeft"><a id="gac1411d018ff4bd6f7fc23ec4b5be7b65" name="gac1411d018ff4bd6f7fc23ec4b5be7b65"></a>
+#define&#160;</td><td class="memItemRight"><b>GOALS_HR_COUNT</b>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:gac1411d018ff4bd6f7fc23ec4b5be7b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many heart rate limits the page offers, from 150 to 200 bpm. <br /></td></tr>
 <tr class="memitem:gae3dd69cb6828ef994edacf5f710a0707" id="r_gae3dd69cb6828ef994edacf5f710a0707"><td class="memItemLeft"><a id="gae3dd69cb6828ef994edacf5f710a0707" name="gae3dd69cb6828ef994edacf5f710a0707"></a>
 #define&#160;</td><td class="memItemRight"><b>HR_DAY_HOURS</b>&#160;&#160;&#160;24</td></tr>
 <tr class="memdesc:gae3dd69cb6828ef994edacf5f710a0707"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's hours from midnight. <br /></td></tr>
@@ -491,7 +537,7 @@ Macros</h2></td></tr>
 <tr class="memdesc:gad46f32990b5080141609508a2f406f7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Steps through a burst that make it a walk, when a face sets none. <br /></td></tr>
 <tr class="memitem:ga29d5cfdac8f3395b7cb700ab9408c1d6" id="r_ga29d5cfdac8f3395b7cb700ab9408c1d6"><td class="memItemLeft"><a id="ga29d5cfdac8f3395b7cb700ab9408c1d6" name="ga29d5cfdac8f3395b7cb700ab9408c1d6"></a>
 #define&#160;</td><td class="memItemRight"><b>HRV_RECENT</b>&#160;&#160;&#160;6</td></tr>
-<tr class="memdesc:ga29d5cfdac8f3395b7cb700ab9408c1d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of the latest bursts a tuning panel can see. <br /></td></tr>
+<tr class="memdesc:ga29d5cfdac8f3395b7cb700ab9408c1d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of the latest bursts a readout that shows each burst can see. <br /></td></tr>
 <tr class="memitem:ga63f3ed0e45cc4da29578aad101c2c414" id="r_ga63f3ed0e45cc4da29578aad101c2c414"><td class="memItemLeft"><a id="ga63f3ed0e45cc4da29578aad101c2c414" name="ga63f3ed0e45cc4da29578aad101c2c414"></a>
 #define&#160;</td><td class="memItemRight"><b>HRV_LOG_ASLEEP</b>&#160;&#160;&#160;0x80</td></tr>
 <tr class="memdesc:ga63f3ed0e45cc4da29578aad101c2c414"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set in a reading's flags when Pebble said the wearer was asleep. <br /></td></tr>
@@ -589,6 +635,27 @@ Enumerations</h2></td></tr>
 , <b>NIGHT_SCHED_COUNT</b>
  }</td></tr>
 <tr class="memdesc:ga90cd678ac8db70a4a741a5ef04cd8793"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the schedule is following. The caller's own enum should line up with these.  <a href="#ga90cd678ac8db70a4a741a5ef04cd8793">More...</a><br /></td></tr>
+<tr class="memitem:ga7b98b8d053da1e5e427ee85865aa164b" id="r_ga7b98b8d053da1e5e427ee85865aa164b"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga7b98b8d053da1e5e427ee85865aa164b">GoalLatchGoal</a> { <br />
+&#160;&#160;<a class="el" href="#gga7b98b8d053da1e5e427ee85865aa164ba2b5fb3c246dd8bb2ce7500002f2275ae">GOAL_LATCH_STEPS</a>
+, <a class="el" href="#gga7b98b8d053da1e5e427ee85865aa164baab050e5c8ce6442dc2f80a046b973c13">GOAL_LATCH_CALORIES</a>
+, <a class="el" href="#gga7b98b8d053da1e5e427ee85865aa164ba9bbe2015af481b16ea0936b2cf59a489">GOAL_LATCH_DISTANCE</a>
+, <a class="el" href="#gga7b98b8d053da1e5e427ee85865aa164ba0c8c56df75ba916cf3079e5b0cec7b02">GOAL_LATCH_ACTIVE</a>
+, <br />
+&#160;&#160;<a class="el" href="#gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906">GOAL_LATCH_COUNT</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga7b98b8d053da1e5e427ee85865aa164b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The goals the latch watches, in the order it reads their readings and targets.  <a href="#ga7b98b8d053da1e5e427ee85865aa164b">More...</a><br /></td></tr>
+<tr class="memitem:gae7e078308f50a757752f931a40ca9d0a" id="r_gae7e078308f50a757752f931a40ca9d0a"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gae7e078308f50a757752f931a40ca9d0a">GoalVibeKind</a> { <br />
+&#160;&#160;<a class="el" href="#ggae7e078308f50a757752f931a40ca9d0aabd3b3b42cd08ae79230f6d576d6412d8">GOAL_VIBE_KIND_NONE</a>
+, <a class="el" href="#ggae7e078308f50a757752f931a40ca9d0aa0e006ae6aa83ed1835c0bf7a56899b3f">GOAL_VIBE_KIND_SHORT</a>
+, <a class="el" href="#ggae7e078308f50a757752f931a40ca9d0aa1771dff8456963d3dfbfd7b25a6adeed">GOAL_VIBE_KIND_LONG</a>
+, <a class="el" href="#ggae7e078308f50a757752f931a40ca9d0aa24a749dff25eb1115d2b7b4a8263fc79">GOAL_VIBE_KIND_DOUBLE</a>
+, <br />
+&#160;&#160;<a class="el" href="#ggae7e078308f50a757752f931a40ca9d0aaee115debe7704d7fa2602f4186843875">GOAL_VIBE_KIND_CUSTOM</a>
+, <a class="el" href="#ggae7e078308f50a757752f931a40ca9d0aa81e48d38494e60b9591907b81c5e89b2">GOAL_VIBE_KIND_LIST</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:gae7e078308f50a757752f931a40ca9d0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a Goal Met Vibration pick plays.  <a href="#gae7e078308f50a757752f931a40ca9d0a">More...</a><br /></td></tr>
 <tr class="memitem:gae63b8153c70e7611881a2e05bec214a7" id="r_gae63b8153c70e7611881a2e05bec214a7"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> { <a class="el" href="#ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b">HRV_STATE_STILL</a>
 , <a class="el" href="#ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f">HRV_STATE_BUSY</a>
 , <a class="el" href="#ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c">HRV_STATE_WALKING</a>
@@ -683,6 +750,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:gadde776e9b470fd4e9df1307415b09851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which day of the year it is, counting January 1st as day 1.  <br /></td></tr>
 <tr class="memitem:ga3c68f59a1602b5e27b1a05a0d63b499c" id="r_ga3c68f59a1602b5e27b1a05a0d63b499c"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga3c68f59a1602b5e27b1a05a0d63b499c">date_days_left_in_year</a> (int year, int yday)</td></tr>
 <tr class="memdesc:ga3c68f59a1602b5e27b1a05a0d63b499c"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many days are left before the year ends, so December 31st reads 0.  <br /></td></tr>
+<tr class="memitem:ga8892a0d27efd802c98dfb09c52acf19b" id="r_ga8892a0d27efd802c98dfb09c52acf19b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga8892a0d27efd802c98dfb09c52acf19b">date_weeks_left_in_year</a> (int year, int yday)</td></tr>
+<tr class="memdesc:ga8892a0d27efd802c98dfb09c52acf19b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many whole weeks are left before the year ends. It is the days left divided by 7 and rounded down, so the last seven days of December, the 25th to the 31st, read 0.  <br /></td></tr>
 <tr class="memitem:gaef88f0efc2274de9f1984658aea37f9b" id="r_gaef88f0efc2274de9f1984658aea37f9b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gaef88f0efc2274de9f1984658aea37f9b">date_days_in_month</a> (int year, int mon0)</td></tr>
 <tr class="memdesc:gaef88f0efc2274de9f1984658aea37f9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many days a month has, with February getting its leap day.  <br /></td></tr>
 <tr class="memitem:ga0b126160626de63678618d54227455ad" id="r_ga0b126160626de63678618d54227455ad"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga0b126160626de63678618d54227455ad">date_first_wday</a> (int wday, int mday)</td></tr>
@@ -766,6 +835,24 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga6654376c135443aa4f6756f406340f02"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many minutes the zone is ahead of UTC, negative for one behind.  <br /></td></tr>
 <tr class="memitem:ga9f625161eafd8ce62405cce899c8ff80" id="r_ga9f625161eafd8ce62405cce899c8ff80"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#ga9f625161eafd8ce62405cce899c8ff80">zone_setting_label</a> (const char *value)</td></tr>
 <tr class="memdesc:ga9f625161eafd8ce62405cce899c8ff80"><td class="mdescLeft">&#160;</td><td class="mdescRight">The place's name, everything after the first comma.  <br /></td></tr>
+<tr class="memitem:ga69f228c432109fc798b2eb1a81e4c391" id="r_ga69f228c432109fc798b2eb1a81e4c391"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#ga69f228c432109fc798b2eb1a81e4c391">goal_latch_update</a> (<a class="el" href="structGoalLatch.html">GoalLatch</a> *latch, int day, const int readings[<a class="el" href="#gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906">GOAL_LATCH_COUNT</a>], const int targets[<a class="el" href="#gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906">GOAL_LATCH_COUNT</a>])</td></tr>
+<tr class="memdesc:ga69f228c432109fc798b2eb1a81e4c391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes the latest readings and says which goals they just met.  <br /></td></tr>
+<tr class="memitem:ga194d670c0cb59a0cd7826e2bb3b15ead" id="r_ga194d670c0cb59a0cd7826e2bb3b15ead"><td class="memItemLeft"><a class="el" href="#gae7e078308f50a757752f931a40ca9d0a">GoalVibeKind</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga194d670c0cb59a0cd7826e2bb3b15ead">goal_vibe_pattern_kind</a> (const char *pick)</td></tr>
+<tr class="memdesc:ga194d670c0cb59a0cd7826e2bb3b15ead"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a pick plays, read from its first character.  <br /></td></tr>
+<tr class="memitem:ga53d668bbd2ebdbe269acceb161a9f223" id="r_ga53d668bbd2ebdbe269acceb161a9f223"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga53d668bbd2ebdbe269acceb161a9f223">goal_vibe_pattern_parse</a> (const char *text, uint32_t *out, int capacity)</td></tr>
+<tr class="memdesc:ga53d668bbd2ebdbe269acceb161a9f223"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a list of milliseconds such as "100,80,300" into the caller's buffer.  <br /></td></tr>
+<tr class="memitem:ga939207e2d703833e67cbf48382d0b193" id="r_ga939207e2d703833e67cbf48382d0b193"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga939207e2d703833e67cbf48382d0b193">goals_steps</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga939207e2d703833e67cbf48382d0b193"><td class="mdescLeft">&#160;</td><td class="mdescRight">The step goal for a menu choice.  <br /></td></tr>
+<tr class="memitem:ga945d507078b2a1f1bcffb2d1bfaff6f5" id="r_ga945d507078b2a1f1bcffb2d1bfaff6f5"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga945d507078b2a1f1bcffb2d1bfaff6f5">goals_distance_m</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga945d507078b2a1f1bcffb2d1bfaff6f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The distance goal for a menu choice, in metres.  <br /></td></tr>
+<tr class="memitem:gab5c0649f6d8925d8d5cb553a21570d3b" id="r_gab5c0649f6d8925d8d5cb553a21570d3b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gab5c0649f6d8925d8d5cb553a21570d3b">goals_calories</a> (uint8_t index)</td></tr>
+<tr class="memdesc:gab5c0649f6d8925d8d5cb553a21570d3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active calorie goal for a menu choice.  <br /></td></tr>
+<tr class="memitem:ga279f4876566255df40de92a7d4fc2ffb" id="r_ga279f4876566255df40de92a7d4fc2ffb"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga279f4876566255df40de92a7d4fc2ffb">goals_active_min</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga279f4876566255df40de92a7d4fc2ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active minutes goal for a menu choice.  <br /></td></tr>
+<tr class="memitem:ga8e28810a14d36a4ca94f3edf51d6f2bb" id="r_ga8e28810a14d36a4ca94f3edf51d6f2bb"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga8e28810a14d36a4ca94f3edf51d6f2bb">goals_sleep_min</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga8e28810a14d36a4ca94f3edf51d6f2bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sleep goal for a menu choice, in minutes.  <br /></td></tr>
+<tr class="memitem:gad0ddb61383b9a9bcd75c95f13ea1a8f7" id="r_gad0ddb61383b9a9bcd75c95f13ea1a8f7"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gad0ddb61383b9a9bcd75c95f13ea1a8f7">goals_hr_limit</a> (uint8_t index)</td></tr>
+<tr class="memdesc:gad0ddb61383b9a9bcd75c95f13ea1a8f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The heart rate limit for a menu choice, the top of a heart rate bar.  <br /></td></tr>
 <tr class="memitem:ga10a8d6b3da25bae2446917c4d2926172" id="r_ga10a8d6b3da25bae2446917c4d2926172"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga10a8d6b3da25bae2446917c4d2926172">hr_day_clear</a> (<a class="el" href="structHrDay.html">HrDay</a> *day)</td></tr>
 <tr class="memdesc:ga10a8d6b3da25bae2446917c4d2926172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empties the day, for a new day or a fresh start.  <br /></td></tr>
 <tr class="memitem:ga3d58235334983237da2d42be7603056a" id="r_ga3d58235334983237da2d42be7603056a"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga3d58235334983237da2d42be7603056a">hr_day_add</a> (<a class="el" href="structHrDay.html">HrDay</a> *day, int hour, int bpm)</td></tr>
@@ -955,6 +1042,26 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Pure maths, clock, text, and unit helpers that need no watch SDK. </p>
 <p>Needing no SDK is what lets them be tested off the watch. Think .beats time, moon phase, weekday names, number formatting, and unit conversions.</p>
 </div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="ga28950c5df4ab807d7d67670be557c6a6" name="ga28950c5df4ab807d7d67670be557c6a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga28950c5df4ab807d7d67670be557c6a6">&#9670;&#160;</a></span>GOAL_LATCH_BIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define GOAL_LATCH_BIT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>goal</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">((uint8_t)(1u &lt;&lt; (goal)))</div>
+</div><!-- fragment -->
+<p>The bit a goal takes in the mask goal_latch_update hands back. </p>
+
+</div>
+</div>
 <a id="gab582a8ca15586973977cd7f48de42fa2" name="gab582a8ca15586973977cd7f48de42fa2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gab582a8ca15586973977cd7f48de42fa2">&#9670;&#160;</a></span>STEP_HOURS_PER_DAY</h2>
 
@@ -1072,6 +1179,64 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef" name="ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef"></a>FONT_SLOT_OWNED&#160;</td><td class="fielddoc"><p>A font the app loaded and registered itself, freed by the registry. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e" name="ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e"></a>FONT_SLOT_LOADED&#160;</td><td class="fielddoc"><p>A font loaded from the resource the slot records, freed by the registry. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga7b98b8d053da1e5e427ee85865aa164b" name="ga7b98b8d053da1e5e427ee85865aa164b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7b98b8d053da1e5e427ee85865aa164b">&#9670;&#160;</a></span>GoalLatchGoal</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ga7b98b8d053da1e5e427ee85865aa164b">GoalLatchGoal</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The goals the latch watches, in the order it reads their readings and targets. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga7b98b8d053da1e5e427ee85865aa164ba2b5fb3c246dd8bb2ce7500002f2275ae" name="gga7b98b8d053da1e5e427ee85865aa164ba2b5fb3c246dd8bb2ce7500002f2275ae"></a>GOAL_LATCH_STEPS&#160;</td><td class="fielddoc"><p>Steps so far today. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b98b8d053da1e5e427ee85865aa164baab050e5c8ce6442dc2f80a046b973c13" name="gga7b98b8d053da1e5e427ee85865aa164baab050e5c8ce6442dc2f80a046b973c13"></a>GOAL_LATCH_CALORIES&#160;</td><td class="fielddoc"><p>Active calories so far today. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b98b8d053da1e5e427ee85865aa164ba9bbe2015af481b16ea0936b2cf59a489" name="gga7b98b8d053da1e5e427ee85865aa164ba9bbe2015af481b16ea0936b2cf59a489"></a>GOAL_LATCH_DISTANCE&#160;</td><td class="fielddoc"><p>Walked distance so far today, in metres. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b98b8d053da1e5e427ee85865aa164ba0c8c56df75ba916cf3079e5b0cec7b02" name="gga7b98b8d053da1e5e427ee85865aa164ba0c8c56df75ba916cf3079e5b0cec7b02"></a>GOAL_LATCH_ACTIVE&#160;</td><td class="fielddoc"><p>Active minutes so far today. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906" name="gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906"></a>GOAL_LATCH_COUNT&#160;</td><td class="fielddoc"><p>How many goals the latch watches. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="gae7e078308f50a757752f931a40ca9d0a" name="gae7e078308f50a757752f931a40ca9d0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae7e078308f50a757752f931a40ca9d0a">&#9670;&#160;</a></span>GoalVibeKind</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#gae7e078308f50a757752f931a40ca9d0a">GoalVibeKind</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>What a Goal Met Vibration pick plays. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggae7e078308f50a757752f931a40ca9d0aabd3b3b42cd08ae79230f6d576d6412d8" name="ggae7e078308f50a757752f931a40ca9d0aabd3b3b42cd08ae79230f6d576d6412d8"></a>GOAL_VIBE_KIND_NONE&#160;</td><td class="fielddoc"><p>Nothing, the pick is empty. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggae7e078308f50a757752f931a40ca9d0aa0e006ae6aa83ed1835c0bf7a56899b3f" name="ggae7e078308f50a757752f931a40ca9d0aa0e006ae6aa83ed1835c0bf7a56899b3f"></a>GOAL_VIBE_KIND_SHORT&#160;</td><td class="fielddoc"><p>The watch's short pulse, from S. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggae7e078308f50a757752f931a40ca9d0aa1771dff8456963d3dfbfd7b25a6adeed" name="ggae7e078308f50a757752f931a40ca9d0aa1771dff8456963d3dfbfd7b25a6adeed"></a>GOAL_VIBE_KIND_LONG&#160;</td><td class="fielddoc"><p>The watch's long pulse, from L. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggae7e078308f50a757752f931a40ca9d0aa24a749dff25eb1115d2b7b4a8263fc79" name="ggae7e078308f50a757752f931a40ca9d0aa24a749dff25eb1115d2b7b4a8263fc79"></a>GOAL_VIBE_KIND_DOUBLE&#160;</td><td class="fielddoc"><p>The watch's double pulse, from D. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggae7e078308f50a757752f931a40ca9d0aaee115debe7704d7fa2602f4186843875" name="ggae7e078308f50a757752f931a40ca9d0aaee115debe7704d7fa2602f4186843875"></a>GOAL_VIBE_KIND_CUSTOM&#160;</td><td class="fielddoc"><p>The wearer's own pattern, from C. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggae7e078308f50a757752f931a40ca9d0aa81e48d38494e60b9591907b81c5e89b2" name="ggae7e078308f50a757752f931a40ca9d0aa81e48d38494e60b9591907b81c5e89b2"></a>GOAL_VIBE_KIND_LIST&#160;</td><td class="fielddoc"><p>The pick itself, as a comma list of milliseconds. </p>
 </td></tr>
 </table>
 
@@ -2118,6 +2283,37 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga8892a0d27efd802c98dfb09c52acf19b" name="ga8892a0d27efd802c98dfb09c52acf19b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8892a0d27efd802c98dfb09c52acf19b">&#9670;&#160;</a></span>date_weeks_left_in_year()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int date_weeks_left_in_year </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>year</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>yday</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How many whole weeks are left before the year ends. It is the days left divided by 7 and rounded down, so the last seven days of December, the 25th to the 31st, read 0. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">year</td><td>The full year (2026, not 126). </td></tr>
+    <tr><td class="paramname">yday</td><td>The day of the year counting January 1st as 0 (like tm_yday). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The weeks remaining from 0 to 52. </dd></dl>
+
+</div>
+</div>
 <a id="gadf1a4e77db17b89d4d0e81dc25c9bcf2" name="gadf1a4e77db17b89d4d0e81dc25c9bcf2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gadf1a4e77db17b89d4d0e81dc25c9bcf2">&#9670;&#160;</a></span>distance_format()</h2>
 
@@ -2700,6 +2896,273 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>total * num / den, or 0 for a denominator of zero so there is no divide by it. </dd></dl>
+
+</div>
+</div>
+<a id="ga69f228c432109fc798b2eb1a81e4c391" name="ga69f228c432109fc798b2eb1a81e4c391"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga69f228c432109fc798b2eb1a81e4c391">&#9670;&#160;</a></span>goal_latch_update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t goal_latch_update </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structGoalLatch.html">GoalLatch</a> *</td>          <td class="paramname"><span class="paramname"><em>latch</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>day</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>readings</em></span>[GOAL_LATCH_COUNT], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int</td>          <td class="paramname"><span class="paramname"><em>targets</em></span>[GOAL_LATCH_COUNT]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Takes the latest readings and says which goals they just met. </p>
+<p>A new day clears the marks first. A reading of 0 or less is no reading yet, since the health store reads -1 for a missing step, calorie, or active minutes total and 0 for a missing distance. A target of 0 or less is no goal, for a face that does not keep one. Either way the goal waits.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">latch</td><td>The latch to check and update. </td></tr>
+    <tr><td class="paramname">day</td><td>The day of the readings, as tm_yday. </td></tr>
+    <tr><td class="paramname">readings</td><td>Today's readings, one per <a class="el" href="#ga7b98b8d053da1e5e427ee85865aa164b" title="The goals the latch watches, in the order it reads their readings and targets.">GoalLatchGoal</a> in its order. </td></tr>
+    <tr><td class="paramname">targets</td><td>The goals, one per <a class="el" href="#ga7b98b8d053da1e5e427ee85865aa164b" title="The goals the latch watches, in the order it reads their readings and targets.">GoalLatchGoal</a> in its order. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A GOAL_LATCH_BIT for each goal met since the last ask, or 0 when none was. </dd></dl>
+
+</div>
+</div>
+<a id="ga194d670c0cb59a0cd7826e2bb3b15ead" name="ga194d670c0cb59a0cd7826e2bb3b15ead"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga194d670c0cb59a0cd7826e2bb3b15ead">&#9670;&#160;</a></span>goal_vibe_pattern_kind()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#gae7e078308f50a757752f931a40ca9d0a">GoalVibeKind</a> goal_vibe_pattern_kind </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>pick</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>What a pick plays, read from its first character. </p>
+<p>Only the first character counts, so anything that opens on S, L, D, or C plays that, and anything else is read as a list of milliseconds.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pick</td><td>The Goal Met Vibration setting, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>What the pick plays. Empty or NULL is GOAL_VIBE_KIND_NONE. </dd></dl>
+
+</div>
+</div>
+<a id="ga53d668bbd2ebdbe269acceb161a9f223" name="ga53d668bbd2ebdbe269acceb161a9f223"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga53d668bbd2ebdbe269acceb161a9f223">&#9670;&#160;</a></span>goal_vibe_pattern_parse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goal_vibe_pattern_parse </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>capacity</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads a list of milliseconds such as "100,80,300" into the caller's buffer. </p>
+<p>Any character that is not a digit ends a number, so commas, spaces, and anything else all work as separators, and a run of them adds nothing. Each number is held to GOAL_VIBE_PATTERN_MIN_MS and GOAL_VIBE_PATTERN_MAX_MS, and a run of digits too long for a number reads as the longest step rather than wrapping round. Numbers past the buffer's room are dropped.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">text</td><td>The list, or NULL. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Where the steps go, starting on a buzz and then turning between pause and buzz. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">capacity</td><td>How many steps out holds, normally GOAL_VIBE_PATTERN_MAX. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>How many steps it wrote, 0 for a list with no numbers in it. </dd></dl>
+
+</div>
+</div>
+<a id="ga279f4876566255df40de92a7d4fc2ffb" name="ga279f4876566255df40de92a7d4fc2ffb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga279f4876566255df40de92a7d4fc2ffb">&#9670;&#160;</a></span>goals_active_min()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goals_active_min </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The active minutes goal for a menu choice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The saved choice, 0 for the first option. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The goal in minutes. </dd></dl>
+
+</div>
+</div>
+<a id="gab5c0649f6d8925d8d5cb553a21570d3b" name="gab5c0649f6d8925d8d5cb553a21570d3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab5c0649f6d8925d8d5cb553a21570d3b">&#9670;&#160;</a></span>goals_calories()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goals_calories </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The active calorie goal for a menu choice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The saved choice, 0 for the first option. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The goal in kilocalories. </dd></dl>
+
+</div>
+</div>
+<a id="ga945d507078b2a1f1bcffb2d1bfaff6f5" name="ga945d507078b2a1f1bcffb2d1bfaff6f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga945d507078b2a1f1bcffb2d1bfaff6f5">&#9670;&#160;</a></span>goals_distance_m()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goals_distance_m </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The distance goal for a menu choice, in metres. </p>
+<p>The goals are always kilometres, whatever unit the wearer reads distance in. The unit only matters when the goal is drawn.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The saved choice, 0 for the first option. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The goal in metres. </dd></dl>
+
+</div>
+</div>
+<a id="gad0ddb61383b9a9bcd75c95f13ea1a8f7" name="gad0ddb61383b9a9bcd75c95f13ea1a8f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad0ddb61383b9a9bcd75c95f13ea1a8f7">&#9670;&#160;</a></span>goals_hr_limit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goals_hr_limit </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The heart rate limit for a menu choice, the top of a heart rate bar. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The saved choice, 0 for the first option. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The limit in beats per minute. </dd></dl>
+
+</div>
+</div>
+<a id="ga8e28810a14d36a4ca94f3edf51d6f2bb" name="ga8e28810a14d36a4ca94f3edf51d6f2bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8e28810a14d36a4ca94f3edf51d6f2bb">&#9670;&#160;</a></span>goals_sleep_min()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goals_sleep_min </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The sleep goal for a menu choice, in minutes. </p>
+<p>The page offers whole hours, and this hands back minutes, the unit the health store reads sleep in.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The saved choice, 0 for the first option. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The goal in minutes. </dd></dl>
+
+</div>
+</div>
+<a id="ga939207e2d703833e67cbf48382d0b193" name="ga939207e2d703833e67cbf48382d0b193"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga939207e2d703833e67cbf48382d0b193">&#9670;&#160;</a></span>goals_steps()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int goals_steps </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The step goal for a menu choice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The saved choice, 0 for the first option. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The goal in steps. </dd></dl>
 
 </div>
 </div>

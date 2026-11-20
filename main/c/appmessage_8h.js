@@ -1,10 +1,7 @@
 var appmessage_8h =
 [
-    [ "APPMESSAGE_CUSTOM_COLORS_MAX", "group__lib__io.html#ga8bfcc8d396856901aeea684974fdb15c", null ],
     [ "CalendarStripHandler", "group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b", null ],
     [ "CoordsHandler", "group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030", null ],
-    [ "CustomColorsHandler", "group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931", null ],
-    [ "CustomColorsProvider", "group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc", null ],
     [ "InboxCompleteHandler", "group__lib__io.html#gaae586b1981cefa58e0284ec05e167205", null ],
     [ "MusicArtHandler", "group__lib__io.html#ga3abd6ef7d9cd8ce0d218fd9e848ea8f7", null ],
     [ "MusicHandler", "group__lib__io.html#ga91efba350e00e340bfd106ee9aff0238", null ],
@@ -17,7 +14,6 @@ var appmessage_8h =
     [ "appmessage_add_inbox_complete", "group__lib__io.html#ga502ebf1b6d9c87b77f5f708cd7424f86", null ],
     [ "appmessage_on_calendar_strip", "group__lib__io.html#ga1ab2899a032be1fe4ab307e70f8bf3cd", null ],
     [ "appmessage_on_coords", "group__lib__io.html#ga7c64814ef2b8dcd4ee38743e31fb58d2", null ],
-    [ "appmessage_on_custom_colors", "group__lib__io.html#gacd479537bb794bc2cc1f07b4db3fb830", null ],
     [ "appmessage_on_music", "group__lib__io.html#ga757a519d948bf39e5414b62761c20593", null ],
     [ "appmessage_on_music_art", "group__lib__io.html#ga4ae46c9fecd1398f3fcf16d666ba2c4f", null ],
     [ "appmessage_on_music_no_plugin", "group__lib__io.html#ga19d4f00dc65f9c0b71a0335f87d10068", null ],
@@ -34,5 +30,5 @@ var appmessage_8h =
     [ "appmessage_request_phone", "group__lib__io.html#ga65ada3fd289956eb8297c91927fad985", null ],
     [ "appmessage_request_stock", "group__lib__io.html#gac7dbcd76bf92e5bbf684d2c9849b5ebf", null ],
     [ "appmessage_request_weather", "group__lib__io.html#gaf552756e4da1e1818775bb984bdd36c0", null ],
-    [ "appmessage_set_custom_colors_provider", "group__lib__io.html#gaf7a398e20625029f2e376405e9132660", null ]
+    [ "appmessage_set_long_text", "group__lib__io.html#ga678097ce4bd264a3488b7aa2e029d35b", null ]
 ];

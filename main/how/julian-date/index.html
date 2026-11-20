@@ -128,7 +128,7 @@
           <h1>The Julian Date</h1>
           
           <div class="readme"><p>The Julian Date counts days in one long run, with no months or years to get in the way. Astronomers use it because the gap between two dates is a plain subtraction. Day 0 began at noon UTC on the 1st of January 4713 BC, so the 1st of January 2000 at noon was day 2451545.</p>
-<p>A face shows it as a readout, such as the Julian panel in the Mosaic family or the LCARS face&#39;s Julian slot. The code lives in <a href="../../c/astro_8h.html"><code>astro.h</code></a> and <a href="../../c/astro_8c.html"><code>astro.c</code></a> under <code>src/c/core/clock/</code>, a single function in plain C.</p>
+<p>A face shows it as a readout, such as a Julian panel or a slot in a row of readouts. The code lives in <a href="../../c/astro_8h.html"><code>astro.h</code></a> and <a href="../../c/astro_8c.html"><code>astro.c</code></a> under <code>src/c/core/clock/</code>, a single function in plain C.</p>
 <h2 id="working-it-out">Working It Out</h2>
 <p>The Unix clock counts seconds from midnight UTC on the 1st of January 1970, which is Julian Date 2440587.5. So the Julian Date is that, plus the seconds since then turned into days:</p>
 <pre><code>JD = 2440587.5 + seconds / 86400</code></pre>

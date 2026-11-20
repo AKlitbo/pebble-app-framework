@@ -6,5 +6,6 @@ var date_8h =
     [ "date_first_wday", "group__lib__core.html#ga0b126160626de63678618d54227455ad", null ],
     [ "date_iso_week", "group__lib__core.html#gaee874b4db4f19a63aec92cf2c57defd2", null ],
     [ "date_iso_week_year", "group__lib__core.html#ga0c190d7c5d5f7d46fc36c3f04bd3e56a", null ],
-    [ "date_iso_weeks_in_year", "group__lib__core.html#ga70f355976c89a7190d80f6d344631710", null ]
+    [ "date_iso_weeks_in_year", "group__lib__core.html#ga70f355976c89a7190d80f6d344631710", null ],
+    [ "date_weeks_left_in_year", "group__lib__core.html#ga8892a0d27efd802c98dfb09c52acf19b", null ]
 ];

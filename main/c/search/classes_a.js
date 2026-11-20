@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['phoneconfig_0',['PhoneConfig',['../structPhoneConfig.html',1,'']]],
-  ['phoneseed_1',['PhoneSeed',['../structPhoneSeed.html',1,'']]],
-  ['pluginsourcesettings_2',['PluginSourceSettings',['../structPluginSourceSettings.html',1,'']]]
+  ['outboxjob_0',['OutboxJob',['../structOutboxJob.html',1,'']]],
+  ['outboxqueue_1',['OutboxQueue',['../structOutboxQueue.html',1,'']]]
 ];

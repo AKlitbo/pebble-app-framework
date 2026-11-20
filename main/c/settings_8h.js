@@ -18,8 +18,15 @@ var settings_8h =
       [ "SETTING_BLUETOOTH_VIBE_DISCONNECT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0", null ],
       [ "SETTING_HOURLY_VIBE", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895", null ],
       [ "SETTING_BATTERY_DISPLAY", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276", null ],
-      [ "SETTING_HEADER_FONT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9", null ],
       [ "SETTING_WIND_UNIT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e", null ],
+      [ "SETTING_GOAL_STEPS", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8", null ],
+      [ "SETTING_GOAL_DISTANCE", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f", null ],
+      [ "SETTING_GOAL_CALORIES", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c", null ],
+      [ "SETTING_GOAL_ACTIVE", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1", null ],
+      [ "SETTING_GOAL_SLEEP", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c", null ],
+      [ "SETTING_GOAL_HR", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec", null ],
+      [ "SETTING_GOAL_VIBE", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee", null ],
+      [ "SETTING_GOAL_VIBE_CUSTOM", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81", null ],
       [ "SETTING_COUNT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33", null ]
     ] ],
     [ "SettingType", "group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338", [

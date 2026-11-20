@@ -1,4 +1,15 @@
 var searchData=
 [
-  ['get_5fversion_0',['get_version',['../settings_8c.html#a50844639d64b22a4b3af0facb74ccf31',1,'settings.c']]]
+  ['get_5fversion_0',['get_version',['../settings_8c.html#a50844639d64b22a4b3af0facb74ccf31',1,'settings.c']]],
+  ['goal_5fat_1',['goal_at',['../goals_8c.html#a22694a347b9d7d76cf428fa274a1ae79',1,'goals.c']]],
+  ['goal_5flatch_5fupdate_2',['goal_latch_update',['../group__lib__core.html#ga69f228c432109fc798b2eb1a81e4c391',1,'goal_latch_update(GoalLatch *latch, int day, const int readings[GOAL_LATCH_COUNT], const int targets[GOAL_LATCH_COUNT]):&#160;goal_latch.c'],['../group__lib__core.html#ga69f228c432109fc798b2eb1a81e4c391',1,'goal_latch_update(GoalLatch *latch, int day, const int readings[GOAL_LATCH_COUNT], const int targets[GOAL_LATCH_COUNT]):&#160;goal_latch.c']]],
+  ['goal_5ftarget_3',['goal_target',['../vibe_8c.html#acd58165798d67fa4f4acb85710a50876',1,'vibe.c']]],
+  ['goal_5fvibe_5fpattern_5fkind_4',['goal_vibe_pattern_kind',['../group__lib__core.html#ga194d670c0cb59a0cd7826e2bb3b15ead',1,'goal_vibe_pattern_kind(const char *pick):&#160;goal_vibe_pattern.c'],['../group__lib__core.html#ga194d670c0cb59a0cd7826e2bb3b15ead',1,'goal_vibe_pattern_kind(const char *pick):&#160;goal_vibe_pattern.c']]],
+  ['goal_5fvibe_5fpattern_5fparse_5',['goal_vibe_pattern_parse',['../group__lib__core.html#ga53d668bbd2ebdbe269acceb161a9f223',1,'goal_vibe_pattern_parse(const char *text, uint32_t *out, int capacity):&#160;goal_vibe_pattern.c'],['../group__lib__core.html#ga53d668bbd2ebdbe269acceb161a9f223',1,'goal_vibe_pattern_parse(const char *text, uint32_t *out, int capacity):&#160;goal_vibe_pattern.c']]],
+  ['goals_5factive_5fmin_6',['goals_active_min',['../group__lib__core.html#ga279f4876566255df40de92a7d4fc2ffb',1,'goals_active_min(uint8_t index):&#160;goals.c'],['../group__lib__core.html#ga279f4876566255df40de92a7d4fc2ffb',1,'goals_active_min(uint8_t index):&#160;goals.c']]],
+  ['goals_5fcalories_7',['goals_calories',['../group__lib__core.html#gab5c0649f6d8925d8d5cb553a21570d3b',1,'goals_calories(uint8_t index):&#160;goals.c'],['../group__lib__core.html#gab5c0649f6d8925d8d5cb553a21570d3b',1,'goals_calories(uint8_t index):&#160;goals.c']]],
+  ['goals_5fdistance_5fm_8',['goals_distance_m',['../group__lib__core.html#ga945d507078b2a1f1bcffb2d1bfaff6f5',1,'goals_distance_m(uint8_t index):&#160;goals.c'],['../group__lib__core.html#ga945d507078b2a1f1bcffb2d1bfaff6f5',1,'goals_distance_m(uint8_t index):&#160;goals.c']]],
+  ['goals_5fhr_5flimit_9',['goals_hr_limit',['../group__lib__core.html#gad0ddb61383b9a9bcd75c95f13ea1a8f7',1,'goals_hr_limit(uint8_t index):&#160;goals.c'],['../group__lib__core.html#gad0ddb61383b9a9bcd75c95f13ea1a8f7',1,'goals_hr_limit(uint8_t index):&#160;goals.c']]],
+  ['goals_5fsleep_5fmin_10',['goals_sleep_min',['../group__lib__core.html#ga8e28810a14d36a4ca94f3edf51d6f2bb',1,'goals_sleep_min(uint8_t index):&#160;goals.c'],['../group__lib__core.html#ga8e28810a14d36a4ca94f3edf51d6f2bb',1,'goals_sleep_min(uint8_t index):&#160;goals.c']]],
+  ['goals_5fsteps_11',['goals_steps',['../group__lib__core.html#ga939207e2d703833e67cbf48382d0b193',1,'goals_steps(uint8_t index):&#160;goals.c'],['../group__lib__core.html#ga939207e2d703833e67cbf48382d0b193',1,'goals_steps(uint8_t index):&#160;goals.c']]]
 ];

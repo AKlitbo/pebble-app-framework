@@ -240,6 +240,13 @@
     </member>
     <member kind="function">
       <type>int</type>
+      <name>date_weeks_left_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8892a0d27efd802c98dfb09c52acf19b</anchor>
+      <arglist>(int year, int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
       <name>date_days_in_month</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gaef88f0efc2274de9f1984658aea37f9b</anchor>
@@ -290,6 +297,13 @@
       <name>date_days_left_in_year</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga3c68f59a1602b5e27b1a05a0d63b499c</anchor>
+      <arglist>(int year, int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_weeks_left_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8892a0d27efd802c98dfb09c52acf19b</anchor>
       <arglist>(int year, int yday)</arglist>
     </member>
     <member kind="function">
@@ -1190,6 +1204,379 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga9f625161eafd8ce62405cce899c8ff80</anchor>
       <arglist>(const char *value)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>goal_latch.c</name>
+    <path>src/c/core/health/</path>
+    <filename>goal__latch_8c.html</filename>
+    <includes id="goal__latch_8h" name="goal_latch.h" local="yes" import="no" module="no" objc="no">health/goal_latch.h</includes>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>goal_latch_update</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga69f228c432109fc798b2eb1a81e4c391</anchor>
+      <arglist>(GoalLatch *latch, int day, const int readings[GOAL_LATCH_COUNT], const int targets[GOAL_LATCH_COUNT])</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>goal_latch.h</name>
+    <path>src/c/core/health/</path>
+    <filename>goal__latch_8h.html</filename>
+    <class kind="struct">GoalLatch</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_LATCH_BIT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga28950c5df4ab807d7d67670be557c6a6</anchor>
+      <arglist>(goal)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_LATCH_EMPTY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gabcf2faf3c7b9b8317e27def352a2baa6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>GoalLatchGoal</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b98b8d053da1e5e427ee85865aa164b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_STEPS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba2b5fb3c246dd8bb2ce7500002f2275ae</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_CALORIES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164baab050e5c8ce6442dc2f80a046b973c13</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_DISTANCE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba9bbe2015af481b16ea0936b2cf59a489</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_ACTIVE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba0c8c56df75ba916cf3079e5b0cec7b02</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>goal_latch_update</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga69f228c432109fc798b2eb1a81e4c391</anchor>
+      <arglist>(GoalLatch *latch, int day, const int readings[GOAL_LATCH_COUNT], const int targets[GOAL_LATCH_COUNT])</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>goal_vibe_pattern.c</name>
+    <path>src/c/core/health/</path>
+    <filename>goal__vibe__pattern_8c.html</filename>
+    <includes id="goal__vibe__pattern_8h" name="goal_vibe_pattern.h" local="yes" import="no" module="no" objc="no">health/goal_vibe_pattern.h</includes>
+    <member kind="function">
+      <type>GoalVibeKind</type>
+      <name>goal_vibe_pattern_kind</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga194d670c0cb59a0cd7826e2bb3b15ead</anchor>
+      <arglist>(const char *pick)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>clamp_step</name>
+      <anchorfile>goal__vibe__pattern_8c.html</anchorfile>
+      <anchor>aea1764991c9e00df234fac6b8e79ec82</anchor>
+      <arglist>(uint32_t value)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goal_vibe_pattern_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga53d668bbd2ebdbe269acceb161a9f223</anchor>
+      <arglist>(const char *text, uint32_t *out, int capacity)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>goal_vibe_pattern.h</name>
+    <path>src/c/core/health/</path>
+    <filename>goal__vibe__pattern_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_VIBE_PATTERN_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac243a4f6f24739af981d774ec0239a18</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_VIBE_PATTERN_MIN_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab54a874b6049feca8ae295ccb128b029</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_VIBE_PATTERN_MAX_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaba4f24cfae659b3e529708a6f70c61c3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>GoalVibeKind</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae7e078308f50a757752f931a40ca9d0a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_NONE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aabd3b3b42cd08ae79230f6d576d6412d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_SHORT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa0e006ae6aa83ed1835c0bf7a56899b3f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_LONG</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa1771dff8456963d3dfbfd7b25a6adeed</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_DOUBLE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa24a749dff25eb1115d2b7b4a8263fc79</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_CUSTOM</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aaee115debe7704d7fa2602f4186843875</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_LIST</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa81e48d38494e60b9591907b81c5e89b2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>GoalVibeKind</type>
+      <name>goal_vibe_pattern_kind</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga194d670c0cb59a0cd7826e2bb3b15ead</anchor>
+      <arglist>(const char *pick)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goal_vibe_pattern_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga53d668bbd2ebdbe269acceb161a9f223</anchor>
+      <arglist>(const char *text, uint32_t *out, int capacity)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>goals.c</name>
+    <path>src/c/core/health/</path>
+    <filename>goals_8c.html</filename>
+    <includes id="goals_8h" name="goals.h" local="yes" import="no" module="no" objc="no">health/goals.h</includes>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>goal_at</name>
+      <anchorfile>goals_8c.html</anchorfile>
+      <anchor>a22694a347b9d7d76cf428fa274a1ae79</anchor>
+      <arglist>(const int16_t *table, uint8_t count, uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_steps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga939207e2d703833e67cbf48382d0b193</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_distance_m</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga945d507078b2a1f1bcffb2d1bfaff6f5</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_calories</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab5c0649f6d8925d8d5cb553a21570d3b</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_active_min</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga279f4876566255df40de92a7d4fc2ffb</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_sleep_min</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8e28810a14d36a4ca94f3edf51d6f2bb</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_hr_limit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad0ddb61383b9a9bcd75c95f13ea1a8f7</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const int16_t</type>
+      <name>s_steps</name>
+      <anchorfile>goals_8c.html</anchorfile>
+      <anchor>a51761b810364e32dca06e45df6c140ed</anchor>
+      <arglist>[]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const int16_t</type>
+      <name>s_distance_m</name>
+      <anchorfile>goals_8c.html</anchorfile>
+      <anchor>a6658312a7158aac2e2b485fbeafac80e</anchor>
+      <arglist>[]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const int16_t</type>
+      <name>s_calories</name>
+      <anchorfile>goals_8c.html</anchorfile>
+      <anchor>ab4b957ca34aed100b129f45501e6a8e3</anchor>
+      <arglist>[]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const int16_t</type>
+      <name>s_active_min</name>
+      <anchorfile>goals_8c.html</anchorfile>
+      <anchor>a63f094770bba938f7e3da5b2bcccd0e8</anchor>
+      <arglist>[]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const int16_t</type>
+      <name>s_sleep_h</name>
+      <anchorfile>goals_8c.html</anchorfile>
+      <anchor>a58dc799937a849ec40d39be07d13bf8e</anchor>
+      <arglist>[]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const int16_t</type>
+      <name>s_hr_limits</name>
+      <anchorfile>goals_8c.html</anchorfile>
+      <anchor>ad73c96fd98656fc25c74a3891793d99b</anchor>
+      <arglist>[]</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>goals.h</name>
+    <path>src/c/core/health/</path>
+    <filename>goals_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_STEPS_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga81537884077e3b192bd08a30c00059f6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_DISTANCE_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga78f05df0753fd059e6071abb1fd9b4f2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_CALORIES_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gababbb2d611b78a66c6555ba6deb9c311</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_ACTIVE_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9aa2223ab51a75abd6ea2770d3b5b306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_SLEEP_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa47b70e875f3592b0e9282c2052c97e1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_HR_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac1411d018ff4bd6f7fc23ec4b5be7b65</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_steps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga939207e2d703833e67cbf48382d0b193</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_distance_m</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga945d507078b2a1f1bcffb2d1bfaff6f5</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_calories</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab5c0649f6d8925d8d5cb553a21570d3b</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_active_min</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga279f4876566255df40de92a7d4fc2ffb</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_sleep_min</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8e28810a14d36a4ca94f3edf51d6f2bb</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_hr_limit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad0ddb61383b9a9bcd75c95f13ea1a8f7</anchor>
+      <arglist>(uint8_t index)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -3737,13 +4124,6 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>appmessage_on_custom_colors</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
-      <arglist>(CustomColorsHandler cb)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
       <name>appmessage_on_phone_battery</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga067bf9e32b6a13413d5157b17e86147c</anchor>
@@ -3772,10 +4152,10 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>appmessage_set_custom_colors_provider</name>
+      <name>appmessage_set_long_text</name>
       <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
-      <arglist>(CustomColorsProvider cb)</arglist>
+      <anchor>ga678097ce4bd264a3488b7aa2e029d35b</anchor>
+      <arglist>(uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -3918,6 +4298,20 @@
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
+      <type>static LongText</type>
+      <name>s_long_text</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a482a72297a6098cbfdda3d77857362c5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_opened</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>ac6de0113496e2a28d7913610d43b979d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
       <type>static CallbackListFn</type>
       <name>s_inbox_complete_entries</name>
       <anchorfile>appmessage_8c.html</anchorfile>
@@ -3971,14 +4365,8 @@
     <name>appmessage.h</name>
     <path>src/c/pebble/io/appmessage/</path>
     <filename>appmessage_8h.html</filename>
+    <includes id="long__text_8h" name="long_text.h" local="yes" import="no" module="no" objc="no">io/long_text.h</includes>
     <includes id="weather__reading_8h" name="weather_reading.h" local="yes" import="no" module="no" objc="no">weather/weather_reading.h</includes>
-    <member kind="define">
-      <type>#define</type>
-      <name>APPMESSAGE_CUSTOM_COLORS_MAX</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>ga8bfcc8d396856901aeea684974fdb15c</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="typedef">
       <type>void(*)</type>
       <name>WeatherHandler</name>
@@ -4048,20 +4436,6 @@
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga3abd6ef7d9cd8ce0d218fd9e848ea8f7</anchor>
       <arglist>(const uint8_t *buf, uint16_t len)</arglist>
-    </member>
-    <member kind="typedef">
-      <type>void(*)</type>
-      <name>CustomColorsHandler</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>ga6daf051587a0083e33af5e4d0847f931</anchor>
-      <arglist>(const char *combined)</arglist>
-    </member>
-    <member kind="typedef">
-      <type>void(*)</type>
-      <name>CustomColorsProvider</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>ga6efc27e8b660e10498f1678ddecc05dc</anchor>
-      <arglist>(char *out, size_t n)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*)</type>
@@ -4142,17 +4516,10 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>appmessage_on_custom_colors</name>
+      <name>appmessage_set_long_text</name>
       <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
-      <arglist>(CustomColorsHandler cb)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>appmessage_set_custom_colors_provider</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
-      <arglist>(CustomColorsProvider cb)</arglist>
+      <anchor>ga678097ce4bd264a3488b7aa2e029d35b</anchor>
+      <arglist>(uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -4236,6 +4603,95 @@
       <anchorfile>appmessage__features_8h.html</anchorfile>
       <anchor>ac8ca4974136fb295f05597a68462a938</anchor>
       <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>long_text.c</name>
+    <path>src/c/pebble/io/</path>
+    <filename>long__text_8c.html</filename>
+    <includes id="long__text_8h" name="long_text.h" local="yes" import="no" module="no" objc="no">io/long_text.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_set</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga0cb475e40797328cd99e356a3412e8c5</anchor>
+      <arglist>(LongText *slot, uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver, bool opened)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_fits</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8d4c5f00c23e024894270391fb1f75aa</anchor>
+      <arglist>(uint32_t text_bytes, uint32_t reply_bytes, uint32_t outbox_max, uint32_t inbox_room)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>long_text_held</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gafe9a63bc1dca334c9b7e8a191ad638d9</anchor>
+      <arglist>(const LongText *slot, char *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_arrived</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gae41cbb38ef15413be76eead3aa97d4f5</anchor>
+      <arglist>(const LongText *slot, const char *text)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>long_text.h</name>
+    <path>src/c/pebble/io/</path>
+    <filename>long__text_8h.html</filename>
+    <class kind="struct">LongText</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>LONG_TEXT_CAP_MAX</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga342e9f4df8f2a749f12bfd1dba4a05b3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>LongTextReceiver</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga0f8e59f3f412d280af3f7e20dff33fd1</anchor>
+      <arglist>(const char *text)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>LongTextProvider</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9b2a1b8b90fa7cf1728ca359af72042c</anchor>
+      <arglist>(char *out, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_set</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga0cb475e40797328cd99e356a3412e8c5</anchor>
+      <arglist>(LongText *slot, uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver, bool opened)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_fits</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8d4c5f00c23e024894270391fb1f75aa</anchor>
+      <arglist>(uint32_t text_bytes, uint32_t reply_bytes, uint32_t outbox_max, uint32_t inbox_room)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>long_text_held</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gafe9a63bc1dca334c9b7e8a191ad638d9</anchor>
+      <arglist>(const LongText *slot, char *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_arrived</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gae41cbb38ef15413be76eead3aa97d4f5</anchor>
+      <arglist>(const LongText *slot, const char *text)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -8666,15 +9122,57 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>SETTING_HEADER_FONT</name>
-      <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
       <name>SETTING_WIND_UNIT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_STEPS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_DISTANCE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_CALORIES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_ACTIVE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_SLEEP</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_HR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_VIBE_CUSTOM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
@@ -8798,6 +9296,7 @@
     <filename>settings__catalog_8h.html</filename>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
     <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
+    <includes id="goals_8h" name="goals.h" local="yes" import="no" module="no" objc="no">health/goals.h</includes>
     <member kind="define">
       <type>#define</type>
       <name>SETTINGS_COUNT</name>
@@ -8811,6 +9310,13 @@
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga60da601435a75b4d496364449dd1060a</anchor>
       <arglist>(key, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_TEXT_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga0271250d7b493166accb2f5412db7535</anchor>
+      <arglist>(blob, member, bytes)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -8830,21 +9336,14 @@
       <type>#define</type>
       <name>KNOWN_DATE_FORMAT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>gaf2a01fb04cac500bbbd57bdd6666a897</anchor>
-      <arglist>(off)</arglist>
+      <anchor>ga0c12e915c59b4b345fc99ff86bda1262</anchor>
+      <arglist>(blob, member)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_THEME</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gad2d575c6e87c1859cd11cd814560f708</anchor>
-      <arglist>(off, table_count)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>KNOWN_HEADER_FONT</name>
-      <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga779ccdfaac16f2eeba42f85f6ce894b9</anchor>
       <arglist>(off, table_count)</arglist>
     </member>
     <member kind="define">
@@ -8916,6 +9415,62 @@
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga270513f4a67f8533c0b8d28e53cb6e52</anchor>
       <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_STEPS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab28e3c958bb82c4a1fac39b5c7c13ab6</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_DISTANCE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga325c5ff4bd639a0931d0caf1b5dc1d15</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_CALORIES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaa8625f6fe7ff97db37701fd56b072010</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_ACTIVE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8e8198e5e090c93cf87f2c2f56cfab14</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_SLEEP</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadf946b6adece334f68415a4bc3c2d54b</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_HR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gacad9a3f336ec70d1623d281b6965206b</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac25588725ea8192c1501e7e8628eae80</anchor>
+      <arglist>(blob, member)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_VIBE_CUSTOM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3e95bc017b7c63614d9c7c2a353eae3d</anchor>
+      <arglist>(blob, member)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -9056,7 +9611,12 @@
     <includes id="vibe_8h" name="vibe.h" local="yes" import="no" module="no" objc="no">system/vibe/vibe.h</includes>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
     <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="time__store_8h" name="time_store.h" local="yes" import="no" module="no" objc="no">io/stores/time_store.h</includes>
     <includes id="hour__latch_8h" name="hour_latch.h" local="yes" import="no" module="no" objc="no">clock/hour_latch.h</includes>
+    <includes id="goal__latch_8h" name="goal_latch.h" local="yes" import="no" module="no" objc="no">health/goal_latch.h</includes>
+    <includes id="goal__vibe__pattern_8h" name="goal_vibe_pattern.h" local="yes" import="no" module="no" objc="no">health/goal_vibe_pattern.h</includes>
+    <includes id="goals_8h" name="goals.h" local="yes" import="no" module="no" objc="no">health/goals.h</includes>
     <member kind="function">
       <type>void</type>
       <name>vibe_pulse</name>
@@ -9099,6 +9659,27 @@
       <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
       <arglist>(const struct tm *tick, uint8_t choice)</arglist>
     </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>play_goal_pattern</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>a30771a4e67e5bb79d03814e09fb440ec</anchor>
+      <arglist>(const char *text)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>goal_target</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>acd58165798d67fa4f4acb85710a50876</anchor>
+      <arglist>(SettingId id, int(*lookup)(uint8_t index))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_goal</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga7d39417dac99e4859ff926a73df9e8bd</anchor>
+      <arglist>(void)</arglist>
+    </member>
     <member kind="variable" static="yes">
       <type>static HourLatch</type>
       <name>s_hour_latch</name>
@@ -9111,6 +9692,13 @@
       <name>s_hourly_seeded</name>
       <anchorfile>vibe_8c.html</anchorfile>
       <anchor>a1a5df4ca02d3ced1f6fa3bb20fd17006</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static GoalLatch</type>
+      <name>s_goal_latch</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>ae71f4e05149e24ebda565f2336ce1806</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -9177,6 +9765,13 @@
       <anchorfile>group__lib__system.html</anchorfile>
       <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
       <arglist>(const struct tm *tick, uint8_t choice)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_goal</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga7d39417dac99e4859ff926a73df9e8bd</anchor>
+      <arglist>(void)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -10406,20 +11001,6 @@
       <anchor>ae620e28c9358d52d80d1c44736a01299</anchor>
       <arglist></arglist>
     </member>
-    <member kind="variable">
-      <type>CustomColorsHandler</type>
-      <name>on_custom_colors</name>
-      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
-      <anchor>a4af2fcbe1312196adbfee82a78b6c585</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>CustomColorsProvider</type>
-      <name>custom_colors_provider</name>
-      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
-      <anchor>a03250f868919dfc3d4477ad54741f30e</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="struct">
     <name>[struct].s_hours</name>
@@ -10446,41 +11027,6 @@
       <type>uint8_t</type>
       <name>tag</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>char</type>
-      <name>lat</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>char</type>
-      <name>lon</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>CalendarStrip</type>
-      <name>strip</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>time_t</type>
-      <name>last_sync</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint8_t</type>
-      <name>tag</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
       <anchor>aa3436b4f53e574810565c9b29d0042d5</anchor>
       <arglist></arglist>
     </member>
@@ -10497,6 +11043,27 @@
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
       <anchor>a71acacf736c0662ae8a364a757778e46</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lat</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lon</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
+      <arglist>[20]</arglist>
     </member>
     <member kind="variable">
       <type>int</type>
@@ -10559,6 +11126,20 @@
       <name>distance_m</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
       <anchor>a6bae943d352d4ea4b1a3f3085e626110</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarStrip</type>
+      <name>strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_sync</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -11168,6 +11749,31 @@
       <name>count</name>
       <anchorfile>structFontSlots.html</anchorfile>
       <anchor>ac8b4c11c8402208fa0c24b6f25e9c29a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>GoalLatch</name>
+    <filename>structGoalLatch.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>day</name>
+      <anchorfile>structGoalLatch.html</anchorfile>
+      <anchor>aa1fe6067f1e0c7bf2c4996a531502f97</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>below</name>
+      <anchorfile>structGoalLatch.html</anchorfile>
+      <anchor>afd53127cf3c70a6fcd39987e5fc05ccc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>met</name>
+      <anchorfile>structGoalLatch.html</anchorfile>
+      <anchor>aec3f86af2a26b9286a93735151fc81e6</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -11954,6 +12560,38 @@
       <name>lon</name>
       <anchorfile>structLocationSeed.html</anchorfile>
       <anchor>a525f72325d8cad6c0317e6b0d4ce469f</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>LongText</name>
+    <filename>structLongText.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>key</name>
+      <anchorfile>structLongText.html</anchorfile>
+      <anchor>a8d99ef64df01d6a26dbda5ef9ea308b3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>cap</name>
+      <anchorfile>structLongText.html</anchorfile>
+      <anchor>a55b8504dbcb0559adbd4e276b0d49111</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>LongTextProvider</type>
+      <name>provider</name>
+      <anchorfile>structLongText.html</anchorfile>
+      <anchor>aa86043ffc653ec3868c881a619fbf30a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>LongTextReceiver</type>
+      <name>receiver</name>
+      <anchorfile>structLongText.html</anchorfile>
+      <anchor>a3ebf30e2f834b405a95d18a57ae32f10</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -13334,6 +13972,12 @@
     <file path="src/c/core/clock/">weekday.h</file>
     <file path="src/c/core/clock/">zone_setting.c</file>
     <file path="src/c/core/clock/">zone_setting.h</file>
+    <file path="src/c/core/health/">goal_latch.c</file>
+    <file path="src/c/core/health/">goal_latch.h</file>
+    <file path="src/c/core/health/">goal_vibe_pattern.c</file>
+    <file path="src/c/core/health/">goal_vibe_pattern.h</file>
+    <file path="src/c/core/health/">goals.c</file>
+    <file path="src/c/core/health/">goals.h</file>
     <file path="src/c/core/health/">hr_day.h</file>
     <file path="src/c/core/health/">hrv_log.c</file>
     <file path="src/c/core/health/">hrv_log.h</file>
@@ -13404,6 +14048,7 @@
     <class kind="struct">TimeConfig</class>
     <class kind="struct">TimeBand</class>
     <class kind="struct">TimeBandSpan</class>
+    <class kind="struct">GoalLatch</class>
     <class kind="struct">HrHour</class>
     <class kind="struct">HrDay</class>
     <class kind="struct">HrvBurst</class>
@@ -13459,6 +14104,83 @@
       <name>TIMEBAND_DAY_MINUTES</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gad3c2b297779efc19aa0c02f2e8635917</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_LATCH_BIT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga28950c5df4ab807d7d67670be557c6a6</anchor>
+      <arglist>(goal)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_LATCH_EMPTY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gabcf2faf3c7b9b8317e27def352a2baa6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_VIBE_PATTERN_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac243a4f6f24739af981d774ec0239a18</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_VIBE_PATTERN_MIN_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab54a874b6049feca8ae295ccb128b029</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOAL_VIBE_PATTERN_MAX_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaba4f24cfae659b3e529708a6f70c61c3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_STEPS_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga81537884077e3b192bd08a30c00059f6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_DISTANCE_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga78f05df0753fd059e6071abb1fd9b4f2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_CALORIES_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gababbb2d611b78a66c6555ba6deb9c311</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_ACTIVE_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9aa2223ab51a75abd6ea2770d3b5b306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_SLEEP_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa47b70e875f3592b0e9282c2052c97e1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>GOALS_HR_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac1411d018ff4bd6f7fc23ec4b5be7b65</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -13757,6 +14479,86 @@
       <name>NIGHT_SCHED_FIXED</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>GoalLatchGoal</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b98b8d053da1e5e427ee85865aa164b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_STEPS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba2b5fb3c246dd8bb2ce7500002f2275ae</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_CALORIES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164baab050e5c8ce6442dc2f80a046b973c13</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_DISTANCE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba9bbe2015af481b16ea0936b2cf59a489</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_ACTIVE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba0c8c56df75ba916cf3079e5b0cec7b02</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_LATCH_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7b98b8d053da1e5e427ee85865aa164ba52eb11f8e55323f16922c2ce62908906</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>GoalVibeKind</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae7e078308f50a757752f931a40ca9d0a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_NONE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aabd3b3b42cd08ae79230f6d576d6412d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_SHORT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa0e006ae6aa83ed1835c0bf7a56899b3f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_LONG</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa1771dff8456963d3dfbfd7b25a6adeed</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_DOUBLE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa24a749dff25eb1115d2b7b4a8263fc79</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_CUSTOM</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aaee115debe7704d7fa2602f4186843875</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>GOAL_VIBE_KIND_LIST</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae7e078308f50a757752f931a40ca9d0aa81e48d38494e60b9591907b81c5e89b2</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -14134,6 +14936,13 @@
     </member>
     <member kind="function">
       <type>int</type>
+      <name>date_weeks_left_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8892a0d27efd802c98dfb09c52acf19b</anchor>
+      <arglist>(int year, int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
       <name>date_days_in_month</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gaef88f0efc2274de9f1984658aea37f9b</anchor>
@@ -14418,6 +15227,69 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga9f625161eafd8ce62405cce899c8ff80</anchor>
       <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>goal_latch_update</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga69f228c432109fc798b2eb1a81e4c391</anchor>
+      <arglist>(GoalLatch *latch, int day, const int readings[GOAL_LATCH_COUNT], const int targets[GOAL_LATCH_COUNT])</arglist>
+    </member>
+    <member kind="function">
+      <type>GoalVibeKind</type>
+      <name>goal_vibe_pattern_kind</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga194d670c0cb59a0cd7826e2bb3b15ead</anchor>
+      <arglist>(const char *pick)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goal_vibe_pattern_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga53d668bbd2ebdbe269acceb161a9f223</anchor>
+      <arglist>(const char *text, uint32_t *out, int capacity)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_steps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga939207e2d703833e67cbf48382d0b193</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_distance_m</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga945d507078b2a1f1bcffb2d1bfaff6f5</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_calories</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab5c0649f6d8925d8d5cb553a21570d3b</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_active_min</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga279f4876566255df40de92a7d4fc2ffb</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_sleep_min</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8e28810a14d36a4ca94f3edf51d6f2bb</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>goals_hr_limit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad0ddb61383b9a9bcd75c95f13ea1a8f7</anchor>
+      <arglist>(uint8_t index)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -15071,17 +15943,20 @@
     <file path="src/c/pebble/io/appmessage/">appmessage.c</file>
     <file path="src/c/pebble/io/appmessage/">appmessage.h</file>
     <file path="src/c/pebble/io/appmessage/">appmessage_features.h</file>
+    <file path="src/c/pebble/io/">long_text.c</file>
+    <file path="src/c/pebble/io/">long_text.h</file>
     <file path="src/c/pebble/io/">outbox_queue.h</file>
     <file path="src/c/pebble/io/">tuple_read.c</file>
     <file path="src/c/pebble/io/">tuple_read.h</file>
+    <class kind="struct">LongText</class>
     <class kind="struct">OutboxJob</class>
     <class kind="struct">OutboxQueue</class>
     <class kind="struct">[struct].s_handlers</class>
     <member kind="define">
       <type>#define</type>
-      <name>APPMESSAGE_CUSTOM_COLORS_MAX</name>
+      <name>LONG_TEXT_CAP_MAX</name>
       <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>ga8bfcc8d396856901aeea684974fdb15c</anchor>
+      <anchor>ga342e9f4df8f2a749f12bfd1dba4a05b3</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -15177,24 +16052,24 @@
     </member>
     <member kind="typedef">
       <type>void(*)</type>
-      <name>CustomColorsHandler</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>ga6daf051587a0083e33af5e4d0847f931</anchor>
-      <arglist>(const char *combined)</arglist>
-    </member>
-    <member kind="typedef">
-      <type>void(*)</type>
-      <name>CustomColorsProvider</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>ga6efc27e8b660e10498f1678ddecc05dc</anchor>
-      <arglist>(char *out, size_t n)</arglist>
-    </member>
-    <member kind="typedef">
-      <type>void(*)</type>
       <name>InboxCompleteHandler</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gaae586b1981cefa58e0284ec05e167205</anchor>
       <arglist>(void)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>LongTextReceiver</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga0f8e59f3f412d280af3f7e20dff33fd1</anchor>
+      <arglist>(const char *text)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>LongTextProvider</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9b2a1b8b90fa7cf1728ca359af72042c</anchor>
+      <arglist>(char *out, size_t size)</arglist>
     </member>
     <member kind="enumeration">
       <type></type>
@@ -15323,17 +16198,10 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>appmessage_on_custom_colors</name>
+      <name>appmessage_set_long_text</name>
       <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
-      <arglist>(CustomColorsHandler cb)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>appmessage_set_custom_colors_provider</name>
-      <anchorfile>group__lib__io.html</anchorfile>
-      <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
-      <arglist>(CustomColorsProvider cb)</arglist>
+      <anchor>ga678097ce4bd264a3488b7aa2e029d35b</anchor>
+      <arglist>(uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -15397,6 +16265,34 @@
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga7c1c49ecbcf5bf2f810e31d8ec5c45ed</anchor>
       <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_set</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga0cb475e40797328cd99e356a3412e8c5</anchor>
+      <arglist>(LongText *slot, uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver, bool opened)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_fits</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8d4c5f00c23e024894270391fb1f75aa</anchor>
+      <arglist>(uint32_t text_bytes, uint32_t reply_bytes, uint32_t outbox_max, uint32_t inbox_room)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>long_text_held</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gafe9a63bc1dca334c9b7e8a191ad638d9</anchor>
+      <arglist>(const LongText *slot, char *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>long_text_arrived</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gae41cbb38ef15413be76eead3aa97d4f5</anchor>
+      <arglist>(const LongText *slot, const char *text)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static bool</type>
@@ -15541,9 +16437,9 @@
     <class kind="struct">SystemSeed</class>
     <class kind="struct">WeatherConfig</class>
     <class kind="struct">WeatherSeed</class>
-    <class kind="struct">[struct].s_hours</class>
-    <class kind="struct">[struct].s_state</class>
     <class kind="struct">[struct].s_window</class>
+    <class kind="struct">[struct].s_state</class>
+    <class kind="struct">[struct].s_hours</class>
     <member kind="define">
       <type>#define</type>
       <name>HEALTH_HR_SENSOR</name>
@@ -16786,6 +17682,13 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>SETTINGS_TEXT_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga0271250d7b493166accb2f5412db7535</anchor>
+      <arglist>(blob, member, bytes)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>SETTINGS_DEFAULT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gacefbc55594446448ad80ff74406626a7</anchor>
@@ -16802,21 +17705,14 @@
       <type>#define</type>
       <name>KNOWN_DATE_FORMAT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>gaf2a01fb04cac500bbbd57bdd6666a897</anchor>
-      <arglist>(off)</arglist>
+      <anchor>ga0c12e915c59b4b345fc99ff86bda1262</anchor>
+      <arglist>(blob, member)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_THEME</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gad2d575c6e87c1859cd11cd814560f708</anchor>
-      <arglist>(off, table_count)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>KNOWN_HEADER_FONT</name>
-      <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga779ccdfaac16f2eeba42f85f6ce894b9</anchor>
       <arglist>(off, table_count)</arglist>
     </member>
     <member kind="define">
@@ -16888,6 +17784,62 @@
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga270513f4a67f8533c0b8d28e53cb6e52</anchor>
       <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_STEPS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab28e3c958bb82c4a1fac39b5c7c13ab6</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_DISTANCE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga325c5ff4bd639a0931d0caf1b5dc1d15</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_CALORIES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaa8625f6fe7ff97db37701fd56b072010</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_ACTIVE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8e8198e5e090c93cf87f2c2f56cfab14</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_SLEEP</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadf946b6adece334f68415a4bc3c2d54b</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_HR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gacad9a3f336ec70d1623d281b6965206b</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac25588725ea8192c1501e7e8628eae80</anchor>
+      <arglist>(blob, member)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_GOAL_VIBE_CUSTOM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3e95bc017b7c63614d9c7c2a353eae3d</anchor>
+      <arglist>(blob, member)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -17150,15 +18102,57 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>SETTING_HEADER_FONT</name>
-      <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
       <name>SETTING_WIND_UNIT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_STEPS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_DISTANCE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_CALORIES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_ACTIVE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_SLEEP</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_HR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_GOAL_VIBE_CUSTOM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
@@ -17413,6 +18407,13 @@
       <anchorfile>group__lib__system.html</anchorfile>
       <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
       <arglist>(const struct tm *tick, uint8_t choice)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_goal</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga7d39417dac99e4859ff926a73df9e8bd</anchor>
+      <arglist>(void)</arglist>
     </member>
   </compound>
   <compound kind="group">

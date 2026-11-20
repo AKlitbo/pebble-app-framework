@@ -276,16 +276,16 @@ Macros</h2></td></tr>
 <tr class="memdesc:gae38319f1a2067a1c9f6b2652bb41b226"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many choices the settings page offers on a message key, worked out by the build.  <br /></td></tr>
 <tr class="memitem:ga60da601435a75b4d496364449dd1060a" id="r_ga60da601435a75b4d496364449dd1060a"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(key,  table_count)</td></tr>
 <tr class="memdesc:ga60da601435a75b4d496364449dd1060a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The page's count on a message key, checked against the size of the face's own table.  <br /></td></tr>
+<tr class="memitem:ga0271250d7b493166accb2f5412db7535" id="r_ga0271250d7b493166accb2f5412db7535"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0271250d7b493166accb2f5412db7535">SETTINGS_TEXT_FIELD</a>(blob,  member,  bytes)</td></tr>
+<tr class="memdesc:ga0271250d7b493166accb2f5412db7535"><td class="mdescLeft">&#160;</td><td class="mdescRight">A text entry's offset and size, with a build stop when the member is not that size.  <br /></td></tr>
 <tr class="memitem:gacefbc55594446448ad80ff74406626a7" id="r_gacefbc55594446448ad80ff74406626a7"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(key)</td></tr>
 <tr class="memdesc:gacefbc55594446448ad80ff74406626a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default the settings page opens with on a message key, worked out by the build.  <br /></td></tr>
 <tr class="memitem:gaeeceac8a6d66376b0fbb3b495e245a8c" id="r_gaeeceac8a6d66376b0fbb3b495e245a8c"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gaeeceac8a6d66376b0fbb3b495e245a8c">KNOWN_TEMPERATURE_UNIT</a>(off)</td></tr>
 <tr class="memdesc:gaeeceac8a6d66376b0fbb3b495e245a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Temperature Unit (Celsius or Fahrenheit).  <br /></td></tr>
-<tr class="memitem:gaf2a01fb04cac500bbbd57bdd6666a897" id="r_gaf2a01fb04cac500bbbd57bdd6666a897"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gaf2a01fb04cac500bbbd57bdd6666a897">KNOWN_DATE_FORMAT</a>(off)</td></tr>
-<tr class="memdesc:gaf2a01fb04cac500bbbd57bdd6666a897"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Date Format.  <br /></td></tr>
+<tr class="memitem:ga0c12e915c59b4b345fc99ff86bda1262" id="r_ga0c12e915c59b4b345fc99ff86bda1262"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0c12e915c59b4b345fc99ff86bda1262">KNOWN_DATE_FORMAT</a>(blob,  member)</td></tr>
+<tr class="memdesc:ga0c12e915c59b4b345fc99ff86bda1262"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Date Format.  <br /></td></tr>
 <tr class="memitem:gad2d575c6e87c1859cd11cd814560f708" id="r_gad2d575c6e87c1859cd11cd814560f708"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gad2d575c6e87c1859cd11cd814560f708">KNOWN_THEME</a>(off,  table_count)</td></tr>
 <tr class="memdesc:gad2d575c6e87c1859cd11cd814560f708"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Theme.  <br /></td></tr>
-<tr class="memitem:ga779ccdfaac16f2eeba42f85f6ce894b9" id="r_ga779ccdfaac16f2eeba42f85f6ce894b9"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga779ccdfaac16f2eeba42f85f6ce894b9">KNOWN_HEADER_FONT</a>(off,  table_count)</td></tr>
-<tr class="memdesc:ga779ccdfaac16f2eeba42f85f6ce894b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Header Font, an index into the face's own header font table.  <br /></td></tr>
 <tr class="memitem:ga53d6cc56389abbc368788db97d0d747e" id="r_ga53d6cc56389abbc368788db97d0d747e"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga53d6cc56389abbc368788db97d0d747e">KNOWN_STEPS_MODE</a>(off)</td></tr>
 <tr class="memdesc:ga53d6cc56389abbc368788db97d0d747e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Steps Mode.  <br /></td></tr>
 <tr class="memitem:gaba0654c3c38a9186e4ecc9732c481e4a" id="r_gaba0654c3c38a9186e4ecc9732c481e4a"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gaba0654c3c38a9186e4ecc9732c481e4a">KNOWN_DISTANCE_UNIT</a>(off)</td></tr>
@@ -306,6 +306,22 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga826e14901547c30cb46f62ebc9582a71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Battery Display (icon + percent / icon / percent).  <br /></td></tr>
 <tr class="memitem:ga270513f4a67f8533c0b8d28e53cb6e52" id="r_ga270513f4a67f8533c0b8d28e53cb6e52"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga270513f4a67f8533c0b8d28e53cb6e52">KNOWN_WIND_UNIT</a>(off)</td></tr>
 <tr class="memdesc:ga270513f4a67f8533c0b8d28e53cb6e52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Wind Unit, the <a class="el" href="group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1" title="Which unit a wind speed reads out in.">WindUnit</a> a wind speed reads out in.  <br /></td></tr>
+<tr class="memitem:gab28e3c958bb82c4a1fac39b5c7c13ab6" id="r_gab28e3c958bb82c4a1fac39b5c7c13ab6"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gab28e3c958bb82c4a1fac39b5c7c13ab6">KNOWN_GOAL_STEPS</a>(off)</td></tr>
+<tr class="memdesc:gab28e3c958bb82c4a1fac39b5c7c13ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Step Goal, an index into goals_steps.  <br /></td></tr>
+<tr class="memitem:ga325c5ff4bd639a0931d0caf1b5dc1d15" id="r_ga325c5ff4bd639a0931d0caf1b5dc1d15"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga325c5ff4bd639a0931d0caf1b5dc1d15">KNOWN_GOAL_DISTANCE</a>(off)</td></tr>
+<tr class="memdesc:ga325c5ff4bd639a0931d0caf1b5dc1d15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Distance Goal, an index into goals_distance_m.  <br /></td></tr>
+<tr class="memitem:gaa8625f6fe7ff97db37701fd56b072010" id="r_gaa8625f6fe7ff97db37701fd56b072010"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gaa8625f6fe7ff97db37701fd56b072010">KNOWN_GOAL_CALORIES</a>(off)</td></tr>
+<tr class="memdesc:gaa8625f6fe7ff97db37701fd56b072010"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Calorie Goal, an index into goals_calories.  <br /></td></tr>
+<tr class="memitem:ga8e8198e5e090c93cf87f2c2f56cfab14" id="r_ga8e8198e5e090c93cf87f2c2f56cfab14"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga8e8198e5e090c93cf87f2c2f56cfab14">KNOWN_GOAL_ACTIVE</a>(off)</td></tr>
+<tr class="memdesc:ga8e8198e5e090c93cf87f2c2f56cfab14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Activity Goal, an index into goals_active_min.  <br /></td></tr>
+<tr class="memitem:gadf946b6adece334f68415a4bc3c2d54b" id="r_gadf946b6adece334f68415a4bc3c2d54b"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gadf946b6adece334f68415a4bc3c2d54b">KNOWN_GOAL_SLEEP</a>(off)</td></tr>
+<tr class="memdesc:gadf946b6adece334f68415a4bc3c2d54b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Sleep Goal, an index into goals_sleep_min.  <br /></td></tr>
+<tr class="memitem:gacad9a3f336ec70d1623d281b6965206b" id="r_gacad9a3f336ec70d1623d281b6965206b"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gacad9a3f336ec70d1623d281b6965206b">KNOWN_GOAL_HR</a>(off)</td></tr>
+<tr class="memdesc:gacad9a3f336ec70d1623d281b6965206b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Heart Rate Limit, an index into goals_hr_limit.  <br /></td></tr>
+<tr class="memitem:gac25588725ea8192c1501e7e8628eae80" id="r_gac25588725ea8192c1501e7e8628eae80"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gac25588725ea8192c1501e7e8628eae80">KNOWN_GOAL_VIBE</a>(blob,  member)</td></tr>
+<tr class="memdesc:gac25588725ea8192c1501e7e8628eae80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Goal Met Vibration, the pick vibe_goal plays.  <br /></td></tr>
+<tr class="memitem:ga3e95bc017b7c63614d9c7c2a353eae3d" id="r_ga3e95bc017b7c63614d9c7c2a353eae3d"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga3e95bc017b7c63614d9c7c2a353eae3d">KNOWN_GOAL_VIBE_CUSTOM</a>(blob,  member)</td></tr>
+<tr class="memdesc:ga3e95bc017b7c63614d9c7c2a353eae3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Custom Vibration Pattern, which vibe_goal plays when the pick is Custom.  <br /></td></tr>
 <tr class="memitem:gac06564560a442b796c3ae56c1be2f4a9" id="r_gac06564560a442b796c3ae56c1be2f4a9"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gac06564560a442b796c3ae56c1be2f4a9">SETTINGS_CHAIN_EACH</a>(schema,  head,  tail)</td></tr>
 <tr class="memdesc:gac06564560a442b796c3ae56c1be2f4a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Walks the face's schemas and then the framework's, for a <span class="tt">for</span> loop's header.  <br /></td></tr>
 </table><table class="memberdecls">
@@ -337,7 +353,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#gga4c67a7b952f3804e2bd056cf95c4161aae026af054f0e10b7ae1896cf47ab26f3">DISTANCE_UNIT_MILES</a> = 1
 , <a class="el" href="#gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9">DISTANCE_UNIT_COUNT</a>
  }</td></tr>
-<tr class="memdesc:ga4c67a7b952f3804e2bd056cf95c4161a"><td class="mdescLeft">&#160;</td><td class="mdescRight">SETTING_DISTANCE_UNIT choices. The standalone Distance panel picks its own unit separate from the Steps panel's STEPS_MODE.  <a href="#ga4c67a7b952f3804e2bd056cf95c4161a">More...</a><br /></td></tr>
+<tr class="memdesc:ga4c67a7b952f3804e2bd056cf95c4161a"><td class="mdescLeft">&#160;</td><td class="mdescRight">SETTING_DISTANCE_UNIT choices. A distance readout's own unit, separate from the steps readout's STEPS_MODE.  <a href="#ga4c67a7b952f3804e2bd056cf95c4161a">More...</a><br /></td></tr>
 <tr class="memitem:ga7b8aec224cacf74446d899e5eaab0819" id="r_ga7b8aec224cacf74446d899e5eaab0819"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga7b8aec224cacf74446d899e5eaab0819">VibeChoice</a> { <br />
 &#160;&#160;<a class="el" href="#gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a">VIBE_NONE</a> = 0
 , <a class="el" href="#gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052">VIBE_SHORT</a> = 1
@@ -370,8 +386,17 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895">SETTING_HOURLY_VIBE</a>
 , <a class="el" href="#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">SETTING_BATTERY_DISPLAY</a>
 , <br />
-&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">SETTING_HEADER_FONT</a>
-, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e">SETTING_WIND_UNIT</a>
+&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e">SETTING_WIND_UNIT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8">SETTING_GOAL_STEPS</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f">SETTING_GOAL_DISTANCE</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c">SETTING_GOAL_CALORIES</a>
+, <br />
+&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1">SETTING_GOAL_ACTIVE</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c">SETTING_GOAL_SLEEP</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec">SETTING_GOAL_HR</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee">SETTING_GOAL_VIBE</a>
+, <br />
+&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81">SETTING_GOAL_VIBE_CUSTOM</a>
 , <a class="el" href="#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33">SETTING_COUNT</a>
 <br />
  }</td></tr>
@@ -439,9 +464,9 @@ Functions</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">SETTING_BATTERY_DISPLAY</a>, .message_key = &amp;MESSAGE_KEY_BATTERY_DISPLAY, \</div>
 <div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = <a class="code hl_enumvalue" href="#ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0">BATTERY_DISPLAY_COUNT</a>, \</div>
 <div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(BATTERY_DISPLAY) }</div>
-<div class="ttc" id="agroup__lib__settings_html_gacefbc55594446448ad80ff74406626a7"><div class="ttname"><a href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a></div><div class="ttdeci">#define SETTINGS_DEFAULT(key)</div><div class="ttdoc">The default the settings page opens with on a message key, worked out by the build.</div><div class="ttdef"><b>Definition</b> settings_catalog.h:96</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gacefbc55594446448ad80ff74406626a7"><div class="ttname"><a href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a></div><div class="ttdeci">#define SETTINGS_DEFAULT(key)</div><div class="ttdoc">The default the settings page opens with on a message key, worked out by the build.</div><div class="ttdef"><b>Definition</b> settings_catalog.h:117</div></div>
 <div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">SETTING_BATTERY_DISPLAY</a></div><div class="ttdeci">@ SETTING_BATTERY_DISPLAY</div><div class="ttdoc">What the battery readout shows.</div><div class="ttdef"><b>Definition</b> settings.h:36</div></div>
-<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a></div><div class="ttdeci">@ SETTING_ENUM_U8</div><div class="ttdoc">A choice, taken as an int or as digits and sent back as text holding the number.</div><div class="ttdef"><b>Definition</b> settings.h:48</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a></div><div class="ttdeci">@ SETTING_ENUM_U8</div><div class="ttdoc">A choice, taken as an int or as digits and sent back as text holding the number.</div><div class="ttdef"><b>Definition</b> settings.h:55</div></div>
 <div class="ttc" id="agroup__lib__settings_html_ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0"><div class="ttname"><a href="#ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0">BATTERY_DISPLAY_COUNT</a></div><div class="ttdeci">@ BATTERY_DISPLAY_COUNT</div><div class="ttdoc">How many choices this setting has.</div><div class="ttdef"><b>Definition</b> setting_values.h:78</div></div>
 </div><!-- fragment -->
 <p>Setting definition for Battery Display (icon + percent / icon / percent). </p>
@@ -471,7 +496,7 @@ Functions</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315">SETTING_BLUETOOTH_ICON</a>, .message_key = &amp;MESSAGE_KEY_CONNECTION_BLUETOOTH_ICON, \</div>
 <div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a>, .offset = (off), .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(CONNECTION_BLUETOOTH_ICON) }</div>
 <div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315">SETTING_BLUETOOTH_ICON</a></div><div class="ttdeci">@ SETTING_BLUETOOTH_ICON</div><div class="ttdoc">Whether the bluetooth icon shows.</div><div class="ttdef"><b>Definition</b> settings.h:31</div></div>
-<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a></div><div class="ttdeci">@ SETTING_BOOL</div><div class="ttdoc">0 or 1, taken as an int or as digits and sent back as a byte. default_num holds the default</div><div class="ttdef"><b>Definition</b> settings.h:47</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a></div><div class="ttdeci">@ SETTING_BOOL</div><div class="ttdoc">0 or 1, taken as an int or as digits and sent back as a byte. default_num holds the default</div><div class="ttdef"><b>Definition</b> settings.h:54</div></div>
 </div><!-- fragment -->
 <p>Setting definition for Bluetooth Icon. </p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -542,8 +567,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaf2a01fb04cac500bbbd57bdd6666a897" name="gaf2a01fb04cac500bbbd57bdd6666a897"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf2a01fb04cac500bbbd57bdd6666a897">&#9670;&#160;</a></span>KNOWN_DATE_FORMAT</h2>
+<a id="ga0c12e915c59b4b345fc99ff86bda1262" name="ga0c12e915c59b4b345fc99ff86bda1262"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0c12e915c59b4b345fc99ff86bda1262">&#9670;&#160;</a></span>KNOWN_DATE_FORMAT</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -551,22 +576,29 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">#define KNOWN_DATE_FORMAT</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>blob</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>member</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75">SETTING_DATE_FORMAT</a>, .message_key = &amp;MESSAGE_KEY_CLOCK_DATE_FORMAT, \</div>
-<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a>, .offset = (off), .size = 16, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a>, <a class="code hl_define" href="#ga0271250d7b493166accb2f5412db7535">SETTINGS_TEXT_FIELD</a>(blob, member, 16), \</div>
 <div class="line">  .default_str = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(CLOCK_DATE_FORMAT), .affects_layout = <span class="keyword">true</span> }</div>
+<div class="ttc" id="agroup__lib__settings_html_ga0271250d7b493166accb2f5412db7535"><div class="ttname"><a href="#ga0271250d7b493166accb2f5412db7535">SETTINGS_TEXT_FIELD</a></div><div class="ttdeci">#define SETTINGS_TEXT_FIELD(blob, member, bytes)</div><div class="ttdoc">A text entry&#39;s offset and size, with a build stop when the member is not that size.</div><div class="ttdef"><b>Definition</b> settings_catalog.h:92</div></div>
 <div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75">SETTING_DATE_FORMAT</a></div><div class="ttdeci">@ SETTING_DATE_FORMAT</div><div class="ttdoc">The date line&#39;s format string.</div><div class="ttdef"><b>Definition</b> settings.h:26</div></div>
-<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a></div><div class="ttdeci">@ SETTING_CSTRING</div><div class="ttdoc">Sent as text, copied into a fixed buffer.</div><div class="ttdef"><b>Definition</b> settings.h:49</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a></div><div class="ttdeci">@ SETTING_CSTRING</div><div class="ttdoc">Sent as text, copied into a fixed buffer.</div><div class="ttdef"><b>Definition</b> settings.h:56</div></div>
 </div><!-- fragment -->
 <p>Setting definition for Date Format. </p>
 <p>The default is the one the settings page opens with, from SETTINGS_DEFAULT, so a fresh watch shows the date the page says it does. paf build stops on a page default whose UTF-8 does not fit the 16 bytes with its end. It reads the size from KNOWN_FIELDS in tools/pkjs/settings-page.ts, which a spec checks against this file.</p>
+<p>It takes the struct and the member rather than an offset, so the build stops on a member that is not exactly 16 bytes. A shorter one would have the date format written past its end.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">blob</td><td>The face's settings struct. </td></tr>
+    <tr><td class="paramname">member</td><td>The <span class="tt">char[16]</span> member that holds the date format. </td></tr>
   </table>
   </dd>
 </dl>
@@ -591,7 +623,7 @@ Functions</h2></td></tr>
 <div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = <a class="code hl_enumvalue" href="#gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9">DISTANCE_UNIT_COUNT</a>, \</div>
 <div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_DISTANCE_UNIT) }</div>
 <div class="ttc" id="agroup__lib__settings_html_gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9"><div class="ttname"><a href="#gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9">DISTANCE_UNIT_COUNT</a></div><div class="ttdeci">@ DISTANCE_UNIT_COUNT</div><div class="ttdoc">How many choices this setting has.</div><div class="ttdef"><b>Definition</b> setting_values.h:55</div></div>
-<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19">SETTING_DISTANCE_UNIT</a></div><div class="ttdeci">@ SETTING_DISTANCE_UNIT</div><div class="ttdoc">Km or miles on the standalone Distance panel.</div><div class="ttdef"><b>Definition</b> settings.h:29</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19">SETTING_DISTANCE_UNIT</a></div><div class="ttdeci">@ SETTING_DISTANCE_UNIT</div><div class="ttdoc">Km or miles on a distance readout, separate from the steps readout&#39;s STEPS_MODE.</div><div class="ttdef"><b>Definition</b> settings.h:29</div></div>
 </div><!-- fragment -->
 <p>Setting definition for Distance Unit. </p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -603,37 +635,261 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga779ccdfaac16f2eeba42f85f6ce894b9" name="ga779ccdfaac16f2eeba42f85f6ce894b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga779ccdfaac16f2eeba42f85f6ce894b9">&#9670;&#160;</a></span>KNOWN_HEADER_FONT</h2>
+<a id="ga8e8198e5e090c93cf87f2c2f56cfab14" name="ga8e8198e5e090c93cf87f2c2f56cfab14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8e8198e5e090c93cf87f2c2f56cfab14">&#9670;&#160;</a></span>KNOWN_GOAL_ACTIVE</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define KNOWN_HEADER_FONT</td>
+          <td class="memname">#define KNOWN_GOAL_ACTIVE</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1">SETTING_GOAL_ACTIVE</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_ACTIVE, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), \</div>
+<div class="line">  .enum_count = <a class="code hl_define" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(HEALTH_GOAL_ACTIVE, <a class="code hl_define" href="group__lib__core.html#ga9aa2223ab51a75abd6ea2770d3b5b306">GOALS_ACTIVE_COUNT</a>), \</div>
+<div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_ACTIVE) }</div>
+<div class="ttc" id="agroup__lib__core_html_ga9aa2223ab51a75abd6ea2770d3b5b306"><div class="ttname"><a href="group__lib__core.html#ga9aa2223ab51a75abd6ea2770d3b5b306">GOALS_ACTIVE_COUNT</a></div><div class="ttdeci">#define GOALS_ACTIVE_COUNT</div><div class="ttdoc">How many active minute goals the page offers, from 15 to 90 minutes.</div><div class="ttdef"><b>Definition</b> goals.h:27</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga60da601435a75b4d496364449dd1060a"><div class="ttname"><a href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a></div><div class="ttdeci">#define SETTINGS_COUNT_CHECKED(key, table_count)</div><div class="ttdoc">The page&#39;s count on a message key, checked against the size of the face&#39;s own table.</div><div class="ttdef"><b>Definition</b> settings_catalog.h:73</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1">SETTING_GOAL_ACTIVE</a></div><div class="ttdeci">@ SETTING_GOAL_ACTIVE</div><div class="ttdoc">The active minutes goal, as an index into goals_active_min.</div><div class="ttdef"><b>Definition</b> settings.h:41</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Activity Goal, an index into goals_active_min. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaa8625f6fe7ff97db37701fd56b072010" name="gaa8625f6fe7ff97db37701fd56b072010"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa8625f6fe7ff97db37701fd56b072010">&#9670;&#160;</a></span>KNOWN_GOAL_CALORIES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_GOAL_CALORIES</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c">SETTING_GOAL_CALORIES</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_CALORIES, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), \</div>
+<div class="line">  .enum_count = <a class="code hl_define" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(HEALTH_GOAL_CALORIES, <a class="code hl_define" href="group__lib__core.html#gababbb2d611b78a66c6555ba6deb9c311">GOALS_CALORIES_COUNT</a>), \</div>
+<div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_CALORIES) }</div>
+<div class="ttc" id="agroup__lib__core_html_gababbb2d611b78a66c6555ba6deb9c311"><div class="ttname"><a href="group__lib__core.html#gababbb2d611b78a66c6555ba6deb9c311">GOALS_CALORIES_COUNT</a></div><div class="ttdeci">#define GOALS_CALORIES_COUNT</div><div class="ttdoc">How many calorie goals the page offers, from 500 to 3,000 kcal.</div><div class="ttdef"><b>Definition</b> goals.h:26</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c">SETTING_GOAL_CALORIES</a></div><div class="ttdeci">@ SETTING_GOAL_CALORIES</div><div class="ttdoc">The calorie goal, as an index into goals_calories.</div><div class="ttdef"><b>Definition</b> settings.h:40</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Calorie Goal, an index into goals_calories. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga325c5ff4bd639a0931d0caf1b5dc1d15" name="ga325c5ff4bd639a0931d0caf1b5dc1d15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga325c5ff4bd639a0931d0caf1b5dc1d15">&#9670;&#160;</a></span>KNOWN_GOAL_DISTANCE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_GOAL_DISTANCE</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f">SETTING_GOAL_DISTANCE</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_DISTANCE, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), \</div>
+<div class="line">  .enum_count = <a class="code hl_define" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(HEALTH_GOAL_DISTANCE, <a class="code hl_define" href="group__lib__core.html#ga78f05df0753fd059e6071abb1fd9b4f2">GOALS_DISTANCE_COUNT</a>), \</div>
+<div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_DISTANCE) }</div>
+<div class="ttc" id="agroup__lib__core_html_ga78f05df0753fd059e6071abb1fd9b4f2"><div class="ttname"><a href="group__lib__core.html#ga78f05df0753fd059e6071abb1fd9b4f2">GOALS_DISTANCE_COUNT</a></div><div class="ttdeci">#define GOALS_DISTANCE_COUNT</div><div class="ttdoc">How many distance goals the page offers, from 2 km to 20 km.</div><div class="ttdef"><b>Definition</b> goals.h:25</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f">SETTING_GOAL_DISTANCE</a></div><div class="ttdeci">@ SETTING_GOAL_DISTANCE</div><div class="ttdoc">The distance goal, as an index into goals_distance_m.</div><div class="ttdef"><b>Definition</b> settings.h:39</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Distance Goal, an index into goals_distance_m. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gacad9a3f336ec70d1623d281b6965206b" name="gacad9a3f336ec70d1623d281b6965206b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacad9a3f336ec70d1623d281b6965206b">&#9670;&#160;</a></span>KNOWN_GOAL_HR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_GOAL_HR</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec">SETTING_GOAL_HR</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_HR, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), \</div>
+<div class="line">  .enum_count = <a class="code hl_define" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(HEALTH_GOAL_HR, <a class="code hl_define" href="group__lib__core.html#gac1411d018ff4bd6f7fc23ec4b5be7b65">GOALS_HR_COUNT</a>), \</div>
+<div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_HR) }</div>
+<div class="ttc" id="agroup__lib__core_html_gac1411d018ff4bd6f7fc23ec4b5be7b65"><div class="ttname"><a href="group__lib__core.html#gac1411d018ff4bd6f7fc23ec4b5be7b65">GOALS_HR_COUNT</a></div><div class="ttdeci">#define GOALS_HR_COUNT</div><div class="ttdoc">How many heart rate limits the page offers, from 150 to 200 bpm.</div><div class="ttdef"><b>Definition</b> goals.h:29</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec">SETTING_GOAL_HR</a></div><div class="ttdeci">@ SETTING_GOAL_HR</div><div class="ttdoc">The heart rate limit, as an index into goals_hr_limit.</div><div class="ttdef"><b>Definition</b> settings.h:43</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Heart Rate Limit, an index into goals_hr_limit. </p>
+<p>The page only has the Heart Rate Limit row when the face asks for it with <span class="tt">heartRate</span>, so a face that places this without the row stops the build with SETTINGS_COUNT_HEALTH_GOAL_HR undeclared.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gadf946b6adece334f68415a4bc3c2d54b" name="gadf946b6adece334f68415a4bc3c2d54b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadf946b6adece334f68415a4bc3c2d54b">&#9670;&#160;</a></span>KNOWN_GOAL_SLEEP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_GOAL_SLEEP</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c">SETTING_GOAL_SLEEP</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_SLEEP, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), \</div>
+<div class="line">  .enum_count = <a class="code hl_define" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(HEALTH_GOAL_SLEEP, <a class="code hl_define" href="group__lib__core.html#gaa47b70e875f3592b0e9282c2052c97e1">GOALS_SLEEP_COUNT</a>), \</div>
+<div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_SLEEP) }</div>
+<div class="ttc" id="agroup__lib__core_html_gaa47b70e875f3592b0e9282c2052c97e1"><div class="ttname"><a href="group__lib__core.html#gaa47b70e875f3592b0e9282c2052c97e1">GOALS_SLEEP_COUNT</a></div><div class="ttdeci">#define GOALS_SLEEP_COUNT</div><div class="ttdoc">How many sleep goals the page offers, from 6 to 10 hours.</div><div class="ttdef"><b>Definition</b> goals.h:28</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c">SETTING_GOAL_SLEEP</a></div><div class="ttdeci">@ SETTING_GOAL_SLEEP</div><div class="ttdoc">The sleep goal, as an index into goals_sleep_min.</div><div class="ttdef"><b>Definition</b> settings.h:42</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Sleep Goal, an index into goals_sleep_min. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gab28e3c958bb82c4a1fac39b5c7c13ab6" name="gab28e3c958bb82c4a1fac39b5c7c13ab6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab28e3c958bb82c4a1fac39b5c7c13ab6">&#9670;&#160;</a></span>KNOWN_GOAL_STEPS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_GOAL_STEPS</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8">SETTING_GOAL_STEPS</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_STEPS, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), \</div>
+<div class="line">  .enum_count = <a class="code hl_define" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(HEALTH_GOAL_STEPS, <a class="code hl_define" href="group__lib__core.html#ga81537884077e3b192bd08a30c00059f6">GOALS_STEPS_COUNT</a>), \</div>
+<div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_STEPS) }</div>
+<div class="ttc" id="agroup__lib__core_html_ga81537884077e3b192bd08a30c00059f6"><div class="ttname"><a href="group__lib__core.html#ga81537884077e3b192bd08a30c00059f6">GOALS_STEPS_COUNT</a></div><div class="ttdeci">#define GOALS_STEPS_COUNT</div><div class="ttdoc">How many step goals the page offers, from 5,000 to 25,000.</div><div class="ttdef"><b>Definition</b> goals.h:24</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8">SETTING_GOAL_STEPS</a></div><div class="ttdeci">@ SETTING_GOAL_STEPS</div><div class="ttdoc">The step goal, as an index into goals_steps.</div><div class="ttdef"><b>Definition</b> settings.h:38</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Step Goal, an index into goals_steps. </p>
+<p>The goal tables are the framework's, in <span class="tt"><a class="el" href="goals_8h.html" title="The daily goals a wearer picks on the settings page, turned from a menu choice into the real target.">health/goals.h</a></span>, and the page's rows are the ones <span class="tt">goal-rows.ts</span> builds. The count is the page's, from SETTINGS_COUNT, and the build stops when it differs from the table, so a choice the page offers always has a goal behind it. Read it with <span class="tt">goals_steps(settings_u8(SETTING_GOAL_STEPS))</span>. The other goal entries work the same way.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gac25588725ea8192c1501e7e8628eae80" name="gac25588725ea8192c1501e7e8628eae80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac25588725ea8192c1501e7e8628eae80">&#9670;&#160;</a></span>KNOWN_GOAL_VIBE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_GOAL_VIBE</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>blob</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>table_count</em></span>&#160;)</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>member</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">SETTING_HEADER_FONT</a>, .message_key = &amp;MESSAGE_KEY_APPEARANCE_HEADER_FONT, \</div>
-<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), \</div>
-<div class="line">  .enum_count = <a class="code hl_define" href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a>(APPEARANCE_HEADER_FONT, table_count), \</div>
-<div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(APPEARANCE_HEADER_FONT) }</div>
-<div class="ttc" id="agroup__lib__settings_html_ga60da601435a75b4d496364449dd1060a"><div class="ttname"><a href="#ga60da601435a75b4d496364449dd1060a">SETTINGS_COUNT_CHECKED</a></div><div class="ttdeci">#define SETTINGS_COUNT_CHECKED(key, table_count)</div><div class="ttdoc">The page&#39;s count on a message key, checked against the size of the face&#39;s own table.</div><div class="ttdef"><b>Definition</b> settings_catalog.h:70</div></div>
-<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">SETTING_HEADER_FONT</a></div><div class="ttdeci">@ SETTING_HEADER_FONT</div><div class="ttdoc">Which font the panel header labels use, as an index into the face&#39;s header font table.</div><div class="ttdef"><b>Definition</b> settings.h:37</div></div>
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee">SETTING_GOAL_VIBE</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_VIBE, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a>, <a class="code hl_define" href="#ga0271250d7b493166accb2f5412db7535">SETTINGS_TEXT_FIELD</a>(blob, member, 64), \</div>
+<div class="line">  .default_str = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_VIBE) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee">SETTING_GOAL_VIBE</a></div><div class="ttdeci">@ SETTING_GOAL_VIBE</div><div class="ttdoc">The Goal Met Vibration pick, which vibe_goal plays.</div><div class="ttdef"><b>Definition</b> settings.h:44</div></div>
 </div><!-- fragment -->
-<p>Setting definition for Header Font, an index into the face's own header font table. </p>
-<p>The count is how many fonts the settings page offers, from SETTINGS_COUNT. The face passes how many its own font table holds, and the build stops when the two differ.</p>
+<p>Setting definition for the Goal Met Vibration, the pick vibe_goal plays. </p>
+<p>The pick is text, empty for None, a letter for a plain pulse or the wearer's own pattern, or a comma list of milliseconds, as <span class="tt"><a class="el" href="goal__vibe__pattern_8h.html" title="Reads the Goal Met Vibration pick, and turns a comma list of milliseconds into a rhythm the watch can...">goal_vibe_pattern.h</a></span> reads it. It keeps 64 bytes, room for the longest option the page offers and its end, and goal-rows.spec.ts checks every option fits. A face keeps this and KNOWN_GOAL_VIBE_CUSTOM in a schema of their own when its main struct has no room for them.</p>
+<p>It takes the struct and the member rather than an offset, so the build stops on a member that is not exactly 64 bytes. A shorter one would have the pick written past its end.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
-    <tr><td class="paramname">table_count</td><td>How many fonts the face's own header font table holds. </td></tr>
+    <tr><td class="paramname">blob</td><td>The face's settings struct. </td></tr>
+    <tr><td class="paramname">member</td><td>The <span class="tt">char[64]</span> member that holds the pick. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga3e95bc017b7c63614d9c7c2a353eae3d" name="ga3e95bc017b7c63614d9c7c2a353eae3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3e95bc017b7c63614d9c7c2a353eae3d">&#9670;&#160;</a></span>KNOWN_GOAL_VIBE_CUSTOM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_GOAL_VIBE_CUSTOM</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>blob</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>member</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81">SETTING_GOAL_VIBE_CUSTOM</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_GOAL_VIBE_CUSTOM, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a>, <a class="code hl_define" href="#ga0271250d7b493166accb2f5412db7535">SETTINGS_TEXT_FIELD</a>(blob, member, 122), \</div>
+<div class="line">  .default_str = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(HEALTH_GOAL_VIBE_CUSTOM) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81">SETTING_GOAL_VIBE_CUSTOM</a></div><div class="ttdeci">@ SETTING_GOAL_VIBE_CUSTOM</div><div class="ttdoc">The wearer&#39;s own goal pattern, played when the pick is Custom.</div><div class="ttdef"><b>Definition</b> settings.h:45</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Custom Vibration Pattern, which vibe_goal plays when the pick is Custom. </p>
+<p>It keeps 122 bytes, room for the 120 characters the page's box takes and the end of the text. Only a face that offers Custom, with <span class="tt">custom</span> on its goal alert rows, has the box and places this.</p>
+<p>Like KNOWN_GOAL_VIBE, it takes the struct and the member, so the build stops on a member that is not exactly 122 bytes.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">blob</td><td>The face's settings struct. </td></tr>
+    <tr><td class="paramname">member</td><td>The <span class="tt">char[122]</span> member that holds the pattern. </td></tr>
   </table>
   </dd>
 </dl>
@@ -841,7 +1097,7 @@ Functions</h2></td></tr>
 <div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = <a class="code hl_enumvalue" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea">WIND_UNIT_COUNT</a>, \</div>
 <div class="line">  .default_num = <a class="code hl_define" href="#gacefbc55594446448ad80ff74406626a7">SETTINGS_DEFAULT</a>(WEATHER_WIND_UNIT) }</div>
 <div class="ttc" id="agroup__lib__core_html_gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea"><div class="ttname"><a href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea">WIND_UNIT_COUNT</a></div><div class="ttdeci">@ WIND_UNIT_COUNT</div><div class="ttdoc">how many units there are, not a unit itself</div><div class="ttdef"><b>Definition</b> wind.h:27</div></div>
-<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e">SETTING_WIND_UNIT</a></div><div class="ttdeci">@ SETTING_WIND_UNIT</div><div class="ttdoc">Which WindUnit a wind speed reads out in.</div><div class="ttdef"><b>Definition</b> settings.h:38</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e">SETTING_WIND_UNIT</a></div><div class="ttdeci">@ SETTING_WIND_UNIT</div><div class="ttdoc">Which WindUnit a wind speed reads out in.</div><div class="ttdef"><b>Definition</b> settings.h:37</div></div>
 </div><!-- fragment -->
 <p>Setting definition for Wind Unit, the <a class="el" href="group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1" title="Which unit a wind speed reads out in.">WindUnit</a> a wind speed reads out in. </p>
 <p>Kilometres per hour, then miles per hour, knots, and metres per second, the order the settings page's row lists them. The default is the one the page opens with, from SETTINGS_DEFAULT, and kilometres per hour on a page with no wind unit row. Read it with <span class="tt">settings_u8(SETTING_WIND_UNIT)</span> and hand it to <span class="tt"><a class="el" href="group__lib__core.html#ga56c983dede8e0be266f38d389a62c371" title="Convert a km/h wind speed into the chosen unit.">wind_from_kmh</a></span> and <span class="tt"><a class="el" href="group__lib__core.html#gafd0dc1755ed3d4dd661c56e5c498e84d" title="The short label for a wind unit.">wind_unit_label</a></span>.</p>
@@ -892,8 +1148,8 @@ Functions</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">.blob = &amp;(settings), \</div>
 <div class="line">.blob_size = <a class="code hl_define" href="#ga9f418302396c6aa0b9d2bc9a2e75a9b0">SETTINGS_BLOB_SIZE</a>(settings), \</div>
 <div class="line">.first_size = <a class="code hl_define" href="#ga8db432ced131d3416a56b8de4dd53bc2">SETTINGS_FIRST_SIZE_</a>(first, settings)</div>
-<div class="ttc" id="agroup__lib__settings_html_ga8db432ced131d3416a56b8de4dd53bc2"><div class="ttname"><a href="#ga8db432ced131d3416a56b8de4dd53bc2">SETTINGS_FIRST_SIZE_</a></div><div class="ttdeci">#define SETTINGS_FIRST_SIZE_(first, settings)</div><div class="ttdoc">The first size for SETTINGS_BLOB, and a build that stops when it is written as more than one token,...</div><div class="ttdef"><b>Definition</b> settings.h:179</div></div>
-<div class="ttc" id="agroup__lib__settings_html_ga9f418302396c6aa0b9d2bc9a2e75a9b0"><div class="ttname"><a href="#ga9f418302396c6aa0b9d2bc9a2e75a9b0">SETTINGS_BLOB_SIZE</a></div><div class="ttdeci">#define SETTINGS_BLOB_SIZE(blob)</div><div class="ttdoc">The size of a settings struct, and a build that stops when the struct is too big to save....</div><div class="ttdef"><b>Definition</b> settings.h:125</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga8db432ced131d3416a56b8de4dd53bc2"><div class="ttname"><a href="#ga8db432ced131d3416a56b8de4dd53bc2">SETTINGS_FIRST_SIZE_</a></div><div class="ttdeci">#define SETTINGS_FIRST_SIZE_(first, settings)</div><div class="ttdoc">The first size for SETTINGS_BLOB, and a build that stops when it is written as more than one token,...</div><div class="ttdef"><b>Definition</b> settings.h:186</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga9f418302396c6aa0b9d2bc9a2e75a9b0"><div class="ttname"><a href="#ga9f418302396c6aa0b9d2bc9a2e75a9b0">SETTINGS_BLOB_SIZE</a></div><div class="ttdeci">#define SETTINGS_BLOB_SIZE(blob)</div><div class="ttdoc">The size of a settings struct, and a build that stops when the struct is too big to save....</div><div class="ttdef"><b>Definition</b> settings.h:132</div></div>
 </div><!-- fragment -->
 <p>Sets a schema's settings struct, its size, and the size it first shipped at, for a schema's initializer. </p>
 <p>It fills in <span class="tt">.blob</span>, <span class="tt">.blob_size</span>, and <span class="tt">.first_size</span>. The first size is the struct's size in bytes in the first release that saved it, and it never changes after that release. A saved blob smaller than it cannot be this schema's. One from the first size up to today's size reads in, and every field appended since keeps its default. The struct's sizeof rises with each appended field and would turn away every older save, so the first size has to be written as the number itself, or a macro that is one. The build stops on sizeof, SETTINGS_BLOB_SIZE, a sum, brackets, or a cast written in place, and on a first size of 0 or one bigger than the struct. A constant worked out from sizeof somewhere else, such as an enum, still gets through.</p>
@@ -904,8 +1160,8 @@ Functions</h2></td></tr>
 <div class="line">    .fields = s_fields,</div>
 <div class="line">    .field_count = ARRAY_LENGTH(s_fields),</div>
 <div class="line">};</div>
-<div class="ttc" id="agroup__lib__settings_html_ga3af4893cdd074306b3fcc30df1cb8a00"><div class="ttname"><a href="#ga3af4893cdd074306b3fcc30df1cb8a00">SETTINGS_BLOB</a></div><div class="ttdeci">#define SETTINGS_BLOB(settings, first)</div><div class="ttdoc">Sets a schema&#39;s settings struct, its size, and the size it first shipped at, for a schema&#39;s initializ...</div><div class="ttdef"><b>Definition</b> settings.h:159</div></div>
-<div class="ttc" id="astructSettingsSchema_html"><div class="ttname"><a href="structSettingsSchema.html">SettingsSchema</a></div><div class="ttdoc">A face&#39;s persistence identity.</div><div class="ttdef"><b>Definition</b> settings.h:90</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga3af4893cdd074306b3fcc30df1cb8a00"><div class="ttname"><a href="#ga3af4893cdd074306b3fcc30df1cb8a00">SETTINGS_BLOB</a></div><div class="ttdeci">#define SETTINGS_BLOB(settings, first)</div><div class="ttdoc">Sets a schema&#39;s settings struct, its size, and the size it first shipped at, for a schema&#39;s initializ...</div><div class="ttdef"><b>Definition</b> settings.h:166</div></div>
+<div class="ttc" id="astructSettingsSchema_html"><div class="ttname"><a href="structSettingsSchema.html">SettingsSchema</a></div><div class="ttdoc">A face&#39;s persistence identity.</div><div class="ttdef"><b>Definition</b> settings.h:97</div></div>
 </div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">settings</td><td>The settings struct itself, not a pointer to it or its type. </td></tr>
@@ -1042,7 +1298,7 @@ Functions</h2></td></tr>
 <div class="line">        <span class="stringliteral">&quot;, but the table the face passed holds &quot;</span> SETTINGS_COUNT_TEXT(table_count)); \</div>
 <div class="line">    <span class="keywordtype">char</span> unused; \</div>
 <div class="line">}))</div>
-<div class="ttc" id="agroup__lib__settings_html_gae38319f1a2067a1c9f6b2652bb41b226"><div class="ttname"><a href="#gae38319f1a2067a1c9f6b2652bb41b226">SETTINGS_COUNT</a></div><div class="ttdeci">#define SETTINGS_COUNT(key)</div><div class="ttdoc">How many choices the settings page offers on a message key, worked out by the build.</div><div class="ttdef"><b>Definition</b> settings_catalog.h:47</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gae38319f1a2067a1c9f6b2652bb41b226"><div class="ttname"><a href="#gae38319f1a2067a1c9f6b2652bb41b226">SETTINGS_COUNT</a></div><div class="ttdeci">#define SETTINGS_COUNT(key)</div><div class="ttdoc">How many choices the settings page offers on a message key, worked out by the build.</div><div class="ttdef"><b>Definition</b> settings_catalog.h:50</div></div>
 </div><!-- fragment -->
 <p>The page's count on a message key, checked against the size of the face's own table. </p>
 <p>The page lists the choices the wearer can pick, and the face's C draws them from a table of its own, such as a theme enum. A choice on the page the table lacks draws nothing, and one in the table the page lacks can never be picked, so the build stops when the two counts differ. The message names the page's count and the table's. The count is the page's, the same as SETTINGS_COUNT.</p>
@@ -1141,6 +1397,49 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga0271250d7b493166accb2f5412db7535" name="ga0271250d7b493166accb2f5412db7535"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0271250d7b493166accb2f5412db7535">&#9670;&#160;</a></span>SETTINGS_TEXT_FIELD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SETTINGS_TEXT_FIELD</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>blob</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>member</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>bytes</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">.offset = (offsetof(blob, member) + 0 * <span class="keyword">sizeof</span>(<span class="keyword">struct </span>{ \</div>
+<div class="line">    _Static_assert(<span class="keyword">sizeof</span>(((blob *)0)-&gt;member) == (bytes), \</div>
+<div class="line">        #blob <span class="stringliteral">&quot;.&quot;</span> #member <span class="stringliteral">&quot; has to be &quot;</span> #bytes <span class="stringliteral">&quot; bytes, the size its entry writes&quot;</span>); \</div>
+<div class="line">    <span class="keywordtype">char</span> unused; \</div>
+<div class="line">})), .size = (bytes)</div>
+</div><!-- fragment -->
+<p>A text entry's offset and size, with a build stop when the member is not that size. </p>
+<p>A text entry writes a fixed number of bytes, so a member any shorter would have the text written over whatever follows it. The size is named once, so the check and the bytes written always agree.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">blob</td><td>The face's settings struct. </td></tr>
+    <tr><td class="paramname">member</td><td>The member that holds the text. </td></tr>
+    <tr><td class="paramname">bytes</td><td>How many bytes the entry writes. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The <span class="tt">.offset</span> and <span class="tt">.size</span> for the entry. </dd></dl>
+
+</div>
+</div>
 <a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
 <a id="ga4c71229864f5dc765a8b70c2c971fb99" name="ga4c71229864f5dc765a8b70c2c971fb99"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga4c71229864f5dc765a8b70c2c971fb99">&#9670;&#160;</a></span>SettingsSchema</h2>
@@ -1199,7 +1498,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>SETTING_DISTANCE_UNIT choices. The standalone Distance panel picks its own unit separate from the Steps panel's STEPS_MODE. </p>
+<p>SETTING_DISTANCE_UNIT choices. A distance readout's own unit, separate from the steps readout's STEPS_MODE. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f" name="gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f"></a>DISTANCE_UNIT_KM&#160;</td><td class="fielddoc"><p>Kilometres. </p>
 </td></tr>
@@ -1234,7 +1533,7 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4" name="gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4"></a>SETTING_STEPS_MODE&#160;</td><td class="fielddoc"><p>Steps, miles, or km on the steps readout. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19" name="gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19"></a>SETTING_DISTANCE_UNIT&#160;</td><td class="fielddoc"><p>Km or miles on the standalone Distance panel. </p>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19" name="gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19"></a>SETTING_DISTANCE_UNIT&#160;</td><td class="fielddoc"><p>Km or miles on a distance readout, separate from the steps readout's STEPS_MODE. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf" name="gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf"></a>SETTING_TIME_FORMAT&#160;</td><td class="fielddoc"><p>Which <a class="el" href="#ga25de3b313f6a766c08b5af9f3cac864d" title="SETTING_TIME_FORMAT choices.">TimeFormat</a> the clock uses. </p>
 </td></tr>
@@ -1250,9 +1549,23 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276" name="gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276"></a>SETTING_BATTERY_DISPLAY&#160;</td><td class="fielddoc"><p>What the battery readout shows. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9" name="gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9"></a>SETTING_HEADER_FONT&#160;</td><td class="fielddoc"><p>Which font the panel header labels use, as an index into the face's header font table. </p>
-</td></tr>
 <tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e" name="gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e"></a>SETTING_WIND_UNIT&#160;</td><td class="fielddoc"><p>Which <a class="el" href="group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1" title="Which unit a wind speed reads out in.">WindUnit</a> a wind speed reads out in. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8" name="gga5b6861430c47031f602e2af972953f53aad0f9ee37bfa1bb617f974f672fb39c8"></a>SETTING_GOAL_STEPS&#160;</td><td class="fielddoc"><p>The step goal, as an index into goals_steps. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f" name="gga5b6861430c47031f602e2af972953f53a05f1b08ac5cdc868adfdea576608590f"></a>SETTING_GOAL_DISTANCE&#160;</td><td class="fielddoc"><p>The distance goal, as an index into goals_distance_m. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c" name="gga5b6861430c47031f602e2af972953f53a96f57cd6be2d4e363500bd285942252c"></a>SETTING_GOAL_CALORIES&#160;</td><td class="fielddoc"><p>The calorie goal, as an index into goals_calories. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1" name="gga5b6861430c47031f602e2af972953f53ab508c79dca983bdb799f62f30d2d7cb1"></a>SETTING_GOAL_ACTIVE&#160;</td><td class="fielddoc"><p>The active minutes goal, as an index into goals_active_min. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c" name="gga5b6861430c47031f602e2af972953f53a0df7f456d2b7288352351e3d6a81ec2c"></a>SETTING_GOAL_SLEEP&#160;</td><td class="fielddoc"><p>The sleep goal, as an index into goals_sleep_min. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec" name="gga5b6861430c47031f602e2af972953f53aede10bd18247edce24e871748cd46bec"></a>SETTING_GOAL_HR&#160;</td><td class="fielddoc"><p>The heart rate limit, as an index into goals_hr_limit. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee" name="gga5b6861430c47031f602e2af972953f53acee3c8403241418124334a7ad4cf54ee"></a>SETTING_GOAL_VIBE&#160;</td><td class="fielddoc"><p>The Goal Met Vibration pick, which vibe_goal plays. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81" name="gga5b6861430c47031f602e2af972953f53aca084c1e5164b5581188f2c2d4c55c81"></a>SETTING_GOAL_VIBE_CUSTOM&#160;</td><td class="fielddoc"><p>The wearer's own goal pattern, played when the pick is Custom. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33" name="gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33"></a>SETTING_COUNT&#160;</td><td class="fielddoc"><p>How many known settings there are. </p>
 </td></tr>

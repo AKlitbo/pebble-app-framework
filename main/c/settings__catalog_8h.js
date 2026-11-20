@@ -4,9 +4,16 @@ var settings__catalog_8h =
     [ "KNOWN_BLUETOOTH_ICON", "group__lib__settings.html#ga5f8c5ebca9a4cae4d21ee7a6b8280fb8", null ],
     [ "KNOWN_BLUETOOTH_VIBE_CONNECT", "group__lib__settings.html#gae7d8e8aee5d1d672fbb7931627cf170c", null ],
     [ "KNOWN_BLUETOOTH_VIBE_DISCONNECT", "group__lib__settings.html#ga8603b3236f69557a9e021326e5396ce7", null ],
-    [ "KNOWN_DATE_FORMAT", "group__lib__settings.html#gaf2a01fb04cac500bbbd57bdd6666a897", null ],
+    [ "KNOWN_DATE_FORMAT", "group__lib__settings.html#ga0c12e915c59b4b345fc99ff86bda1262", null ],
     [ "KNOWN_DISTANCE_UNIT", "group__lib__settings.html#gaba0654c3c38a9186e4ecc9732c481e4a", null ],
-    [ "KNOWN_HEADER_FONT", "group__lib__settings.html#ga779ccdfaac16f2eeba42f85f6ce894b9", null ],
+    [ "KNOWN_GOAL_ACTIVE", "group__lib__settings.html#ga8e8198e5e090c93cf87f2c2f56cfab14", null ],
+    [ "KNOWN_GOAL_CALORIES", "group__lib__settings.html#gaa8625f6fe7ff97db37701fd56b072010", null ],
+    [ "KNOWN_GOAL_DISTANCE", "group__lib__settings.html#ga325c5ff4bd639a0931d0caf1b5dc1d15", null ],
+    [ "KNOWN_GOAL_HR", "group__lib__settings.html#gacad9a3f336ec70d1623d281b6965206b", null ],
+    [ "KNOWN_GOAL_SLEEP", "group__lib__settings.html#gadf946b6adece334f68415a4bc3c2d54b", null ],
+    [ "KNOWN_GOAL_STEPS", "group__lib__settings.html#gab28e3c958bb82c4a1fac39b5c7c13ab6", null ],
+    [ "KNOWN_GOAL_VIBE", "group__lib__settings.html#gac25588725ea8192c1501e7e8628eae80", null ],
+    [ "KNOWN_GOAL_VIBE_CUSTOM", "group__lib__settings.html#ga3e95bc017b7c63614d9c7c2a353eae3d", null ],
     [ "KNOWN_HOURLY_VIBE", "group__lib__settings.html#gadc1a8ba6bbe41444b7ba1906e5a7f536", null ],
     [ "KNOWN_QUIET_TIME_ICON", "group__lib__settings.html#ga85914fbaf222c55ef9c16f52c16fceb0", null ],
     [ "KNOWN_STEPS_MODE", "group__lib__settings.html#ga53d6cc56389abbc368788db97d0d747e", null ],
@@ -16,5 +23,6 @@ var settings__catalog_8h =
     [ "KNOWN_WIND_UNIT", "group__lib__settings.html#ga270513f4a67f8533c0b8d28e53cb6e52", null ],
     [ "SETTINGS_COUNT", "group__lib__settings.html#gae38319f1a2067a1c9f6b2652bb41b226", null ],
     [ "SETTINGS_COUNT_CHECKED", "group__lib__settings.html#ga60da601435a75b4d496364449dd1060a", null ],
-    [ "SETTINGS_DEFAULT", "group__lib__settings.html#gacefbc55594446448ad80ff74406626a7", null ]
+    [ "SETTINGS_DEFAULT", "group__lib__settings.html#gacefbc55594446448ad80ff74406626a7", null ],
+    [ "SETTINGS_TEXT_FIELD", "group__lib__settings.html#ga0271250d7b493166accb2f5412db7535", null ]
 ];

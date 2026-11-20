@@ -3,7 +3,7 @@ var searchData=
   ['last_5fat_0',['last_at',['../structHrvRun.html#ad9b69963930bf29a2ee1ba9aaacb171d',1,'HrvRun']]],
   ['last_5fms_1',['last_ms',['../structHrvRun.html#ab97d22d055ef0b60e635d6dc9b4054ec',1,'HrvRun']]],
   ['last_5fstart_2',['last_start',['../structHourLatch.html#af42cb17bd6a6dfea7d7c95e87eb8f37a',1,'HourLatch']]],
-  ['last_5fsync_3',['last_sync',['../structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a',1,'WeatherState::last_sync'],['../structCalendarPersist.html#a9ba0dbe5f0bd8c2114bacc0be1385f11',1,'CalendarPersist::last_sync'],['../struct_0fstruct_0e_8s__state.html#a76fab064443fccad957cca54b5bf2c27',1,'[struct].s_state::last_sync'],['../struct_0fstruct_0e_8s__state.html#a71acacf736c0662ae8a364a757778e46',1,'[struct].s_state::last_sync']]],
+  ['last_5fsync_3',['last_sync',['../structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a',1,'WeatherState::last_sync'],['../structCalendarPersist.html#a9ba0dbe5f0bd8c2114bacc0be1385f11',1,'CalendarPersist::last_sync'],['../struct_0fstruct_0e_8s__state.html#a71acacf736c0662ae8a364a757778e46',1,'[struct].s_state::last_sync'],['../struct_0fstruct_0e_8s__state.html#a76fab064443fccad957cca54b5bf2c27',1,'[struct].s_state::last_sync']]],
   ['last_5fx_4',['last_x',['../structHrvMotion.html#a41c7172c7306a847903028be8a6c1fea',1,'HrvMotion']]],
   ['last_5fy_5',['last_y',['../structHrvMotion.html#a6e5f5c3c8c361ee8cf0f65cdc3d19be3',1,'HrvMotion']]],
   ['last_5fz_6',['last_z',['../structHrvMotion.html#af87e0721177b9e093cc6c190baabec62',1,'HrvMotion']]],

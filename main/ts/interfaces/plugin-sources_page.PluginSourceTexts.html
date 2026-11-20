@@ -55,7 +55,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">PluginSourceTexts</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#empty">empty</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#noplugin">noPlugin</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#notinstalledlabel">notInstalledLabel</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#notstandard">notStandard</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pluginName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#notstandardnoselect">notStandardNoSelect</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pluginName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#permissiondenied">permissionDenied</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#source">source</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L134">plugin-sources/page.ts:134</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L172">plugin-sources/page.ts:172</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -80,7 +80,7 @@
 <div class="tsd-comment tsd-typography"><p>The row for a last update that held nothing, drawn in the calmer info look.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L145">plugin-sources/page.ts:145</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L183">plugin-sources/page.ts:183</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="noplugin"><code class="tsd-tag">Optional</code><span>no<wbr/>Plugin</span><a href="#noplugin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">noPlugin</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -88,10 +88,11 @@
 serving it, which is also what a phone with plugins off reports. It says how to turn them on, or
 for a kind the Pebble app has no plugin of its own for, how to get one. A kind with a source choice
 shows it under the select too, in place of the line to turn plugins on, while the phone lists
-other plugins.</p>
+other plugins. <code>{panel}</code> in it stands for the supported plugins panel's title, as <code>PANEL_TITLE_MARK</code>
+describes.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L155">plugin-sources/page.ts:155</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L194">plugin-sources/page.ts:194</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="notinstalledlabel"><code class="tsd-tag">Optional</code><span>not<wbr/>Installed<wbr/>Label</span><a href="#notinstalledlabel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">notInstalledLabel</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -100,14 +101,14 @@ serving the kind, for a kind the Pebble app has no plugin of its own for. Left o
 reads as Plugins Off.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L161">plugin-sources/page.ts:161</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L200">plugin-sources/page.ts:200</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="notstandard"><code class="tsd-tag">Optional</code><span>not<wbr/>Standard</span><a href="#notstandard" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">notStandard</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pluginName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The row for a plugin that answered last but does not declare the standard readings. It gets the plugin's name.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L136">plugin-sources/page.ts:136</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L174">plugin-sources/page.ts:174</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="notstandardnoselect"><code class="tsd-tag">Optional</code><span>not<wbr/>Standard<wbr/>No<wbr/>Select</span><a href="#notstandardnoselect" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">notStandardNoSelect</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pluginName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span></div>
@@ -115,21 +116,21 @@ reads as Plugins Off.</p>
 Left out, <code>notStandard</code> serves both.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L141">plugin-sources/page.ts:141</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L179">plugin-sources/page.ts:179</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="permissiondenied"><code class="tsd-tag">Optional</code><span>permission<wbr/>Denied</span><a href="#permissiondenied" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">permissionDenied</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The row for a last error of <code>PERMISSION_DENIED</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L143">plugin-sources/page.ts:143</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L181">plugin-sources/page.ts:181</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="source"><code class="tsd-tag">Optional</code><span>source</span><a href="#source" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">source</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>The row saying where the plugin's data comes from, which shows whenever a plugin is picked.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-sources/page.ts#L147">plugin-sources/page.ts:147</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-sources/page.ts#L185">plugin-sources/page.ts:185</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

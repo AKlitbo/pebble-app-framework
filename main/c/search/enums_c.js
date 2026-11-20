@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['windunit_0',['WindUnit',['../group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1',1,'wind.h']]],
-  ['wxcond_1',['WxCond',['../group__lib__core.html#ga9421de4c15783a83fa65e156b89c355f',1,'wx_cond.g.h']]]
+  ['vibechoice_0',['VibeChoice',['../group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819',1,'setting_values.h']]],
+  ['vibepulse_1',['VibePulse',['../group__lib__system.html#gabbe12c91a0e3541c91618e6765204e19',1,'vibe.h']]]
 ];

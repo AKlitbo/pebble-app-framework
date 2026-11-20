@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['link_5fdropped_0',['LINK_DROPPED',['../group__lib__core.html#ggae74178abed5fae945e1364010e009448a8d4fd3f7d66697a5ec2983845f66e644',1,'link_change.h']]],
-  ['link_5freconnected_1',['LINK_RECONNECTED',['../group__lib__core.html#ggae74178abed5fae945e1364010e009448a26d88e62a7d3a8a7278e8825d95f56b6',1,'link_change.h']]],
-  ['link_5fsame_2',['LINK_SAME',['../group__lib__core.html#ggae74178abed5fae945e1364010e009448a432b1d29bb1f587e2c7bbc80f36164aa',1,'link_change.h']]]
+  ['hrv_5fcount_5fany_0',['HRV_COUNT_ANY',['../group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f',1,'hrv_log.h']]],
+  ['hrv_5fcount_5fnot_5fwalking_1',['HRV_COUNT_NOT_WALKING',['../group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc',1,'hrv_log.h']]],
+  ['hrv_5fcount_5fstill_2',['HRV_COUNT_STILL',['../group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8',1,'hrv_log.h']]],
+  ['hrv_5fstate_5fbusy_3',['HRV_STATE_BUSY',['../group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f',1,'hrv_log.h']]],
+  ['hrv_5fstate_5fstill_4',['HRV_STATE_STILL',['../group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b',1,'hrv_log.h']]],
+  ['hrv_5fstate_5fwalking_5',['HRV_STATE_WALKING',['../group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c',1,'hrv_log.h']]]
 ];

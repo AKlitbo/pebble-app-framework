@@ -13,5 +13,6 @@ var searchData=
   ['precip_5fchance_10',['precip_chance',['../structWeatherMessage.html#a196b4cbc8502c9c6e24d1040d4ff8ce2',1,'WeatherMessage::precip_chance'],['../structWeatherState.html#a27ceeb5c3bd3ae1d840b53f10f8ad709',1,'WeatherState::precip_chance'],['../structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437',1,'WeatherSeed::precip_chance']]],
   ['pressure_11',['pressure',['../structWeatherMessage.html#ae9d770ab1a1756f491395ca35cf2014e',1,'WeatherMessage::pressure'],['../structWeatherState.html#a10a0c1b94135d6c9d6ed2e49102e6e0e',1,'WeatherState::pressure'],['../structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902',1,'WeatherSeed::pressure']]],
   ['price_5fcents_12',['price_cents',['../structStockSlot.html#a5256275b025aa00f48cc430f0fb775be',1,'StockSlot']]],
-  ['primed_13',['primed',['../structHrvMotion.html#ad8bc1316b2adb8e66b7c078b6911737f',1,'HrvMotion']]]
+  ['primed_13',['primed',['../structHrvMotion.html#ad8bc1316b2adb8e66b7c078b6911737f',1,'HrvMotion']]],
+  ['provider_14',['provider',['../structLongText.html#aa86043ffc653ec3868c881a619fbf30a',1,'LongText']]]
 ];

@@ -53,9 +53,11 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="eventinstance"><span class="tsd-kind-call-signature">eventInstance</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/calendar_ical.CalendarEvent.html" class="tsd-signature-type tsd-kind-interface">CalendarEvent</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">instanceId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">offsetAt</span><span class="tsd-signature-symbol">?:</span> <a href="../types/pkjs_phone-clock.PhoneOffset.html" class="tsd-signature-type tsd-kind-type-alias">PhoneOffset</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/plugin-sources_types.SourceInstance.html" class="tsd-signature-type tsd-kind-interface">SourceInstance</a><a href="#eventinstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="eventinstance"><span class="tsd-kind-call-signature">eventInstance</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/calendar_ical.CalendarEvent.html" class="tsd-signature-type tsd-kind-interface">CalendarEvent</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">instanceId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">offsetAt</span><span class="tsd-signature-symbol">?:</span> <a href="../types/pkjs_phone-clock.PhoneOffset.html" class="tsd-signature-type tsd-kind-type-alias">PhoneOffset</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">labels</span><span class="tsd-signature-symbol">?:</span> <a href="../types/plugin-app_calendar.EventLabelOptions.html" class="tsd-signature-type tsd-kind-type-alias">EventLabelOptions</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/plugin-sources_types.SourceInstance.html" class="tsd-signature-type tsd-kind-interface">SourceInstance</a><a href="#eventinstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>One event as a <code>calendar/event</code> instance.</p>
+<p>The notes go out as a <code>longText</code> <code>description</code>, cleaned as the built-in cleans them, and are left out
+when there are none.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -68,11 +70,14 @@
 </div></li>
 <li><span><span class="tsd-kind-parameter">offsetAt</span>: <a href="../types/pkjs_phone-clock.PhoneOffset.html" class="tsd-signature-type tsd-kind-type-alias">PhoneOffset</a><span class="tsd-signature-symbol"> = phoneOffsetMinutes</span></span>
 <div class="tsd-comment tsd-typography"><p>Reads the phone's offset, normally the phone's own. A spec stands the phone in another zone with it.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">labels</span>: <a href="../types/plugin-app_calendar.EventLabelOptions.html" class="tsd-signature-type tsd-kind-type-alias">EventLabelOptions</a><span class="tsd-signature-symbol"> = {}</span></span>
+<div class="tsd-comment tsd-typography"><p>How the start and end are labelled. Left out, they read <code>HH:MM</code> as the built-in's do.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/plugin-sources_types.SourceInstance.html" class="tsd-signature-type tsd-kind-interface">SourceInstance</a></h4><p>The instance.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/498107bc5df88bd225bff41ade08be776caf358b/src/ts/plugin-app/calendar.ts#L76">plugin-app/calendar.ts:76</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/a3fd1e4573a0b74e513ad59a1ab86881784df9df/src/ts/plugin-app/calendar.ts#L189">plugin-app/calendar.ts:189</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

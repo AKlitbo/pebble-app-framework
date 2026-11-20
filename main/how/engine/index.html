@@ -207,7 +207,7 @@
 <p><strong>Old Layers Go First.</strong> Every layer is freed before any new one is made, so a rebuild never holds two copies of the screen at once.</p>
 <p><strong>Every Slot Fits Again.</strong> The rebuild clears each slot&#39;s last string, so the first repaint fits every text slot afresh against its new zone. A rebuild ends with a full repaint, so nothing else needs calling after it.</p>
 <p><strong>New Layers Land on Top.</strong> The rebuilt slot layers are added above whatever is already on the root layer. A layer the face adds after <code>engine_init</code> ends up underneath the slots after the first rebuild, so anything that has to sit above them belongs in a draw slot.</p>
-<p>A face can also rebuild for reasons of its own. The Mosaic faces rebuild when the night or Quiet Time layout takes over, as <a href="../../how/layout-strings/">Layout Strings</a> covers.</p>
+<p>A face can also rebuild for reasons of its own, such as a night or Quiet Time layout taking over, as <a href="../../how/layout-strings/">Layout Strings</a> covers.</p>
 <h2 id="the-whole-lifecycle">The Whole Lifecycle</h2>
 <pre class="mermaid">sequenceDiagram
   participant Face
