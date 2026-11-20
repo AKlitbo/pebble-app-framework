@@ -2,7 +2,7 @@
 
 The Julian Date counts days in one long run, with no months or years to get in the way. Astronomers use it because the gap between two dates is a plain subtraction. Day 0 began at noon UTC on the 1st of January 4713 BC, so the 1st of January 2000 at noon was day 2451545.
 
-A face shows it as a readout, such as the Julian panel in the Mosaic family or the LCARS face's Julian slot. The code lives in [`astro.h`](../../src/c/core/clock/astro.h) and [`astro.c`](../../src/c/core/clock/astro.c) under `src/c/core/clock/`, a single function in plain C.
+A face shows it as a readout, such as a Julian panel or a slot in a row of readouts. The code lives in [`astro.h`](../../src/c/core/clock/astro.h) and [`astro.c`](../../src/c/core/clock/astro.c) under `src/c/core/clock/`, a single function in plain C.
 
 ## Working It Out
 

@@ -50,7 +50,7 @@ export function batteryFromUpdate(envelope: SourceEnvelope | null | undefined): 
 
 /** The phone battery page hook's notes. */
 export const PHONE_TEXTS: PluginSourceTexts = {
-  notStandard: (pluginName) => `${pluginName} sends phone details this watchface cannot read. Pick the Pebble app's own Phone plugin under Preferred Sources in the Pebble app.`,
+  notStandard: (pluginName) => `${pluginName} sends phone details this face cannot read. Pick the Pebble app's own Phone plugin under Preferred Sources in the Pebble app.`,
   noPlugin: 'Phone battery comes from the Phone plugin built into the Pebble app. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.',
 };
 

@@ -29,7 +29,7 @@ export default buildConfig({
 
 **Present Means Included.** Each field turns on a section or a control inside one, and its own fields tune it. A marker such as `weather: {}` needs nothing more. A field left out leaves its controls off the page.
 
-**The Order.** A heading and an intro line open the page, and a **Save & Apply to Watch** button closes it. The default intro mentions the weather when the page has a Weather section, and `intro` replaces it. The phone checks every page it opens, the folded page and the one it falls back to alike, so a page that has lost its Weather section, such as on a face whose weather comes from a plugin alone and that shows no unit, opens on the plain wording. In between, the sections always come in this order:
+**The Order.** A heading and an intro line open the page, and a **Save & Apply to Watch** button closes it. The heading is the app's `displayName`, which `paf build` writes into the phone code, or **Settings** in phone code built without it, and `heading` replaces it. The intro reads "Choose how your watch looks and what it shows.", and `intro` replaces it. `introWithoutWeather` is the intro for a page left with no Weather section. The phone checks every page it opens, the folded page and the one it falls back to alike, so a page that has lost its Weather section, such as on a face whose weather comes from a plugin alone and that shows no unit, opens on that line. In between, the sections always come in this order:
 
 | Section | Shown When | What It Offers |
 | :-- | :-- | :-- |
@@ -46,6 +46,8 @@ export default buildConfig({
 The sources that need setting up come ahead of Health, whose defaults work untouched. Location Settings sits straight under Weather, so picking a weather plugin folds it away just below the select that hides it.
 
 **Each Section Brings Its Keys.** Every message key a section uses has to be declared in the face's `pebble.appinfo.json`, and each one adds to the inbox the face sizes, as [Opening the Connection](talking-to-the-phone.md#opening-the-connection) covers. Bluetooth and Clock are always on the page, so their keys are always needed. An optional section that is left out brings no keys, which is why Health returns nothing at all, not even a heading, for a face that shows neither steps nor battery.
+
+**Wording a Face Can Change.** The theme picker reads **Theme**, "The face's colours.", and `theme.label` and `theme.description` change it. The steps control reads **Steps Readout**, "Whether the steps readout shows steps or the distance walked.", and takes `steps.label` and `steps.description`. The Quiet Time toggle's help line is `quietTime.description`. The Date Format opens on `%a %d %b`, which a fresh watch shows too, unless `date.default` names another. `location.placeholder` and `clock.timeZonePlaceholder` change the hint in the empty Manual Location and Alternate Time Zone boxes.
 
 **The .beat Formats.** `date.beats` adds the .beat formats to the end of the date list. Their `{B}` marker is not a `strftime` token, and only `readout_date` swaps it for the time in .beats, so a face asks for them only when its date line runs through `readout_date`. [.beats](beats.md) covers the reading.
 
@@ -146,7 +148,7 @@ const health = {
 
 **The Page Is Read Whole.** The phone code walks every item on the page, nested sections included, for each setting's default and for every second clock, so a hand-built page gets the same treatment as one from `buildConfig`. [The Phone Side](phone-side.md) covers what it does with them.
 
-**The Watch's Counts Come from Here.** `paf build` loads the page the same way and counts the choices each `select`, `radiogroup`, and `themePreview` with whole number values offers, as the highest value plus one. The watch holds each choice field to that count, through `KNOWN_THEME`, `KNOWN_HEADER_FONT`, and `SETTINGS_COUNT` in the face's own fields. Keep a choice's values whole numbers from 0 to 254 for the watch to count it. The build loads the page on a phone with no plugins and nothing saved, once for each platform, and takes the largest count, so offer the same whole number choices whatever the phone has installed or saved. [Counts from the Settings Page](settings-on-the-watch.md#counts-from-the-settings-page) covers the rules.
+**The Watch's Counts Come from Here.** `paf build` loads the page the same way and counts the choices each `select`, `radiogroup`, and `themePreview` with whole number values offers, as the highest value plus one. The watch holds each choice field to that count, through `KNOWN_THEME`, and `SETTINGS_COUNT` or `SETTINGS_COUNT_CHECKED` in the face's own fields. Keep a choice's values whole numbers from 0 to 254 for the watch to count it. The build loads the page on a phone with no plugins and nothing saved, once for each platform, and takes the largest count, so offer the same whole number choices whatever the phone has installed or saved. [Counts from the Settings Page](settings-on-the-watch.md#counts-from-the-settings-page) covers the rules.
 
 **So Do Its Defaults.** The build also writes the default each control opens with, which a fresh watch starts on, through every `KNOWN_*` entry and `SETTINGS_DEFAULT` in the face's own fields. Give a choice a default from its own options, and give every control on a key the same default on every platform, or the build stops. [Defaults from the Settings Page](settings-on-the-watch.md#defaults-from-the-settings-page) covers them.
 
@@ -232,6 +234,18 @@ The location search, the plugin notes, and the supported plugins panel draw in C
 ```
 
 Each one left out keeps Clay's colour, so a face that sets none looks as Clay draws it. None of them changes a size. `--pf-note-info-accent` sets the grey of a calm note and of the panel. [`control-style.ts`](../../src/ts/clay/control-style.ts) holds the rules the framework's components share, and [`callout-style.ts`](../../src/ts/clay/callout-style.ts) holds the notes'.
+
+**The Theme Picker's Frames.** The theme picker draws each picture on a backing with a border round it, and takes three more properties from the same place:
+
+```css
+:root {
+  --pf-preview-backing: #000;    /* behind each picture */
+  --pf-preview-border: #3d434d;  /* the 2px border round each picture */
+  --pf-preview-size: 8rem;       /* how wide each picture is drawn, up to 40% of the row */
+}
+```
+
+These are the values a face that sets none of them gets.
 
 **The Class Names.** The framework's own classes on the page start with `pf-`, so they keep clear of a face's own.
 

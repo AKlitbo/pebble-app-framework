@@ -4,8 +4,9 @@
  * the wind unit entry, which a face moves onto from a field of its own.
  *
  * paf build writes a SETTINGS_COUNT_<KEY> for each choice on the face's settings page and a
- * SETTINGS_DEFAULT_<KEY> for each default the page opens with. KNOWN_THEME and KNOWN_HEADER_FONT
- * clamp to the count once it matches the table the face passes. What is worth pinning is that a
+ * SETTINGS_DEFAULT_<KEY> for each default the page opens with. KNOWN_THEME clamps to the count once
+ * it matches the table the face passes, and so does a face's own choice field written with
+ * SETTINGS_COUNT_CHECKED. What is worth pinning is that a
  * matching count builds, with no warning on the way, and lands in the field the clamp reads, that a
  * default the page gives lands in the field a fresh watch starts from, and that a setting the page
  * does not show keeps the framework's own default. The counts that have to stop the build sit in
@@ -18,11 +19,16 @@
  * A face that kept its goals in fields of its own swaps them for the KNOWN_GOAL_* entries on the same
  * keys, so each entry has to keep the same count, default, and text size, or a saved goal or buzz
  * would change on the wearer's watch.
+ *
+ * A face that kept its header font on the catalogue's old entry writes the same field as one of its
+ * own, so that field has to come out with the same key, type, count, and default, or a saved font
+ * would change on the wearer's watch.
  */
 #define SETTINGS_COUNT_APPEARANCE_THEME 4
 #define SETTINGS_COUNT_APPEARANCE_HEADER_FONT 8
 #define SETTINGS_DEFAULT_APPEARANCE_THEME 3
-#define SETTINGS_DEFAULT_CLOCK_DATE_FORMAT "%a %d %b"
+#define SETTINGS_DEFAULT_APPEARANCE_HEADER_FONT 0
+#define SETTINGS_DEFAULT_CLOCK_DATE_FORMAT "%b %d"
 #define SETTINGS_DEFAULT_CONNECTION_VIBE_CONNECT 2
 #define SETTINGS_COUNT_HEALTH_GOAL_STEPS 7
 #define SETTINGS_DEFAULT_HEALTH_GOAL_STEPS 4
@@ -64,14 +70,25 @@ void test_known_theme_takes_the_page_count(void)
     TEST_ASSERT_EQUAL_UINT8(4, result);
 }
 
-/** @brief The header font count is the page's, so the watch takes the last font the page offers and nothing past it. */
-void test_known_header_font_takes_the_page_count(void)
+/**
+ * @brief A face's own header font field reads a saved font the way the catalogue's entry did: an enum
+ * at the same offset on the same key, held to the page's eight fonts, and starting on the first.
+ */
+void test_face_header_font_field_matches_the_old_entry(void)
 {
-    static const SettingField fields[] = { KNOWN_HEADER_FONT(1, 8) };
+    static const SettingField fields[] = {
+        { .id = SETTING_COUNT, .message_key = &MESSAGE_KEY_APPEARANCE_HEADER_FONT, .type = SETTING_ENUM_U8,
+          .offset = 1, .enum_count = SETTINGS_COUNT_CHECKED(APPEARANCE_HEADER_FONT, 8),
+          .default_num = SETTINGS_DEFAULT(APPEARANCE_HEADER_FONT) },
+    };
 
-    uint8_t result = fields[0].enum_count;
+    const SettingField *result = &fields[0];
 
-    TEST_ASSERT_EQUAL_UINT8(8, result);
+    TEST_ASSERT_EQUAL_PTR(&MESSAGE_KEY_APPEARANCE_HEADER_FONT, result->message_key);
+    TEST_ASSERT_EQUAL_INT(SETTING_ENUM_U8, result->type);
+    TEST_ASSERT_EQUAL_UINT16(1, result->offset);
+    TEST_ASSERT_EQUAL_UINT8(8, result->enum_count);
+    TEST_ASSERT_EQUAL_UINT32(0, result->default_num);
 }
 
 /**
@@ -107,7 +124,7 @@ void test_known_date_format_takes_the_page_default(void)
 
     const char *result = fields[0].default_str;
 
-    TEST_ASSERT_EQUAL_STRING("%a %d %b", result);
+    TEST_ASSERT_EQUAL_STRING("%b %d", result);
 }
 
 /** @brief A framework list takes the page's default as well as the framework's count. */
@@ -190,7 +207,7 @@ int main(void)
 {
     UNITY_BEGIN();
     RUN_TEST(test_known_theme_takes_the_page_count);
-    RUN_TEST(test_known_header_font_takes_the_page_count);
+    RUN_TEST(test_face_header_font_field_matches_the_old_entry);
     RUN_TEST(test_known_wind_unit_keeps_the_four_units_with_kmh_first);
     RUN_TEST(test_known_theme_takes_the_page_default);
     RUN_TEST(test_known_date_format_takes_the_page_default);

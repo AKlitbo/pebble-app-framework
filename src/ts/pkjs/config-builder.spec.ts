@@ -179,35 +179,14 @@ describe('buildConfig optional sections', () => {
 describe('buildConfig intro', () => {
   const pageIntro = (config: ClayConfigItem[]) => config.find((item) => item.type === 'text')?.defaultValue;
 
-  /** A face with weather has to read that the page sets the weather up, without writing the line itself. */
-  test('mentions weather in the default intro for a face with weather', () => {
-    const result = pageIntro(buildConfig({ weather: {} }));
-
-    expect(result).toBe('Personalize your layout, dial in your weather preferences, and make this watchface your own.');
-  });
-
-  /** A Weather section from the unit rows alone is still weather to set up, so the intro has to say so. */
+  /** The default lead line fits any face, a watchapp included, so it names neither a watchface nor weather. */
   test.each([
-    ['temperature', { temperature: {} }],
-    ['wind', { wind: {} }],
-  ])('mentions weather in the default intro for a face with only the %s unit', (_name, options) => {
-    const result = pageIntro(buildConfig(options));
+    ['weather', { weather: {} }],
+    ['no Weather section', { location: {} }],
+  ])('opens on the neutral intro for a face with %s', (_name, options) => {
+    const result = buildConfig(options).find((item) => item.type === 'text');
 
-    expect(result).toBe('Personalize your layout, dial in your weather preferences, and make this watchface your own.');
-  });
-
-  /** A face with no Weather section must not promise weather settings it never shows. */
-  test('leaves weather out of the default intro for a face without a Weather section', () => {
-    const result = buildConfig({ location: {} }).find((item) => item.type === 'text');
-
-    expect(result).toEqual({ type: 'text', defaultValue: 'Personalize your layout and make this watchface your own.' });
-  });
-
-  /** A fold can take the Weather section off, so the weather wording has to carry the plain one for the page to fall back to. */
-  test('carries the plain wording on the weather intro', () => {
-    const result = buildConfig({ weather: {} }).find((item) => item.type === 'text')?.introWithoutWeather;
-
-    expect(result).toBe('Personalize your layout and make this watchface your own.');
+    expect(result).toEqual({ type: 'text', defaultValue: 'Choose how your watch looks and what it shows.' });
   });
 
   /** A face's own intro has to win, or the default would write over it. */
@@ -215,6 +194,144 @@ describe('buildConfig intro', () => {
     const result = pageIntro(buildConfig({ weather: {}, intro: 'Set up the scene.' }));
 
     expect(result).toBe('Set up the scene.');
+  });
+
+  /** A fold can take the Weather section off, so a face's line for that page has to ride the intro for the phone to fall back to. */
+  test('carries the face\'s intro for a page left with no Weather section', () => {
+    const result = buildConfig({ weather: {}, intro: 'Set up the weather.', introWithoutWeather: 'Pick a scene.' }).find((item) => item.type === 'text');
+
+    expect(result).toEqual({ type: 'text', defaultValue: 'Set up the weather.', introWithoutWeather: 'Pick a scene.' });
+  });
+
+  /** A page that never had a Weather section opens on the face's line for one without, since no fold runs to settle it. */
+  test('opens on the face\'s intro without weather on a page with no Weather section', () => {
+    const result = buildConfig({ location: {}, intro: 'Set up the weather.', introWithoutWeather: 'Pick a scene.' }).find((item) => item.type === 'text');
+
+    expect(result).toEqual({ type: 'text', defaultValue: 'Pick a scene.' });
+  });
+});
+
+describe('buildConfig neutral defaults', () => {
+  /** Phone code built outside paf build has no app name, so the page still opens on a heading that fits any app. */
+  test('titles the page Settings when the build wrote no app name', () => {
+    const result = buildConfig({})[0];
+
+    expect(result).toEqual({ type: 'heading', defaultValue: 'Settings' });
+  });
+
+  /** The theme picker has to fit a face with no frame, so it names neither one. */
+  test('labels the theme picker Theme with a help line about the face\'s colours', () => {
+    const result = findItemByKey(buildConfig({ theme: { options: [{ label: 'Day', value: 0 }] } }), 'APPEARANCE_THEME');
+
+    expect(result).toMatchObject({ label: 'Theme', description: 'The face\'s colours.' });
+  });
+
+  /** The steps control has to fit a face with no stats slot, so it names the steps readout it changes. */
+  test('labels the steps control Steps Readout', () => {
+    const result = findItemByKey(buildConfig({ steps: {} }), 'HEALTH_STEPS_MODE');
+
+    expect(result).toMatchObject({ label: 'Steps Readout', description: 'Whether the steps readout shows steps or the distance walked.' });
+  });
+
+  /** A face whose Quiet Time mark is not a speaker by the bluetooth icon still has a help line that is true. */
+  test('describes the Quiet Time icon without naming its glyph', () => {
+    const result = findItemByKey(buildConfig({ quietTime: {} }), 'APPEARANCE_QUIET_TIME_ICON')?.description;
+
+    expect(result).toBe('Show an icon while Quiet Time is on.');
+  });
+
+  /** The page's default date is the one a fresh watch shows, so it has to be the same as SETTINGS_DEFAULT_CLOCK_DATE_FORMAT in settings_catalog.h. */
+  test('opens the date format on the weekday, day, and month the watch falls back to', () => {
+    const catalog = fs.readFileSync(path.join(import.meta.dirname, '../../c/pebble/system/settings/settings_catalog.h'), 'utf8');
+    const watch = /#define SETTINGS_DEFAULT_CLOCK_DATE_FORMAT "([^"]*)"/.exec(catalog)?.[1];
+
+    const result = findItemByKey(buildConfig({}), 'CLOCK_DATE_FORMAT')?.defaultValue;
+
+    expect(result).toBe('%a %d %b');
+    expect(watch).toBe(result);
+  });
+
+  /**
+   * A face with its own date list may not offer the stock default, and the build stops on a select
+   * that opens on a choice it does not list, so the list opens on its own first format.
+   */
+  test('opens a face\'s own date list on its first format when the face gives no default', () => {
+    const options = [{ label: 'JUN 18', value: '%b %d' }, { label: '18 JUN', value: '%d %b' }];
+
+    const result = findItemByKey(buildConfig({ date: { options } }), 'CLOCK_DATE_FORMAT')?.defaultValue;
+
+    expect(result).toBe('%b %d');
+  });
+
+  /** A face's own default still wins over the first of its own formats. */
+  test('keeps the face\'s own default over its first date format', () => {
+    const options = [{ label: 'JUN 18', value: '%b %d' }, { label: '18 JUN', value: '%d %b' }];
+
+    const result = findItemByKey(buildConfig({ date: { options, default: '%d %b' } }), 'CLOCK_DATE_FORMAT')?.defaultValue;
+
+    expect(result).toBe('%d %b');
+  });
+
+  /** The default date has to be one the list offers, or the select opens on a blank row. */
+  test('offers the default date format in the stock list', () => {
+    const result = buildConfig.defaultDateOptions.map((option) => option.value);
+
+    expect(result).toContain('%a %d %b');
+  });
+
+  /** The search hints name a city with no tie to any face. */
+  test('hints a neutral city in the location and time zone searches', () => {
+    const config = buildConfig({ location: {}, clock: { timeZone: true } });
+
+    const result = [findItemByKey(config, 'LOCATION_NAME')?.attributes, findItemByKey(config, 'CLOCK_TIMEZONE_1')?.attributes];
+
+    expect(result).toEqual([{ placeholder: 'Search a city, e.g. Tokyo' }, { placeholder: 'e.g. Tokyo, UTC, or Europe/London' }]);
+  });
+});
+
+describe('buildConfig keeps a face\'s own wording', () => {
+  /**
+   * The wording the builder gave before its defaults went neutral. A face that passes each of these
+   * back has to get the same page it had, or its wearers see the settings page change under them.
+   */
+  const OWN = {
+    heading: 'Watchface Configuration',
+    intro: 'Personalize your layout, dial in your weather preferences, and make this watchface your own.',
+    introWithoutWeather: 'Personalize your layout and make this watchface your own.',
+    theme: { label: 'Frame Theme', description: 'Colour scheme for the watch frame.', options: [{ label: 'Day', value: 0 }] },
+    steps: { label: 'Stats Readout', description: 'What the stats slot shows: step count, or distance walked.' },
+    quietTime: { description: 'Show a muted-speaker glyph next to bluetooth while Quiet Time is on.' },
+    date: { default: '%Y.%m%d' },
+    location: { placeholder: 'Search a city, e.g. Phoenix' },
+    clock: { timeZone: true, timeZonePlaceholder: 'e.g. Phoenix, UTC, or Europe/London' },
+    weather: {},
+  };
+
+  /** Each option a face passes lands on its row, so a face can keep every line of its page as it was. */
+  test('puts back every line a face passes', () => {
+    const config = buildConfig(OWN);
+
+    const result = {
+      heading: config[0].defaultValue,
+      intro: config[1],
+      theme: findItemByKey(config, 'APPEARANCE_THEME'),
+      steps: findItemByKey(config, 'HEALTH_STEPS_MODE'),
+      quiet: findItemByKey(config, 'APPEARANCE_QUIET_TIME_ICON')?.description,
+      date: findItemByKey(config, 'CLOCK_DATE_FORMAT')?.defaultValue,
+      location: findItemByKey(config, 'LOCATION_NAME')?.attributes,
+      zone: findItemByKey(config, 'CLOCK_TIMEZONE_1')?.attributes,
+    };
+
+    expect(result).toMatchObject({
+      heading: 'Watchface Configuration',
+      intro: { type: 'text', defaultValue: OWN.intro, introWithoutWeather: OWN.introWithoutWeather },
+      theme: { label: 'Frame Theme', description: 'Colour scheme for the watch frame.' },
+      steps: { label: 'Stats Readout', description: 'What the stats slot shows: step count, or distance walked.' },
+      quiet: 'Show a muted-speaker glyph next to bluetooth while Quiet Time is on.',
+      date: '%Y.%m%d',
+      location: { placeholder: 'Search a city, e.g. Phoenix' },
+      zone: { placeholder: 'e.g. Phoenix, UTC, or Europe/London' },
+    });
   });
 });
 

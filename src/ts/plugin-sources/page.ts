@@ -24,7 +24,9 @@
 
 import { declaresStandard, servesItem } from './standard';
 import { escapeHtml, shownName, uuidKey } from './escape';
-import { addPluginsPanel, PANEL_TYPE } from './panel';
+import { addPluginsPanel, PANEL_TITLE, PANEL_TYPE } from './panel';
+import type { PluginPanelTexts } from './panel';
+import { pluginTexts } from '../pkjs/plugin-texts';
 import { PLUGIN_KINDS_CLASS, PLUGIN_KINDS_TYPE } from './kinds-component';
 import { allItems, conditionsOf, dropRow, dropRows, findRow, footIndex, listHolding, settleConditions } from '../clay/rows';
 import type { StandardReadings } from './standard';
@@ -130,6 +132,42 @@ function kindOf(inputs: PluginSourceInputs): string {
   return inputs.rowKind || inputs.category;
 }
 
+/** The kinds a face can give its own wording for, by their names in the providers list. */
+type OverriddenKind = Exclude<keyof PluginTextOverrides, 'panel'>;
+
+/** The mark in a text that stands for the supported plugins panel's title, as the panel shows it. */
+export const PANEL_TITLE_MARK = '{panel}';
+
+/**
+ * The inputs with the face's own wording for the kind laid over the feature's, a text at a time, then
+ * the extra source line joined on and the panel's title filled in.
+ *
+ * A face that gives its own `notStandard` and no `notStandardNoSelect` gets its line on a page with no
+ * select too, since the feature's own `notStandardNoSelect` would otherwise win there. The extra source
+ * line, such as the weather's note on coordinates, joins whichever source line wins, so a face's own
+ * source keeps it. The panel's title goes in where a text holds `PANEL_TITLE_MARK`, so a line pointing
+ * the wearer at the panel names it as it reads, the face's own title included.
+ */
+function withOverrides(inputs: PluginSourceInputs): PluginSourceInputs {
+  const wording = pluginTexts();
+  const own = wording[kindOf(inputs) as OverriddenKind] || {};
+  const texts: PluginSourceTexts = { ...inputs.texts, ...own };
+
+  if (own.notStandard && !own.notStandardNoSelect) {
+    texts.notStandardNoSelect = own.notStandard;
+  }
+
+  if (inputs.sourceExtra) {
+    texts.source = [texts.source, inputs.sourceExtra].filter(Boolean).join(' ');
+  }
+
+  if (texts.noPlugin) {
+    texts.noPlugin = texts.noPlugin.split(PANEL_TITLE_MARK).join((wording.panel && wording.panel.title) || PANEL_TITLE);
+  }
+
+  return { ...inputs, texts };
+}
+
 /** The warning rows a feature shows under its select while a plugin is picked. A text left out gets no row. */
 export interface PluginSourceTexts {
   /** The row for a plugin that answered last but does not declare the standard readings. It gets the plugin's name. */
@@ -150,7 +188,8 @@ export interface PluginSourceTexts {
    * serving it, which is also what a phone with plugins off reports. It says how to turn them on, or
    * for a kind the Pebble app has no plugin of its own for, how to get one. A kind with a source choice
    * shows it under the select too, in place of the line to turn plugins on, while the phone lists
-   * other plugins.
+   * other plugins. `{panel}` in it stands for the supported plugins panel's title, as `PANEL_TITLE_MARK`
+   * describes.
    */
   noPlugin?: string;
   /**
@@ -159,6 +198,22 @@ export interface PluginSourceTexts {
    * reads as Plugins Off.
    */
   notInstalledLabel?: string;
+}
+
+/**
+ * A face's own wording for the plugin rows, which it passes startPebbleApp as `pluginTexts`.
+ *
+ * Each kind goes by its name in the providers list, and each text it names takes the place of the
+ * framework's own for that kind. `panel` holds the supported plugins panel's title and intro. A text
+ * left out keeps the framework's wording.
+ */
+export interface PluginTextOverrides {
+  weather?: PluginSourceTexts;
+  stocks?: PluginSourceTexts;
+  calendar?: PluginSourceTexts;
+  music?: PluginSourceTexts;
+  phone?: PluginSourceTexts;
+  panel?: PluginPanelTexts;
 }
 
 /** A select a feature adds because the face's page has none, and where it goes. */
@@ -199,6 +254,8 @@ export interface PluginSourceInputs {
   standard: StandardReadings;
   /** The feature's own wording for each warning row. */
   texts: PluginSourceTexts;
+  /** A line to join on to whichever source line wins, the feature's or the face's, such as a note on coordinates. */
+  sourceExtra?: string;
   /** The select to add when the face's page has none, as the calendar does. */
   insert?: PluginSourceInsert;
   /** The select's saved value. A saved plugin choice keeps its option while no plugin serves the item. */
@@ -581,7 +638,7 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
   const missing = listed !== null && !servesItem(listed, inputs.category, inputs.item);
 
   if (inputs.panel) {
-    addPluginsPanel(page, inputs.category, inputs.item, inputs.plugins);
+    addPluginsPanel(page, inputs.category, inputs.item, inputs.plugins, pluginTexts().panel);
   }
 
   const source = texts.source && !missing ? [noteRow(texts.source, 'info')] : [];
@@ -651,10 +708,17 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  * the face marks with `pluginSourceRows` for the kind, or at the foot of the page just above the panel.
  *
  * @param page The settings page so far, the page hook's own copy. It is changed in place.
- * @param inputs The select, the plugin list, the saved state and value, and the feature's wording.
+ * Every row and the panel take the face's own wording from `pluginTexts` in `ts/pkjs/plugin-texts.ts`,
+ * which faceStart keeps from what the face passed startPebbleApp, laid over the feature's.
+ *
+ * @param page The settings page so far, the page hook's own copy. It is changed in place.
+ * @param given The select, the plugin list, the saved state and value, and the feature's wording.
  * @return The page, changed.
  */
-export function pluginSourcePage(page: ClayConfigItem[], inputs: PluginSourceInputs): ClayConfigItem[] {
+export function pluginSourcePage(page: ClayConfigItem[], given: PluginSourceInputs): ClayConfigItem[] {
+  // the face's own wording for the kind lies over the feature's here, once, so every row below reads
+  // one set and no page hook has to hand the face's wording on
+  const inputs = withOverrides(given);
   const { selectKey } = inputs;
 
   recordKindState(page, kindOf(inputs), pluginKindState(inputs.plugins, inputs.category, inputs.item));
@@ -693,7 +757,7 @@ export function pluginSourcePage(page: ClayConfigItem[], inputs: PluginSourceInp
   // the panel goes on whenever the face offers the choice, with plugins on or off, since plugins off
   // is when the wearer most needs to hear what to turn on and where to get it
   if (inputs.panel) {
-    addPluginsPanel(page, inputs.category, inputs.item, inputs.plugins);
+    addPluginsPanel(page, inputs.category, inputs.item, inputs.plugins, pluginTexts().panel);
   }
 
   return page;

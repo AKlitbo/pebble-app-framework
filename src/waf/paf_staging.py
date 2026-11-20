@@ -11,9 +11,9 @@ per sandbox under targets/<target>/.
 Every folder in the source dict the wscript passes is relative to the repo root:
 
     engine       the framework, such as paf
-    face         the face, such as gridlock in a family, or . for a face on its own
+    face         the face, such as face-a in a family, or . for a face on its own
     family_core  the face's family core, which is core in a family, or empty for none
-    family       the family's name, such as mosaic, or empty for none
+    family       the family's name, such as my-family, or empty for none
 """
 
 import os

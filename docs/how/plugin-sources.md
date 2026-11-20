@@ -72,7 +72,7 @@ The calendar's page has no source select of its own, since without plugins it wo
 
 With a plugin only list, the page shows notes where the select or the iCal link would sit: where the data comes from, and while nothing on the phone serves the kind, how to turn plugins on. Now playing and the phone's battery always get their notes this way, as [The Phone and Music Stores](phone-and-music-stores.md#on-the-settings-page) covers.
 
-**Warnings under the Choice.** While the plugin is picked, the page reads what the plugin source saved last and adds a note for each thing that went wrong. A plugin that answered and does not send the readings the face needs gets one, as [Preferred Source and the Standard Check](#preferred-source-and-the-standard-check) covers. A wearer who has not allowed the permission gets one saying to allow it for this watchface in the Pebble app. A stock update with no tickers gets a calmer note saying the phone may have been offline, or the plugin may have no tickers set up in its own settings. A calendar update that held no events gets a calmer note saying the Pebble app may need permission to read the phone's calendars, or that those calendars may be switched off in its calendar settings.
+**Warnings under the Choice.** While the plugin is picked, the page reads what the plugin source saved last and adds a note for each thing that went wrong. A plugin that answered and does not send the readings the face needs gets one, as [Preferred Source and the Standard Check](#preferred-source-and-the-standard-check) covers. A wearer who has not allowed the permission gets one saying to allow it for this face in the Pebble app. A stock update with no tickers gets a calmer note saying the phone may have been offline, or the plugin may have no tickers set up in its own settings. A calendar update that held no events gets a calmer note saying the Pebble app may need permission to read the phone's calendars, or that those calendars may be switched off in its calendar settings.
 
 ### With Plugins Off
 
@@ -129,11 +129,11 @@ The Pebble app only holds a plugin to its own manifest, so a weather plugin that
 | now playing | `title` as a `shortText` or a `longText`, and `playing` as a `boolean` |
 | phone battery | `battery_level` as a `numericValue` |
 
-A plugin that fails gets a note on the page naming it, saying it sends data this watchface cannot read, and pointing the wearer at Preferred Sources in the Pebble app, or at another source on the face's own select. Everything else a plugin sends is optional, and leaving it out only leaves that readout on its dashes.
+A plugin that fails gets a note on the page naming it, saying it sends data this face cannot read, and pointing the wearer at Preferred Sources in the Pebble app, or at another source on the face's own select. Everything else a plugin sends is optional, and leaving it out only leaves that readout on its dashes.
 
 ## The Supported Plugins Panel
 
-A face built with any plugin define gets one more row at the foot of its settings page once one of its kinds offers a plugin: a closed panel titled **Plugins This Watchface Supports**. Opened, it lists under a heading for each kind the face has on the plugins known to serve it, and where to get them.
+A face built with any plugin define gets one more row at the foot of its settings page once one of its kinds offers a plugin: a closed panel titled **Plugins This Face Supports**. Opened, it lists under a heading for each kind the face has on the plugins known to serve it, and where to get them.
 
 * **The Pebble App's Own.** Each built-in plugin reads **Weather - Built Into the Pebble App**, and **Weather - Built Into the Pebble App, Off** when the phone's plugin list leaves that one out, as it leaves every one out with plugins off. The music plugin is built in on Android only, and says so.
 * **Store Plugins.** A store plugin links to its listing on the Pebble appstore, and carries the version tested with the face, the `verifiedVersion` in the table, as in **MET Norway Weather - v1.0.5**. It reads **MET Norway Weather - v1.0.5 - Installed** when the phone lists it. The panel's intro says the version is one tested with the face, which may not be the plugin's newest.
@@ -141,6 +141,21 @@ A face built with any plugin define gets one more row at the foot of its setting
 * **Plugins Off.** When the phone lists no plugins at all, the panel opens on a line saying to turn plugins on in the Pebble app under Settings, Plugins, or to update the Pebble app.
 
 The panel's headings are in [`directory.ts`](../../src/ts/plugin-sources/directory.ts), and the plugins it knows are in [`known-plugins.json`](../../src/known-plugins.json), which the table below is written from. A kind a plugin serves that the panel has no heading for, such as `finance/crypto`, is left off the panel.
+
+**The Face's Own Wording.** The notes and the panel say "this face", so they read right on a watchface and a watchapp alike. A face that wants other words passes `pluginTexts` to `startPebbleApp`, with any of a kind's texts under its name in the providers list, and the panel's `title` and `intro` under `panel`. Each text it names takes the place of the framework's own for that kind, and a text left out keeps it:
+
+```ts
+startPebbleApp({
+  clayConfig,
+  features: [weather],
+  pluginTexts: {
+    weather: { permissionDenied: "My Face needs Location to read the Pebble app's weather. Allow it in the Pebble app." },
+    panel: { title: 'Plugins My Face Supports' },
+  },
+});
+```
+
+A kind's texts are `notStandard` and `notStandardNoSelect`, which take the plugin's name, and `permissionDenied`, `empty`, `source`, `noPlugin`, and `notInstalledLabel`, as `PluginSourceTexts` in [`page.ts`](../../src/ts/plugin-sources/page.ts) describes. A face that gives `notStandard` and no `notStandardNoSelect` gets its line on a page with no source select too. The weather's line on coordinates joins whichever source line wins, the face's own included. `{panel}` in a text stands for the panel's title as it reads, the face's own included, which is how the stock line for no plugin points the wearer at the panel. `faceStart` keeps the wording where every plugin source page reads it, so the phone, the build's own page load, and `clay-preview` all open the page in the face's words.
 
 ### Supported Plugins
 

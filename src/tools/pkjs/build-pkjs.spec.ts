@@ -26,7 +26,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, test, expect } from 'vitest';
-import { PKJS_BASE_TSCONFIG, bundledProviders, copyIcalJs, faceProvidersSource, facePaths, fillEmit, findGenerated, pluginIndexSource, refuseDirectPluginImports, requires, writeGeneratedEntries, writeTsconfig } from './build-pkjs';
+import { PKJS_BASE_TSCONFIG, appNameSource, bundledProviders, copyIcalJs, faceProvidersSource, facePaths, fillEmit, findGenerated, pluginIndexSource, refuseDirectPluginImports, requires, writeGeneratedEntries, writeTsconfig } from './build-pkjs';
 import type { FacePaths } from './build-pkjs';
 import { PLUGIN_KINDS, pluginKindsOn } from '../manifest/plugin-kinds';
 import * as pluginEntry from '../../ts/plugin-sources/index';
@@ -46,6 +46,7 @@ const FIXTURE_PATHS: FacePaths = {
   icaljsTo: path.join(FIXTURE, 'targets', 'face', 'emit', 'ts', 'calendar', 'icaljs.js'),
   pluginSources: path.join(FIXTURE, 'targets', 'face', 'emit', 'ts', 'plugin-sources'),
   faceProviders: path.join(FIXTURE, 'targets', 'face', 'emit', 'ts', 'face-providers'),
+  appName: path.join(FIXTURE, 'targets', 'face', 'emit', 'ts', 'app-name'),
   tsconfig: path.join(FIXTURE, 'targets', 'face', 'tsconfig.pkjs.json'),
   skipDir: path.join(FIXTURE_SRC, 'clay', 'builder'),
 };
@@ -208,6 +209,7 @@ describe('the entries step', () => {
       icaljsTo: path.join(emit, 'paf', 'ts', 'calendar', 'icaljs.js'),
       pluginSources: path.join(emit, 'paf', 'ts', 'plugin-sources'),
       faceProviders: path.join(emit, 'paf', 'ts', 'face-providers'),
+      appName: path.join(emit, 'paf', 'ts', 'app-name'),
     };
   }
 
@@ -342,6 +344,56 @@ describe('the entries step', () => {
       const result = writeGeneratedEntries(paths, { PLUGIN_WEATHER: 1 }, { weather: ['plugin', 'openmeteo'], stocks: ['yahoo'], calendarHosts: ['google.com'] }).providers;
 
       expect(result).toEqual(['weather plugin and openmeteo', 'stocks yahoo']);
+    });
+  });
+
+  describe('the app name entry', () => {
+    /** Runs a written app name entry the way the phone does and gives back what it exports. */
+    function runEntry(source: string): unknown {
+      const exports: Record<string, unknown> = {};
+      const load = new Function('exports', 'require', source);
+
+      load(exports, () => undefined);
+
+      return exports.appName;
+    }
+
+    /** The page heading reads this name, so the entry has to hand it over exactly as the appinfo spells it. */
+    test('hands over the display name as written', () => {
+      const source = appNameSource('My "Face" \\ 2');
+
+      const result = runEntry(source);
+
+      expect(result).toBe('My "Face" \\ 2');
+    });
+
+    /** An older JS engine reads a bare line separator as the end of the line, which would stop the whole phone bundle loading. */
+    test('escapes the two line separators JSON leaves bare', () => {
+      const source = appNameSource('One\u2028Two\u2029Three');
+
+      const result = [source.includes('\u2028') || source.includes('\u2029'), runEntry(source)];
+
+      expect(result).toEqual([false, 'One\u2028Two\u2029Three']);
+    });
+
+    /** A face with no display name gets the plain heading, so the entry has to say there is none rather than an empty title. */
+    test('hands over null for a face with no display name', () => {
+      const source = appNameSource(null);
+
+      const result = runEntry(source);
+
+      expect(result).toBeNull();
+    });
+
+    /** The build writes the entry beside the other generated ones, or the page keeps tsc's null and every face is titled Settings. */
+    test('is written into the emit tree with the face\'s name', () => {
+      const paths = compiledTarget('face');
+
+      writeGeneratedEntries(paths, {}, {}, 'My Face');
+
+      const result = runEntry(fs.readFileSync(path.join(paths.appName, 'index.js'), 'utf8'));
+
+      expect(result).toBe('My Face');
     });
   });
 

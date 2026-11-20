@@ -499,7 +499,7 @@ function readCalendar(value: unknown, where: Where): EventSeed[] {
  * @param value The block as the file holds it.
  * @param clockMinute The pinned clock as minutes past midnight, which the HRV log has to end by.
  * @param file The file as a message names it.
- * @param owner `gridlock's ` for a face's entry, or empty for the top of the file.
+ * @param owner `face-a's ` for a face's entry, or empty for the top of the file.
  * @return Each store the block seeds, and null for each it leaves to the fixture.
  */
 export function readStores(value: unknown, clockMinute: number, file: string, owner: string): DevStores {

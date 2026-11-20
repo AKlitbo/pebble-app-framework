@@ -4,7 +4,7 @@
  * Renders frame/<name>~<platform>.html in Firefox at a supersampled deviceScaleFactor, strips the
  * live readouts (the app draws those at runtime), then resizes to the platform's native
  * screen size with a lanczos3 kernel and writes a PNG. Firefox rather than Chromium, because
- * Chromium clips pseudo-elements drawn at z-index:-1, which carve-outs such as the LCARS elbows
+ * Chromium clips pseudo-elements drawn at z-index:-1, which corner cut-outs
  * rely on.
  *
  * A frame is baked once for each platform the face's appinfo targets, since the screens differ in
@@ -15,9 +15,9 @@
  * The build does not bake frames. The PNGs under resources/images/ are committed. Run this
  * by hand to re-bake one during design:
  *   paf gen <face> background                    the default frame of a face without themes
- *   paf gen <face> background --frame voyager    one frame
+ *   paf gen <face> background --frame night    one frame
  *   paf gen <face> background --theme mono       one theme of a face with themes
- *   paf gen <face> background --frame voyager --scale 4 --out resources/images/preview.png
+ *   paf gen <face> background --frame night --scale 4 --out resources/images/preview.png
  *
  * --frame and --theme each take a name or all. all bakes every one the face has, and where the face
  * has only the one frame, or no themes, it bakes what there is. paf gen <face> all passes --frame all
@@ -747,7 +747,7 @@ async function main(): Promise<void> {
 
           // visibility rather than display so the box still takes up its space
           // it also takes the element's ::before and ::after along with it
-          // which is where a frame often keeps its decorations, such as the LCARS end notches
+          // which is where a frame often keeps its decorations, such as its corner cut-outs
           if (unpaint) {
             document.querySelectorAll(unpaint).forEach((el) => {
               (el as HTMLElement).style.visibility = 'hidden';

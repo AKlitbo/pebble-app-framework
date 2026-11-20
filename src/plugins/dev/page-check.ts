@@ -254,20 +254,20 @@ const OPEN_METEO_LINE = 'Open-Meteo needs no key, so this face asks for none.';
 // the weather feature's own words for its rows, from WEATHER_TEXTS in ts/plugin-sources/weather.ts
 // and PLUGINS_OFF_TEXT in ts/plugin-sources/page.ts. the check runs under plain node, which cannot
 // load those files, so they are copied here and the spec beside this file checks the copies match
-export const NOT_STANDARD_TEXT = '<img src=x onerror=alert(1)> sends weather this watchface cannot read. Pick another weather plugin under Preferred Sources in the Pebble app, or another data source here.';
+export const NOT_STANDARD_TEXT = '<img src=x onerror=alert(1)> sends weather this face cannot read. Pick another weather plugin under Preferred Sources in the Pebble app, or another data source here.';
 
 // a plugin name holding the dollar sign patterns Clay's plain string replace reads, and the
 // not-standard note it gets
 export const DOLLAR_NAME = 'Rain$\'Check $$SETTINGS$$';
-export const DOLLAR_NOT_STANDARD_TEXT = 'Rain$\'Check $$SETTINGS$$ sends weather this watchface cannot read. Pick another weather plugin under Preferred Sources in the Pebble app, or another data source here.';
-export const PERMISSION_TEXT = 'This watchface needs Location to read the Pebble app\'s weather. Allow it for this watchface in the Pebble app.';
+export const DOLLAR_NOT_STANDARD_TEXT = 'Rain$\'Check $$SETTINGS$$ sends weather this face cannot read. Pick another weather plugin under Preferred Sources in the Pebble app, or another data source here.';
+export const PERMISSION_TEXT = 'This face needs Location to read the Pebble app\'s weather. Allow it for this face in the Pebble app.';
 export const SOURCE_TEXT = 'Your watch shows the weather for the first location in the Pebble app\'s weather settings.';
 export const COORDS_TEXT = 'The coordinates show only from a weather plugin that serves them.';
 export const PLUGINS_OFF_TEXT = 'The Pebble app is not offering this source right now. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
 
 // the supported plugins panel's own words, from ts/plugin-sources/panel.ts, copied for the same
 // reason and checked by the same spec
-export const PANEL_TITLE = 'Plugins This Watchface Supports';
+export const PANEL_TITLE = 'Plugins This Face Supports';
 export const PANEL_OFF_TEXT = 'The Pebble app is not offering any plugins right now. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
 export const BUILT_IN_TAG = 'Built Into the Pebble App';
 export const INSTALLED_TAG = 'Installed';
@@ -303,8 +303,8 @@ export const FACE_CODE_MARK = 'body[data-face-page-code="after"]';
 
 // the calendar feature's own words for its rows, from CALENDAR_TEXTS in ts/plugin-sources/calendar.ts,
 // copied for the same reason and checked by the same spec
-export const CALENDAR_NOT_STANDARD_TEXT = 'Odd Calendar sends events this watchface cannot read. Pick another calendar plugin under Preferred Sources in the Pebble app, or use an iCal link here.';
-export const CALENDAR_PERMISSION_TEXT = 'This watchface needs Calendar to read the Pebble app\'s events. Allow it for this watchface in the Pebble app.';
+export const CALENDAR_NOT_STANDARD_TEXT = 'Odd Calendar sends events this face cannot read. Pick another calendar plugin under Preferred Sources in the Pebble app, or use an iCal link here.';
+export const CALENDAR_PERMISSION_TEXT = 'This face needs Calendar to read the Pebble app\'s events. Allow it for this face in the Pebble app.';
 export const CALENDAR_EMPTY_TEXT = 'If events are missing, the Pebble app may need permission to read your phone\'s calendars, or those calendars may be switched off in the Pebble app\'s calendar settings.';
 export const CALENDAR_SOURCE_TEXT = 'Your watch shows the events from the calendars on your phone, the ones switched on in the Pebble app\'s calendar settings.';
 
@@ -322,14 +322,14 @@ const SELECT_PLACE = { textsAbove: [{ text: CALENDAR_LEAD, key: 'CALENDAR_SOURCE
 // the now playing and phone battery notes, from MUSIC_TEXTS in ts/plugin-sources/music.ts and
 // PHONE_TEXTS in ts/plugin-sources/phone.ts, copied for the same reason and checked by the same spec
 export const MUSIC_NO_PLUGIN_TEXT = 'Now playing needs a music plugin. The Pebble app has one built in on Android. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
-export const MUSIC_PERMISSION_TEXT = 'This watchface needs Music to show what your phone is playing. Allow it for this watchface in the Pebble app.';
-export const MUSIC_NOT_STANDARD_TEXT = 'Odd Music sends music this watchface cannot read. Pick another music plugin under Preferred Sources in the Pebble app.';
+export const MUSIC_PERMISSION_TEXT = 'This face needs Music to show what your phone is playing. Allow it for this face in the Pebble app.';
+export const MUSIC_NOT_STANDARD_TEXT = 'Odd Music sends music this face cannot read. Pick another music plugin under Preferred Sources in the Pebble app.';
 export const PHONE_NO_PLUGIN_TEXT = 'Phone battery comes from the Phone plugin built into the Pebble app. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
 
 // the stock notes, from STOCK_TEXTS in ts/plugin-sources/stocks.ts, copied for the same reason and
 // checked by the same spec
 export const STOCK_SOURCE_TEXT = 'Your watch shows the first 4 tickers your stock plugin sends, the ones set up in that plugin\'s own settings in the Pebble app.';
-export const STOCK_NO_PLUGIN_TEXT = 'This watchface needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under Plugins This Watchface Supports, then pick it under Preferred Sources in the Pebble app.';
+export const STOCK_NO_PLUGIN_TEXT = 'This face needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under Plugins This Face Supports, then pick it under Preferred Sources in the Pebble app.';
 
 // the panel's stock plugins on a phone that lists the stock fixture plugin
 const PANEL_STOCKS = { label: 'Stocks', plugins: [{ name: 'Stocks', tag: 'v1.0.4', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', tag: 'v1.0.1', listing: STOCKS_CRYPTO_LISTING }, { name: 'My Stocks', tag: 'Installed' }] };

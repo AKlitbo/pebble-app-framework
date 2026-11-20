@@ -162,12 +162,12 @@ export function stockErrorStatus(code: string | null | undefined): string | unde
  * with plugins off still gets the line saying to turn them on, from the page and the panel.
  */
 export const STOCK_TEXTS: PluginSourceTexts = {
-  notStandard: (pluginName) => `${pluginName} sends quotes this watchface cannot read. Pick another stock plugin under Preferred Sources in the Pebble app, or another data source here.`,
-  notStandardNoSelect: (pluginName) => `${pluginName} sends quotes this watchface cannot read. Pick another stock plugin under Preferred Sources in the Pebble app.`,
-  permissionDenied: 'The Pebble app is not letting this watchface read its stock plugin. Allow it for this watchface in the Pebble app.',
+  notStandard: (pluginName) => `${pluginName} sends quotes this face cannot read. Pick another stock plugin under Preferred Sources in the Pebble app, or another data source here.`,
+  notStandardNoSelect: (pluginName) => `${pluginName} sends quotes this face cannot read. Pick another stock plugin under Preferred Sources in the Pebble app.`,
+  permissionDenied: 'The Pebble app is not letting this face read its stock plugin. Allow it for this face in the Pebble app.',
   empty: 'Your stock plugin sent no quotes last time. The phone may have been offline, or the plugin may have no tickers set up in its own settings in the Pebble app.',
   source: `Your watch shows the first ${wire.STOCK_SLOTS_MAX} tickers your stock plugin sends, the ones set up in that plugin's own settings in the Pebble app.`,
-  noPlugin: 'This watchface needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under Plugins This Watchface Supports, then pick it under Preferred Sources in the Pebble app.',
+  noPlugin: 'This face needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under {panel}, then pick it under Preferred Sources in the Pebble app.',
   notInstalledLabel: 'Pebble App: Preferred Source (No Stock Plugin)',
 };
 

@@ -18,7 +18,7 @@ appmessage_open(4096);
 
 `settings_init` has to come first, because the outbox is sized from the settings table.
 
-**The Outbox Sizes Itself.** The biggest message the watch ever sends is its copy of the settings: a marker saying it is a settings reply, every setting, the fresh flag, and the custom colours on a face that has them. `appmessage_open` adds those up with every text setting counted at its full buffer and every choice at four bytes, the three digits of 255 and a terminator, so no later change to a setting can outgrow the outbox. Each value costs 7 bytes of header on top of itself, so a face with fifteen settings, two of them text fields of 16 and 32 bytes, needs a little over 200 bytes. At open, the layer logs a table too big for the platform's largest outbox, and a reply that would not fit goes out empty, as [Sending, One at a Time](#sending-one-at-a-time) explains.
+**The Outbox Sizes Itself.** The biggest message the watch ever sends is its copy of the settings: a marker saying it is a settings reply, every setting, the fresh flag, and the long text setting on a face that sets one. `appmessage_open` adds those up with every text setting counted at its full buffer and every choice at four bytes, the three digits of 255 and a terminator, so no later change to a setting can outgrow the outbox. Each value costs 7 bytes of header on top of itself, so a face with fifteen settings, two of them text fields of 16 and 32 bytes, needs a little over 200 bytes. At open, the layer logs a table too big for the platform's largest outbox, and a reply that would not fit goes out empty, as [Sending, One at a Time](#sending-one-at-a-time) explains.
 
 **The Inbox Is the Face's to Size.** The biggest message in is a save from the settings page, and Clay puts every key on the page in it, including keys the watch never reads. Only the face knows what its page holds, so it passes the number. Both buffers come off the app's heap, so the inbox is not opened at the platform's largest. Every byte of inbox the face does not need is heap it cannot use for anything else. The number is pinned between the SDK's smallest and largest inbox. Each key on the page costs 7 bytes of header plus its longest value, and the sum is the number to pass. A save bigger than the inbox is dropped whole, and the watch only logs `Message dropped`, so a face adding settings keeps the number in step.
 
@@ -65,6 +65,17 @@ Each part of a message has one handler slot, set with an `appmessage_on_*` call,
 **Only for the Length of the Call.** Everything a handler is given points into the inbox, which the SDK reuses for the next message. A handler copies whatever it keeps. The stock and calendar strips go over raw because each store owns its format and decodes it itself, which [The Message Formats](message-formats.md) covers.
 
 **Work for the End of a Message.** One message can reach a store through more than one handler, such as a unit change landing beside the weather. A store adds a function with `appmessage_add_inbox_complete`, and the layer runs it once after the whole message, so the store can redraw and save once. [The Weather Store](weather-store.md#one-redraw-and-one-save-per-message) shows it in use. Unlike the handler slots, this is a list, so several stores can each add one. It holds four, runs them in the order they were added, ignores a function added twice, and logs an error if a fifth is turned away. The list itself is a small fixed array its owner provides, so nothing is allocated.
+
+**A Text Too Long for the Settings.** A settings struct holds at most 256 bytes, so a face with one text setting that can run longer, such as a packed list of colours, keeps it in storage of its own and hands the layer its key with `appmessage_set_long_text`:
+
+```c
+appmessage_set_long_text(MESSAGE_KEY_APPEARANCE_PALETTE, 400, palette_write, palette_store);
+appmessage_open(4096);
+```
+
+The face names the key, the most bytes the text takes with its end, a provider that writes the text it holds, and a receiver that stores a new one. The page sends the text with every save, so the layer asks the provider for the text the face holds and hands the receiver only one that differs from it. Only as much as the cap holds is compared, and an unchanged save moves nothing. The settings reply carries the provider's text, so the page reopens on it. Each compare and each reply has the provider write into a stack buffer of the cap's size for that moment alone, so the cap is held to `LONG_TEXT_CAP_MAX`, 1024 bytes.
+
+**What the Layer Refuses.** The outbox counts the text at its cap, so the call has to come before `appmessage_open`, and one after it is logged and refused. A call missing the provider or the receiver is refused too, since without the provider every save would count as a change, and without the receiver nothing would keep the text. At open, a text the outbox cannot hold beside the rest of the settings reply, or the inbox cannot hold on its own, is logged and left out, since it would send every reply empty or drop every save. A later call replaces the setting, and [`long_text.h`](../../src/c/pebble/io/long_text.h) holds the deciding.
 
 ## Sending, One at a Time
 

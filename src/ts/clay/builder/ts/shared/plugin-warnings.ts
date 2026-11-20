@@ -118,7 +118,7 @@ export function pluginWarnings(panels: string[], panelKinds: Partial<Record<stri
   return warnings;
 }
 
-/** The panels' names as a sentence's subject, such as "Stock and Watchlist". */
+/** The panels' names as a sentence's subject, such as "Stock and Weather". */
 function nameList(panels: string[]): string {
   if (panels.length < 3) {
     return panels.join(' and ');

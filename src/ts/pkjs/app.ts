@@ -30,8 +30,10 @@ import { getConfig, readValue } from './settings-store';
 import { addProviderKeys, fileSavedRows, forgetOwners, hasKeyRows, keysForOpen, loadProviderKeys, mergeProviderKeys, recordOwners, saveProviderKeys, takePageKeys } from './provider-keys';
 import { WIRE_CAPS } from './wire';
 import { faceProviders } from '../face-providers';
+import { keepPluginTexts } from './plugin-texts';
 import type { Feature, FeatureHooks, ProviderLists } from './feature';
 import type { FaceProviders } from '../face-providers/narrow';
+import type { PluginTextOverrides } from '../plugin-sources/page';
 import type { ClayConfigItem } from '../clay/types';
 
 /** The options a face hands startPebbleApp. */
@@ -45,6 +47,12 @@ export interface StartOptions {
   customClay?: unknown;
   // the parts of the runtime only some faces use, such as weather, stocks, and the calendar
   features?: Feature[];
+  /**
+   * The face's own wording for the plugin rows and the supported plugins panel, by kind as the
+   * providers list names it, such as `{ weather: { permissionDenied: '...' }, panel: { title: '...' } }`.
+   * Each text it names takes the place of the framework's own, and a text left out keeps it.
+   */
+  pluginTexts?: PluginTextOverrides;
 }
 
 // how long after the config page closes a changed setting waits to refetch
@@ -828,6 +836,10 @@ export interface FaceStart {
  * @return The options to start with, the defaults, the lists for the features, and the providers' hooks.
  */
 export function faceStart(options: StartOptions, providers: FaceProviders | null = faceProviders): FaceStart {
+  // every plugin source page reads the face's wording from where this keeps it, and the phone, the
+  // build's page load, and clay-preview all start the face here
+  keepPluginTexts(options.pluginTexts);
+
   // a previews function comes off the page before anything reads it, so no page built from it, and
   // no Clay, ever holds one. a face with none keeps its own options
   const taken = takePreviewLoaders(options.clayConfig);

@@ -154,7 +154,7 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
     // a face that shows coordinates asks for the place's too, and its source note says only some
     // plugins serve them. with one that serves none its coordinate readouts show no fix
     const properties = [...mapping.properties(fields, wantForecast), ...(controls.withCoords ? ['latitude', 'longitude'] : [])];
-    const texts = controls.withCoords && mapping.coordsText ? { ...mapping.texts, source: [mapping.texts.source, mapping.coordsText].filter(Boolean).join(' ') } : mapping.texts;
+    const sourceExtra = controls.withCoords ? mapping.coordsText : undefined;
 
     // a save is told apart by which of these moved. the provider switches between the plugin and a
     // fetch, the unit converts the kept update again, and the rest only mean something to a fetch
@@ -423,7 +423,8 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
         messageKeys,
         state: subscription.state(),
         standard: WEATHER_STANDARD,
-        texts,
+        texts: mapping.texts,
+        sourceExtra,
         panel: true,
       });
 
@@ -438,7 +439,8 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       messageKeys,
       state: subscription.state(),
       standard: WEATHER_STANDARD,
-      texts,
+      texts: mapping.texts,
+      sourceExtra,
       panel: true,
       saved: readValue(getConfig().WEATHER_PROVIDER, undefined),
       pluginByDefault: freshPlugin(getConfig(), 'WEATHER_PROVIDER', () => choice.serves()),

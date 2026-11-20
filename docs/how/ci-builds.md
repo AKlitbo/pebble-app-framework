@@ -16,9 +16,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { face: radar-array, unit: watchfaces/radar-array }
-          - { face: gridlock, unit: watchfaces/mosaic }
-          - { face: ridgeline, unit: watchfaces/sketchbook }
+          - { face: face-c, unit: watchfaces/face-c }
+          - { face: face-a, unit: watchfaces/my-family }
+          - { face: face-b, unit: watchfaces/my-family }
     steps:
       - uses: actions/checkout@v7
 
@@ -44,11 +44,11 @@ jobs:
 
 The steps run in this order because each reads what the one before it left. The sync fills the unit's `paf/` and `node_modules`. `setup-pebble` reads the toolchain out of that `paf/`. `paf build` needs both, and the upload needs the build's output.
 
-**One Job per Face.** `fail-fast: false` keeps a face that breaks from cancelling the rest, so every other face still builds and uploads its `.pbw`. Each face is a matrix entry of its own, even when several share a unit, such as Gridlock and Sidereel in Mosaic. Faces sharing a unit each fill it again in their own job, and in return a failure shows on the job named for the face that broke.
+**One Job per Face.** `fail-fast: false` keeps a face that breaks from cancelling the rest, so every other face still builds and uploads its `.pbw`. Each face is a matrix entry of its own, even when several share a unit, such as `face-a` and `face-b` in `my-family`. Faces sharing a unit each fill it again in their own job, and in return a failure shows on the job named for the face that broke.
 
 **The Unit Column.** The build writes into the `targets/` folder of the unit the face builds from, so the upload path needs the unit's folder. Nothing else reads it. A repo that is one face or one family builds into `targets/` at its root and can leave the column out.
 
-**Every Target the Face Builds.** The `face*` in the path picks up each target's sandbox, so a face that builds a watchface and a watchapp from one source, such as Gridlock's `gridlock-face` and `gridlock-app`, uploads both. `if-no-files-found: error` fails the job when the build left nothing to upload.
+**Every Target the Face Builds.** The `face*` in the path picks up each target's sandbox, so a face that builds a watchface and a watchapp from one source, such as `my-face-watchface` and `my-face-app`, uploads both. `if-no-files-found: error` fails the job when the build left nothing to upload.
 
 **Piped through `tee`.** The log is kept for `report-memory`, as [What report-memory Reads](ci-memory.md#what-report-memory-reads) covers. A plugin app gets no memory report, since it runs on the phone and links no watch binary. `report-memory` says so in one line and uploads no rows for it. `shell: bash` runs the step with `pipefail`, so a build that fails still fails the step rather than passing on `tee`'s exit code.
 

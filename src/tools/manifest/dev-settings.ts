@@ -29,7 +29,7 @@ const INT32_MIN = -(2 ** 31);
  *
  * @param value The block as the file holds it.
  * @param file The file as a message names it.
- * @param owner `gridlock's ` for a face's entry, or empty for the top of the file.
+ * @param owner `face-a's ` for a face's entry, or empty for the top of the file.
  * @param field Where the block sits, such as `settings` or `walks.presets.steps[2].settings`.
  * @return Each setting's value by its message key.
  */

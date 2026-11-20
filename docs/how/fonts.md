@@ -60,7 +60,7 @@ A face that lets the wearer pick a font swaps it when the setting changes:
 ```c
 static void apply_header_font(void)
 {
-    fonts_swap(FONT_HEADER, header_font_resource(settings_u8(SETTING_HEADER_FONT)));
+    fonts_swap(FONT_HEADER, header_font_resource(s_settings.header_font));
 }
 ```
 

@@ -364,6 +364,19 @@ describe('KNOWN_FIELDS', () => {
     throw new Error(`no enum in the headers holds ${name}`);
   }
 
+  /**
+   * The header font is a face's own field, so the build holds it to no shared entry. A face that moved
+   * its font onto a field of its own still needs the page's count and default written, or its
+   * SETTINGS_COUNT_CHECKED and SETTINGS_DEFAULT stop the build.
+   */
+  test('writes the header font\'s count and default as a face\'s own key', () => {
+    const page = [{ ...select('APPEARANCE_HEADER_FONT', [0, 1, 2, 3, 4, 5, 6, 7]), defaultValue: 0 }];
+
+    const result = ['APPEARANCE_HEADER_FONT' in KNOWN_FIELDS, choiceCounts(page).APPEARANCE_HEADER_FONT, pageDefaults([page]).APPEARANCE_HEADER_FONT];
+
+    expect(result).toEqual([false, 8, '0']);
+  });
+
   /** Each KNOWN_* macro's message key, the field its default goes in, a text field's size, and a count the framework sets, read from the catalog. */
   function catalogFields(): Record<string, KnownField> {
     const catalog = fs.readFileSync(path.join(ENGINE, 'c', 'pebble', 'system', 'settings', 'settings_catalog.h'), 'utf8');

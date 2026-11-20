@@ -273,7 +273,7 @@ bool health_store_hrv_measuring(void);
 const HrvLog *health_store_hrv_log(void);
 
 /**
- * @brief One of the latest HRV bursts as a tuning panel shows it, dropped ones included, newest
+ * @brief One of the latest HRV bursts, for a readout that shows each burst, dropped ones included, newest
  * first. Kept in memory only, so a face starts each launch with none.
  *
  * @param back 0 for the newest.

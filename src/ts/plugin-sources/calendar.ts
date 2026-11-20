@@ -166,9 +166,9 @@ export const CALENDAR_SOURCE_SELECT: ClayConfigItem = {
  * providers list is the plugin alone they always show, and the one for no plugin joins them.
  */
 export const CALENDAR_TEXTS: PluginSourceTexts = {
-  notStandard: (pluginName) => `${pluginName} sends events this watchface cannot read. Pick another calendar plugin under Preferred Sources in the Pebble app, or use an iCal link here.`,
-  notStandardNoSelect: (pluginName) => `${pluginName} sends events this watchface cannot read. Pick another calendar plugin under Preferred Sources in the Pebble app.`,
-  permissionDenied: 'This watchface needs Calendar to read the Pebble app\'s events. Allow it for this watchface in the Pebble app.',
+  notStandard: (pluginName) => `${pluginName} sends events this face cannot read. Pick another calendar plugin under Preferred Sources in the Pebble app, or use an iCal link here.`,
+  notStandardNoSelect: (pluginName) => `${pluginName} sends events this face cannot read. Pick another calendar plugin under Preferred Sources in the Pebble app.`,
+  permissionDenied: 'This face needs Calendar to read the Pebble app\'s events. Allow it for this face in the Pebble app.',
   empty: 'If events are missing, the Pebble app may need permission to read your phone\'s calendars, or those calendars may be switched off in the Pebble app\'s calendar settings.',
   source: 'Your watch shows the events from the calendars on your phone, the ones switched on in the Pebble app\'s calendar settings.',
   noPlugin: PLUGINS_OFF_TEXT,

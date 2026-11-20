@@ -99,7 +99,7 @@ export function parseThumbnailArgs(args: string[]): ThumbnailArgs {
   const [face, ...rest] = args;
 
   if (!face || face.startsWith('-')) {
-    throw new ToolError('no face given. Pass it first, as in paf tool gridlock thumbnails --target=gridlock-face');
+    throw new ToolError('no face given. Pass it first, as in paf tool my-face thumbnails --target=my-face-app');
   }
 
   parsed.face = face;

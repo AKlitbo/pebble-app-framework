@@ -248,12 +248,12 @@ A dev build whose walk needs a hook the face does not define stops at the link, 
 ```json
 {
   "panels": {
-    "include": "engine/catalog.h",
+    "include": "panels.h",
     "sizes": {
-      "1x2": { "id": "MSIZE_1x2", "crop": { "left": 4, "top": 94, "width": 94, "height": 40 } },
-      "2x2": { "id": "MSIZE_2x2", "crop": { "left": 4, "top": 72, "width": 94, "height": 83 } }
+      "1x2": { "id": "SIZE_SMALL", "crop": { "left": 0, "top": 100, "width": 100, "height": 40 } },
+      "2x2": { "id": "SIZE_LARGE", "crop": { "left": 0, "top": 60, "width": 100, "height": 80 } }
     },
-    "ids": { "phone-battery": "MOD_SYSTEM_PHONE_BATTERY", "battery-battery": "MOD_SYSTEM_BATTERY_PAIR" }
+    "ids": { "phone-battery": "PANEL_PHONE_BATTERY", "battery-battery": "PANEL_BATTERY_PAIR" }
   }
 }
 ```
@@ -264,7 +264,7 @@ An id is a whole number or a C name, and `include` names the header the C names 
 
 ## Previewing the Settings Page
 
-`clay-preview` builds a face's real settings page into `paf/plugins/dev/clay-preview.html`, a plain HTML file a desktop browser opens. It compiles the face's phone code into its build sandbox the way the build does, and fills the sandbox the way the build fills it: the committed `*.g.js` components, ical.js for a face that uses the calendar, the plugin sources entry written from the face's defines, and the face providers entry written from its `providers` list. It runs the build's own step for this, so a face whose own code requires a file in the framework's `plugin-sources/` or `face-providers/` other than its index stops the preview, as it stops the face's real build, and so does a `providers` list the build would refuse. Then it loads the face's own `src/pkjs/index.ts` with `startPebbleApp` swapped for a stand-in that only records what the face hands it. The page, the components, `customClay`, and the features all come from there. The page goes through `faceStart` and then `createClay` in the framework's `ts/pkjs/app.ts`, the same calls `startPebbleApp` builds the phone's page with, so a face that lists providers previews its page narrowed to them, as [Offering Fewer Providers](settings-page.md#offering-fewer-providers) covers. A face with no `src/pkjs/index.ts` of its own stops with a line saying so, and so does one whose `index.ts` never calls `startPebbleApp`. It needs Node and nothing from the Pebble SDK.
+`clay-preview` builds a face's real settings page into `paf/plugins/dev/clay-preview.html`, a plain HTML file a desktop browser opens. It compiles the face's phone code into its build sandbox the way the build does, and fills the sandbox the way the build fills it: the committed `*.g.js` components, ical.js for a face that uses the calendar, the plugin sources entry written from the face's defines, the face providers entry written from its `providers` list, and the app name entry written from its `displayName`, which the page heading shows. It runs the build's own step for this, so a face whose own code requires a file in the framework's `plugin-sources/` or `face-providers/` other than its index stops the preview, as it stops the face's real build, and so does a `providers` list the build would refuse. Then it loads the face's own `src/pkjs/index.ts` with `startPebbleApp` swapped for a stand-in that only records what the face hands it. The page, the components, `customClay`, and the features all come from there. The page goes through `faceStart` and then `createClay` in the framework's `ts/pkjs/app.ts`, the same calls `startPebbleApp` builds the phone's page with, so a face that lists providers previews its page narrowed to them, as [Offering Fewer Providers](settings-page.md#offering-fewer-providers) covers. A face with no `src/pkjs/index.ts` of its own stops with a line saying so, and so does one whose `index.ts` never calls `startPebbleApp`. It needs Node and nothing from the Pebble SDK.
 
 **The Build's Own Loader.** The loading is the framework's settings page loader, [`settings-page.ts`](../../src/tools/pkjs/settings-page.ts) under `src/tools/pkjs/`, which `paf build` also runs on every build to count the page's choices and read its defaults for the watch, as [Counts from the Settings Page](settings-on-the-watch.md#counts-from-the-settings-page) covers. So a page that loads in the preview loads in the build, and one whose loading stops the build stops the preview with the same line. The checks the build makes once the page has loaded, such as a control on a key the appinfo does not declare or a `customClay` written as an arrow, run in the build alone, so the preview still opens a page the build refuses, which shows what to fix. The build always starts the features, as the phone does, while the preview starts them only on a face with a plugin define, below.
 

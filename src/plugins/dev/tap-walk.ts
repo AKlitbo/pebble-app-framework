@@ -12,7 +12,7 @@
  *
  * The face comes first. The walk uses whatever is running on the emulator, and --install puts the
  * face's latest build there first. A face that ships several targets builds each in a sandbox of its
- * own, such as gridlock-face and gridlock-app, so --target picks the one --install installs.
+ * own, such as my-face-watchface and my-face-app, so --target picks the one --install installs.
  * Building is left to paf build, which knows when a clean build is needed, so a face is built with
  * paf build <face> --dev before --install puts it on the emulator.
  *
@@ -137,7 +137,7 @@ export function parseTapWalkArgs(args: string[]): TapWalkArgs {
   const [face, ...rest] = args;
 
   if (!face || face.startsWith('-')) {
-    throw new ToolError('no face given. Pass it first, as in paf tool ridgeline tap-walk, or paf tool gridlock tap-walk --install --target=gridlock-face');
+    throw new ToolError('no face given. Pass it first, as in paf tool my-face tap-walk, or paf tool my-face tap-walk --install --target=my-face-app');
   }
 
   parsed.face = face;

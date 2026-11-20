@@ -1,6 +1,6 @@
 /**
  * Looks up a module's real panel screenshot. Thumbnails come in keyed by the
- * module's label then by size, so both builders resolve a shot the same way.
+ * module's label then by size, so every builder resolves a shot the same way.
  *
  * This is a Clay builder piece. esbuild bundles it into a component's
  * initialize, which runs in the config webview, so it sticks to browser APIs.

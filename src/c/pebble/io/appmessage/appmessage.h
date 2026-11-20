@@ -9,6 +9,7 @@
 #pragma once
 #include <pebble.h>
 
+#include "io/long_text.h"
 #include "weather/weather_reading.h"
 
 /**
@@ -111,30 +112,6 @@ typedef void (*MusicNoPluginHandler)(bool no_plugin);
  */
 typedef void (*MusicArtHandler)(const uint8_t *buf, uint16_t len);
 
-// the custom-colours string can be too big for one persist key, so it rides its own handler
-// instead of the settings table. inbound the face splits it and stores it. outbound the
-// provider rebuilds it into the buffer appmessage hands over, so nobody keeps a worst-case
-// buffer alive between sends
-
-/**
- * @brief Called inbound with the combined custom-colours string, for the face to split and store.
- *
- * @param combined The combined string, such as "3 colours | flags".
- */
-typedef void (*CustomColorsHandler)(const char *combined);
-
-/**
- * @brief Called outbound to rebuild the combined custom-colours string before a settings reply
- * is sent.
- *
- * @param[out] out The buffer to fill.
- * @param n The size of @p out.
- */
-typedef void (*CustomColorsProvider)(char *out, size_t n);
-
-/// Worst case combined custom-colours string. Two persist-key-sized halves plus the bar and the NUL
-#define APPMESSAGE_CUSTOM_COLORS_MAX 502
-
 /**
  * @brief Called once after every inbox message is fully handled.
  *
@@ -155,8 +132,35 @@ void appmessage_on_phone_battery(PhoneBatteryHandler cb);        /**< @brief The
 void appmessage_on_music(MusicHandler cb);                       /**< @brief What the phone is playing. Does nothing on a face without the music keys */
 void appmessage_on_music_no_plugin(MusicNoPluginHandler cb);     /**< @brief Whether no plugin serves now playing, just before each music message. Does nothing on a face without the music keys */
 void appmessage_on_music_art(MusicArtHandler cb);                /**< @brief Album art. Does nothing on a face without the album art key */
-void appmessage_on_custom_colors(CustomColorsHandler cb);        /**< @brief Inbound: splits and stores the combined string */
-void appmessage_set_custom_colors_provider(CustomColorsProvider cb); /**< @brief Outbound: rebuilds the combined string */
+
+/**
+ * @brief Sets up one text setting too long for the settings blob, on a message key of the face's own.
+ *
+ * A settings field lives in a blob of at most 256 bytes, so a face keeps a longer text itself, split
+ * over as many persist keys as it needs. The phone sends it on its key with every save. The transport
+ * hands it to the receiver only when it differs from what the provider writes, so an unchanged save
+ * changes nothing, and adds the provider's text to the settings reply so the settings page reopens on
+ * it. A later call replaces the setting.
+ *
+ * Call it before appmessage_open, which sizes the outbox to hold the text at its cap. A call after that
+ * is logged and refused, and so is one missing the provider or the receiver, or with a cap past
+ * LONG_TEXT_CAP_MAX. appmessage_open also logs and leaves out a text whose cap the outbox cannot hold
+ * beside the rest of the settings reply, or the inbox cannot hold on its own. The provider writes into
+ * a stack buffer of the cap's size for the one send or compare, so nothing holds a worst case buffer
+ * between them.
+ *
+ * @code
+ * appmessage_set_long_text(MESSAGE_KEY_APPEARANCE_PALETTE, 400, palette_write, palette_store);
+ * appmessage_open(4096);
+ * @endcode
+ *
+ * @param key The `MESSAGE_KEY_*` value the text rides on, which the face declares.
+ * @param cap The most bytes the text takes, its end included, up to LONG_TEXT_CAP_MAX.
+ * @param provider Writes the text the face holds.
+ * @param receiver Stores a text that arrived.
+ */
+void appmessage_set_long_text(uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver);
+
 /**
  * @brief Adds work to run once after a whole inbound message is handled, after every channel in it.
  *

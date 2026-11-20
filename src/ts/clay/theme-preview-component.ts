@@ -83,15 +83,17 @@ export default {
     '</div>',
   ].join(''),
 
-  // the pictures sit centred in framed boxes the way the mosaic faces show a watch: a black backing
-  // and a muted border. a theme with a day and a night shot gets both, side by side. a round watch's
-  // shot is a square framebuffer with the corners outside the circle, so the box is rounded off to the
-  // circle the watch really shows. initialize sets image-rendering per shot: crisp pixels when a shot
-  // is drawn larger than its own pixels, smooth when a hi-res shot is shrunk to fit. the dropdown
-  // itself takes Clay's own select styles, which createClay registers on every page holding a picker
+  // the pictures sit centred in framed boxes, each on a backing with a border round it. a face sets
+  // --pf-preview-backing, --pf-preview-border, and --pf-preview-size in its own styles to change them,
+  // and each falls back to a black backing, a muted grey border, and 8rem. a theme with a day and a
+  // night shot gets both, side by side. a round watch's shot is a square framebuffer with the corners
+  // outside the circle, so the box is rounded off to the circle the watch really shows. initialize
+  // sets image-rendering per shot: crisp pixels when a shot is drawn larger than its own pixels, smooth
+  // when a hi-res shot is shrunk to fit. the dropdown itself takes Clay's own select styles, which
+  // createClay registers on every page holding a picker
   style: [
     '.pf-theme .pf-theme-preview { display: flex; justify-content: center; gap: 1.4rem; margin: 0.9rem 0 0.3rem; }',
-    '.pf-theme .pf-theme-img { display: block; width: 8rem; max-width: 40%; height: auto; background: #000; border: 2px solid #3d434d; }',
+    '.pf-theme .pf-theme-img { display: block; width: var(--pf-preview-size, 8rem); max-width: 40%; height: auto; background: var(--pf-preview-backing, #000); border: 2px solid var(--pf-preview-border, #3d434d); }',
     '.pf-theme .pf-theme-img.pf-theme-round { border-radius: 50%; }',
   ].join(''),
 

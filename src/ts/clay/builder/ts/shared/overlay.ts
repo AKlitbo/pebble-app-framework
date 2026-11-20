@@ -1,5 +1,5 @@
 /**
- * The one overlay pattern both builders use: a dimmed backdrop with a panel on
+ * The one overlay pattern every builder uses: a dimmed backdrop with a panel on
  * top of it, both appended straight to body so a parent transform can never
  * break the fixed centring.
  *

@@ -38,7 +38,7 @@ A `HealthSeed` pins fixed numbers and curves for screenshots, as [How the Stores
 
 **Sleep, Active Minutes, Calories, and Distance.** Each of these costs a blocking flash read every time it is asked for, which is why a face pays only for the ones it shows. Sleep and active minutes arrive in seconds, and the store turns them into minutes. Sleep is the watch's total for today.
 
-**Distance Reads 0 for No Data.** Distance gives 0 rather than -1 when there is no reading, so it cannot tell a quiet morning from Health being off. A panel tells the two apart by the step count, which is -1 with no data. The settings page's Stats Readout control can switch the steps readout to distance in miles or kilometres, and a face that offers it turns `distance` on.
+**Distance Reads 0 for No Data.** Distance gives 0 rather than -1 when there is no reading, so it cannot tell a quiet morning from Health being off. A panel tells the two apart by the step count, which is -1 with no data. The settings page's Steps Readout control can switch the steps readout to distance in miles or kilometres, and a face that offers it turns `distance` on.
 
 Before every read the store asks the watch whether the reading exists for the span, and takes the no-data value when it does not. A platform built without Pebble Health reads nothing at all, and every getter stays at its no-data value.
 

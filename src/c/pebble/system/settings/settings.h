@@ -26,7 +26,7 @@ typedef enum
     SETTING_DATE_FORMAT,               ///< The date line's format string
     SETTING_THEME,                     ///< Which theme is active
     SETTING_STEPS_MODE,                ///< Steps, miles, or km on the steps readout
-    SETTING_DISTANCE_UNIT,             ///< Km or miles on the standalone Distance panel
+    SETTING_DISTANCE_UNIT,             ///< Km or miles on a distance readout, separate from the steps readout's STEPS_MODE
     SETTING_TIME_FORMAT,               ///< Which TimeFormat the clock uses
     SETTING_BLUETOOTH_ICON,            ///< Whether the bluetooth icon shows
     SETTING_QUIET_TIME_ICON,           ///< Whether the Quiet Time mark shows
@@ -34,7 +34,6 @@ typedef enum
     SETTING_BLUETOOTH_VIBE_DISCONNECT, ///< Vibe pattern to fire when the phone drops
     SETTING_HOURLY_VIBE,               ///< Vibe pattern to fire on the hour
     SETTING_BATTERY_DISPLAY,           ///< What the battery readout shows
-    SETTING_HEADER_FONT,               ///< Which font the panel header labels use, as an index into the face's header font table
     SETTING_WIND_UNIT,                 ///< Which WindUnit a wind speed reads out in
     SETTING_GOAL_STEPS,                ///< The step goal, as an index into goals_steps
     SETTING_GOAL_DISTANCE,             ///< The distance goal, as an index into goals_distance_m

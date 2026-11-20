@@ -5,8 +5,8 @@
  * This is the only way a user gets a layout or a colour set out of the watch
  * and back in, and every failure here is silent: the box seeds with the wrong
  * string, Apply re-imports the text the user just replaced, or Copy leaves
- * whatever was on the clipboard before. The two builders hand in different
- * class sets, so the styling contract gets pinned here too.
+ * whatever was on the clipboard before. Each builder hands in its own
+ * class set, so the styling contract gets pinned here too.
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';

@@ -34,11 +34,11 @@ plugins/, or the repo root for a repo that is one face or one family. PAF_HOME m
 fetches the framework from another URL or path.
 ```
 
-The examples on this page come from two face repos. `pebble-watchface-lcars` is a single face, `lcars-stardate`, at its root. The other keeps several units under `watchfaces/`, among them the `mosaic` family with its `gridlock` and `sidereel` faces.
+The examples on this page come from two face repos. `my-face` is a single face of the same name at its root. The other keeps several units under `watchfaces/`, among them the `my-family` family with its `face-a` and `face-b` faces.
 
 ## What Every Command Shares
 
-**Naming a Unit.** Wherever a command takes `[unit]`, a face name works too and picks the unit that holds it. So `paf sync gridlock` syncs the whole `mosaic` family. Leaving the unit out runs every unit in the repo.
+**Naming a Unit.** Wherever a command takes `[unit]`, a face name works too and picks the unit that holds it. So `paf sync face-a` syncs the whole `my-family` family. Leaving the unit out runs every unit in the repo.
 
 **One Unit at a Time.** `sync`, `check`, `test`, `typecheck`, `lint`, and `format` take at most one unit, and stop when given two:
 
@@ -60,7 +60,7 @@ paf: paf status has no flag --verbose
 
 **Node.** `build`, `gen`, `check`, `tool`, `lint`, and `format` run the framework's own scripts, and refuse a Node outside the range in `paf/package.json`.
 
-**Exit Codes.** `0` when everything passed, `1` when anything failed. `gen` and `tool` exit with the code of the script they ran. A command that runs over every unit carries on past a failing one, then names each that failed, such as `sync failed in watchfaces/mosaic`. An error `paf` stops on is printed to stderr, starting `paf:`.
+**Exit Codes.** `0` when everything passed, `1` when anything failed. `gen` and `tool` exit with the code of the script they ran. A command that runs over every unit carries on past a failing one, then names each that failed, such as `sync failed in watchfaces/my-family`. An error `paf` stops on is printed to stderr, starting `paf:`.
 
 ## paf sync
 
@@ -74,8 +74,8 @@ A first sync in a fresh clone:
 
 ```
 $ paf sync
-pebble-watchface-lcars: paf/ is on v4.0.0 (4002539), 214 files
-pebble-watchface-lcars: installing node_modules, which brings the lock up to date if the framework moved
+my-face: paf/ is on v4.0.0 (4002539), 214 files
+my-face: installing node_modules, which brings the lock up to date if the framework moved
 
 added 216 packages in 2s
 ```
@@ -96,11 +96,11 @@ Shows each unit, its faces, the tag it pins, the newest framework tag paf fills,
 
 ```
 $ paf status
-UNIT                    FACES                           TAG     LATEST  STATE
-watchfaces/ide-vscode   ide-vscode                      v4.0.0  v4.0.0  ready
-watchfaces/mosaic       gridlock, sidereel              v4.0.0  v4.0.0  ready
-watchfaces/radar-array  radar-array                     v4.0.0  v4.0.0  ready
-watchfaces/sketchbook   ridgeline, shoreline, treeline  v4.0.0  v4.0.0  ready
+UNIT                     FACES                   TAG     LATEST  STATE
+watchfaces/face-c        face-c                  v4.0.0  v4.0.0  ready
+watchfaces/face-d        face-d                  v4.0.0  v4.0.0  ready
+watchfaces/my-family     face-a, face-b          v4.0.0  v4.0.0  ready
+watchfaces/other-family  face-e, face-f, face-g  v4.0.0  v4.0.0  ready
 LATEST is the newest framework tag paf fills as of the last fetch, a release when there is one, and paf sync fetches again.
 
 toolchain: SDK 4.33.1 active. v4.0.0 was built with 4.33.1
@@ -128,17 +128,17 @@ Moves one unit to another framework tag, fills its `paf/`, and installs. Naming 
 
 Before it writes anything it checks that the tag is a version tag of framework 4 or later, that the framework has it, and that it has every plugin the unit lists. Then it prints what changed between the two tags in the framework changelog: every breaking entry in full, and a count of the rest. It ends with the generators to run, since a new framework can change what they write.
 
-Moving `mosaic` to a newer tag prints this, with the parts in angle brackets filled in:
+Moving `my-family` to a newer tag prints this, with the parts in angle brackets filled in:
 
 ```
-$ paf pin mosaic latest
-mosaic: v4.0.0 to <new tag>
+$ paf pin my-family latest
+my-family: v4.0.0 to <new tag>
 Breaking
   - **Breaking:** <each breaking entry between the two tags>
 <n> other changelog entries. The full list is in paf/CHANGELOG.md once the pin moves
-then run paf gen <face> all for gridlock, sidereel
-watchfaces/mosaic: paf/ is on <new tag> (<commit>), <n> files
-watchfaces/mosaic: installing node_modules, which brings the lock up to date if the framework moved
+then run paf gen <face> all for face-a, face-b
+watchfaces/my-family: paf/ is on <new tag> (<commit>), <n> files
+watchfaces/my-family: installing node_modules, which brings the lock up to date if the framework moved
 ```
 
 Moving back to an older tag lists what is being left behind instead. A unit that pins nothing yet prints `first pin` in place of the old tag.
@@ -146,8 +146,8 @@ Moving back to an older tag lists what is being left behind instead. A unit that
 Pinning the tag a unit is already on syncs it, and takes the new commit if the tag moved since it was recorded:
 
 ```
-$ paf pin lcars-stardate latest
-pebble-watchface-lcars is already on v4.0.0
+$ paf pin my-face latest
+my-face is already on v4.0.0
 ```
 
 A unit already on a tag newer than `latest`, such as a release candidate, stays where it is with `paf pin <unit> latest`. A unit on a local framework moves off it onto the tag.
@@ -162,9 +162,9 @@ paf use <unit> pinned
 **`local`** fills a unit's `paf/` from a framework clone on disk, working tree included, so uncommitted edits reach the build. The path defaults to a `pebble-app-framework` folder beside the repo. From then on every command that readies the unit copies the clone again first, and skips the copy when nothing changed.
 
 ```
-$ paf use lcars-stardate local /home/me/src/pebble-app-framework
-pebble-watchface-lcars: paf/ is on 8b45d9e from /home/me/src/pebble-app-framework, working tree included, 214 files
-paf sync --locked refuses until paf use pebble-watchface-lcars pinned
+$ paf use my-face local /home/me/src/pebble-app-framework
+my-face: paf/ is on 8b45d9e from /home/me/src/pebble-app-framework, working tree included, 214 files
+paf sync --locked refuses until paf use my-face pinned
 ```
 
 The clone has to be framework 4 or later, with a `src/package.json` named `pebble-app-framework`. Its specs, fixtures, and the plugins the unit does not list are left out, the same as from a tag.
@@ -172,8 +172,8 @@ The clone has to be framework 4 or later, with a `src/package.json` named `pebbl
 **`pinned`** puts the unit back on its tag. If the sync refuses, the local copy stays in place.
 
 ```
-$ paf use lcars-stardate pinned
-pebble-watchface-lcars: paf/ is on v4.0.0 (4002539), 214 files
+$ paf use my-face pinned
+my-face: paf/ is on v4.0.0 (4002539), 214 files
 ```
 
 ## paf build
@@ -201,13 +201,13 @@ Before it writes the header, the script checks the page and stops with a line na
 `paf` keeps a record of what each face's last passing build was made from, in `targets/.paf-build.json`. The next build starts clean on its own when the face's message keys, the unit's lock, or the framework in `paf/` changed since then, or when there is no passing build to go on from, and it names the reason. The script also starts a sandbox clean when the keys it writes differ from the ones that sandbox's last passing build recorded, which covers a feature passed in code or a plugin define turned on:
 
 ```
-$ paf build lcars-stardate
-== lcars-stardate: no passing build here to go on from, so this one is clean ==
-Sandbox targets/lcars-stardate is ready (source face lcars-stardate 1.13.0, watchface=true).
-built emit/ for lcars-stardate and copied 2 generated components into targets/lcars-stardate/emit/src/pkjs/
-== building lcars-stardate (face lcars-stardate) ==
+$ paf build my-face
+== my-face: no passing build here to go on from, so this one is clean ==
+Sandbox targets/my-face is ready (source face my-face 1.0.0, watchface=true).
+built emit/ for my-face and copied 2 generated components into targets/my-face/emit/src/pkjs/
+== building my-face (face my-face) ==
 …
-[177/177] Creating app_bundle:  -> build/lcars-stardate.pbw
+[177/177] Creating app_bundle:  -> build/my-face.pbw
 'build' finished successfully (1.742s)
 ```
 
@@ -230,17 +230,17 @@ Runs a generator for a face. The framework, each listed plugin, and the unit its
 **`all`** runs every generator the face has inputs for, in order, and stops at the first that fails with its exit code. It takes no arguments, since each generator gets its own. Each prints a heading as it starts:
 
 ```
-$ paf gen lcars-stardate all
-== gen clay: lcars-stardate ==
-wrote src/pkjs/clay/slot-component.g.js (50201 bytes)
-== gen icons: lcars-stardate ==
+$ paf gen my-face all
+== gen clay: my-face ==
+wrote src/pkjs/clay/panel-picker.g.js (24000 bytes)
+== gen icons: my-face ==
 …
 ```
 
 A face with nothing to generate prints `<face> has nothing to generate`. An unknown kind names what the unit does offer:
 
 ```
-$ paf gen lcars-stardate nope
+$ paf gen my-face nope
 paf: no generator called nope. What the unit lists offers clay, icons, thumbnails, and background, and no plugin the unit leaves out offers it either
 ```
 
@@ -256,7 +256,7 @@ Runs every check the framework and the listed plugins ship, such as whether each
 
 ```
 $ paf check
-== check: pebble-watchface-lcars ==
+== check: my-face ==
 Clay components: every face is current
 icons: every face is current
 thumbnails: every face is current
@@ -273,13 +273,13 @@ paf tool <face> <name> [args]
 Runs a tool a listed plugin offers, with the face first and every argument after the name passed on exactly as typed, `-h` and `--` included. The `dev` plugin offers `clay-preview`, `tap-walk`, and `thumbnails`:
 
 ```sh
-paf tool gridlock clay-preview
+paf tool face-a clay-preview
 ```
 
 An unknown name lists the tools the unit has:
 
 ```
-$ paf tool lcars-stardate nope
+$ paf tool my-face nope
 paf: no tool called nope. What the unit lists offers clay-preview, tap-walk, and thumbnails, and no plugin the unit leaves out offers it either
 ```
 
@@ -292,8 +292,8 @@ paf run <unit|face> <script> [args]
 Runs one of the unit's own npm scripts, after readying the unit. Any arguments go after a `--`, and a `--` typed first is dropped, so these are the same:
 
 ```sh
-paf run mosaic test:coverage --reporter=dot
-paf run mosaic test:coverage -- --reporter=dot
+paf run my-family test:coverage --reporter=dot
+paf run my-family test:coverage -- --reporter=dot
 ```
 
 It exits `0` or `1`, whatever code npm returned.
@@ -308,7 +308,7 @@ Runs the unit's own `test` script, in every unit or one:
 
 ```
 $ paf test
-== test: pebble-watchface-lcars ==
+== test: my-face ==
 
 > test
 > vitest run --config config/vitest.config.ts
@@ -325,11 +325,11 @@ Runs `tsc --noEmit` on every `tsconfig.json` and `tsconfig.*.json` the unit hold
 
 ```
 $ paf typecheck
-== typecheck: pebble-watchface-lcars config/tsconfig.builder.json ==
-== typecheck: pebble-watchface-lcars config/tsconfig.json ==
-== typecheck: pebble-watchface-lcars config/tsconfig.spec.json ==
-== typecheck: pebble-watchface-lcars config/tsconfig.tools.json ==
-== typecheck: pebble-watchface-lcars tsconfig.json ==
+== typecheck: my-face config/tsconfig.builder.json ==
+== typecheck: my-face config/tsconfig.json ==
+== typecheck: my-face config/tsconfig.spec.json ==
+== typecheck: my-face config/tsconfig.tools.json ==
+== typecheck: my-face tsconfig.json ==
 ```
 
 A unit with no tsconfig fails rather than passing with nothing checked.
@@ -344,7 +344,7 @@ Lints a unit with the listed plugin that offers it, normally the framework's `co
 
 ```
 $ paf lint
-== lint: pebble-watchface-lcars ==
+== lint: my-face ==
 linted with paf/plugins/code-style/eslint.config.ts
 ```
 
@@ -362,7 +362,7 @@ Formats a unit the same way. `code-style` runs Prettier over its CSS, JSON, and 
 
 ```
 $ paf format --check
-== format: pebble-watchface-lcars ==
+== format: my-face ==
 all 22 files are formatted
 ```
 
@@ -388,7 +388,7 @@ ok       git version 2.43.0
 ok       node 24.18.0
 ok       every unit on a tag matches its pin
 ok       pebble-tool 5.0.40
-ok       SDK 4.33.1 is what v4.0.0 was built with (ide-vscode, mosaic, radar-array, sketchbook)
+ok       SDK 4.33.1 is what v4.0.0 was built with (face-c, face-d, my-family, other-family)
 ```
 
 Each line starts with `ok`, `problem`, `behind`, `note`, or `skipped`. An SDK older than a tag was built with is `behind`, and a newer one is only a `note`. Without `pebble`, as on Windows outside WSL, the SDK line is `skipped`. It exits `1` when there is any `problem` or `behind`.

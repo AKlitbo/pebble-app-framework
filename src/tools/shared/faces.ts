@@ -2,7 +2,7 @@
  * Finding a face's source directory.
  *
  * A face is a directory holding pebble.appinfo.json. The folder mounting the framework is either
- * one face, or a family with its faces beside the code they share ({core,ridgeline,...}).
+ * one face, or a family with its faces beside the code they share ({core,face-a,...}).
  *
  * A family's core/ carries no appinfo, which is what keeps it from being mistaken for a face, and
  * nothing has to be registered anywhere.

@@ -34,7 +34,7 @@
  * So the other control cannot use keys or previews as a value, since a map holding either is read
  * this way.
  *
- *   { "keys": { "0": "ridgeline", "1": "shoreline" },
+ *   { "keys": { "0": "beach", "1": "forest" },
  *     "previews": { "0": { "emery": ["shots/{key}/emery_day.png", "shots/{key}/emery_night.png"] } } }
  *
  * The keys are the option values the picker carries, as strings, since JSON keys are strings and
@@ -290,7 +290,7 @@ function readKeyedGroups(map: Record<string, unknown>, name: string, file: strin
   const keys = map.keys;
 
   if (!isObject(keys) || !Object.keys(keys).length) {
-    throw new ToolError(`${file}: keys in map "${name}" has to be an object naming at least one value of the other control, such as { "0": "ridgeline" }`);
+    throw new ToolError(`${file}: keys in map "${name}" has to be an object naming at least one value of the other control, such as { "0": "beach" }`);
   }
 
   const previews = map.previews;

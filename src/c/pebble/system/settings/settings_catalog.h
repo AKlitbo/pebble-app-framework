@@ -8,7 +8,7 @@
  * setting's MESSAGE_KEY in the face's package.json. Face-only settings are declared
  * inline in the table instead, with an id of SETTING_COUNT or greater.
  *
- * A choice the face's own settings page lists, the theme and the header font, takes its
+ * A choice the face's own settings page lists, such as the theme, takes its
  * count from settings_page.h, which paf build writes into the sandbox from the page, and the
  * face passes the size of its own table so the build stops when the two disagree. A choice
  * the framework lists takes the framework's own count from setting_values.h, since the
@@ -122,13 +122,10 @@
 #define SETTINGS_DEFAULT_WEATHER_TEMPERATURE_UNIT 0
 #endif
 #ifndef SETTINGS_DEFAULT_CLOCK_DATE_FORMAT
-#define SETTINGS_DEFAULT_CLOCK_DATE_FORMAT "%Y.%m%d"
+#define SETTINGS_DEFAULT_CLOCK_DATE_FORMAT "%a %d %b"
 #endif
 #ifndef SETTINGS_DEFAULT_APPEARANCE_THEME
 #define SETTINGS_DEFAULT_APPEARANCE_THEME 0
-#endif
-#ifndef SETTINGS_DEFAULT_APPEARANCE_HEADER_FONT
-#define SETTINGS_DEFAULT_APPEARANCE_HEADER_FONT 0
 #endif
 #ifndef SETTINGS_DEFAULT_HEALTH_STEPS_MODE
 #define SETTINGS_DEFAULT_HEALTH_STEPS_MODE 0
@@ -230,21 +227,6 @@
       .type = SETTING_ENUM_U8, .offset = (off), \
       .enum_count = SETTINGS_COUNT_CHECKED(APPEARANCE_THEME, table_count), \
       .default_num = SETTINGS_DEFAULT(APPEARANCE_THEME) }
-
-/**
- * @brief Setting definition for Header Font, an index into the face's own header font table.
- *
- * The count is how many fonts the settings page offers, from SETTINGS_COUNT. The face passes how
- * many its own font table holds, and the build stops when the two differ.
- *
- * @param off Offset into the face's settings struct.
- * @param table_count How many fonts the face's own header font table holds.
- */
-#define KNOWN_HEADER_FONT(off, table_count) \
-    { .id = SETTING_HEADER_FONT, .message_key = &MESSAGE_KEY_APPEARANCE_HEADER_FONT, \
-      .type = SETTING_ENUM_U8, .offset = (off), \
-      .enum_count = SETTINGS_COUNT_CHECKED(APPEARANCE_HEADER_FONT, table_count), \
-      .default_num = SETTINGS_DEFAULT(APPEARANCE_HEADER_FONT) }
 
 /**
  * @brief Setting definition for Steps Mode.

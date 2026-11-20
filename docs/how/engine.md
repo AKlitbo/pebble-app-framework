@@ -132,7 +132,7 @@ A repaint only refreshes what a slot shows. A rebuild is needed whenever the set
 
 **New Layers Land on Top.** The rebuilt slot layers are added above whatever is already on the root layer. A layer the face adds after `engine_init` ends up underneath the slots after the first rebuild, so anything that has to sit above them belongs in a draw slot.
 
-A face can also rebuild for reasons of its own. The Mosaic faces rebuild when the night or Quiet Time layout takes over, as [Layout Strings](layout-strings.md) covers.
+A face can also rebuild for reasons of its own, such as a night or Quiet Time layout taking over, as [Layout Strings](layout-strings.md) covers.
 
 ## The Whole Lifecycle
 

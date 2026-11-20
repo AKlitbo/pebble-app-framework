@@ -260,7 +260,6 @@ export const KNOWN_FIELDS: Readonly<Record<string, KnownField>> = {
   WEATHER_TEMPERATURE_UNIT: { field: 'default_num', count: 2 },
   CLOCK_DATE_FORMAT: { field: 'default_str', size: 16 },
   APPEARANCE_THEME: { field: 'default_num' },
-  APPEARANCE_HEADER_FONT: { field: 'default_num' },
   HEALTH_STEPS_MODE: { field: 'default_num', count: 3 },
   HEALTH_DISTANCE_UNIT: { field: 'default_num', count: 2 },
   CLOCK_TIME_FORMAT: { field: 'default_num', count: 5 },

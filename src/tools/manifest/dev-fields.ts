@@ -4,7 +4,7 @@
  */
 import { ToolError } from '../shared/tool-error.ts';
 
-/** Where a message points, such as `mosaic/paf.dev.config.json` and `gridlock's `, empty for the top of the file. */
+/** Where a message points, such as `my-family/paf.dev.config.json` and `face-a's `, empty for the top of the file. */
 export type Where = { file: string; owner: string };
 
 /** A 24-hour `HH:MM`, with the hour and the minute caught. */
@@ -16,7 +16,7 @@ const CLOCK_TEXT = /^([01]\d|2[0-3]):([0-5]\d)$/;
  * @param where Where the field sits.
  * @param field The field, such as `stores.weather.temp`.
  * @param value What the file holds there.
- * @return The opening, such as `mosaic/paf.dev.config.json sets gridlock's stores.weather.temp to 900`.
+ * @return The opening, such as `my-family/paf.dev.config.json sets face-a's stores.weather.temp to 900`.
  */
 export function sets(where: Where, field: string, value: unknown): string {
   return `${where.file} sets ${where.owner}${field} to ${JSON.stringify(value)}`;

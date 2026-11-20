@@ -2,7 +2,7 @@
  * Specs for the module screenshot lookup.
  *
  * Two levels of index with nothing guarding either one, called for every cell
- * both builders draw. A module the thumbnail pass skipped has no entry at all,
+ * a builder draws. A module the thumbnail pass skipped has no entry at all,
  * so the miss path is the one that decides between an emoji fallback and a
  * builder that throws before it renders anything.
  */

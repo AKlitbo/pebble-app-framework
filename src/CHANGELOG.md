@@ -11,10 +11,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Added
 
 - Added daily movement goals. `health/goals.h` holds the step, distance, calorie, active minutes, sleep, and heart rate tables, and `KNOWN_GOAL_STEPS` to `KNOWN_GOAL_HR`, `KNOWN_GOAL_VIBE`, and `KNOWN_GOAL_VIBE_CUSTOM` keep the wearer's picks. Call `vibe_goal()` from the health store callback to buzz the first time each day a goal is met. `ts/pkjs/goal-rows.ts` builds the settings rows, and `buildConfig` adds them with `goals: {}`. The Goal Met Vibration offers None, Short, Long, and Double, a face adds its own picks with `vibePicks` and Custom with `custom: true`, and the build stops on a pick the watch cannot play as written, or on Custom with no Custom Vibration Pattern row. The eight new setting ids add 8 bytes of static RAM each to every face, 64 in all.
+- Added `appmessage_set_long_text(key, cap, provider, receiver)` in `io/appmessage/appmessage.h`, for one text setting too long for the settings blob. The face names its message key and the most bytes the text takes, the receiver gets a text only when it differs from what the provider writes, and the settings reply carries the provider's text. Call it before `appmessage_open`, with both functions and a cap up to `LONG_TEXT_CAP_MAX`, 1024 bytes. The layer logs and refuses a later call, one missing either function, and at open one whose cap the outbox or the inbox cannot hold. Every face carries about 410 bytes more code and 9 bytes more static RAM for it, and a face that calls it about 310 bytes more.
 
 #### Changed
 
+- **Breaking:** `buildConfig`'s theme picker now reads **Theme**, "The face's colours." Pass `theme.label` and `theme.description` to keep other wording.
+- **Breaking:** The steps control now reads **Steps Readout**, "Whether the steps readout shows steps or the distance walked." Pass `steps.label` and `steps.description` to keep other wording.
+- **Breaking:** The Quiet Time icon toggle's help line now reads "Show an icon while Quiet Time is on." Pass `quietTime.description` to keep another.
+- **Breaking:** The default intro is now "Choose how your watch looks and what it shows." with or without a Weather section. Pass `intro`, and the new `introWithoutWeather` for the line a page left with no Weather section opens on.
+- **Breaking:** The page heading is now the appinfo's `displayName`, which `paf build` writes into `ts/app-name`, or **Settings** in phone code built without it. Pass `heading` to keep another title.
+- **Breaking:** The Date Format now opens on `%a %d %b`, and `KNOWN_DATE_FORMAT` falls back to it for a page with no Date Format. Pass `date.default` to keep another. A face that passes its own `date.options` and no default opens on the first of them. A fresh watch on a face whose page has no Date Format starts on the new format, and a saved one keeps its own.
+- **Breaking:** The Manual Location and Alternate Time Zone searches now hint Tokyo. Pass the new `location.placeholder` and `clock.timeZonePlaceholder` to keep other hints.
 - **Breaking:** The build now stops on an option for a text `KNOWN_*` setting that is too long for its buffer, such as a `date.options` value over 15 bytes, which built before and was cut short on the watch. Keep each date option to 15 bytes.
+- The theme picker's frames now read `--pf-preview-backing`, `--pf-preview-border`, and `--pf-preview-size`, which a face sets on `:root`. They fall back to the black backing, `#3d434d` border, and 8rem width the picker had.
+
+#### Removed
+
+- **Breaking:** Removed `appmessage_on_custom_colors`, `appmessage_set_custom_colors_provider`, `CustomColorsHandler`, `CustomColorsProvider`, `APPMESSAGE_CUSTOM_COLORS_MAX`, and the transport's own handling of `APPEARANCE_CUSTOM_COLORS`. Call `appmessage_set_long_text(MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS, 502, provider, receiver)` before `appmessage_open` with the same two functions, since both are now required. The key, the text, and the reply's size stay as they were, so the wearer's colours carry over.
+- **Breaking:** Removed `KNOWN_HEADER_FONT`, `SETTING_HEADER_FONT`, and the framework's default for `APPEARANCE_HEADER_FONT`. A face with a header font keeps it as a field of its own at the same offset, as `{ .id = SETTING_COUNT, .message_key = &MESSAGE_KEY_APPEARANCE_HEADER_FONT, .type = SETTING_ENUM_U8, .offset = ..., .enum_count = SETTINGS_COUNT_CHECKED(APPEARANCE_HEADER_FONT, table_count), .default_num = SETTINGS_DEFAULT(APPEARANCE_HEADER_FONT) }`, and reads it from its own struct rather than `settings_u8(SETTING_HEADER_FONT)`. A saved font reads back as before, and every face saves 8 bytes of static RAM.
+
+### Wearer-Visible Changes
+
+#### Changed
+
+- The plugin notes and the supported plugins panel now say "this face" rather than "this watchface", so they read right on a watchapp too. A face keeps other wording by passing `pluginTexts` to `startPebbleApp`, by kind and for the panel, and `{panel}` in a text names the panel by its title.
 
 ## [6.5.0] - 2026-11-18
 

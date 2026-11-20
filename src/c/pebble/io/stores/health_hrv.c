@@ -40,10 +40,10 @@ static HrvMotion s_motion;       ///< The movement seen through the burst being 
 static uint32_t s_held_since;    ///< When the hold started, in seconds
 static void (*s_changed)(void);  ///< Called whenever the reading changes, so the face can redraw
 static bool s_keep_all;          ///< Whether a burst that cannot count is measured anyway, for a panel that shows it
-static bool s_live_redraw;       ///< Whether the face is redrawn once a second while a burst is held, for a tuning panel
+static bool s_live_redraw;       ///< Whether the face is redrawn once a second while a burst is held, for a readout that shows each burst
 static int32_t s_steps_start = -1; ///< The day's step count when the hold started, or -1 when not known
 static uint8_t s_hold_gaps;      ///< Gaps added to the run since the hold started
-static HrvBurst s_recent[HRV_RECENT];  ///< The latest bursts, for a tuning panel, kept in memory only
+static HrvBurst s_recent[HRV_RECENT];  ///< The latest bursts, for a readout that shows each burst, kept in memory only
 static uint8_t s_recent_head;    ///< The slot the next burst goes in
 static uint32_t s_persist_key;   ///< The persist slot the log is saved in, or 0 for none
 static HrvLog s_log;             ///< The readings kept for the face's panels
@@ -282,7 +282,7 @@ static void on_accel(AccelData *data, uint32_t num_samples)
         }
     }
 
-    // a batch comes once a second, so a tuning panel can show the score climbing as it happens
+    // a batch comes once a second, so a readout that shows each burst can show the score climbing as it happens
     if (s_live_redraw && s_changed)
     {
         s_changed();
@@ -374,8 +374,8 @@ static void hold_end(uint32_t now_sec)
 }
 
 /**
- * @brief Ends a burst whose beats went quiet: files what it measured, or notes it as dropped on a
- * tuning panel, and lets the sensor go.
+ * @brief Ends a burst whose beats went quiet: files what it measured, or notes it as dropped for a
+ * readout that shows each burst, and lets the sensor go.
  *
  * Beats that came outside a hold have no score and never make a reading, so their run is only
  * emptied.
@@ -477,7 +477,7 @@ void health_hrv_on_gap(void)
         s_run.last_at = now;
         if (finished < 0)
         {
-            // too few beats to give a reading, which a tuning panel still shows
+            // too few beats to give a reading, which a readout that shows each burst still shows
             note_burst(-1, now, false);
         }
     }

@@ -18,20 +18,20 @@ const EMERY = 'data:image/png;base64,CCCC';
 const GABBRO = 'data:image/png;base64,DDDD';
 
 const themeConfig = {
-  label: 'Scene Palette',
-  options: [{ label: 'Sketchbook', value: 0 }, { label: 'Forest', value: 4 }],
+  label: 'Palette',
+  options: [{ label: 'Paper', value: 0 }, { label: 'Forest', value: 4 }],
   previews: { 0: [DAY, NIGHT], 4: [DAY] },
 };
 
 const platformConfig = {
-  label: 'Scene Palette',
-  options: [{ label: 'Sketchbook', value: 0 }],
+  label: 'Palette',
+  options: [{ label: 'Paper', value: 0 }],
   previews: { 0: { emery: [EMERY], gabbro: [GABBRO] } },
 };
 
 const gabbroOnlyConfig = {
-  label: 'Scene Palette',
-  options: [{ label: 'Sketchbook', value: 0 }],
+  label: 'Palette',
+  options: [{ label: 'Paper', value: 0 }],
   previews: { 0: { gabbro: [GABBRO] } },
 };
 
@@ -109,6 +109,23 @@ describe('the dropdown', () => {
     const result = (root.querySelector('.pf-theme-select') as HTMLElement).getAttribute('data-manipulator-target');
 
     expect(result).not.toBeNull();
+  });
+});
+
+describe('the picture frames', () => {
+  /**
+   * A face whose page is not dark sets these on :root to frame its shots, so each one has to be read
+   * through its variable, with the black backing, grey border, and 8rem width as the fallbacks a face
+   * that sets none still gets.
+   */
+  test.each([
+    ['backing', 'background: var(--pf-preview-backing, #000)'],
+    ['border', 'border: 2px solid var(--pf-preview-border, #3d434d)'],
+    ['size', 'width: var(--pf-preview-size, 8rem)'],
+  ])('reads the %s from its variable with the plain value as the fallback', (_name, rule) => {
+    const result = component.style;
+
+    expect(result).toContain(rule);
   });
 });
 
@@ -272,8 +289,8 @@ describe('previews keyed by a sibling control', () => {
 
   // one palette picker owning APPEARANCE_THEME, its shots nested by the scene the sibling holds
   const sceneNestedConfig = {
-    label: 'Scene Palette',
-    options: [{ label: 'Sketchbook', value: 0 }, { label: 'Forest', value: 4 }],
+    label: 'Palette',
+    options: [{ label: 'Paper', value: 0 }, { label: 'Forest', value: 4 }],
     previewsByKey: 'APPEARANCE_SCENE',
     previews: {
       0: { 0: [RIDGE], 4: [DAY] },

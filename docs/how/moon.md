@@ -103,6 +103,6 @@ int lit = moon_illumination_pct(now);      // 0 to 100
 int days = moon_days_to_phase(now, true);  // days to the next full moon
 ```
 
-The LCARS face's moon slots work this way. Its table of eight moon images is indexed straight by `moon_glyph_index(now, 8)`, so the picture and the `moon_phase_name` text always agree.
+A face with a table of eight moon images works this way. It indexes the table straight by `moon_glyph_index(now, 8)`, so the picture and the `moon_phase_name` text always agree.
 
 Nothing here repaints on its own. A moon panel reads these when the face redraws, and the minute tick comes far more often than the moon changes.

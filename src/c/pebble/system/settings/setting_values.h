@@ -45,8 +45,8 @@ typedef enum
 } StepsMode;
 
 /**
- * @brief SETTING_DISTANCE_UNIT choices. The standalone Distance panel picks its own unit
- * separate from the Steps panel's STEPS_MODE.
+ * @brief SETTING_DISTANCE_UNIT choices. A distance readout's own unit, separate from the steps
+ * readout's STEPS_MODE.
  */
 typedef enum
 {

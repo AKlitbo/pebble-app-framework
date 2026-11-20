@@ -1,6 +1,6 @@
 /**
  * The shared import/export panel body: a title, a textarea holding the current
- * wire string, a Copy button, and an Apply button. Both builders open one of
+ * wire string, a Copy button, and an Apply button. Every builder opens one of
  * these so users can share their layout or colours as plain text.
  *
  * This is a Clay builder piece. esbuild bundles it into a component's

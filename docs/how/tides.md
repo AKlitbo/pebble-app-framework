@@ -1,6 +1,6 @@
 # Tides
 
-The tide code gives a face water that rises and falls like a real sea. It comes in for a little over six hours and goes out for a little over six, stands nearly still at the turns, runs fastest in between, and arrives about 50 minutes later each day. The Shoreline face uses it to float a boat up and down the sand.
+The tide code gives a face water that rises and falls like a real sea. It comes in for a little over six hours and goes out for a little over six, stands nearly still at the turns, runs fastest in between, and arrives about 50 minutes later each day. A face can use it to float a boat up and down a beach.
 
 It is a rhythm, not a tide table. It knows nothing about any port, so it cannot tell a wearer when high water is on their beach. It gives water that moves at the right speed and in the right shape, with no phone, no location, and no network.
 

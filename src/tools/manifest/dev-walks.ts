@@ -21,7 +21,7 @@
  * The panels block says what each panel and size is to the face's C, and where a size sits on the
  * screen for the thumbnails tool to crop it:
  *
- *     { "include": "engine/catalog.h", "sizes": { "1x2": { "id": "MSIZE_1x2", "crop": { "left": 4, "top": 94, "width": 94, "height": 40 } } },
+ *     { "include": "panels.h", "sizes": { "1x2": { "id": "SIZE_SMALL", "crop": { "left": 0, "top": 100, "width": 100, "height": 40 } } },
  *       "ids": { "phone-battery": "MOD_SYSTEM_PHONE_BATTERY" } }
  *
  * An id is a whole number or a C name, and the header named by `include` is where the C names come from.
@@ -207,7 +207,7 @@ function readWalk(value: unknown, where: Where, field: string): DevWalk {
  *
  * @param value The block as the file holds it.
  * @param file The file as a message names it.
- * @param owner `gridlock's ` for a face's entry, or empty for the top of the file.
+ * @param owner `face-a's ` for a face's entry, or empty for the top of the file.
  * @return Each walk by its name.
  */
 export function readWalks(value: unknown, file: string, owner: string): Record<string, DevWalk> {
@@ -244,7 +244,7 @@ function cId(value: unknown, where: Where, field: string): string {
   const id = typeof value === 'number' ? String(value) : value;
 
   if (typeof id !== 'string' || !C_ID.test(id)) {
-    throw new ToolError(`${sets(where, field, value)}. It takes a whole number or a C name, such as "MSIZE_1x2"`);
+    throw new ToolError(`${sets(where, field, value)}. It takes a whole number or a C name, such as "SIZE_SMALL"`);
   }
 
   return id;
@@ -255,7 +255,7 @@ function cId(value: unknown, where: Where, field: string): string {
  *
  * @param value The block as the file holds it.
  * @param file The file as a message names it.
- * @param owner `gridlock's ` for a face's entry, or empty for the top of the file.
+ * @param owner `face-a's ` for a face's entry, or empty for the top of the file.
  * @return The headers, the sizes, and the ids.
  */
 export function readPanels(value: unknown, file: string, owner: string): DevPanels {
@@ -271,12 +271,12 @@ export function readPanels(value: unknown, file: string, owner: string): DevPane
 
   include.forEach((header, index) => {
     if (typeof header !== 'string' || !HEADER.test(header)) {
-      throw new ToolError(`${sets(where, `panels.include[${index}]`, header)}. It takes a header path as the face's C includes it, such as "engine/catalog.h"`);
+      throw new ToolError(`${sets(where, `panels.include[${index}]`, header)}. It takes a header path as the face's C includes it, such as "panels.h"`);
     }
   });
 
   if (!isObject(value.sizes) || Object.keys(value.sizes).length === 0) {
-    throw new ToolError(`${sets(where, 'panels.sizes', value.sizes)}. It takes each size, such as { "1x2": { "id": "MSIZE_1x2", "crop": { "left": 4, "top": 94, "width": 94, "height": 40 } } }`);
+    throw new ToolError(`${sets(where, 'panels.sizes', value.sizes)}. It takes each size, such as { "1x2": { "id": "SIZE_SMALL", "crop": { "left": 0, "top": 100, "width": 100, "height": 40 } } }`);
   }
 
   const sizes: Record<string, PanelSize> = Object.create(null);
@@ -289,7 +289,7 @@ export function readPanels(value: unknown, file: string, owner: string): DevPane
     }
 
     if (!isObject(entry) || !isObject(entry.crop)) {
-      throw new ToolError(`${sets(where, at, entry)}. A size takes { "id": "MSIZE_1x2", "crop": { "left": 4, "top": 94, "width": 94, "height": 40 } }`);
+      throw new ToolError(`${sets(where, at, entry)}. A size takes { "id": "SIZE_SMALL", "crop": { "left": 0, "top": 100, "width": 100, "height": 40 } }`);
     }
 
     walkFields(entry, ['id', 'crop'], where, at);

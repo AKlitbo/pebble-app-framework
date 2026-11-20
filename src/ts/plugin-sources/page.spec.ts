@@ -18,9 +18,16 @@
  * plugin list alone, since a page opened before the feature ran has no saved error to go by.
  */
 
-import { describe, test, expect, vi } from 'vitest';
+import { afterEach, describe, test, expect, vi } from 'vitest';
 import { pluginKindState, pluginSourcePage, PLUGIN_KINDS_TYPE, PLUGIN_LABEL, PLUGINS_OFF_LABEL, PLUGINS_OFF_TEXT, PLUGIN_VALUE } from './page';
-import type { PluginSourceInputs } from './page';
+import type { PluginSourceInputs, PluginSourceTexts } from './page';
+import { PANEL_INTRO, PANEL_TITLE } from './panel';
+import { keepPluginTexts } from '../pkjs/plugin-texts';
+import { WEATHER_TEXTS } from './weather';
+import { CALENDAR_TEXTS } from './calendar';
+import { STOCK_TEXTS } from './stocks';
+import { MUSIC_TEXTS } from './music';
+import { PHONE_TEXTS } from './phone';
 import { CALENDAR_STANDARD, WEATHER_STANDARD } from './standard';
 import { escapeHtml } from './escape';
 import type { PluginSummary, SourceState } from './types';
@@ -866,6 +873,109 @@ describe('pluginSourcePage the face\'s own page', () => {
     const result = pluginSourcePage(pluginSourcePage(copy(), weatherInputs({ plugins, state })), calendarInputs({ plugins, state }));
 
     expect(result).toEqual(first);
+  });
+});
+
+describe('pluginSourcePage the face\'s own wording', () => {
+  afterEach(() => {
+    keepPluginTexts(undefined);
+  });
+
+  /** Every note the page carries, with or without a select to hang on. */
+  function notesOn(page: ClayConfigItem[]): unknown[] {
+    return allRows(page).filter((row) => row.type === 'pluginNote').map((row) => row.defaultValue);
+  }
+
+  /** A face that keeps its old notes passes them in, and its wearers have to read the face's line rather than the framework's. */
+  test('takes the face\'s own text for the kind over the feature\'s', () => {
+    keepPluginTexts({ weather: { permissionDenied: 'Allow Location for this watchface in the Pebble app.' } });
+    const state = { ...NOTHING_SAVED, lastError: 'PERMISSION_DENIED' };
+
+    const result = warningsOn(pluginSourcePage(weatherPage(), weatherInputs({ state }))).map((row) => row.defaultValue);
+
+    expect(result).toEqual(['Allow Location for this watchface in the Pebble app.']);
+  });
+
+  /** A face that changes one text keeps the feature's others, or a note it never touched would vanish. */
+  test('keeps the feature\'s text for one the face leaves out', () => {
+    keepPluginTexts({ weather: { permissionDenied: 'Allow Location for this watchface in the Pebble app.' } });
+    const state = { ...NOTHING_SAVED, pluginUuid: 'odd-uuid' };
+
+    const result = warningsOn(pluginSourcePage(weatherPage(), weatherInputs({ plugins: [WEATHER_PLUGIN, ODD_WEATHER_PLUGIN], state }))).map((row) => row.defaultValue);
+
+    expect(result).toEqual(['Odd Weather sends weather this face cannot read.']);
+  });
+
+  /** Each kind reads only its own wording, so a face's weather line never turns up under the calendar. */
+  test('leaves another kind\'s wording alone', () => {
+    keepPluginTexts({ weather: { permissionDenied: 'Allow Location for this watchface in the Pebble app.' } });
+    const state = { ...NOTHING_SAVED, lastError: 'PERMISSION_DENIED' };
+
+    const result = warningsOn(pluginSourcePage(calendarPage(), calendarInputs({ state }))).map((row) => row.defaultValue);
+
+    expect(result).toEqual(['Allow the calendar for this face in the Pebble app.']);
+  });
+
+  /**
+   * A page with no source select shows the feature's line for no select when it has one, so a face
+   * that only changed notStandard would still see the framework's words there.
+   */
+  test('uses the face\'s own not standard line on a page with no select', () => {
+    keepPluginTexts({ weather: { notStandard: (name) => `${name} sends weather this watchface cannot read.` } });
+    const state = { ...NOTHING_SAVED, pluginUuid: 'odd-uuid' };
+    const texts = { notStandard: (name: string) => `${name} sends weather this face cannot read.`, notStandardNoSelect: (name: string) => `${name} sends weather this face cannot read, so pick another.` };
+
+    const result = notesOn(pluginSourcePage([{ type: 'submit', defaultValue: 'Save' }], weatherInputs({ selectKey: undefined, plugins: [WEATHER_PLUGIN, ODD_WEATHER_PLUGIN], state, texts })));
+
+    expect(result).toEqual(['Odd Weather sends weather this watchface cannot read.']);
+  });
+
+  /** A face that changes the source line still has to tell the wearer only some plugins serve coordinates. */
+  test('joins the extra source line on to the face\'s own source line', () => {
+    keepPluginTexts({ weather: { source: 'Your watch shows the weather from the Pebble app.' } });
+    const texts = { source: 'The feature\'s own source line.' };
+
+    const result = notesOn(pluginSourcePage([{ type: 'submit', defaultValue: 'Save' }], weatherInputs({ selectKey: undefined, texts, sourceExtra: 'The coordinates show only from some plugins.' })));
+
+    expect(result).toEqual(['Your watch shows the weather from the Pebble app. The coordinates show only from some plugins.']);
+  });
+
+  /** A line pointing the wearer at the panel has to name it as it reads, or the wearer looks for a heading that is not there. */
+  test.each([
+    ['the framework\'s title', undefined, 'Get one listed under Plugins This Face Supports.'],
+    ['the face\'s own title', { title: 'Plugins My Face Reads' }, 'Get one listed under Plugins My Face Reads.'],
+  ])('names the panel by %s in a line that points at it', (_name, panel, expected) => {
+    keepPluginTexts(panel ? { panel } : undefined);
+    const inputs = weatherInputs({ selectKey: undefined, category: 'finance', item: 'stock', rowKind: 'stocks', texts: { noPlugin: 'Get one listed under {panel}.' } });
+
+    const result = notesOn(pluginSourcePage([{ type: 'submit', defaultValue: 'Save' }], inputs));
+
+    expect(result).toEqual([expected]);
+  });
+
+  /** The panel's title and intro are the face's to set too, so a face can keep the panel as its wearers knew it. */
+  test('titles the supported plugins panel in the face\'s own words', () => {
+    keepPluginTexts({ panel: { title: 'Plugins This Watchface Supports', intro: 'This watchface reads these plugins.' } });
+
+    const result = allRows(pluginSourcePage(weatherPage(), weatherInputs({ panel: true }))).find((row) => row.type === 'pluginPanel')?.panel;
+
+    expect(result).toMatchObject({ title: 'Plugins This Watchface Supports', intro: 'This watchface reads these plugins.' });
+  });
+});
+
+describe('the framework\'s plugin wording', () => {
+  /** Every text a kind can show, with a plugin name filled into the ones that take one. */
+  function textsOf(texts: PluginSourceTexts): string[] {
+    return Object.values(texts).map((text) => (typeof text === 'function' ? text('Some Plugin') : String(text)));
+  }
+
+  /** A watchapp built on the framework shows these notes too, so none of them can call it a watchface. */
+  test('never calls the app a watchface', () => {
+    const shown = [WEATHER_TEXTS, CALENDAR_TEXTS, STOCK_TEXTS, MUSIC_TEXTS, PHONE_TEXTS].flatMap(textsOf).concat([PANEL_TITLE, PANEL_INTRO]);
+
+    const result = shown.filter((text) => /watchface/i.test(text));
+
+    expect(result).toEqual([]);
   });
 });
 

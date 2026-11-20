@@ -356,7 +356,7 @@ void test_a_clock_set_back_does_not_end_a_hold(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** @brief A finished run says how many differences went into it, which the tuning panel shows as the beats kept. */
+/** @brief A finished run says how many differences went into it, which a readout that shows each burst gives as the beats kept. */
 void test_a_finished_run_keeps_its_count(void)
 {
     HrvRun run;
@@ -385,7 +385,7 @@ void test_settle_takes_one_gap(void)
     TEST_ASSERT_EQUAL_UINT8(1, result);
 }
 
-/** @brief The top of the range is taken as asked, so a tuning panel's highest setting is the one in use. */
+/** @brief The top of the range is taken as asked, so the highest setting a face offers is the one in use. */
 void test_settle_takes_twenty_gaps(void)
 {
     uint8_t result = hrv_settle_gaps(20);

@@ -17,7 +17,7 @@ import { MUSIC_TEXTS } from '../../ts/plugin-sources/music.ts';
 import { PHONE_TEXTS } from '../../ts/plugin-sources/phone.ts';
 import { STOCK_TEXTS } from '../../ts/plugin-sources/stocks.ts';
 import { PAGE_KEYS_FIELD } from '../../ts/pkjs/provider-keys.ts';
-import { PLUGIN_KINDS_CLASS as PAGE_PLUGIN_KINDS_CLASS, PLUGINS_OFF_TEXT as PAGE_PLUGINS_OFF_TEXT } from '../../ts/plugin-sources/page.ts';
+import { PANEL_TITLE_MARK, PLUGIN_KINDS_CLASS as PAGE_PLUGIN_KINDS_CLASS, PLUGINS_OFF_TEXT as PAGE_PLUGINS_OFF_TEXT } from '../../ts/plugin-sources/page.ts';
 import panel from '../../ts/plugin-sources/panel.ts';
 import { KNOWN_PLUGINS, storeListing } from '../../ts/plugin-sources/directory.ts';
 import { readPluginsFile } from './clay-preview.ts';
@@ -316,11 +316,14 @@ describe('the plugin kinds store the scenarios look for', () => {
 });
 
 describe('the stock words the scenarios look for', () => {
-  /** The same drift on the stock notes would have the check look for stock notes that never show. */
+  /**
+   * The same drift on the stock notes would have the check look for stock notes that never show. The
+   * line for no plugin names the panel by its title, which the page puts in for its mark.
+   */
   test('match the stock feature\'s own rows', () => {
     const result = [STOCK_SOURCE_TEXT, STOCK_NO_PLUGIN_TEXT];
 
-    expect(result).toEqual([STOCK_TEXTS.source, STOCK_TEXTS.noPlugin]);
+    expect(result).toEqual([STOCK_TEXTS.source, String(STOCK_TEXTS.noPlugin).split(PANEL_TITLE_MARK).join(panel.PANEL_TITLE)]);
   });
 });
 

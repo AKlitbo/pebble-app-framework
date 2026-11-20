@@ -17,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildMedia, buildManifest, buildPluginManifest, checkAppinfo, checkPluginApp, checkPluginKeys, faceBuildInfo, fillWscript, findTargetClash, isPluginApp, keysChanged, prepareAppinfo, readDefines, recordBuiltKeys, resolveTargets } from './build-manifests';
+import { buildMedia, buildManifest, buildPluginManifest, checkAppinfo, checkPluginApp, checkPluginKeys, displayNameOf, faceBuildInfo, fillWscript, findTargetClash, isPluginApp, keysChanged, prepareAppinfo, readDefines, recordBuiltKeys, resolveTargets } from './build-manifests';
 import { fillAppinfo } from './feature-keys';
 import type { SharedAppinfo } from './build-manifests';
 import { tempDir } from '../../ts/testing/temp-dir.ts';
@@ -687,6 +687,21 @@ describe('the built keys record', () => {
   });
 });
 
+describe('displayNameOf', () => {
+  /** The settings page heading shows this name, so stray space round it would show as a heading off centre. */
+  test.each([
+    ['as written', { displayName: 'My Face' }, 'My Face'],
+    ['without the space round it', { displayName: '  My Face  ' }, 'My Face'],
+    ['as null when it is blank', { displayName: '   ' }, null],
+    ['as null when it is missing', {}, null],
+    ['as null when it is not text', { displayName: 7 }, null],
+  ])('gives the name %s', (_name, appinfo, expected) => {
+    const result = displayNameOf(appinfo);
+
+    expect(result).toBe(expected);
+  });
+});
+
 describe('faceBuildInfo', () => {
   /** The phone build reads the providers from here, so a list it skipped checking could reach the bundle unchecked. */
   test('carries the checked providers beside the targets and defines', () => {
@@ -694,7 +709,7 @@ describe('faceBuildInfo', () => {
 
     const result = faceBuildInfo(config, 'gridlock');
 
-    expect(result).toEqual({ targets: ['gridlock'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin'] } });
+    expect(result).toEqual({ targets: ['gridlock'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin'] }, appName: 'Test' });
   });
 
   /** The phone build stops on the same refusals as the manifest build, so neither can run ahead of the other. */

@@ -133,8 +133,8 @@ export type SharedAppinfo = {
 
 /**
  * A face's build identity is either a single target inlined at the top level (the common case:
- * one .pbw per face) or a targets map naming several. Gridlock ships a watchface and a watchapp
- * from one source, so it lists both here.
+ * one .pbw per face) or a targets map naming several, such as a face that ships a watchface and a
+ * watchapp from one source.
  */
 type TargetsMap = Record<string, Target>;
 
@@ -449,9 +449,9 @@ export function buildPluginManifest(config: Appinfo, rootPkg: RootPkg, permissio
  */
 export interface SandboxDirs {
   engine: string;     // the framework, such as paf
-  face: string;       // the face, such as gridlock in a family, or . for a face on its own
+  face: string;       // the face, such as face-a in a family, or . for a face on its own
   familyCore: string; // the face's family core, which is core in a family, or empty for none
-  family: string;     // the family's name, such as mosaic, or empty for none
+  family: string;     // the family's name, such as my-family, or empty for none
   watchface: boolean; // true for a face target, false for an app one, which builds with -DBUILD_WATCHAPP
 }
 
@@ -678,6 +678,8 @@ export interface FaceBuildInfo {
   defines: Defines;
   /** The face's providers list, from readProviders. */
   providers: ProviderLists;
+  /** The appinfo's displayName, which the settings page heading shows, or null for one with none. */
+  appName?: string | null;
 }
 
 /**
@@ -691,7 +693,8 @@ export interface FaceBuildInfo {
  *
  * @param appinfo The face's appinfo.
  * @param face The face the appinfo belongs to, which a refusal names.
- * @return The target names, in the order the face declares them, the defines, and the checked providers.
+ * @return The target names, in the order the face declares them, the defines, the checked providers,
+ *   and the display name.
  */
 export function faceBuildInfo(appinfo: Appinfo, face: string): FaceBuildInfo {
   // resolveTargets tells a plugin app from a face and refuses an appinfo that is neither, so it runs first
@@ -707,7 +710,20 @@ export function faceBuildInfo(appinfo: Appinfo, face: string): FaceBuildInfo {
     targets,
     defines,
     providers: readProviders(appinfo, face, defines),
+    appName: displayNameOf(appinfo),
   };
+}
+
+/**
+ * The name the settings page heading shows, the appinfo's displayName with the space round it trimmed.
+ *
+ * @param appinfo The face's appinfo.
+ * @return The name, or null when the appinfo has none, or only space.
+ */
+export function displayNameOf(appinfo: { displayName?: unknown }): string | null {
+  const name = typeof appinfo.displayName === 'string' ? appinfo.displayName.trim() : '';
+
+  return name || null;
 }
 
 /**

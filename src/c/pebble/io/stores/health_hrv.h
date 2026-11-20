@@ -29,7 +29,7 @@ typedef struct
     uint16_t settle_gaps;   ///< Gaps left out at the start of a burst, or 0 for HRV_SETTLE_GAPS
     HrvCount count;         ///< Which bursts count for the main reading
     bool keep_all;          ///< Measure a burst that cannot count rather than drop it, for a panel that shows it
-    bool live_redraw;       ///< Redraw the face once a second while a burst is held, for a tuning panel
+    bool live_redraw;       ///< Redraw the face once a second while a burst is held, for a readout that shows each burst
     uint32_t persist_key;   ///< The persist slot for the log, or 0 to keep it in memory only
 } HealthHrvConfig;
 

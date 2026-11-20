@@ -33,6 +33,7 @@ import { select } from './config-rows';
 import kindsComponent from '../plugin-sources/kinds-component';
 import { pluginSourcePage } from '../plugin-sources/page';
 import { WEATHER_STANDARD } from '../plugin-sources/standard';
+import { pluginTexts } from './plugin-texts';
 import { SETTINGS_ASK_RETRIES, SETTINGS_ASK_RETRY_MS } from './settings-ask';
 import { SEND_RETRIES, SEND_RETRY_MS } from './send-queue';
 import { WIRE_CAPS } from './wire';
@@ -3540,20 +3541,20 @@ describe('startPebbleApp settings page hooks', () => {
       return config;
     });
 
-    openSettings(buildConfig({ weather: {} }), [dropWeather]);
+    openSettings(buildConfig({ weather: {}, intro: 'Set up your weather.', introWithoutWeather: 'Pick your look.' }), [dropWeather]);
 
     const result = (PageClay.opened[0].config as ClayConfigItem[])[1];
 
-    expect(result).toEqual({ type: 'text', defaultValue: 'Personalize your layout and make this watchface your own.' });
+    expect(result).toEqual({ type: 'text', defaultValue: 'Pick your look.' });
   });
 
   /** The weather wording has to stay while the Weather section does, with the mark gone so it reaches the page as plain text. */
   test('keeps the builder\'s weather intro when the fold leaves the Weather section', () => {
-    openSettings(buildConfig({ weather: {}, temperature: {} }), [pageFeature((config) => config.slice())]);
+    openSettings(buildConfig({ weather: {}, temperature: {}, intro: 'Set up your weather.', introWithoutWeather: 'Pick your look.' }), [pageFeature((config) => config.slice())]);
 
     const result = (PageClay.opened[0].config as ClayConfigItem[])[1];
 
-    expect(result).toEqual({ type: 'text', defaultValue: 'Personalize your layout, dial in your weather preferences, and make this watchface your own.' });
+    expect(result).toEqual({ type: 'text', defaultValue: 'Set up your weather.' });
   });
 
   /** A row no component can draw stops the page from opening at all, which is worse than a page without the features' rows. */
@@ -3855,6 +3856,30 @@ describe('startPebbleApp face providers', () => {
     const result = contexts.map((context) => context.providers);
 
     expect(result).toEqual([{ weather: ['plugin', 'openmeteo'] }, { weather: ['plugin', 'openmeteo'] }]);
+  });
+
+  /**
+   * Every plugin source page reads the face's wording from where faceStart keeps it, so a face's
+   * pluginTexts that never got there would leave every note and the panel in the framework's words.
+   */
+  test('keeps the face\'s own plugin wording for the plugin source pages', () => {
+    const wording = { weather: { permissionDenied: 'Allow Location for this watchface.' }, panel: { title: 'Plugins This Watchface Supports' } };
+
+    app.startPebbleApp({ clayConfig: ownPage(), pluginTexts: wording });
+
+    const result = pluginTexts();
+
+    expect(result).toEqual(wording);
+  });
+
+  /** One node process loads face after face for the build, so a face with no wording must not keep the last face's. */
+  test('drops the last face\'s wording for a face that passes none', () => {
+    faceStart({ clayConfig: ownPage(), pluginTexts: { panel: { title: 'Another Face' } } });
+    faceStart({ clayConfig: ownPage() });
+
+    const result = pluginTexts();
+
+    expect(result).toEqual({});
   });
 
   /**

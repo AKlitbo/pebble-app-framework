@@ -253,7 +253,7 @@ The build never runs the generator, so the committed file is all the page ever s
 
 ```
 $ paf check
-== check: pebble-watchface-lcars ==
+== check: my-face ==
 Clay components: every face is current
 icons: every face is current
 thumbnails: every face is current

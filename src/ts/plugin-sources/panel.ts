@@ -23,10 +23,18 @@ import type { PluginSummary } from './types';
 import type { ClayConfigItem, PluginPanelContent, PluginPanelEntry, PluginPanelKind } from '../clay/types';
 
 /** The words the panel shows while it is closed. */
-export const PANEL_TITLE = 'Plugins This Watchface Supports';
+export const PANEL_TITLE = 'Plugins This Face Supports';
 
 /** The line under the title once the panel opens. */
-export const PANEL_INTRO = 'This watchface can read from these Pebble app plugins. Choose which one it uses under Preferred Sources in the Pebble app. The version beside each plugin is one that has been tested with this watchface, which may not be its newest.';
+export const PANEL_INTRO = 'This face can read from these Pebble app plugins. Choose which one it uses under Preferred Sources in the Pebble app. The version beside each plugin is one that has been tested with this face, which may not be its newest.';
+
+/** The panel's title and intro, each in the face's own words or the ones above when left out. */
+export interface PluginPanelTexts {
+  /** The words the panel shows while it is closed. */
+  title?: string;
+  /** The line under the title once the panel opens. */
+  intro?: string;
+}
 
 /** The panel's first line while the phone lists no plugins, with plugins off or a Pebble app from before them. */
 export const PANEL_OFF_TEXT = 'The Pebble app is not offering any plugins right now. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
@@ -132,8 +140,10 @@ function entriesFor(category: string, item: string, plugins: PluginSummary[] | n
  * @param category The kind's category, such as `weather`.
  * @param item The item inside it, such as `location`.
  * @param plugins The plugins the phone lists, or null when its list cannot be read.
+ * @param texts The face's own title and intro, for a panel this call puts on the page. Left out, each
+ *   is the framework's own.
  */
-export function addPluginsPanel(page: ClayConfigItem[], category: string, item: string, plugins: PluginSummary[] | null): void {
+export function addPluginsPanel(page: ClayConfigItem[], category: string, item: string, plugins: PluginSummary[] | null, texts: PluginPanelTexts = {}): void {
   const kind = PANEL_KINDS.find((known) => known.category === category && known.item === item);
 
   if (!kind) {
@@ -151,7 +161,7 @@ export function addPluginsPanel(page: ClayConfigItem[], category: string, item: 
   if (!existing) {
     const row: ClayConfigItem = {
       type: PANEL_TYPE,
-      panel: { title: escapeHtml(PANEL_TITLE), intro: escapeHtml(PANEL_INTRO), off, kinds: [added] },
+      panel: { title: escapeHtml(texts.title || PANEL_TITLE), intro: escapeHtml(texts.intro || PANEL_INTRO), off, kinds: [added] },
     };
 
     page.splice(footIndex(page), 0, { type: 'section', items: [row] });

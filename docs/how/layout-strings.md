@@ -6,7 +6,7 @@ It lives in [`layout_string.h`](../../src/c/core/layout/layout_string.h) and [`l
 
 ## A Grid as Text
 
-A grid reaches the watch as one text setting, a run of records separated by semicolons. The Mosaic faces, for example, write each record as five numbers, the panel and then its row, column, width, and height:
+A grid reaches the watch as one text setting, a run of records separated by semicolons. A grid face might write each record as five numbers, the panel and then its row, column, width, and height:
 
 ```
 3,0,0,2,1;7,1,0,4,2;12,3,2,2,1

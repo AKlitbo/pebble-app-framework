@@ -32,6 +32,9 @@ import { escapeHtml } from './escape';
 import stockUtil from '../stock/util';
 import type { ClayConfigItem } from '../clay/types';
 
+/** The stock line for no plugin as the page shows it, with the panel's title in place of its mark. */
+const NO_STOCK_PLUGIN = 'This face needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under Plugins This Face Supports, then pick it under Preferred Sources in the Pebble app.';
+
 // the plugin code a face built with PLUGIN_STOCKS finds, which a spec turns off to stand for a face
 // built without it. the build writes null into the index then, which is what the getter hands back
 const pluginCode = vi.hoisted(() => ({ off: false }));
@@ -533,7 +536,7 @@ describe('stock plugin page with no stock plugin', () => {
     const result = { label: rowOf(page, 'STOCK_PROVIDER')?.options?.find((option) => option.value === 'plugin')?.label, notes: notesOf(page) };
 
     expect(result.label).toBe(STOCK_TEXTS.notInstalledLabel);
-    expect(result.notes).toContain(escapeHtml(STOCK_TEXTS.noPlugin as string));
+    expect(result.notes).toContain(escapeHtml(NO_STOCK_PLUGIN));
   });
 
   /** The Pebble app has no stock plugin built in, so a wearer who never picked one would never learn a plugin can feed the quotes. */
@@ -583,7 +586,7 @@ describe('stock plugin page with no stock plugin', () => {
 
     const result = (card?.items || []).map((row) => (row.type === 'pluginNote' ? String(row.defaultValue) : row.type));
 
-    expect(result).toEqual(['heading', escapeHtml(STOCK_TEXTS.noPlugin as string)]);
+    expect(result).toEqual(['heading', escapeHtml(NO_STOCK_PLUGIN)]);
   });
 });
 

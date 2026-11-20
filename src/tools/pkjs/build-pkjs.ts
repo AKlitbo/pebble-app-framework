@@ -19,8 +19,10 @@
  *            plugin-sources/index.js is written again from PLUGIN_KINDS, with each kind that
  *            is off set to null. The face's providers list decides what its settings page
  *            offers, so face-providers/index.js is written again with the lists that change
- *            something on the phone, or left as tsc wrote it, null, for a face with none. A face
- *            whose own code reaches past either index is refused first.
+ *            something on the phone, or left as tsc wrote it, null, for a face with none.
+ *            app-name/index.js is written again with the appinfo's displayName, which the
+ *            settings page heading reads. A face whose own code reaches past either plugin
+ *            index is refused first.
  *
  * The SDK's bundler starts at the face's entry and follows require from there, so an emitted file
  * nothing requires is left out of the bundle. The vendor and entries steps rely on that. tsc emits
@@ -32,7 +34,7 @@
  * or emit/src/pkjs/index.js for a face on its own, beside the framework's emit/<framework folder>/ts/**.
  * The wscript tells paf_build.build_face which of those the entry is.
  *
- * A face that ships several targets (Gridlock's watchface and watchapp) compiles once. The emit tree
+ * A face that ships several targets, such as a watchface and a watchapp, compiles once. The emit tree
  * does not depend on the target, so the first target's emit/ is copied whole into each of the others.
  *
  * build.ts runs it before every Pebble build, which is what paf build runs.
@@ -73,6 +75,7 @@ export interface FacePaths {
   icaljsTo: string;  // targets/<target>/emit/<framework folder>/ts/calendar/icaljs.js
   pluginSources: string; // targets/<target>/emit/<framework folder>/ts/plugin-sources
   faceProviders: string; // targets/<target>/emit/<framework folder>/ts/face-providers
+  appName: string;   // targets/<target>/emit/<framework folder>/ts/app-name
   tsconfig: string;  // targets/<target>/tsconfig.pkjs.json (generated)
   skipDir: string;   // <sourceFace>/src/pkjs/clay/builder
 }
@@ -128,6 +131,7 @@ export function facePaths(target: string, sourceFace: string = target, place: Fa
     icaljsTo: path.join(emit, ...engineRel.split('/'), 'ts', 'calendar', 'icaljs.js'),
     pluginSources: path.join(emit, ...engineRel.split('/'), 'ts', 'plugin-sources'),
     faceProviders: path.join(emit, ...engineRel.split('/'), 'ts', 'face-providers'),
+    appName: path.join(emit, ...engineRel.split('/'), 'ts', 'app-name'),
     tsconfig: path.join(sandbox, 'tsconfig.pkjs.json'),
     skipDir: path.join(faceSrc, 'clay', 'builder'),
   };
@@ -483,6 +487,32 @@ function writeFaceProvidersEntry(p: FacePaths, providers: ProviderLists): string
   return kinds.map((kind) => `${kind} ${(bundled[kind] as BundledList).offered.join(' and ')}`);
 }
 
+/**
+ * The app-name/index.js a face builds with, holding the name the settings page heading shows.
+ *
+ * It reads the same as tsc's output for index.ts, so config-builder's import of it works unchanged.
+ * The name goes in as a JSON string with the two line separators JSON leaves bare escaped too, since
+ * an older JS engine reads either one as the end of the line.
+ *
+ * @param name The appinfo's displayName, or null for a face with none.
+ * @return The file's text.
+ */
+export function appNameSource(name: string | null): string {
+  const literal = name === null ? 'null' : JSON.stringify(name).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+
+  return [
+    "'use strict';",
+    "Object.defineProperty(exports, '__esModule', { value: true });",
+    `exports.appName = ${literal};`,
+  ].join('\n') + '\n';
+}
+
+/** Writes the emitted app-name/index.js again with the face's display name. */
+function writeAppNameEntry(p: FacePaths, name: string | null): void {
+  fs.mkdirSync(p.appName, { recursive: true });
+  fs.writeFileSync(path.join(p.appName, 'index.js'), appNameSource(name));
+}
+
 /** What writeGeneratedEntries wrote, for the line printed after the build. */
 export interface GeneratedEntries {
   /** The file name of each plugin kind the face built with, such as weather. */
@@ -496,18 +526,22 @@ export interface GeneratedEntries {
  *
  * tsc compiles every face's ts/ the same way, so a file that has to differ from face to face is
  * written over its compiled copy here. That is plugin-sources/index.js, which requires only the
- * plugin kinds the face's defines turn on, and face-providers/index.js, which carries the providers
- * the face lists. Each file has a writer of its own, and this runs them in turn. It runs after the
- * compile and before the emit tree is copied into a face's other targets.
+ * plugin kinds the face's defines turn on, face-providers/index.js, which carries the providers the
+ * face lists, and app-name/index.js, which carries the face's display name. Each file has a writer of
+ * its own, and this runs them in turn. It runs after the compile and before the emit tree is copied
+ * into a face's other targets.
  *
  * @param p The paths for the target that compiled.
  * @param defines The face's defines, from readDefines.
  * @param providers The face's checked providers list, from readProviders. Left out, the face lists none.
+ * @param appName The appinfo's displayName. Left out, the page heading falls back to its plain one.
  * @return What was written, for the build's one line.
  */
-export function writeGeneratedEntries(p: FacePaths, defines: Defines, providers: ProviderLists = {}): GeneratedEntries {
+export function writeGeneratedEntries(p: FacePaths, defines: Defines, providers: ProviderLists = {}, appName: string | null = null): GeneratedEntries {
   const plugins = writePluginSourcesEntry(p, pluginKindsOn(defines));
   const offered = writeFaceProvidersEntry(p, providers);
+
+  writeAppNameEntry(p, appName);
 
   return { plugins, providers: offered };
 }
@@ -530,15 +564,16 @@ export interface FaceBuild extends GeneratedEntries {
  * @param rest The paths for every other target the face declares.
  * @param defines The face's defines, from readDefines.
  * @param providers The face's checked providers list, from readProviders. Left out, the face lists none.
+ * @param appName The appinfo's displayName. Left out, the page heading falls back to its plain one.
  * @return The generated components copied, whether ical.js went in, and what writeGeneratedEntries wrote.
  */
-export function fillEmit(first: FacePaths, rest: FacePaths[], defines: Defines, providers: ProviderLists = {}): Omit<FaceBuild, 'targets'> {
+export function fillEmit(first: FacePaths, rest: FacePaths[], defines: Defines, providers: ProviderLists = {}, appName: string | null = null): Omit<FaceBuild, 'targets'> {
   const generated = copyGenerated(first);
 
   refuseDirectPluginImports(first);
 
   const icaljs = copyIcalJs(first);
-  const entries = writeGeneratedEntries(first, defines, providers);
+  const entries = writeGeneratedEntries(first, defines, providers, appName);
 
   for (const p of rest) {
     cleanEmit(p);
@@ -567,7 +602,7 @@ export function buildFace(face: string, info: FaceBuildInfo = readFaceBuildInfo(
   writeTsconfig(face, first);
   compile(first);
 
-  return { targets, ...fillEmit(first, rest, defines, providers) };
+  return { targets, ...fillEmit(first, rest, defines, providers, info.appName ?? null) };
 }
 
 /**

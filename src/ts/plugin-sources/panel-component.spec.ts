@@ -21,7 +21,7 @@ const LISTING = 'https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e
 /** A panel listing the built-in weather plugin and one store plugin, escaped as the page carries it. */
 function content(overrides: Partial<PluginPanelContent> = {}): PluginPanelContent {
   return {
-    title: 'Plugins This Watchface Supports',
+    title: 'Plugins This Face Supports',
     intro: 'Intro.',
     off: '',
     kinds: [{
@@ -80,7 +80,7 @@ describe('opening and closing', () => {
     const result = root.querySelector('details');
 
     expect(result?.open).toBe(false);
-    expect(result?.querySelector('summary')?.textContent).toBe('Plugins This Watchface Supports');
+    expect(result?.querySelector('summary')?.textContent).toBe('Plugins This Face Supports');
   });
 });
 

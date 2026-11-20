@@ -28,7 +28,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { facePaths, compile, fillEmit, writeTsconfig, type FacePaths } from '../../tools/pkjs/build-pkjs.ts';
-import { isPluginApp, PLUGIN_CONFIG_PAGE, readAppinfo, readDefines } from '../../tools/manifest/build-manifests.ts';
+import { displayNameOf, isPluginApp, PLUGIN_CONFIG_PAGE, readAppinfo, readDefines } from '../../tools/manifest/build-manifests.ts';
 import { readPluginPage, renderPluginPage } from '../../tools/pkjs/plugin-page.ts';
 import { readProviders } from '../../tools/manifest/providers.ts';
 import type { ProviderLists } from '../../tools/manifest/providers.ts';
@@ -250,21 +250,22 @@ function htmlFromDataUrl(url: string): string {
  * @param paths The paths for the face's sandbox.
  * @param defines The face's defines, from its appinfo.
  * @param providers The face's checked providers list, from readProviders. Left out, the face lists none.
+ * @param appName The face's display name, which the page heading shows. Left out, the heading is the plain one.
  */
-export function fillPreviewEmit(paths: FacePaths, defines: Record<string, number>, providers: ProviderLists = {}): void {
-  fillEmit(paths, [], defines, providers);
+export function fillPreviewEmit(paths: FacePaths, defines: Record<string, number>, providers: ProviderLists = {}, appName: string | null = null): void {
+  fillEmit(paths, [], defines, providers, appName);
 }
 
 /**
- * A face's defines and its checked providers list, read from its appinfo alone. The preview builds no
+ * A face's defines, its checked providers list, and its display name, read from its appinfo alone. The preview builds no
  * watch app, so it never looks at the face's targets, and a face whose targets would not resolve still
  * previews. A providers list the build would refuse stops the preview the same way.
  */
-function faceBuild(face: string): { defines: Record<string, number>; providers: ProviderLists } {
+function faceBuild(face: string): { defines: Record<string, number>; providers: ProviderLists; appName: string | null } {
   const appinfo = readAppinfo(face);
   const defines = readDefines(appinfo, face);
 
-  return { defines, providers: readProviders(appinfo, face, defines) };
+  return { defines, providers: readProviders(appinfo, face, defines), appName: displayNameOf(appinfo) };
 }
 
 /**
@@ -461,11 +462,11 @@ function watch(args: ClayPreviewArgs, paths: FacePaths, messageKeys: Record<stri
     forgetCompiled(paths);
 
     try {
-      const { defines, providers } = faceBuild(args.face);
+      const { defines, providers, appName } = faceBuild(args.face);
 
       // no cleanEmit here: wiping emit/ would mean a cold tsc on every keystroke
       compile(paths);
-      fillPreviewEmit(paths, defines, providers);
+      fillPreviewEmit(paths, defines, providers, appName);
       // each build starts the features again, so each one starts from the saved state the files gave
       installHost(args, args.plugins === null ? null : readPluginsFile(args.plugins));
       build(args, paths, messageKeys, defines);
@@ -516,7 +517,7 @@ function main(): void {
 
     const plugins = args.plugins === null ? null : readPluginsFile(args.plugins);
     const keys = messageKeysFrom(appinfoPath(args.face));
-    const { defines, providers } = faceBuild(args.face);
+    const { defines, providers, appName } = faceBuild(args.face);
 
     messageKeys = keys;
     stubModuleLoad((id) => (id === 'message_keys' ? keys : undefined));
@@ -526,7 +527,7 @@ function main(): void {
     // the face's start-up loads every feature it passes, the calendar one reads ical.js, the face's
     // defines decide which plugin code its features find and whether they start at all, and its
     // providers decide what its page offers
-    fillPreviewEmit(paths, defines, providers);
+    fillPreviewEmit(paths, defines, providers, appName);
     build(args, paths, messageKeys, defines);
   } catch (error) {
     reportFailure(error);

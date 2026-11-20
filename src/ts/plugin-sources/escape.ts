@@ -11,22 +11,13 @@
  * and never become markup.
  */
 
+import { escapeHtml } from '../clay/escape-html';
 import type { PluginSummary } from './types';
+
+export { escapeHtml };
 
 /** The longest plugin name the page shows, with an ellipsis standing in for the rest. */
 export const NAME_LIMIT = 40;
-
-/**
- * Words with their HTML characters escaped, and the dollar sign with them.
- *
- * @param text The words as they should read.
- * @return The words with `&`, `<`, `>`, both quotes, and `$` written as their entities.
- */
-export function escapeHtml(text: string): string {
-  const entities: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;', '$': '&#36;' };
-
-  return text.replace(/[&<>"'$]/g, (character) => entities[character]);
-}
 
 /**
  * A plugin's uuid in lowercase, so the same uuid written in another case still matches.

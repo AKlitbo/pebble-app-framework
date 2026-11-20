@@ -131,8 +131,8 @@ export function trackFromUpdate(envelope: SourceEnvelope | null | undefined, art
 
 /** The now playing page hook's notes. No store plugin serves music yet, so the no plugin note names none. */
 export const MUSIC_TEXTS: PluginSourceTexts = {
-  notStandard: (pluginName) => `${pluginName} sends music this watchface cannot read. Pick another music plugin under Preferred Sources in the Pebble app.`,
-  permissionDenied: 'This watchface needs Music to show what your phone is playing. Allow it for this watchface in the Pebble app.',
+  notStandard: (pluginName) => `${pluginName} sends music this face cannot read. Pick another music plugin under Preferred Sources in the Pebble app.`,
+  permissionDenied: 'This face needs Music to show what your phone is playing. Allow it for this face in the Pebble app.',
   noPlugin: 'Now playing needs a music plugin. The Pebble app has one built in on Android. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.',
 };
 

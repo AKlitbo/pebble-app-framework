@@ -1,6 +1,6 @@
 # Releases
 
-A face repo releases one face at a time by pushing a tag named for the face and its version, such as `ridgeline-v1.4.2`. The release workflow reads the face out of the tag, checks the tag against the face's appinfo and changelog before anything is installed, builds the face on the toolchain CI uses, and publishes a GitHub release with the face's `.pbw` files attached and its changelog entry as the notes. Pushing the tag is the whole release process. Each face in a repo of several keeps its own version and its own releases.
+A face repo releases one face at a time by pushing a tag named for the face and its version, such as `my-face-v1.4.2`. The release workflow reads the face out of the tag, checks the tag against the face's appinfo and changelog before anything is installed, builds the face on the toolchain CI uses, and publishes a GitHub release with the face's `.pbw` files attached and its changelog entry as the notes. Pushing the tag is the whole release process. Each face in a repo of several keeps its own version and its own releases.
 
 The checks are in [`prepare-release`](../../.github/actions/prepare-release/action.yml), with the tag and changelog reading in [`lib.js`](../../.github/actions/prepare-release/scripts/lib.js) and the checks themselves in [`prepare-release.js`](../../.github/actions/prepare-release/scripts/prepare-release.js). Publishing is [`publish-release`](../../.github/actions/publish-release/action.yml), with [`publish-release.js`](../../.github/actions/publish-release/scripts/publish-release.js). The face lookup they share is in [`lib.js`](../../.github/shared/lib.js). The sync and `setup-pebble` steps are on [Building in CI](ci-builds.md).
 
@@ -60,7 +60,7 @@ From the tag to the published release, with every point that can stop it:
 
 ```mermaid
 flowchart TD
-  tag["a tag such as ridgeline-v1.4.2 is pushed"] --> sync["paf sync --locked fills every unit"]
+  tag["a tag such as my-face-v1.4.2 is pushed"] --> sync["paf sync --locked fills every unit"]
   sync --> prepare["prepare-release checks the tag, the appinfo, and the changelog"]
   prepare --> setup["setup-pebble installs the face's toolchain"]
   setup --> build["paf build builds every target"]
@@ -79,7 +79,7 @@ Nothing is published before the last step, so a run that stops earlier leaves no
 
 A release tag is shaped `<face>-v<version>`. `prepare-release` splits it at the last `-v` with a digit straight after it. A face name can hold `-v` itself, as in `retro-vapor`, and so can a pre-release label, as in `-very.1`, and neither is followed by a digit, so `retro-vapor-v2.0.0-very.1` still splits into `retro-vapor` and `2.0.0-very.1`. A tag with no such `-v` stops the release with the shape it should have.
 
-**The Face's Name.** A face goes by the name the tools give it where it builds. A face that is its own unit, at the repo root or in a folder under `watchfaces/`, `watchapps/`, or `plugins/`, goes by the `name` in its appinfo, since its folder is named after wherever it was cloned. A face in a family goes by its folder's name beside the family's `core/`. So the LCARS face at its repo's root releases as `lcars-stardate-v1.13.0`, and Ridgeline in the Sketchbook family as `ridgeline-v1.4.2`.
+**The Face's Name.** A face goes by the name the tools give it where it builds. A face that is its own unit, at the repo root or in a folder under `watchfaces/`, `watchapps/`, or `plugins/`, goes by the `name` in its appinfo, since its folder is named after wherever it was cloned. A face in a family goes by its folder's name beside the family's `core/`. So a face named `my-face` at its repo's root releases as `my-face-v1.4.2`, and `face-a` in `my-family` as `face-a-v1.0.0`.
 
 **Finding Its Unit.** The action looks at the repo root and every folder under `watchfaces/`, `watchapps/`, and `plugins/` for a face of that name, which also tells it the unit the face builds from. Then it lists the faces with [`faces.ts`](../../src/tools/shared/faces.ts) from that unit's own `paf/`, the same lookup the face's build uses, even when the action comes from a newer tag. A name that matches no face stops the release there.
 
@@ -99,18 +99,18 @@ Every check that can stop a release runs here, before the SDK install and the bu
 
 **Not Already Released.** The action asks `gh` for a release under the tag. One that exists stops the run with a message to delete it first, since republishing over a shipped release is not something to do without noticing. A `gh` failure for any other reason stops it too, since the same problem would only show again once the build was done.
 
-**What It Hands On.** Once every check passes, it writes the release notes to a file and gives the next steps the face, the version, the title, and the notes file. The title is the appinfo's `displayName` and the version, such as `Ridgeline 1.4.2`, and falls back to the face's name when the appinfo has no display name. A short table on the job summary names the face, the version, the framework tag, and the changelog entry it used.
+**What It Hands On.** Once every check passes, it writes the release notes to a file and gives the next steps the face, the version, the title, and the notes file. The title is the appinfo's `displayName` and the version, such as `My Face 1.4.2`, and falls back to the face's name when the appinfo has no display name. A short table on the job summary names the face, the version, the framework tag, and the changelog entry it used.
 
 ### The Notes Are the Changelog Entry
 
-The notes are the changelog entry as written, so there is no second copy to keep in step. The entry runs from its heading to the next `## [...]` heading, or to the link references a changelog closes with, whichever comes first, and the blank lines either side are trimmed. A line with the date goes above it. For Gridlock's 1.5.0, the notes open like this:
+The notes are the changelog entry as written, so there is no second copy to keep in step. The entry runs from its heading to the next `## [...]` heading, or to the link references a changelog closes with, whichever comes first, and the blank lines either side are trimmed. A line with the date goes above it. For a face's 1.5.0, the notes open like this:
 
 ```
 Released 2026-09-27.
 
 ### Added
 
-- Added support for stock symbols outside the US, indexes, and currency pairs, such as 7203.T, ^GSPC, EURUSD=X, and BTC/USD. The watch shows the first 11 characters.
+- Added a sunrise readout to the top bar.
 ```
 
 ## Building the Face
@@ -129,8 +129,8 @@ Released 2026-09-27.
 
 | Target Builds For | Asset Name | Example |
 | :-- | :-- | :-- |
-| one platform | `<target>-<platform>-<version>.pbw` | `gridlock-face-emery-1.5.0.pbw` |
-| several platforms | `<target>-<version>.pbw` | `ridgeline-1.4.2.pbw` |
+| one platform | `<target>-<platform>-<version>.pbw` | `my-face-app-emery-1.5.0.pbw` |
+| several platforms | `<target>-<version>.pbw` | `my-face-1.4.2.pbw` |
 | a plugin app, which builds for no platform | `<target>-<version>.pbw` | `my-plugin-1.0.0.pbw` |
 
 A `.pbw` built for several platforms carries a binary for each, so naming it after any one of them would mislead.

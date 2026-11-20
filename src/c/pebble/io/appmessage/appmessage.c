@@ -45,9 +45,10 @@ static struct
 #if defined(APPMESSAGE_HAS_MUSIC_ART)
     MusicArtHandler             on_music_art;           ///< The album art arrived
 #endif
-    CustomColorsHandler         on_custom_colors;       ///< Custom colours arrived from the settings page
-    CustomColorsProvider        custom_colors_provider; ///< Supplies the face's custom colours for the settings reply
 } s_handlers;
+
+static LongText s_long_text; ///< The face's text setting too long for the settings blob, zeroed for none
+static bool     s_opened;    ///< Whether appmessage_open has run, after which the outbox size is fixed
 
 /// Room for the work that waits for a whole inbound message, one entry per store that wants it
 #define INBOX_COMPLETE_MAX 4
@@ -61,7 +62,6 @@ void appmessage_on_settings_changed(SettingsChangedHandler cb) { s_handlers.on_s
 void appmessage_on_unit_changed(UnitChangedHandler cb)         { s_handlers.on_unit_changed = cb; }
 void appmessage_on_stock_strip(StockStripHandler cb)          { s_handlers.on_stock_strip = cb; }
 void appmessage_on_calendar_strip(CalendarStripHandler cb)   { s_handlers.on_calendar_strip = cb; }
-void appmessage_on_custom_colors(CustomColorsHandler cb)      { s_handlers.on_custom_colors = cb; }
 
 void appmessage_on_phone_battery(PhoneBatteryHandler cb)
 {
@@ -98,7 +98,11 @@ void appmessage_on_music_art(MusicArtHandler cb)
     (void)cb;
 #endif
 }
-void appmessage_set_custom_colors_provider(CustomColorsProvider cb) { s_handlers.custom_colors_provider = cb; }
+
+void appmessage_set_long_text(uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver)
+{
+    (void)long_text_set(&s_long_text, key, cap, provider, receiver, s_opened);
+}
 
 void appmessage_add_inbox_complete(InboxCompleteHandler cb)
 {
@@ -387,7 +391,8 @@ void appmessage_release_music(void)
 
 /**
  * @brief The most outbox bytes the settings reply could take, counting everything write_settings
- * writes. The outbox is opened at this, so no settings change can outgrow it later.
+ * writes but the long text. The outbox is opened at this and the long text at its cap, so no
+ * settings change can outgrow it later.
  *
  * @return The whole message's size, the dictionary's own header included, or 0 for a face without
  * the settings keys, which never sends it.
@@ -395,15 +400,10 @@ void appmessage_release_music(void)
 static uint32_t settings_reply_size(void)
 {
 #if defined(APPMESSAGE_HAS_SETTINGS)
-    // the dictionary's header, the request marker, and the fields, then the fresh flag
+    // the dictionary's header, the request marker, and the fields, then the fresh flag. appmessage_open
+    // adds the long text once it has checked the text fits
     uint32_t size = dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) + settings_serialized_size_max();
     size += dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) - dict_calc_buffer_size(0);
-
-#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
-    // counted whether or not a provider is set yet, so the order a face registers the provider and
-    // opens the transport in makes no difference
-    size += dict_calc_buffer_size(1, (uint32_t)APPMESSAGE_CUSTOM_COLORS_MAX) - dict_calc_buffer_size(0);
-#endif
 
     return size;
 #else
@@ -411,41 +411,14 @@ static uint32_t settings_reply_size(void)
 #endif
 }
 
-#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
-/**
- * @brief Whether the custom colours a message carries are the ones the face already holds.
- *
- * The settings page sends the colours with every save, so taking each arrival as a change made
- * every save rebuild the face and refetch anything that follows a settings change. The face's own
- * provider rebuilds the string it holds, and the two only match when nothing moved. A string the
- * provider writes differently just counts as a change.
- *
- * @param custom The colours the message carries.
- * @return True when they match what the face holds.
- */
-static bool custom_colors_match(const char *custom)
-{
-    if (!s_handlers.custom_colors_provider)
-    {
-        return false;
-    }
-
-    // only as much as the face can hold is compared, so a longer string whose held part matches
-    // does not count as a change on every save
-    char held[APPMESSAGE_CUSTOM_COLORS_MAX];
-    s_handlers.custom_colors_provider(held, sizeof(held));
-    return strncmp(custom, held, sizeof(held) - 1) == 0;
-}
-#endif
-
 // a face without the settings keys never asks for its settings back, so it sends no reply
 #if defined(APPMESSAGE_HAS_SETTINGS)
 /**
  * @brief Write the settings reply payload into the outbox iterator.
  *
  * The watch persist is the source of truth so Clay can seed its store from it. Carries the request
- * key as a marker, the current settings, a fresh flag, and the custom colours. settings_reply_size
- * counts the same four things.
+ * key as a marker, the current settings, a fresh flag, and the face's long text setting.
+ * settings_reply_size counts the first three, and appmessage_open adds the long text once it fits.
  *
  * @param iter The outbox iterator to write into.
  * @return True when all of it was written, false when the outbox ran out of room partway.
@@ -461,17 +434,15 @@ static bool write_settings(DictionaryIterator *iter)
     // can push its own config back instead of letting these defaults seed over it
     written = dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_FRESH, settings_was_fresh() ? 1 : 0) == DICT_OK && written;
 
-    // custom colours ride their own key (split across two persist blobs on the watch), so the
-    // settings table does not carry them: the provider rebuilds the combined string into a stack
-    // buffer that lives only for this send since dict_write_cstring copies it into the outbox
-#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
-    if (s_handlers.custom_colors_provider)
+    // the long text rides its own key, since the face keeps it outside the settings table. the
+    // provider writes it into a stack buffer that lives only for this send, since dict_write_cstring
+    // copies it into the outbox. long_text_set holds the cap to LONG_TEXT_CAP_MAX
+    if (s_long_text.cap)
     {
-        char combined[APPMESSAGE_CUSTOM_COLORS_MAX];
-        s_handlers.custom_colors_provider(combined, sizeof(combined));
-        written = dict_write_cstring(iter, MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS, combined) == DICT_OK && written;
+        char held[s_long_text.cap];
+        long_text_held(&s_long_text, held);
+        written = dict_write_cstring(iter, s_long_text.key, held) == DICT_OK && written;
     }
-#endif
 
     return written;
 }
@@ -545,24 +516,20 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // the settings go in before any reading. a plugin's weather carries the units it is in as
     // settings, so the reading in hand converts to them first and the new reading then lands as it is
 
-    // custom colours ride their own key, not the settings table: the combined "~3 colours | flags"
-    // string can exceed a persist key, so read it straight off the tuple and let the face split +
-    // store it into the two blobs
-    bool custom_changed = false;
-#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
-    Tuple *custom_colors_t = dict_find(iterator, MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS);
-    if (custom_colors_t && s_handlers.on_custom_colors)
+    // the long text rides its own key, not the settings table, since it can run past what one persist
+    // key holds. it is read straight off the tuple and the face stores it however it splits it
+    bool long_text_changed = false;
+    if (s_long_text.cap)
     {
-        // this string gets split straight into the two persist blobs, so an unterminated one
-        // would carry whatever followed it in the inbox all the way into flash
-        const char *custom = tuple_str_or(custom_colors_t, NULL);
-        if (custom && !custom_colors_match(custom))
+        Tuple *long_text_t = dict_find(iterator, s_long_text.key);
+        // the face writes this text straight to flash, so an unended one would carry whatever
+        // followed it in the inbox all the way there
+        const char *text = long_text_t ? tuple_str_or(long_text_t, NULL) : NULL;
+        if (text)
         {
-            s_handlers.on_custom_colors(custom);
-            custom_changed = true;
+            long_text_changed = long_text_arrived(&s_long_text, text);
         }
     }
-#endif
 
     // decode every settings field the message carries. the table owns which keys
     // exist and how each encodes so this transport never names a field
@@ -576,10 +543,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 #else
     SettingsInbound settings = settings_apply_inbox(iterator);
 #endif
-    bool moved = settings.changed || custom_changed;
+    bool moved = settings.changed || long_text_changed;
 
-    // a custom colour change saves too. a face keeps its colours in storage-only schemas in the
-    // chain, so the save is what writes them. every schema is rewritten, which costs a write per
+    // a long text change saves too. a face that keeps the text in storage-only schemas in the chain
+    // has it written by this save. every schema is rewritten, which costs a write per
     // blob on a save the wearer made by hand, where a checksum per schema would cost bytes on every face
     bool save = moved;
     bool restoring = false;
@@ -864,6 +831,13 @@ void appmessage_open(uint32_t inbox_size)
     app_message_register_outbox_failed(outbox_failed_callback);
     app_message_register_outbox_sent(outbox_sent_callback);
 
+    // both buffers come off the heap, and the platform maximum is the most the SDK will open
+    uint32_t outbox_max = app_message_outbox_size_maximum();
+    uint32_t inbox_max = app_message_inbox_size_maximum();
+
+    // an inbox under the SDK minimum would drop every message the phone sends
+    inbox_size = (uint32_t)clamp_int((int)inbox_size, APP_MESSAGE_INBOX_SIZE_MINIMUM, (int)inbox_max);
+
     // the biggest thing the watch sends is the settings reply, and every string in it is counted at
     // its full buffer, so no settings change can outgrow the outbox later. a face with no settings
     // at all still needs room for a one byte request
@@ -874,9 +848,25 @@ void appmessage_open(uint32_t inbox_size)
         outbox_size = request_size;
     }
 
-    // both buffers come off the heap, and the platform maximum is the most the SDK will open
-    uint32_t outbox_max = app_message_outbox_size_maximum();
-    uint32_t inbox_max = app_message_inbox_size_maximum();
+    // a long text the outbox cannot hold beside the rest of the reply would send every reply empty,
+    // and one the inbox cannot hold would drop every save, so one that misses either is left out
+    if (s_long_text.cap)
+    {
+        uint32_t text_bytes = dict_calc_buffer_size(1, (uint32_t)s_long_text.cap) - dict_calc_buffer_size(0);
+        if (long_text_fits(text_bytes, outbox_size, outbox_max, inbox_size - dict_calc_buffer_size(0)))
+        {
+#if defined(APPMESSAGE_HAS_SETTINGS)
+            outbox_size += text_bytes;
+#endif
+        }
+        else
+        {
+            APP_LOG(APP_LOG_LEVEL_ERROR, "long text cap %d does not fit outbox %d or inbox %d, so it is left out",
+                    (int)s_long_text.cap, (int)outbox_max, (int)inbox_size);
+            s_long_text = (LongText){0};
+        }
+    }
+
     s_outbox_size = outbox_size < outbox_max ? outbox_size : outbox_max;
     if (outbox_size > outbox_max)
     {
@@ -884,8 +874,9 @@ void appmessage_open(uint32_t inbox_size)
         // does not fit goes out empty
         APP_LOG(APP_LOG_LEVEL_ERROR, "settings reply %d over outbox %d", (int)outbox_size, (int)outbox_max);
     }
-    // an inbox under the SDK minimum would drop every message the phone sends
-    inbox_size = (uint32_t)clamp_int((int)inbox_size, APP_MESSAGE_INBOX_SIZE_MINIMUM, (int)inbox_max);
+
+    // the outbox size is fixed from here, which is what makes appmessage_set_long_text refuse a later call
+    s_opened = true;
 
     // a failed open leaves every message in both directions going nowhere, so say so rather than
     // leave the panels on placeholders with no clue why

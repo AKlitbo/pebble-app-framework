@@ -26,7 +26,7 @@ A plugin app is a face too, one whose appinfo sets `"projectType": "plugin"`. A 
 
 ## One Face at the Root
 
-A repo that is a single face, such as the LCARS face:
+A repo that is a single face:
 
 ```
 my-face/

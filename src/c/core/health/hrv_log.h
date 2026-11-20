@@ -48,10 +48,10 @@ typedef enum
     HRV_COUNT_ANY,         ///< Every burst counts
 } HrvCount;
 
-#define HRV_RECENT 6  ///< How many of the latest bursts a tuning panel can see
+#define HRV_RECENT 6  ///< How many of the latest bursts a readout that shows each burst can see
 
 /**
- * @brief One burst as a tuning panel shows it: what the wearer did and what came of it.
+ * @brief One burst, for a readout that shows each burst: what the wearer did and what came of it.
  *
  * Kept in memory only, since it is for watching the numbers while moving, not for history.
  */

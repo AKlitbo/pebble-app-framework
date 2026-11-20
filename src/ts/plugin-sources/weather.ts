@@ -708,9 +708,9 @@ export function weatherErrorStatus(code: string | null | undefined): string | un
  * list is the plugin alone they always show, and the one for no plugin joins them.
  */
 export const WEATHER_TEXTS: PluginSourceTexts = {
-  notStandard: (pluginName) => `${pluginName} sends weather this watchface cannot read. Pick another weather plugin under Preferred Sources in the Pebble app, or another data source here.`,
-  notStandardNoSelect: (pluginName) => `${pluginName} sends weather this watchface cannot read. Pick another weather plugin under Preferred Sources in the Pebble app.`,
-  permissionDenied: 'This watchface needs Location to read the Pebble app\'s weather. Allow it for this watchface in the Pebble app.',
+  notStandard: (pluginName) => `${pluginName} sends weather this face cannot read. Pick another weather plugin under Preferred Sources in the Pebble app, or another data source here.`,
+  notStandardNoSelect: (pluginName) => `${pluginName} sends weather this face cannot read. Pick another weather plugin under Preferred Sources in the Pebble app.`,
+  permissionDenied: 'This face needs Location to read the Pebble app\'s weather. Allow it for this face in the Pebble app.',
   source: 'Your watch shows the weather for the first location in the Pebble app\'s weather settings.',
   noPlugin: PLUGINS_OFF_TEXT,
 };

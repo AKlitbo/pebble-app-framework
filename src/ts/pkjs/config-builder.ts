@@ -13,14 +13,21 @@ import type { ClayConfigItem, ThemePreviewPictures } from '../clay/types';
 import { warnMissingPictures } from '../clay/preview-pictures';
 import { VIBE_OPTIONS, WIND_UNIT_OPTIONS } from './config-rows';
 import { goalRows, type GoalRowsOptions } from './goal-rows';
+import { appName } from '../app-name';
+import { escapeHtml } from '../clay/escape-html';
 
 /** The per-section description a face hands buildConfig. Each section is optional.
  * Present means "include it", and its own fields tune it. */
 export interface ConfigBuilderOptions {
+  /** The page's title. Left out, it is the app's displayName from its appinfo, or Settings where the
+   * build has not written one. */
   heading?: string;
-  /** The lead line under the heading. Left out, the page gets the default one, which mentions weather
-   * while the page has a Weather section. */
+  /** The lead line under the heading. Left out, the page gets the default one. */
   intro?: string;
+  /** The lead line for a page with no Weather section, including one the phone's folds leave without it,
+   * such as on a face whose weather comes from a plugin alone and that shows no unit. Left out, the
+   * lead line is the same either way. */
+  introWithoutWeather?: string;
   /** previews shows a picture of the chosen theme under the dropdown, keyed by the option's value as
    * a string, each a list of one or more pictures (such as a day and a night shot), or a map of such
    * a list per platform so each watch shows its own shots. It comes from the file
@@ -52,9 +59,11 @@ export interface ConfigBuilderOptions {
    * `vibe_goal` plays the buzz. */
   goals?: GoalRowsOptions;
   /** timeZone adds the alternate time zone picker to the Clock section, for a face with a second
-   * clock. It needs the CLOCK_TIMEZONE_1 key, and works with or without weather. */
-  clock?: { timeZone?: boolean };
-  location?: { gpsDefault?: boolean };
+   * clock. It needs the CLOCK_TIMEZONE_1 key, and works with or without weather. timeZonePlaceholder
+   * replaces the hint shown in its empty box. */
+  clock?: { timeZone?: boolean; timeZonePlaceholder?: string };
+  /** placeholder replaces the hint shown in the empty Manual Location box. */
+  location?: { gpsDefault?: boolean; placeholder?: string };
   weather?: unknown;
   temperature?: unknown;
   /** A marker that adds the wind speed unit to the Weather section, on WEATHER_WIND_UNIT. The watch
@@ -109,11 +118,20 @@ const KEYLESS_WEATHER = ['openmeteo'];
 /** The stock providers that need no API key. */
 const KEYLESS_STOCKS = ['yahoo'];
 
-/** The default intro for a page with no Weather section. */
-const PLAIN_INTRO = 'Personalize your layout and make this watchface your own.';
+/** The default intro under the page heading. */
+const DEFAULT_INTRO = 'Choose how your watch looks and what it shows.';
 
-/** The default intro for a page with a Weather section. */
-const WEATHER_INTRO = 'Personalize your layout, dial in your weather preferences, and make this watchface your own.';
+/** The page heading for a build that has not written the app's name. */
+const DEFAULT_HEADING = 'Settings';
+
+/** The default date format, which a fresh watch opens on too, from SETTINGS_DEFAULT_CLOCK_DATE_FORMAT in settings_catalog.h. */
+const DEFAULT_DATE_FORMAT = '%a %d %b';
+
+/** The hint in the empty Manual Location box. */
+const LOCATION_PLACEHOLDER = 'Search a city, e.g. Tokyo';
+
+/** The hint in the empty Alternate Time Zone box. */
+const TIME_ZONE_PLACEHOLDER = 'e.g. Tokyo, UTC, or Europe/London';
 
 /**
  * The theme picker: rows with a picture beside each name when the face has previews, the plain
@@ -126,8 +144,8 @@ function themePicker(theme: NonNullable<ConfigBuilderOptions['theme']>): ClayCon
   const picker: ClayConfigItem = {
     'type': 'select',
     'messageKey': 'APPEARANCE_THEME',
-    'label': theme.label || 'Frame Theme',
-    'description': theme.description || 'Colour scheme for the watch frame.',
+    'label': theme.label || 'Theme',
+    'description': theme.description || 'The face\'s colours.',
     'defaultValue': 0,
     'options': theme.options,
   };
@@ -178,7 +196,7 @@ export function appearanceSection(options: ConfigBuilderOptions): ClayConfigItem
         'type': 'toggle',
         'messageKey': 'APPEARANCE_QUIET_TIME_ICON',
         'label': 'Show Quiet Time Icon',
-        'description': options.quietTime.description || 'Show a muted-speaker glyph next to bluetooth while Quiet Time is on.',
+        'description': options.quietTime.description || 'Show an icon while Quiet Time is on.',
         'defaultValue': false,
       }] : []),
     ],
@@ -240,6 +258,19 @@ export function bluetoothSection(options: ConfigBuilderOptions): ClayConfigItem 
 }
 
 /**
+ * The format the Date Format opens on. A face's own list with no default of its own opens on the first
+ * of its formats, since the stock default may not be one of them and the page cannot open on a choice
+ * it does not offer.
+ */
+function dateDefault(date: NonNullable<ConfigBuilderOptions['date']>): string | number {
+  if (date.default) {
+    return date.default;
+  }
+
+  return date.options && date.options.length ? date.options[0].value : DEFAULT_DATE_FORMAT;
+}
+
+/**
  * The Clock section: the date and time formats, the face's own clock controls, and the alternate
  * time zone picker and hourly buzz when asked for.
  *
@@ -263,7 +294,7 @@ export function clockSection(options: ConfigBuilderOptions): ClayConfigItem {
       'messageKey': 'CLOCK_DATE_FORMAT',
       'label': date.label || 'Date Format',
       'description': date.description || dateDescription,
-      'defaultValue': date.default || '%Y.%m%d',
+      'defaultValue': dateDefault(date),
       'options': [...(date.options || defaultDateOptions), ...(date.beats ? beatsDateOptions : [])],
     },
     {
@@ -295,7 +326,7 @@ export function clockSection(options: ConfigBuilderOptions): ClayConfigItem {
       'label': 'Alternate Time Zone',
       'description': 'Sets the time shown by the alternate time zone readout. Search a city, a zone name such as Europe/London, or type UTC or an offset like UTC+05:30.',
       'attributes': {
-        'placeholder': 'e.g. Phoenix, UTC, or Europe/London',
+        'placeholder': options.clock.timeZonePlaceholder || TIME_ZONE_PLACEHOLDER,
       },
     });
   }
@@ -318,7 +349,7 @@ export function clockSection(options: ConfigBuilderOptions): ClayConfigItem {
 }
 
 /**
- * The Health section: what the stats slot shows, the battery readout, and the daily goals, each when
+ * The Health section: what the steps readout shows, the battery readout, and the daily goals, each when
  * asked for. A face that shows none of them gets no section, and so declares no health keys.
  *
  * @param options The per-section description, read for steps, battery, and goals.
@@ -349,8 +380,8 @@ export function healthSection(options: ConfigBuilderOptions): ClayConfigItem | n
     healthItems.push({
       'type': 'select',
       'messageKey': 'HEALTH_STEPS_MODE',
-      'label': steps.label || 'Stats Readout',
-      'description': steps.description || 'What the stats slot shows: step count, or distance walked.',
+      'label': steps.label || 'Steps Readout',
+      'description': steps.description || 'Whether the steps readout shows steps or the distance walked.',
       'defaultValue': 0,
       'options': [
         { 'label': 'Steps', 'value': 0 },
@@ -434,7 +465,7 @@ export function locationSection(options: ConfigBuilderOptions): ClayConfigItem |
       'label': 'Manual Location',
       'pluginSourceHides': 'WEATHER_PROVIDER',
       'attributes': {
-        'placeholder': 'Search a city, e.g. Phoenix',
+        'placeholder': options.location.placeholder || LOCATION_PLACEHOLDER,
       },
     },
   ];
@@ -662,24 +693,43 @@ export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem |
 /**
  * The lead line under the page heading: the face's own intro, or the default.
  *
- * The default mentions weather when the page has a Weather section, from weather, temperature, or
- * wind. A fold can take that section off later, such as on a face whose weather comes from a plugin
- * alone and that shows no unit, so the row carries the plain wording too, and the phone settles it
- * on every page it opens.
+ * A face that passes introWithoutWeather gets it in place of the intro on a page with no Weather
+ * section, from weather, temperature, or wind. A fold can take that section off later, such as on a
+ * face whose weather comes from a plugin alone and that shows no unit, so a page with one carries both,
+ * and the phone settles it on every page it opens.
  *
- * @param options The per-section description, read for intro and the Weather section's fields.
+ * @param options The per-section description, read for intro, introWithoutWeather, and the Weather
+ *   section's fields.
  * @return The text row.
  */
 function introRow(options: ConfigBuilderOptions): ClayConfigItem {
-  if (options.intro) {
-    return { 'type': 'text', 'defaultValue': options.intro };
+  const intro = options.intro || DEFAULT_INTRO;
+  const withoutWeather = options.introWithoutWeather;
+
+  if (!withoutWeather) {
+    return { 'type': 'text', 'defaultValue': intro };
   }
 
   if (!weatherSection(options)) {
-    return { 'type': 'text', 'defaultValue': PLAIN_INTRO };
+    return { 'type': 'text', 'defaultValue': withoutWeather };
   }
 
-  return { 'type': 'text', 'defaultValue': WEATHER_INTRO, 'introWithoutWeather': PLAIN_INTRO };
+  return { 'type': 'text', 'defaultValue': intro, 'introWithoutWeather': withoutWeather };
+}
+
+/**
+ * The page title: the face's own heading, then the app's name, then the plain one.
+ *
+ * Clay shows a heading as markup, so a face's own heading goes in as written and can carry markup of
+ * its own. The app's name comes from the appinfo rather than the face's code, so it goes in escaped and
+ * reads as written whatever characters it holds.
+ */
+function headingText(options: ConfigBuilderOptions): string {
+  if (options.heading) {
+    return options.heading;
+  }
+
+  return appName ? escapeHtml(appName) : DEFAULT_HEADING;
 }
 
 /**
@@ -699,8 +749,9 @@ function introRow(options: ConfigBuilderOptions): ClayConfigItem {
  * those rows while it is picked.
  *
  * Top-level fields:
- *   heading, intro        page title and lead paragraph (both optional). The default intro
- *                         mentions weather while the page has a Weather section
+ *   heading, intro        page title and lead paragraph (both optional). The default title is
+ *                         the app's displayName, or Settings where the build wrote none
+ *   introWithoutWeather   the lead paragraph for a page left with no Weather section
  *
  * Section objects (each section is customized through its own fields):
  *   appearanceItems [ClayConfigItem]            extra controls inside the Appearance section, which
@@ -722,8 +773,8 @@ function introRow(options: ConfigBuilderOptions): ClayConfigItem {
  *                                                   list, and a picker given none has nothing to offer.
  *                                                   previews shows a picture beside each name, and
  *                                                   can be a function the page calls as it opens
- *   clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
- *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
+ *   clock       { timeZone?, timeZonePlaceholder? }  adds the alternate time zone picker to the Clock section
+ *   location    { gpsDefault?, placeholder? }    the GPS toggles and the manual city, which weather reads
  *   weather     {}                               marker, adds the provider picker to the Weather section
  *   temperature {}                               marker, adds the unit dropdown to the Weather section
  *   wind        {}                               marker, adds the wind speed unit to the Weather section
@@ -740,7 +791,7 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
   const config: ClayConfigItem[] = [
     {
       'type': 'heading',
-      'defaultValue': options.heading || 'Watchface Configuration',
+      'defaultValue': headingText(options),
     },
     introRow(options),
     ...(hasAppearance(options) ? [appearanceSection(options)] : []),

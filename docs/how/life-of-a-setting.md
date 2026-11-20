@@ -1,6 +1,6 @@
 # The Life of a Setting
 
-This page follows one setting from the settings page to the watch redrawing. Along the way the framework handles the parts a face would otherwise write for itself: one queue for every message to the watch, a check on every value as it lands, a single flash write per save, and the settings put back after a reinstall. The example is the LCARS face's frame theme, a choice of nine frames, but every setting takes the same road.
+This page follows one setting from the settings page to the watch redrawing. Along the way the framework handles the parts a face would otherwise write for itself: one queue for every message to the watch, a check on every value as it lands, a single flash write per save, and the settings put back after a reinstall. The example is a face's theme, a choice of nine, but every setting takes the same road.
 
 It starts on the settings page, which is built with Clay and shown in the phone app's web view. From there it goes to the phone code, the face's PebbleKit JS running inside the Pebble app, and then to the watch, which keeps every setting in one block of flash and redraws from it.
 
@@ -28,8 +28,8 @@ The face builds its page with `buildConfig` from [`config-builder.ts`](../../src
 {
   'type': 'select',
   'messageKey': 'APPEARANCE_THEME',
-  'label': theme.label || 'Frame Theme',
-  'description': theme.description || 'Colour scheme for the watch frame.',
+  'label': theme.label || 'Theme',
+  'description': theme.description || 'The face\'s colours.',
   'defaultValue': 0,
   'options': theme.options,
 }
@@ -69,10 +69,10 @@ So the theme reaches the watch as the text `"3"`, not the number 3.
 
 ## On the Watch
 
-**Only the Keys It Knows.** `settings_apply_inbox` walks the face's own list of settings and looks each one up in the message. The list is the table of fields the face hands `settings_init`, which uses the framework's shared entries for the common settings. The LCARS face's theme takes one line:
+**Only the Keys It Knows.** `settings_apply_inbox` walks the face's own list of settings and looks each one up in the message. The list is the table of fields the face hands `settings_init`, which uses the framework's shared entries for the common settings. A face's theme takes one line:
 
 ```c
-KNOWN_THEME(offsetof(LcarsSettings, theme), 9),
+KNOWN_THEME(offsetof(MySettings, theme), 9),
 ```
 
 A key in the message that is not on the list is ignored. It still takes up room in the message, though.
@@ -96,7 +96,7 @@ Some settings start more work on the watch:
 * **The Temperature Unit.** The weather store converts the reading it already holds, as [Weather Readings](weather-readings.md#switching-units) covers.
 * **Anything Weather Depends On.** The watch asks the phone for fresh weather.
 
-**One Message Holds the Whole Page.** Clay sends every message key on every save, including ones the watch never reads, so the face sizes its inbox for the whole page. LCARS asks for 4096 bytes. [Talking to the Phone](talking-to-the-phone.md#opening-the-connection) shows how to work the number out.
+**One Message Holds the Whole Page.** Clay sends every message key on every save, including ones the watch never reads, so the face sizes its inbox for the whole page. A face with a long page might ask for 4096 bytes. [Talking to the Phone](talking-to-the-phone.md#opening-the-connection) shows how to work the number out.
 
 ## After a Reinstall
 

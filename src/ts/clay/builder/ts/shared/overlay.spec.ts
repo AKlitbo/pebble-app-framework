@@ -2,7 +2,7 @@
 /**
  * Specs for the shared overlay host.
  *
- * Every popup in both builders opens through one of these, so the lifecycle
+ * Every popup in every builder opens through one of these, so the lifecycle
  * rules here decide whether a config screen can end up with a dead backdrop
  * dimming it and no way out. The sibling structure matters as much as the
  * open/close pair: the panel is appended beside the backdrop rather than

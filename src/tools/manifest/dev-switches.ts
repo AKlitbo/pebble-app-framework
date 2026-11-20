@@ -7,7 +7,7 @@
  * take the same screenshots. The settings at the top are the unit's, and an entry under `faces` sets
  * them for one face, by the name `paf build` takes:
  *
- *     { "walk": "themes", "faces": { "gridlock": { "walk": "modules", "clock": "20:42" } } }
+ *     { "walk": "themes", "faces": { "face-a": { "walk": "clocks", "clock": "20:42" } } }
  *
  * The walk and the clock become defines. The date, the settings, the store readings, and the walks the
  * file lays out as lists go into a header the build writes for a dev build, which dev-header.ts writes.
@@ -115,7 +115,7 @@ const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
  *
  * @param value The date as written, `YYYY-MM-DD`.
  * @param file The file as a message names it.
- * @param owner `gridlock's ` for a face's entry, or empty for the top of the file.
+ * @param owner `face-a's ` for a face's entry, or empty for the top of the file.
  * @return The date with its weekday and day of the year.
  */
 export function readDate(value: unknown, file: string, owner: string): DevDate {
@@ -144,7 +144,7 @@ function modeRefused(file: string, owner: string): ToolError {
 /**
  * Reads one block of settings, the top of the file or a face's entry, taking what it leaves out from
  * the fallback. The owner goes in front of each setting a message names, so a face's entry reads as
- * `gridlock's walk`.
+ * `face-a's walk`.
  *
  * A `mode` stops the build, since the file is committed and a mode in it would read as on in every
  * build, CI's and a release's included, while `--dev` is what turns it on. A setting the block does not
@@ -207,7 +207,7 @@ function readBlock(block: Record<string, unknown>, file: string, owner: string, 
  * walk that is not a lowercase name, and a clock that is not a 24-hour `HH:MM`, at the top or in an entry.
  *
  * @param settings The unit's paf.dev.config.json, parsed.
- * @param file The file as a message names it, such as `mosaic/paf.dev.config.json`.
+ * @param file The file as a message names it, such as `my-family/paf.dev.config.json`.
  * @param faces Gives the names of the unit's faces, as `paf build` takes them. It is only asked when the file has an entry.
  * @return The unit's settings and each face entry's, with the defaults for anything the file leaves out.
  */
@@ -220,7 +220,7 @@ export function readDevHarness(settings: unknown, file: string, faces: () => str
   const entries = 'faces' in settings ? settings.faces : {};
 
   if (!isObject(entries)) {
-    throw new ToolError(`${file} sets faces to ${JSON.stringify(entries)}. It takes an object of settings by face name, such as { "gridlock": { "walk": "modules" } }`);
+    throw new ToolError(`${file} sets faces to ${JSON.stringify(entries)}. It takes an object of settings by face name, such as { "face-a": { "walk": "clocks" } }`);
   }
 
   // no prototype, so an entry called __proto__ is a plain key like any other
@@ -236,7 +236,7 @@ export function readDevHarness(settings: unknown, file: string, faces: () => str
     }
 
     if (!isObject(entry)) {
-      throw new ToolError(`${file} sets ${name} to ${JSON.stringify(entry)}, which is not an object of dev settings such as { "walk": "modules" }`);
+      throw new ToolError(`${file} sets ${name} to ${JSON.stringify(entry)}, which is not an object of dev settings such as { "walk": "clocks" }`);
     }
 
     byFace[name] = readBlock(entry, file, `${name}'s `, FACE_SETTINGS, unit);
