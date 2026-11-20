@@ -1,12 +1,13 @@
 /**
- * The permissions a face's phone-side script asks for, worked out from its message keys.
+ * The permissions a face asks for, worked out from its message keys and its capabilities.
  *
  * A pbw built as manifestVersion 2 gets only the sites and phone features its appinfo lists in
  * usesPermissions, once the wearer turns plugins on in the Pebble app. A request to a site it never
  * listed fails at once, and a location lookup it never listed is turned away. The list follows the
  * features a face's keys switch on, narrowed by the providers it lists, so a face never names a
- * provider's site by hand. Each entry the build writes carries the reason the wearer reads and
- * `required: false`, since a face still tells the time with any of them turned down.
+ * provider's site by hand. A face that reads Pebble Health gets Health from its `health` capability.
+ * Each entry the build writes carries the reason the wearer reads and `required: false`, since a face
+ * still tells the time with any of them turned down.
  */
 import { ToolError } from '../shared/tool-error.ts';
 import { keyNames } from './message-keys.ts';
@@ -50,6 +51,7 @@ const ICAL_PURPOSE: Purpose = { reason: 'To fetch your iCal calendar link', phra
 const LOCATION_REASON = 'To show the weather where you are';
 const CALENDAR_REASON = "To show events from your phone's calendars";
 const MUSIC_REASON = "To show what's playing on your phone";
+const HEALTH_REASON = 'To show your Pebble Health readings';
 
 /**
  * True for a key whose row is a location or time zone picker. The framework builds its location
@@ -260,7 +262,7 @@ function siteEntries(groups: { purpose: Purpose; sites: string[] }[], claimed: S
  * own order, or for the whole web without them, since a feed can sit on any site. A calendar from a
  * plugin alone asks for no site. A face built with `PLUGIN_CALENDAR` also asks for the calendar,
  * which the calendar plugins need, and one built with `PLUGIN_MUSIC` asks for `ReadMusic`, which the
- * Pebble app's music plugin needs.
+ * Pebble app's music plugin needs. A face whose capabilities list `health` asks for `Health`.
  *
  * Every entry it writes has a reason and `required: false`, and each feature's sites get an Internet
  * entry of their own, so the store listing says what each site is for and the phone asks about one
@@ -278,9 +280,10 @@ function siteEntries(groups: { purpose: Purpose; sites: string[] }[], claimed: S
  * @param face The face the appinfo belongs to, which a mistake in it names.
  * @param defines The face's defines, from readDefines. Left out, the face sets none.
  * @param providers The face's providers list, from readProviders. Left out, the face lists none.
+ * @param capabilities The face's capabilities, as fillAppinfo gives them. Left out, the face lists none.
  * @return The entries in the order they go into the manifest, empty when the face needs none.
  */
-export function permissionsFor(messageKeys: unknown, declared: unknown, face: string, defines: Record<string, number> = {}, providers: ProviderLists = {}): Permission[] {
+export function permissionsFor(messageKeys: unknown, declared: unknown, face: string, defines: Record<string, number> = {}, providers: ProviderLists = {}, capabilities: unknown = undefined): Permission[] {
   const keys = keyNames(messageKeys);
   const weather = keys.has(FEATURE_KEYS.weather);
   // the build cannot see the settings page, since the phone builds it, so it goes by the keys a picker
@@ -317,6 +320,14 @@ export function permissionsFor(messageKeys: unknown, declared: unknown, face: st
   // for nothing, so PLUGIN_PHONE adds no entry
   if (kindsOn.includes('PLUGIN_MUSIC')) {
     generated.push({ name: 'ReadMusic', reason: MUSIC_REASON, required: false });
+  }
+
+  // the SDK checks the linked app for health calls, and the manifest is written before anything links,
+  // so the build goes by the health capability instead. that is the face's word that it reads Pebble
+  // Health, and the Pebble app asks about an older face's health on the same capability. a face that
+  // calls the health API without it fails on an SDK that checks, with an error naming Health
+  if (Array.isArray(capabilities) && capabilities.includes('health')) {
+    generated.push({ name: 'Health', reason: HEALTH_REASON, required: false });
   }
 
   const names: string[] = [];

@@ -34,6 +34,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Wearer-Visible Changes
 
+#### Added
+
+- A face that reads Pebble Health now lists health among its permissions, with the reason "To show your Pebble Health readings", so the Pebble app says what the face does with it wherever it asks. A wearer who has the Pebble app ask before older apps use permissions is asked to allow health once, on the face's first update built with it. The build writes `Health` into `usesPermissions` for a face whose `capabilities` list `health`, which SDK 5.113 needs to build a face that reads health.
+
 #### Changed
 
 - The plugin notes and the supported plugins panel now say "this face" rather than "this watchface", so they read right on a watchapp too. A face keeps other wording by passing `pluginTexts` to `startPebbleApp`, by kind and for the panel, and `{panel}` in a text names the panel by its title.

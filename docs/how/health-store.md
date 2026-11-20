@@ -14,7 +14,7 @@ health_store_init((HealthConfig){.live = true, .hr_history = HEALTH_HR_HISTORY, 
 health_store_subscribe(redraw);
 ```
 
-The face also lists `health` under `capabilities` in its `pebble.appinfo.json`, as the SDK asks of any app that reads Pebble Health.
+The face also lists `health` under `capabilities` in its `pebble.appinfo.json`, as the SDK asks of any app that reads Pebble Health. The build then lists `Health` in its `usesPermissions`, as [What the Phone Lets It Reach](phone-side.md#what-the-phone-lets-it-reach) covers.
 
 The heart rate and the step count are always read. **`sleep`, `active`, `calories`, and `distance`** each turn on a read of the day's sleep, active minutes, active calories, and walked distance. A total left off is never read, and its getter keeps returning its no-data value.
 

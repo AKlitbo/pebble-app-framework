@@ -135,7 +135,7 @@ export type FillableAppinfo = {
  * look the wearer up by GPS, then configurable for a face whose phone code calls startPebbleApp, since
  * that is what builds its settings page. Weather is the WEATHER_REQUEST key, the same rule the
  * usesPermissions list goes by for Location. Health stays the face's to list, since the build cannot
- * see whether the watch code reads Pebble Health.
+ * see whether the watch code reads Pebble Health. A face that lists it gets the Health permission too.
  *
  * @param config The face's appinfo.
  * @param face The face the appinfo belongs to, which a refusal names.

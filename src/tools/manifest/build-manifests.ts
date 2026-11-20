@@ -36,8 +36,8 @@
  * the face. They are the defaults of the plugin source choices the watch keeps, worked out from the
  * face's providers list, and the waf build turns each into a -D flag holding a string.
  *
- * The manifest also lists the sites and phone features the face's phone-side script uses, as
- * usesPermissions. permissions.ts works them out from the face's message keys and its providers list.
+ * The manifest also lists the sites and phone features the face uses, as usesPermissions. permissions.ts
+ * works them out from the face's message keys, its providers list, and its capabilities.
  *
  * A plugin app is a face whose appinfo sets "projectType": "plugin". It is a Pebble app plugin with no
  * watch code, so its appinfo holds the SDK's plugin block and its own usesPermissions rather than
@@ -577,7 +577,7 @@ export function checkAppinfo(config: Appinfo, face: string, unit: string = ROOT,
 
   checkMessageKeys(config.messageKeys, face, prep.defines, prep.providers);
 
-  const permissions = permissionsFor(config.messageKeys, config.usesPermissions, face, prep.defines, prep.providers);
+  const permissions = permissionsFor(config.messageKeys, config.usesPermissions, face, prep.defines, prep.providers, config.capabilities);
   const textDefines = pluginSourceDefaults(prep.defines, prep.providers);
 
   return { ...prep, permissions, textDefines, warnings: [...providerWarnings(prep.providers, face), ...permissionWarnings(config.messageKeys, face, prep.providers)] };

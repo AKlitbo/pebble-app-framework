@@ -416,7 +416,7 @@ describe('checkAppinfo', () => {
 
     const result = JSON.stringify(buildManifest(config, { author: 'x', version: '1.0.0' }, { name: 'gridlock', watchface: true }, checked.defines, checked.permissions, checked.textDefines));
 
-    expect(result).toBe('{"name":"gridlock","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Test","uuid":"uuid-1","sdkVersion":"3","enableMultiJS":true,"targetPlatforms":["emery"],"watchapp":{"watchface":true},"capabilities":["health"],"messageKeys":["WEATHER_REQUEST","WEATHER_TEMPERATURE","WEATHER_CONDITIONS","WEATHER_OK","WEATHER_PROVIDER","STOCK_STRIP"],"resources":{"media":[{"type":"bitmap","name":"ICON_ONE","file":"one.png"},{"type":"bitmap","name":"ICON_TWO","file":"two.png"}]},"usesPermissions":[{"name":"Location","reason":"To show the weather where you are","required":false},{"name":"Internet","parameters":{"domains":["open-meteo.com","openweathermap.org","weatherapi.com"]},"reason":"To get the weather","required":false},{"name":"Internet","parameters":{"domains":["alphavantage.co","finnhub.io","twelvedata.com","yahoo.com"]},"reason":"To get your stock quotes","required":false}]}}');
+    expect(result).toBe('{"name":"gridlock","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Test","uuid":"uuid-1","sdkVersion":"3","enableMultiJS":true,"targetPlatforms":["emery"],"watchapp":{"watchface":true},"capabilities":["health"],"messageKeys":["WEATHER_REQUEST","WEATHER_TEMPERATURE","WEATHER_CONDITIONS","WEATHER_OK","WEATHER_PROVIDER","STOCK_STRIP"],"resources":{"media":[{"type":"bitmap","name":"ICON_ONE","file":"one.png"},{"type":"bitmap","name":"ICON_TWO","file":"two.png"}]},"usesPermissions":[{"name":"Location","reason":"To show the weather where you are","required":false},{"name":"Health","reason":"To show your Pebble Health readings","required":false},{"name":"Internet","parameters":{"domains":["open-meteo.com","openweathermap.org","weatherapi.com"]},"reason":"To get the weather","required":false},{"name":"Internet","parameters":{"domains":["alphavantage.co","finnhub.io","twelvedata.com","yahoo.com"]},"reason":"To get your stock quotes","required":false}]}}');
   });
 
   /** The SDK copies only the pebble block, so providers has to stay out of the manifest the way defines does. */
@@ -428,6 +428,7 @@ describe('checkAppinfo', () => {
 
     expect(result.pebble.usesPermissions).toEqual([
       { name: 'Location', reason: 'To show the weather where you are', required: false },
+      { name: 'Health', reason: 'To show your Pebble Health readings', required: false },
       { name: 'Internet', parameters: { domains: ['open-meteo.com'] }, reason: 'To get the weather and search for places', required: false },
       { name: 'Internet', parameters: { domains: ['yahoo.com'] }, reason: 'To get your stock quotes', required: false },
     ]);
@@ -544,8 +545,9 @@ describe('checkAppinfo', () => {
 
 describe('checkAppinfo for PLUGIN_STOCKS', () => {
   // a face whose quotes come from a plugin alone, which declares neither the select nor a provider key
+  // it reads no health, so the lists below hold only what the stocks ask for
   function stockFace(providers: unknown, messageKeys: string[] = ['STOCK_STRIP', 'STOCK_REQUEST']): SharedAppinfo & { name: string } {
-    return { ...makeConfig(), name: 'gridlock', messageKeys, defines: { PLUGIN_STOCKS: 1 }, providers };
+    return { ...makeConfig(), name: 'gridlock', capabilities: undefined, messageKeys, defines: { PLUGIN_STOCKS: 1 }, providers };
   }
 
   /**

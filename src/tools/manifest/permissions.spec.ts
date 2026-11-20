@@ -33,6 +33,7 @@ function covers(domains: string[], host: string): boolean {
 const LOCATION = { name: 'Location', reason: 'To show the weather where you are', required: false };
 const CALENDAR = { name: 'Calendar', reason: "To show events from your phone's calendars", required: false };
 const READ_MUSIC = { name: 'ReadMusic', reason: "To show what's playing on your phone", required: false };
+const HEALTH = { name: 'Health', reason: 'To show your Pebble Health readings', required: false };
 const ICAL_ANY_SITE = { name: 'Internet', reason: 'To fetch your iCal calendar link', required: false };
 const WEATHER_REASON = 'To get the weather';
 const STOCK_REASON = 'To get your stock quotes';
@@ -79,7 +80,7 @@ describe('permissionsFor', () => {
   test('marks every generated entry optional with a reason', () => {
     const keys = ['WEATHER_REQUEST', 'STOCK_STRIP', 'CALENDAR_STRIP', 'CALENDAR_SOURCE', 'CLOCK_TIMEZONE_1', 'MUSIC_REQUEST'];
 
-    const result = permissionsFor(keys, undefined, 'face', { PLUGIN_CALENDAR: 1, PLUGIN_MUSIC: 1 }).filter((entry) => typeof entry === 'string' || entry.required !== false || !entry.reason);
+    const result = permissionsFor(keys, undefined, 'face', { PLUGIN_CALENDAR: 1, PLUGIN_MUSIC: 1 }, {}, ['health']).filter((entry) => typeof entry === 'string' || entry.required !== false || !entry.reason);
 
     expect(result).toEqual([]);
   });
@@ -217,6 +218,39 @@ describe('permissionsFor', () => {
     const result = permissionsFor(keys, undefined, 'face', { PLUGIN_PHONE: 1 });
 
     expect(result).toEqual([]);
+  });
+
+  /**
+   * An SDK that checks health use fails the build of a face that reads Pebble Health without Health,
+   * and the Pebble app lets the wearer allow or deny it with the reason beside it.
+   */
+  test('asks a face whose capabilities list health for Health', () => {
+    const keys = ['WEATHER_REQUEST'];
+
+    const result = permissionsFor(keys, undefined, 'face', {}, {}, ['location', 'configurable', 'health']);
+
+    expect(result).toEqual([LOCATION, HEALTH, sitesEntry(WEATHER_DOMAINS, WEATHER_REASON)]);
+  });
+
+  /** The wearer is asked about their health data, so a face that never reads it must never put that question to them. */
+  test.each([
+    ['with no capabilities', undefined],
+    ['with other capabilities', ['location', 'configurable']],
+  ])('leaves Health off a face %s', (_name, capabilities) => {
+    const keys = ['WEATHER_REQUEST'];
+
+    const result = permissionsFor(keys, undefined, 'face', {}, {}, capabilities).map(nameOf);
+
+    expect(result).not.toContain('Health');
+  });
+
+  /** A face giving Health a reason of its own writes it, and the generated one beside it would ask the wearer twice. */
+  test('lets a face\'s own marked Health take the place of the generated one', () => {
+    const own = [{ name: 'Health', reason: 'To show your steps', required: false }];
+
+    const result = permissionsFor([], own, 'face', {}, {}, ['health']);
+
+    expect(result).toEqual([own[0]]);
   });
 
   /**
