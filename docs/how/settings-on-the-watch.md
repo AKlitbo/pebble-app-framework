@@ -24,6 +24,8 @@ static const SettingField s_fields[] = {
 
 **The Shared Entries.** The `KNOWN_*` macros fill in a common setting whole, with its message key, type, limits, default, and side effects. A face gives the offset. A list the framework owns takes its count from `setting_values.h`, where each list ends in one, such as `TIME_FORMAT_COUNT`, since the watch can only draw the values its own enum names. The wind units are the core's `WindUnit` from `units/wind.h`, which `setting_values.h` includes, so `KNOWN_WIND_UNIT` takes `WIND_UNIT_COUNT` from there. Its default is the page's, and km/h on a page with no wind unit row. A face reads it with `settings_u8(SETTING_WIND_UNIT)` and hands it to `wind_from_kmh`. The theme and the header font are the face's own lists, so `KNOWN_THEME` and `KNOWN_HEADER_FONT` take their counts from the face's settings page, and the face passes the size of its own table beside the offset, such as `THEME_COUNT`. The build stops when the page and the table disagree, as [Counts from the Settings Page](#counts-from-the-settings-page) covers. Every shared entry takes its default from the page, as [Defaults from the Settings Page](#defaults-from-the-settings-page) covers, so `KNOWN_DATE_FORMAT` takes the offset alone.
 
+The daily goals and the goal buzz are shared entries too, as [Daily Goals](#daily-goals) covers.
+
 A shared entry lets the framework's own code find the setting. The date and time readouts read the formats, the steps readout reads its mode, and the Bluetooth vibration reads the pattern the wearer picked, all with no plumbing from the face:
 
 ```c
@@ -112,11 +114,35 @@ A fresh watch holds each setting at its default until the phone sends a save, an
 - a text default for a `KNOWN_*` entry whose UTF-8 does not fit its buffer with the end of the text, such as a date format over 15 bytes, which a fresh watch would cut short
 - a default for a `KNOWN_*` entry with a count of the framework's own, such as a vibe or the time format, that is past that count, since the watch holds no more choices than that whatever the page lists
 - an option on one of those entries that is at or past the framework's count, since a wearer who picks it gets the default back
+- an option on a text `KNOWN_*` entry whose UTF-8 does not fit its buffer with the end of the text, such as a date format option over 15 bytes, since a wearer who picks it gets only its start
+- a Goal Met Vibration option that is neither None, one of the letters, nor up to 40 whole milliseconds from 10 to 10000 separated by commas, since the watch would play a rhythm nobody wrote
+- a Custom Goal Met Vibration pick on a page with no `HEALTH_GOAL_VIBE_CUSTOM` row on the same watch, since the pick would stay quiet
 - a default on a counted key that is not a whole number below its count, which the watch would put back to the default and save again on every launch
 
 The checks on a `KNOWN_*` entry go by message key, so a face's own field on a shared key, such as its own field on `CONNECTION_VIBE_CONNECT`, is held to the framework's count too.
 
 Controls on one key that `capabilities` keep apart, so a watch only ever shows one of them, count as one platform for the defaults. The build reads both on the same platform, so they need the same default.
+
+## Daily Goals
+
+The framework keeps the daily movement goals a wearer picks, so a face that shows goal bars or buzzes when one is met carries no tables of its own. The page sends each goal as the index of the wearer's choice, and the watch turns it into the goal from the tables in [`goals.h`](../../src/c/core/health/goals.h):
+
+| Entry | Message Key | Read It With | Choices |
+| :-- | :-- | :-- | :-- |
+| `KNOWN_GOAL_STEPS` | `HEALTH_GOAL_STEPS` | `goals_steps` | 5,000 to 25,000 steps |
+| `KNOWN_GOAL_DISTANCE` | `HEALTH_GOAL_DISTANCE` | `goals_distance_m` | 2 km to 20 km, in metres |
+| `KNOWN_GOAL_CALORIES` | `HEALTH_GOAL_CALORIES` | `goals_calories` | 500 to 3,000 kcal |
+| `KNOWN_GOAL_ACTIVE` | `HEALTH_GOAL_ACTIVE` | `goals_active_min` | 15 to 90 active minutes |
+| `KNOWN_GOAL_SLEEP` | `HEALTH_GOAL_SLEEP` | `goals_sleep_min` | 6 to 10 hours, in minutes |
+| `KNOWN_GOAL_HR` | `HEALTH_GOAL_HR` | `goals_hr_limit` | 150 to 200 bpm, the top of a heart rate bar |
+
+A face reads one as `goals_steps(settings_u8(SETTING_GOAL_STEPS))`. An index past the end of a table reads as its first goal. The distance goals are kilometres whatever the wearer's Distance Unit says, which `KNOWN_DISTANCE_UNIT` keeps, so the unit only matters when the goal is drawn. The page's rows come from [`goal-rows.ts`](../../src/ts/pkjs/goal-rows.ts), as [Daily Goals on the Page](settings-page.md#daily-goals-on-the-page) covers, and a spec there checks its lists against these tables.
+
+**Counts and Defaults.** Each goal takes its count from the page with `SETTINGS_COUNT_CHECKED`, held to the length of its table, so a goal added to the page and not the table stops the build. Each takes its default from the page, and a page that gives none starts on 10,000 steps, 5 km, 2,000 kcal, 30 minutes, 8 hours, and 180 bpm. An entry whose row the page does not show has no count, and the build stops at it with `SETTINGS_COUNT_<KEY>` undeclared. The Heart Rate Limit row is only on the page when the face asks for it, so a face that places `KNOWN_GOAL_HR` passes `heartRate` to `goalRows` or `buildConfig`'s `goals`, or the build stops with `SETTINGS_COUNT_HEALTH_GOAL_HR` undeclared.
+
+**The Goal Buzz.** `KNOWN_GOAL_VIBE` keeps the Goal Met Vibration as text in 64 bytes, and `KNOWN_GOAL_VIBE_CUSTOM` keeps the Custom Vibration Pattern in 122. Both take the struct and the member, as `KNOWN_GOAL_VIBE(MySettings, goal_vibe)`, rather than an offset, so the build stops on a member that is not exactly that size. Both start empty, which is None and no pattern. Only a face that offers Custom has the pattern box, and so places `KNOWN_GOAL_VIBE_CUSTOM`. `vibe_goal` reads them, as [When a Goal Is Met](vibrations.md#when-a-goal-is-met) covers, and skips any goal whose entry the face leaves out. Together the two take 186 bytes, so a face whose main struct has no room for them gives them a schema of their own, chained on as [Settings across Several Keys](#settings-across-several-keys) covers.
+
+**Where They Sit Is the Face's.** Like every shared entry, each goes in the face's own table at the offset the face gives, so a face that kept its goals in fields of its own swaps each field for the entry on the same key and offset, and its saved settings read back as before. The lookup `settings_init` builds holds a place for every shared id, so each of the eight takes 8 bytes of static memory on every face, whether the face places it or not.
 
 ## Keeping a Plugin Source
 

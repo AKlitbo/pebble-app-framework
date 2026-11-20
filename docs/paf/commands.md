@@ -194,6 +194,8 @@ Before it writes the header, the script checks the page and stops with a line na
 - a `_REQUEST` key in `messageKeys` that no feature passed to `startPebbleApp` answers
 - a `customClay` that is not written with the `function` keyword
 - a choice whose default is not one of its options, a key that opens on two defaults, a default past its key's count, or a default for a shared `KNOWN_*` setting of the wrong kind or too long for its field
+- an option too long for a shared text `KNOWN_*` setting's buffer, such as a date format option over 15 bytes
+- a Goal Met Vibration option the watch cannot play as written, or Custom with no Custom Vibration Pattern row
 - a weather or calendar source default that the face's own picker does not offer, or that the page does not open on, matched without regard to case
 
 `paf` keeps a record of what each face's last passing build was made from, in `targets/.paf-build.json`. The next build starts clean on its own when the face's message keys, the unit's lock, or the framework in `paf/` changed since then, or when there is no passing build to go on from, and it names the reason. The script also starts a sandbox clean when the keys it writes differ from the ones that sandbox's last passing build recorded, which covers a feature passed in code or a plugin define turned on:

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Framework Changes
+
+#### Added
+
+- Added daily movement goals. `health/goals.h` holds the step, distance, calorie, active minutes, sleep, and heart rate tables, and `KNOWN_GOAL_STEPS` to `KNOWN_GOAL_HR`, `KNOWN_GOAL_VIBE`, and `KNOWN_GOAL_VIBE_CUSTOM` keep the wearer's picks. Call `vibe_goal()` from the health store callback to buzz the first time each day a goal is met. `ts/pkjs/goal-rows.ts` builds the settings rows, and `buildConfig` adds them with `goals: {}`. The Goal Met Vibration offers None, Short, Long, and Double, a face adds its own picks with `vibePicks` and Custom with `custom: true`, and the build stops on a pick the watch cannot play as written, or on Custom with no Custom Vibration Pattern row. The eight new setting ids add 8 bytes of static RAM each to every face, 64 in all.
+
+#### Changed
+
+- **Breaking:** The build now stops on an option for a text `KNOWN_*` setting that is too long for its buffer, such as a `date.options` value over 15 bytes, which built before and was cut short on the watch. Keep each date option to 15 bytes.
+
 ## [6.5.0] - 2026-11-18
 
 ### Framework Changes

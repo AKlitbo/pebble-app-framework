@@ -57,6 +57,7 @@ import {
   settingsPageHeader,
   startFacts,
   KNOWN_FIELDS,
+  GOAL_VIBE_LIMITS,
   type AppinfoFacts,
   type CheckedPage,
   type KnownField,
@@ -582,6 +583,65 @@ describe('checkPage', () => {
     const call = () => check([page], appinfoOf(['CONNECTION_VIBE_CONNECT']));
 
     expect(call).toThrow("my-face's settings page offers 4 for CONNECTION_VIBE_CONNECT, but the watch's shared entry for CONNECTION_VIBE_CONNECT holds 4 choices, from 0 to 3. A wearer who picks it gets the default back, so take the option off the page");
+  });
+
+  /** The watch keeps the pick in 64 bytes, so a face's own fanfare past 63 would play only its start. */
+  test('refuses a Goal Met Vibration pick too long for the watch\'s buffer', () => {
+    const long = Array(17).fill('100').join(',');
+    const page = pageOf([{ ...select('HEALTH_GOAL_VIBE', ['', 'S', long]), defaultValue: '' }]);
+
+    const call = () => check([page], appinfoOf(['HEALTH_GOAL_VIBE']));
+
+    expect(call).toThrow(`my-face's settings page offers "${long}" for HEALTH_GOAL_VIBE, which is 67 bytes, but the watch keeps HEALTH_GOAL_VIBE in 64 bytes, room for 63 and the end of the text. A wearer who picks it gets it cut short, so make the option 63 bytes or shorter`);
+  });
+
+  /** A pick that fills the buffer exactly, 63 characters and the end, still plays whole. */
+  test('takes a Goal Met Vibration pick of 63 characters', () => {
+    const page = pageOf([{ ...select('HEALTH_GOAL_VIBE', ['', Array(16).fill('100').join(',')]), defaultValue: '' }]);
+
+    const call = () => check([page], appinfoOf(['HEALTH_GOAL_VIBE']));
+
+    expect(call).not.toThrow();
+  });
+
+  /** The watch reads any other character as a separator, so a typo plays a rhythm nobody wrote instead of failing. */
+  test.each([['100, 80, 300'], ['100,80,'], ['fanfare'], ['100,5,300'], ['100,20000']])('refuses the Goal Met Vibration pick %s', (pick) => {
+    const page = pageOf([{ ...select('HEALTH_GOAL_VIBE', ['', pick]), defaultValue: '' }]);
+
+    const call = () => check([page], appinfoOf(['HEALTH_GOAL_VIBE']));
+
+    expect(call).toThrow(`my-face's settings page offers "${pick}" for HEALTH_GOAL_VIBE, which the watch cannot play as written. Write each pick as up to 40 whole milliseconds from 10 to 10000, separated by commas with no spaces, such as "100,80,300"`);
+  });
+
+  /** None, the three pulses, Custom, and a plain list are every pick the watch plays as written. */
+  test('takes the letters and a comma list as Goal Met Vibration picks', () => {
+    const page = pageOf([{ ...select('HEALTH_GOAL_VIBE', ['', 'S', 'L', 'D', '50,50,250', 'C']), defaultValue: '' }, { type: 'input', messageKey: 'HEALTH_GOAL_VIBE_CUSTOM' }]);
+
+    const call = () => check([page], appinfoOf(['HEALTH_GOAL_VIBE', 'HEALTH_GOAL_VIBE_CUSTOM']));
+
+    expect(call).not.toThrow();
+  });
+
+  /** A Custom pick plays the pattern the wearer types, so on a page with no box to type it in the pick stays quiet. */
+  test('refuses a Custom Goal Met Vibration pick on a page with no Custom Vibration Pattern row', () => {
+    const page = pageOf([{ ...select('HEALTH_GOAL_VIBE', ['', 'S', 'C']), defaultValue: '' }]);
+
+    const call = () => check([page], appinfoOf(['HEALTH_GOAL_VIBE']));
+
+    expect(call).toThrow("my-face's settings page offers Custom for HEALTH_GOAL_VIBE with no HEALTH_GOAL_VIBE_CUSTOM row, so a wearer who picks it gets no buzz. Add the Custom Vibration Pattern row, as goalRows does with custom: true, or take Custom off the page");
+  });
+
+  /**
+   * The check holds a pick to what the watch plays, so its limits have to be the C's. A raised step
+   * count or a changed clamp in the C would let a pick through that the watch plays cut down.
+   */
+  test('holds a pick to the limits in goal_vibe_pattern.h', () => {
+    const header = fs.readFileSync(path.join(ENGINE, 'c', 'core', 'health', 'goal_vibe_pattern.h'), 'utf8');
+    const define = (name: string) => Number(new RegExp(`#define ${name}\\s+(\\d+)`).exec(header)?.[1]);
+
+    const result = { steps: define('GOAL_VIBE_PATTERN_MAX'), minMs: define('GOAL_VIBE_PATTERN_MIN_MS'), maxMs: define('GOAL_VIBE_PATTERN_MAX_MS') };
+
+    expect(result).toEqual(GOAL_VIBE_LIMITS);
   });
 
   /** A page can list the framework's choices in any order and leave some out, as long as each is one the watch holds. */

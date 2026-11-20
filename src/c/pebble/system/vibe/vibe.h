@@ -78,4 +78,31 @@ void vibe_bt_transition(bool connected);
  */
 void vibe_hourly(const struct tm *tick, uint8_t choice);
 
+/**
+ * @brief Buzz the first time each day a movement goal is met. A face calls this once at startup, after
+ * both health_store_init and time_store_init, and from its health store callback on every reading.
+ *
+ * health_store_init reads the totals without calling the callback, so without the startup call the
+ * first check would wait for the next changed reading. A relaunch within about a minute's walk of a
+ * goal would then check first with the goal already past, and lose that day's buzz. The startup call
+ * records the reading below the goal, so the buzz is kept. It has to come after time_store_init too,
+ * since each reading is filed under the day the time store reads, and before it starts that day reads
+ * as 0, so the next call clears what the startup call recorded.
+ *
+ * It watches steps, calories, distance, and active minutes against the goals the wearer picked, and
+ * plays the Goal Met Vibration once per goal per day. Two goals met on one reading give one buzz. A
+ * goal only buzzes once a reading below it has been seen that day, so reopening the face on a goal
+ * already met stays quiet, and so does yesterday's total landing just after midnight. The decision
+ * lives in `health/goal_latch.h` in the core.
+ *
+ * It reads the goals and the pick through the `KNOWN_GOAL_*` entries, the readings from the health
+ * store, and the day from the time store. While the pick is None it returns before anything else,
+ * and it only reads a pattern on the call that buzzes, so a call on every reading costs little. The
+ * health store only reads calories, active minutes, and distance for a face that turns them on in
+ * its HealthConfig, so those goals never buzz on a face that leaves them off. A goal whose
+ * `KNOWN_GOAL_*` entry the face leaves out never buzzes either. A Custom pick on a face with no
+ * `KNOWN_GOAL_VIBE_CUSTOM` reads an empty pattern and stays quiet.
+ */
+void vibe_goal(void);
+
 /** @} */

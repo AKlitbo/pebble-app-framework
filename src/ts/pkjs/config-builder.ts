@@ -12,6 +12,7 @@
 import type { ClayConfigItem, ThemePreviewPictures } from '../clay/types';
 import { warnMissingPictures } from '../clay/preview-pictures';
 import { VIBE_OPTIONS, WIND_UNIT_OPTIONS } from './config-rows';
+import { goalRows, type GoalRowsOptions } from './goal-rows';
 
 /** The per-section description a face hands buildConfig. Each section is optional.
  * Present means "include it", and its own fields tune it. */
@@ -43,6 +44,13 @@ export interface ConfigBuilderOptions {
    * passes e.g. ['NOT_PLATFORM_GABBRO'] and Clay drops the control on that platform for it,
    * rather than every face losing it. */
   steps?: { label?: string; description?: string; capabilities?: string[] };
+  /** The daily movement goals, the Distance Unit, and the Goal Met Vibration, in the Health section
+   * under the steps and battery controls. heartRate adds the Heart Rate Limit, with its own help line
+   * and Clay filter. distanceUnit and alerts are on unless set to false, and each takes its own help
+   * line. alerts also takes the face's own vibePicks, and custom to offer the wearer's own pattern.
+   * The watch reads them through the `KNOWN_GOAL_*` entries and `KNOWN_DISTANCE_UNIT`, and
+   * `vibe_goal` plays the buzz. */
+  goals?: GoalRowsOptions;
   /** timeZone adds the alternate time zone picker to the Clock section, for a face with a second
    * clock. It needs the CLOCK_TIMEZONE_1 key, and works with or without weather. */
   clock?: { timeZone?: boolean };
@@ -310,14 +318,14 @@ export function clockSection(options: ConfigBuilderOptions): ClayConfigItem {
 }
 
 /**
- * The Health section: what the stats slot shows, and the battery readout, each when asked for. A face
- * that shows neither gets no section, and so declares no health keys.
+ * The Health section: what the stats slot shows, the battery readout, and the daily goals, each when
+ * asked for. A face that shows none of them gets no section, and so declares no health keys.
  *
- * @param options The per-section description, read for steps and battery.
- * @return The section, or null for a face that asks for neither.
+ * @param options The per-section description, read for steps, battery, and goals.
+ * @return The section, or null for a face that asks for none of them.
  */
 export function healthSection(options: ConfigBuilderOptions): ClayConfigItem | null {
-  if (!options.steps && !options.battery) {
+  if (!options.steps && !options.battery && !options.goals) {
     return null;
   }
 
@@ -326,13 +334,13 @@ export function healthSection(options: ConfigBuilderOptions): ClayConfigItem | n
   // when the steps control is the only thing in this section and it is filtered out, the heading
   // goes with it. a lone section title with nothing under it reads as a control that failed to
   // load rather than one that does not apply
-  const healthHeadingCapabilities = steps.capabilities && !options.battery ? steps.capabilities : undefined;
+  const healthHeadingCapabilities = steps.capabilities && !options.battery && !options.goals ? steps.capabilities : undefined;
 
   const healthItems: ClayConfigItem[] = [
     {
       'type': 'heading',
-      // with no steps control the section holds the battery control alone, and is titled for it
-      'defaultValue': options.steps ? 'Health' : 'Battery',
+      // with only the battery control the section is titled for it
+      'defaultValue': options.steps || options.goals ? 'Health' : 'Battery',
       ...(healthHeadingCapabilities ? { 'capabilities': healthHeadingCapabilities } : {}),
     },
   ];
@@ -366,6 +374,11 @@ export function healthSection(options: ConfigBuilderOptions): ClayConfigItem | n
         { 'label': 'Percent Only', 'value': 2 },
       ],
     });
+  }
+
+  // the goals open with their own subheadings, so they come after the plain rows above
+  if (options.goals) {
+    healthItems.push(...goalRows(options.goals));
   }
 
   return {
@@ -699,6 +712,12 @@ function introRow(options: ConfigBuilderOptions): ClayConfigItem {
  * Optional sections (present = included, omitted = excluded):
  *   steps       { label?, description?, capabilities? }  the steps control in the Health section
  *   battery     { label?, description? }         the battery readout control in the Health section
+ *   goals       { heartRate?, distanceUnit?, alerts? }  the daily goals and the goal buzz in the
+ *                                                   Health section. heartRate { description?,
+ *                                                   capabilities? } adds the Heart Rate Limit.
+ *                                                   distanceUnit { description? } and alerts
+ *                                                   { description?, vibePicks?, custom? } are on
+ *                                                   unless set to false
  *   theme       { label?, description?, options?, previews? }  the theme picker. options is the theme
  *                                                   list, and a picker given none has nothing to offer.
  *                                                   previews shows a picture beside each name, and

@@ -14,7 +14,7 @@ A face builds in only the parts it uses. The phone fetches the weather, stock qu
 - Calendars from iCal links, kept as one agenda for the week.
 - Readings from Pebble app plugins: the weather, stocks, the phone's calendars, now playing, and the phone's battery. The [Supported Plugins](docs/how/plugin-sources.md#supported-plugins) table lists the plugins a face can read from.
 - Plugin apps, Pebble app plugins with no watch code that serve data to any face, including the weather from Open-Meteo, OpenWeatherMap, or WeatherAPI.com with each provider's calls counted against its plan.
-- Steps, heart rate, and heart rate variability from the watch's health service.
+- Steps, heart rate, and heart rate variability from the watch's health service, with daily goals and a buzz when one is met.
 - Sunrise and sunset, the moon, tides, time zones, and time bands, worked out on the watch with no phone.
 - A Clay settings page with a key for each provider, rows that show and hide with other settings, and a face's own components.
 - Generators and checks for a face's settings page, icons, and frames.

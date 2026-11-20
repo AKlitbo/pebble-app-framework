@@ -14,16 +14,31 @@
  * A face that kept the wind unit in a field of its own, four units with km/h first, swaps it for
  * KNOWN_WIND_UNIT on the same key, so the entry has to clamp and default the same way or a saved unit
  * would change on the wearer's watch.
+ *
+ * A face that kept its goals in fields of its own swaps them for the KNOWN_GOAL_* entries on the same
+ * keys, so each entry has to keep the same count, default, and text size, or a saved goal or buzz
+ * would change on the wearer's watch.
  */
 #define SETTINGS_COUNT_APPEARANCE_THEME 4
 #define SETTINGS_COUNT_APPEARANCE_HEADER_FONT 8
 #define SETTINGS_DEFAULT_APPEARANCE_THEME 3
 #define SETTINGS_DEFAULT_CLOCK_DATE_FORMAT "%a %d %b"
 #define SETTINGS_DEFAULT_CONNECTION_VIBE_CONNECT 2
+#define SETTINGS_COUNT_HEALTH_GOAL_STEPS 7
+#define SETTINGS_DEFAULT_HEALTH_GOAL_STEPS 4
+#define SETTINGS_COUNT_HEALTH_GOAL_HR 6
 
 #include "unity.h"
 
 #include "system/settings/settings_catalog.h"
+
+// a face blob holding the goal buzz text, laid out the way a face keeps it
+typedef struct
+{
+    uint8_t version;
+    char pick[64];
+    char custom[122];
+} GoalVibeBlob;
 
 uint32_t MESSAGE_KEY_APPEARANCE_THEME = 1;
 uint32_t MESSAGE_KEY_APPEARANCE_HEADER_FONT = 2;
@@ -31,6 +46,10 @@ uint32_t MESSAGE_KEY_WEATHER_WIND_UNIT = 3;
 uint32_t MESSAGE_KEY_CLOCK_DATE_FORMAT = 4;
 uint32_t MESSAGE_KEY_CONNECTION_BLUETOOTH_ICON = 5;
 uint32_t MESSAGE_KEY_CONNECTION_VIBE_CONNECT = 6;
+uint32_t MESSAGE_KEY_HEALTH_GOAL_STEPS = 7;
+uint32_t MESSAGE_KEY_HEALTH_GOAL_HR = 8;
+uint32_t MESSAGE_KEY_HEALTH_GOAL_VIBE = 9;
+uint32_t MESSAGE_KEY_HEALTH_GOAL_VIBE_CUSTOM = 10;
 
 void setUp(void) {}
 void tearDown(void) {}
@@ -111,6 +130,62 @@ void test_known_bluetooth_icon_keeps_its_own_default_off_the_page(void)
     TEST_ASSERT_EQUAL_UINT32(1, result);
 }
 
+/** @brief The step goal holds the page's seven choices, so the last one is kept and nothing past it. */
+void test_known_goal_steps_takes_the_page_count(void)
+{
+    static const SettingField fields[] = { KNOWN_GOAL_STEPS(0) };
+
+    const SettingField *result = &fields[0];
+
+    TEST_ASSERT_EQUAL_PTR(&MESSAGE_KEY_HEALTH_GOAL_STEPS, result->message_key);
+    TEST_ASSERT_EQUAL_INT(SETTING_ENUM_U8, result->type);
+    TEST_ASSERT_EQUAL_UINT8(7, result->enum_count);
+}
+
+/** @brief A fresh watch aims for the step goal the page opens with. */
+void test_known_goal_steps_takes_the_page_default(void)
+{
+    static const SettingField fields[] = { KNOWN_GOAL_STEPS(0) };
+
+    uint32_t result = fields[0].default_num;
+
+    TEST_ASSERT_EQUAL_UINT32(4, result);
+}
+
+/** @brief A page with no default for the heart rate limit still starts on 180 bpm, the framework's own. */
+void test_known_goal_hr_keeps_its_own_default_off_the_page(void)
+{
+    static const SettingField fields[] = { KNOWN_GOAL_HR(0) };
+
+    uint32_t result = fields[0].default_num;
+
+    TEST_ASSERT_EQUAL_UINT32(3, result);
+}
+
+/** @brief The pick keeps 64 bytes and starts on None, so a saved pick reads back whole and a fresh watch stays quiet. */
+void test_known_goal_vibe_keeps_64_bytes_and_starts_on_none(void)
+{
+    static const SettingField fields[] = { KNOWN_GOAL_VIBE(GoalVibeBlob, pick) };
+
+    const SettingField *result = &fields[0];
+
+    TEST_ASSERT_EQUAL_INT(SETTING_CSTRING, result->type);
+    TEST_ASSERT_EQUAL_UINT16(64, result->size);
+    TEST_ASSERT_EQUAL_STRING("", result->default_str);
+}
+
+/** @brief The custom pattern keeps 122 bytes, the page's 120 characters and the end, and starts empty. */
+void test_known_goal_vibe_custom_keeps_122_bytes_and_starts_empty(void)
+{
+    static const SettingField fields[] = { KNOWN_GOAL_VIBE_CUSTOM(GoalVibeBlob, custom) };
+
+    const SettingField *result = &fields[0];
+
+    TEST_ASSERT_EQUAL_INT(SETTING_CSTRING, result->type);
+    TEST_ASSERT_EQUAL_UINT16(122, result->size);
+    TEST_ASSERT_EQUAL_STRING("", result->default_str);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -121,5 +196,10 @@ int main(void)
     RUN_TEST(test_known_date_format_takes_the_page_default);
     RUN_TEST(test_known_vibe_takes_the_page_default);
     RUN_TEST(test_known_bluetooth_icon_keeps_its_own_default_off_the_page);
+    RUN_TEST(test_known_goal_steps_takes_the_page_count);
+    RUN_TEST(test_known_goal_steps_takes_the_page_default);
+    RUN_TEST(test_known_goal_hr_keeps_its_own_default_off_the_page);
+    RUN_TEST(test_known_goal_vibe_keeps_64_bytes_and_starts_on_none);
+    RUN_TEST(test_known_goal_vibe_custom_keeps_122_bytes_and_starts_empty);
     return UNITY_END();
 }

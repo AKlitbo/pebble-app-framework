@@ -36,6 +36,14 @@ typedef enum
     SETTING_BATTERY_DISPLAY,           ///< What the battery readout shows
     SETTING_HEADER_FONT,               ///< Which font the panel header labels use, as an index into the face's header font table
     SETTING_WIND_UNIT,                 ///< Which WindUnit a wind speed reads out in
+    SETTING_GOAL_STEPS,                ///< The step goal, as an index into goals_steps
+    SETTING_GOAL_DISTANCE,             ///< The distance goal, as an index into goals_distance_m
+    SETTING_GOAL_CALORIES,             ///< The calorie goal, as an index into goals_calories
+    SETTING_GOAL_ACTIVE,               ///< The active minutes goal, as an index into goals_active_min
+    SETTING_GOAL_SLEEP,                ///< The sleep goal, as an index into goals_sleep_min
+    SETTING_GOAL_HR,                   ///< The heart rate limit, as an index into goals_hr_limit
+    SETTING_GOAL_VIBE,                 ///< The Goal Met Vibration pick, which vibe_goal plays
+    SETTING_GOAL_VIBE_CUSTOM,          ///< The wearer's own goal pattern, played when the pick is Custom
     SETTING_COUNT                      ///< How many known settings there are
 } SettingId;
 

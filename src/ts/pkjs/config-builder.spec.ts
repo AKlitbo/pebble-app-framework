@@ -446,7 +446,7 @@ function watchEnums(): Record<string, number[]> {
 }
 
 describe('buildConfig agrees with the choices the watch names', () => {
-  const config = buildConfig({ theme: minimalTheme, steps: {}, battery: {}, hourlyVibe: {}, wind: {} });
+  const config = buildConfig({ theme: minimalTheme, steps: {}, battery: {}, hourlyVibe: {}, wind: {}, goals: {} });
 
   /**
    * The framework's own choice fields take their counts from these enums rather than the page, so a
@@ -461,12 +461,85 @@ describe('buildConfig agrees with the choices the watch names', () => {
     ['CLOCK_HOURLY_VIBE', 'VibeChoice'],
     ['BATTERY_DISPLAY', 'BatteryDisplay'],
     ['WEATHER_WIND_UNIT', 'WindUnit'],
+    ['HEALTH_DISTANCE_UNIT', 'DistanceUnit'],
   ])('offers on %s the values %s names', (key, name) => {
     const values = findItemByKey(config, key).options.map((option) => option.value);
 
     const result = [...values].sort((a, b) => Number(a) - Number(b));
 
     expect(result).toEqual(watchEnums()[name]);
+  });
+});
+
+describe('buildConfig goals', () => {
+  /** A face with no goal panels declares no goal keys, so the page must not offer goals its watch never reads. */
+  test('leaves the goals out unless the face asks', () => {
+    const config = buildConfig({ steps: {} });
+
+    const result = collectMessageKeys(config);
+
+    expect(result).not.toContain('HEALTH_GOAL_STEPS');
+    expect(result).not.toContain('HEALTH_GOAL_VIBE');
+  });
+
+  /** These are the keys the watch's KNOWN_GOAL_* entries and vibe_goal read, so a face asking for goals has to get them all. */
+  test('publishes the goal keys in the Health section, without the heart rate limit unless asked', () => {
+    const config = buildConfig({ goals: {} });
+
+    const health = config.find((section) => (section.items || []).some((item) => item.defaultValue === 'Health'));
+    const result = collectMessageKeys(health ? [health] : []);
+
+    expect(result).toEqual(['HEALTH_GOAL_STEPS', 'HEALTH_GOAL_DISTANCE', 'HEALTH_DISTANCE_UNIT', 'HEALTH_GOAL_CALORIES', 'HEALTH_GOAL_ACTIVE', 'HEALTH_GOAL_SLEEP', 'HEALTH_GOAL_VIBE']);
+  });
+
+  /** The goals come under their own subheadings, so the plain steps and battery rows have to sit above them. */
+  test('puts the goals under the steps and battery rows', () => {
+    const config = buildConfig({ steps: {}, battery: {}, goals: { heartRate: {}, alerts: { custom: true } } });
+
+    const result = collectMessageKeys(config).filter((key) => key.startsWith('HEALTH_') || key === 'BATTERY_DISPLAY');
+
+    expect(result).toEqual(['HEALTH_STEPS_MODE', 'BATTERY_DISPLAY', 'HEALTH_GOAL_STEPS', 'HEALTH_GOAL_DISTANCE', 'HEALTH_DISTANCE_UNIT', 'HEALTH_GOAL_CALORIES', 'HEALTH_GOAL_ACTIVE', 'HEALTH_GOAL_SLEEP', 'HEALTH_GOAL_HR', 'HEALTH_GOAL_VIBE', 'HEALTH_GOAL_VIBE_CUSTOM']);
+  });
+
+  /** The goals still show where the steps row is filtered out, so the Health heading must not take the steps filter with it. */
+  test('keeps the Health heading on every watch when the face has goals', () => {
+    const config = buildConfig({ steps: { capabilities: ['NOT_PLATFORM_GABBRO'] }, goals: {} });
+
+    const heading = config.flatMap((section) => section.items || []).find((item) => item.defaultValue === 'Health');
+
+    expect(heading?.capabilities).toBeUndefined();
+  });
+
+  /** A face's own picks and Custom reach the page through buildConfig, or a face on the builder could offer neither. */
+  test('passes the face\'s own picks and Custom through', () => {
+    const config = buildConfig({ goals: { alerts: { vibePicks: [{ label: 'Fanfare', value: '50,50,250' }], custom: true } } });
+
+    const result = (findItemByKey(config, 'HEALTH_GOAL_VIBE')?.options || []).map((option) => option.value);
+
+    expect(result).toEqual(['', 'S', 'L', 'D', '50,50,250', 'C']);
+    expect(findItemByKey(config, 'HEALTH_GOAL_VIBE_CUSTOM')).toBeDefined();
+  });
+
+  /** A face that shows goal bars and never buzzes or reads a distance unit must not publish keys it never declared. */
+  test('leaves the Distance Unit and Goal Alerts out when the face turns them off', () => {
+    const config = buildConfig({ goals: { distanceUnit: false, alerts: false } });
+
+    const result = collectMessageKeys(config);
+
+    expect(result).not.toContain('HEALTH_DISTANCE_UNIT');
+    expect(result).not.toContain('HEALTH_GOAL_VIBE');
+    expect(result).not.toContain('HEALTH_GOAL_VIBE_CUSTOM');
+    expect(result).toContain('HEALTH_GOAL_STEPS');
+  });
+
+  /** A round watch has no heart rate sensor, so the face's filter has to reach the Heart Rate Limit row. */
+  test('passes the heart rate filter and help line through', () => {
+    const config = buildConfig({ goals: { heartRate: { description: 'The top of the heart rate bar.', capabilities: ['NOT_PLATFORM_GABBRO'] } } });
+
+    const result = findItemByKey(config, 'HEALTH_GOAL_HR');
+
+    expect(result?.description).toBe('The top of the heart rate bar.');
+    expect(result?.capabilities).toEqual(['NOT_PLATFORM_GABBRO']);
   });
 });
 

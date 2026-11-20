@@ -41,7 +41,7 @@ export default buildConfig({
 | Location Settings | `location` | phone GPS, a fallback, and a manual place |
 | Calendar Preferences | `calendar` | the iCal link, then the face's own `items` |
 | Stock Preferences | `stocks` | the provider, its key, and the tickers, then the face's own `items`. A face built with `PLUGIN_STOCKS` gets Preferred Source in the provider select |
-| Health | `steps` or `battery` | what the steps readout counts, and how the battery reads |
+| Health | `steps`, `battery`, or `goals` | what the steps readout counts, how the battery reads, and the daily goals with the goal buzz |
 
 The sources that need setting up come ahead of Health, whose defaults work untouched. Location Settings sits straight under Weather, so picking a weather plugin folds it away just below the select that hides it.
 
@@ -65,6 +65,8 @@ The sources that need setting up come ahead of Health, whose defaults work untou
 * **A Provider That Takes No Key.** The phone never files a key under a provider the row hides for, read off the row's own `visibleWhen` on the select exactly as the page's show and hide reads it, nor under the plugin choice or a blank select. A key left on the row there is kept apart and goes to the first provider the wearer picks that needs a key and has none. A blank select, as from a saved provider the select does not offer, shows the key of the provider the row belongs to and never hands it to another. With no such provider on record it shows the key kept apart, so a save that touches nothing keeps it and emptying the row clears it.
 * **A Key Row That Goes.** A `providers` list that takes the key row off the page, such as Yahoo alone, lets go of the keys kept for that select, so nothing stays on the phone that the page can no longer change. A face with no list that takes its key row off keeps the keys, and a save leaves them as they were, so a later release that brings the row back finds them.
 * **How a Save Brings Them Back.** Clay only saves rows with a message key and seals its own methods, so the phone adds a hidden store on `PF_PROVIDER_KEYS` at the foot of the page, and the page code keeps every provider's key in it. The phone takes it out of the save before Clay reads it, since Clay would send it to the watch under a key the face never declared. The build leaves the store out of the controls it counts, so it needs no place in `messageKeys`. `PF_PROVIDER_KEYS` and `pf-provider-keys` are reserved, and a face's `customClay` sees the store in `getAllItems`.
+
+**The Daily Goals.** `goals: {}` adds the goal rows to the Health section, under the steps and battery rows, as [Daily Goals on the Page](#daily-goals-on-the-page) lists them. `goals.heartRate` adds the Heart Rate Limit, with its own `description` and `capabilities`. The Distance Unit and the Goal Alerts are on unless `goals.distanceUnit` or `goals.alerts` is `false`, and each takes its own `description`. A face that keeps the Distance Unit declares `HEALTH_DISTANCE_UNIT` and places `KNOWN_DISTANCE_UNIT`, and one that keeps the Goal Alerts declares `HEALTH_GOAL_VIBE` and places `KNOWN_GOAL_VIBE`. `goals.alerts.vibePicks` adds the face's own picks, and `goals.alerts.custom` adds Custom, which also needs `HEALTH_GOAL_VIBE_CUSTOM` and `KNOWN_GOAL_VIBE_CUSTOM`.
 
 **The Wind Speed Unit.** `wind: {}` adds a Wind Speed Unit select on `WEATHER_WIND_UNIT`, with km/h, mph, knots, and m/s as 0 to 3 and km/h as the default. The watch reads it through `KNOWN_WIND_UNIT`, as [Describing the Settings](settings-on-the-watch.md#describing-the-settings) covers. A face that builds its own weather section offers the same choices with `WIND_UNIT_OPTIONS` from `config-rows.ts`.
 
@@ -98,6 +100,49 @@ export default [
 ```
 
 A hand-built page ends with its own submit button, since nothing adds one for it.
+
+### Daily Goals on the Page
+
+[`goal-rows.ts`](../../src/ts/pkjs/goal-rows.ts) builds the rows for the daily movement goals and the buzz when one is met, which the watch reads through the `KNOWN_GOAL_*` entries in [Daily Goals](settings-on-the-watch.md#daily-goals). `goalRows` lays them out in their usual order, and each row is its own piece, so a face can put rows of its own between them:
+
+| Piece | Rows | Message Key |
+| :-- | :-- | :-- |
+| `activityHeading` | the Activity subheading | |
+| `stepGoalRow` | Step Goal, opening on 10,000 | `HEALTH_GOAL_STEPS` |
+| `distanceGoalRow` | Distance Goal, opening on 5 km | `HEALTH_GOAL_DISTANCE` |
+| `distanceUnitRow` | Distance Unit, kilometres or miles | `HEALTH_DISTANCE_UNIT` |
+| `calorieGoalRow` | Calorie Goal, opening on 2000 kcal | `HEALTH_GOAL_CALORIES` |
+| `activityGoalRow` | Activity Goal, opening on 30 min | `HEALTH_GOAL_ACTIVE` |
+| `sleepHeading` | the Sleep subheading | |
+| `sleepGoalRow` | Sleep Goal, opening on 8 h | `HEALTH_GOAL_SLEEP` |
+| `heartHeading` | the Heart subheading | |
+| `heartRateLimitRow` | Heart Rate Limit, opening on 180 bpm | `HEALTH_GOAL_HR` |
+| `goalAlertRows` | the Goal Alerts subheading, Goal Met Vibration opening on None, and with `custom` the Custom Vibration Pattern | `HEALTH_GOAL_VIBE`, and `HEALTH_GOAL_VIBE_CUSTOM` with `custom` |
+
+```ts
+import { heading } from '../../paf/ts/pkjs/config-rows';
+import { goalAlertRows, stepGoalRow, distanceGoalRow, distanceUnitRow } from '../../paf/ts/pkjs/goal-rows';
+
+const health = {
+  type: 'section',
+  items: [heading('Health'), stepGoalRow(), distanceGoalRow(), distanceUnitRow(), ...goalAlertRows()],
+};
+```
+
+**What a Face Can Change.** The keys, labels, defaults, and options are fixed, since the watch's tables and a wearer's saved choices depend on them. Three rows take a help line of the face's own, since only the face knows which panels it shows:
+
+* `heartRateLimitRow` takes a `description`, and has none otherwise. It also takes `capabilities`, such as `['NOT_PLATFORM_GABBRO']` for a watch with no heart rate sensor, and `heartHeading` takes the same `capabilities`, so the heading goes with the row.
+* `distanceUnitRow` takes a `description`, and has none otherwise.
+* `goalAlertRows` takes a `description` for the Goal Met Vibration. Without one it says the watch buzzes the first time each day the wearer reaches a goal. It also takes the face's own `vibePicks` and `custom`, below.
+
+`goalRows` takes the same options as `heartRate`, `distanceUnit`, and `alerts`. It leaves the Heart rows out without `heartRate`, and leaves the Distance Unit or the Goal Alerts out when `distanceUnit` or `alerts` is `false`, for a face that shows goal bars with no buzz or no unit.
+
+**The Goal Met Vibration Is Text.** Its values are what the watch plays, so the page carries the tunes and the watch carries none. Every page offers None, Short, Long, and Double, as empty text and `S`, `L`, and `D`, which are `GOAL_VIBE_OPTIONS`.
+
+* **The Face's Own Picks.** `vibePicks` adds picks after Double, each valued as a comma list of milliseconds starting on a buzz, such as `{ label: 'Fanfare', value: '50,50,250,150,600' }`. The build stops on a pick longer than the 63 characters the watch keeps, and on one that is not a list of up to 40 whole milliseconds from 10 to 10000 with no spaces, since the watch would play it cut short or as a rhythm nobody wrote. The build holds any face's own select on `HEALTH_GOAL_VIBE` to the same rules, and stops on one offering Custom, `C`, on a page with no `HEALTH_GOAL_VIBE_CUSTOM` row, since the pick would stay quiet.
+* **Custom.** `custom: true` adds Custom as the last pick, valued `C`, and the Custom Vibration Pattern box under the select, which only shows while Custom is picked and takes 120 characters. Without it the page has neither, and the face needs no `HEALTH_GOAL_VIBE_CUSTOM`.
+
+**The Tables.** `GOAL_STEPS`, `GOAL_DISTANCES`, `GOAL_CALORIES`, `GOAL_ACTIVE_MINUTES`, `GOAL_SLEEP_HOURS`, and `GOAL_HR_LIMITS` hold the goals each select offers, in menu order. Each select sends the index, and a spec checks every list against the watch's table in `goals.c`, length and order. The step labels are written in the phone's own number format.
 
 **The Page Is Read Whole.** The phone code walks every item on the page, nested sections included, for each setting's default and for every second clock, so a hand-built page gets the same treatment as one from `buildConfig`. [The Phone Side](phone-side.md) covers what it does with them.
 

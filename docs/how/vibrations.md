@@ -1,6 +1,6 @@
 # Vibrations
 
-A face built on the framework can buzz the wrist at the top of each hour, when the phone connects, and when it drops. The wearer picks the buzz for each on the settings page from the same choices, None, Short, Long, or Double. Every buzz the framework plays stays silent during Quiet Time, so a phone dropping in and out overnight never buzzes through it.
+A face built on the framework can buzz the wrist at the top of each hour, when the phone connects, and when it drops. The wearer picks the buzz for each on the settings page from the same choices, None, Short, Long, or Double. It can also buzz the first time each day the wearer meets a movement goal, with a pick of its own that can also take the face's own tunes and a pattern the wearer types. Every buzz the framework plays stays silent during Quiet Time, so a phone dropping in and out overnight never buzzes through it.
 
 It lives in [`vibe.h`](../../src/c/pebble/system/vibe/vibe.h) and [`vibe.c`](../../src/c/pebble/system/vibe/vibe.c) under `src/c/pebble/system/vibe/`.
 
@@ -57,4 +57,50 @@ static void on_time_changed(void)
 
 ## Playing Your Own Rhythm
 
-`vibe_custom` plays a face's own pattern, a list of milliseconds that starts with a buzz and then switches between pause and buzz. It stays silent in Quiet Time like the rest. A face can use it for something the choices do not cover, such as a little celebration when a step goal is met. The firmware caps each step at 10 seconds.
+`vibe_custom` plays a face's own pattern, a list of milliseconds that starts with a buzz and then switches between pause and buzz. It stays silent in Quiet Time like the rest. A face can use it for something the choices do not cover. The firmware caps each step at 10 seconds.
+
+## When a Goal Is Met
+
+`vibe_goal` buzzes the first time each day the wearer meets their step, calorie, distance, or active minutes goal. The wearer picks the goals and the buzz on the settings page, from the rows in [`goal-rows.ts`](../../src/ts/pkjs/goal-rows.ts), and the watch reads them through the `KNOWN_GOAL_*` entries, as [Daily Goals](settings-on-the-watch.md#daily-goals) covers. The face calls it once at startup, after both `health_store_init` and `time_store_init`, and from its health store callback beside its redraw, since the store has one subscriber:
+
+```c
+static void on_health_changed(void)
+{
+    vibe_goal();
+    engine_mark_dirty();
+}
+
+health_store_init((HealthConfig){.live = true, .calories = true, .active = true, .distance = true}, NULL);
+health_store_subscribe(on_health_changed);
+time_store_init((TimeConfig){.live = true, .minute_tick = true}, NULL);
+vibe_goal();
+```
+
+It reads the readings from the health store and the day from the time store. The health store only reads calories, active minutes, and distance for a face that turns `calories`, `active`, and `distance` on in its `HealthConfig`, as [The Health Store](health-store.md#setting-it-up) covers, so a face that leaves one off never buzzes for that goal. Steps are always read.
+
+**The Startup Call.** `health_store_init` reads the totals without calling the callback, so the first check from the callback waits for the next changed reading. A face relaunched within about a minute's walk of a goal would then check first with the goal already past, and lose that day's buzz. The startup call records the reading below the goal, so the buzz is kept. It has to come after `time_store_init` too, since each reading is filed under the day the time store reads, and before the time store starts that day reads as 0, so the next call clears what the startup call recorded.
+
+**The Pick.** The Goal Met Vibration is text rather than a number, so the page can carry a tune without the watch holding one:
+
+| Choice | Value | What It Plays |
+| :-- | :-- | :-- |
+| None | empty | nothing |
+| Short, Long, Double | `S`, `L`, `D` | the watch's own pulse, the same as the other choices |
+| the face's own picks | a comma list of milliseconds | the list, buzz first |
+| Custom, when the face offers it | `C` | the Custom Vibration Pattern the wearer typed |
+
+None and the three pulses are on every page. A face adds tunes of its own after Double, and Custom last, as [Daily Goals on the Page](settings-page.md#daily-goals-on-the-page) covers. The watch keeps the pick in 64 bytes and the Custom pattern in 122, room for the 120 characters its box takes. Only the first character picks the buzz, and anything that opens on none of the letters is read as a list. A Custom pick on a face that keeps no Custom pattern reads it as empty and stays quiet.
+
+**Reading a Pattern.** Any character that is not a digit ends a number, so commas, spaces, and stray letters all separate. Each step is held to 10 ms at the short end and 10 seconds at the long, a run of digits too long for a number reads as 10 seconds, and steps past 40 are dropped. A list with no numbers plays nothing. The reading lives in `goal_vibe_pattern.h` in the core, with host specs, and only runs on the call that buzzes.
+
+**Once per Goal per Day.** The face calls `vibe_goal` on every health reading, which can be once a second during an HRV burst, so it remembers which goals were met today and buzzes each one once. Two goals met on one reading give one buzz. The marks clear when the day changes. The decision lives in `goal_latch.h` in the core, with host specs.
+
+**Only after a Reading below the Goal.** A goal buzzes only when its reading reaches it after a reading below it that same day. A reading already past the goal with none below it first never buzzes, so opening the face in the evening on a goal met that afternoon stays quiet, and so does a reading that arrives late already past its goal. The health store reads activity once a minute, so for up to a minute after midnight it can still hold yesterday's totals, such as when a heart rate reading wakes the face at 00:00:20. Those totals reach the new day already past their goals and buzz nothing. The goal then buzzes once today's own readings climb past it.
+
+**A Changed Goal.** A goal the wearer raises after meeting it stays met for the day. One lowered below today's reading buzzes on the next health reading, not the moment the settings land.
+
+**None.** While the pick is None, `vibe_goal` returns before it reads anything. A goal that had a reading below it before the wearer picked None, and was met in that time, buzzes on the first reading after the wearer picks a buzz again that day. A face that has been on None since launch has seen no reading below the goal, so it stays quiet.
+
+**A Missing Reading.** Steps, calories, and active minutes read -1 with no data, and distance reads 0. A reading of 0 or less never meets a goal and never counts as a reading below one either, so a distance that reads 0 before its first real reading cannot make a goal met hours ago buzz.
+
+**A Face That Leaves an Entry Out.** A face whose settings leave the pick out reads it as None, so it never buzzes. A face that keeps the pick but leaves out a goal's `KNOWN_GOAL_*` entry never buzzes for that goal, since `settings_enum_count` reads 0 for it and the latch takes that as no goal.

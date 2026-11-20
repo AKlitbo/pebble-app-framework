@@ -137,6 +137,8 @@ The average weighs every reading the same, so an hour with many readings counts 
 
 Each reading has its own getter, such as `health_store_hr` or `health_store_steps`, and each returns its no-data value until there is something to show. The framework's `readout_hr` and `readout_steps` already turn those into text with dashes for no data, as covered in [Readouts](readouts.md). The store reads every number it was asked for once during init, before the face first paints, so a face shows real numbers from its first frame rather than dashes until the first event.
 
+**Against a Goal.** A face that draws a reading against the wearer's goal reads the goal from the framework's tables, such as `goals_steps(settings_u8(SETTING_GOAL_STEPS))`, as [Daily Goals](settings-on-the-watch.md#daily-goals) covers, and `pct_of` in [`pct.h`](../../src/c/core/math/pct.h) turns the two into a bar from 0 to 100. A face that buzzes when a goal is met calls `vibe_goal` from its health callback, as [When a Goal Is Met](vibrations.md#when-a-goal-is-met) covers, and turns on `calories`, `active`, and `distance` for the goals it buzzes for.
+
 ## Heart Rate Variability
 
 Heart rate variability is how much the gap between one heartbeat and the next changes from beat to beat. The watch's sensor reports each gap, and the store adds a run of them up into RMSSD, the figure fitness trackers show, in milliseconds. A higher number generally means a rested body, and a lower one stress, tiredness, or illness. `health_store_hrv_ms` hands back the reading, and `readout_hrv` writes it or dashes.

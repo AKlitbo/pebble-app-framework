@@ -12,7 +12,8 @@
  * count from settings_page.h, which paf build writes into the sandbox from the page, and the
  * face passes the size of its own table so the build stops when the two disagree. A choice
  * the framework lists takes the framework's own count from setting_values.h, since the
- * watch can only draw the values its own enum names.
+ * watch can only draw the values its own enum names. A daily goal takes the page's count,
+ * checked against the framework's goal table in health/goals.h.
  *
  * Every entry takes its default from the same header, so a fresh watch starts on the value
  * the settings page opens with. A setting the page does not show keeps the framework's own
@@ -21,8 +22,10 @@
  * @ingroup lib_settings
  */
 #pragma once
+#include <stddef.h>
 #include "system/settings/settings.h"
 #include "system/settings/setting_values.h"
+#include "health/goals.h"
 #include "settings_page.h"
 
 /**
@@ -72,6 +75,24 @@
         _Static_assert(SETTINGS_COUNT(key) == (table_count), \
             "the settings page offers " SETTINGS_COUNT_TEXT(SETTINGS_COUNT(key)) " choices on " #key \
             ", but the table the face passed holds " SETTINGS_COUNT_TEXT(table_count)); \
+        char unused; \
+    }))
+
+/**
+ * @brief A text member's offset, with a build stop when the member is not the size its entry writes.
+ *
+ * A text entry writes a fixed number of bytes, so a member any shorter would have the text written
+ * over whatever follows it.
+ *
+ * @param blob The face's settings struct.
+ * @param member The member that holds the text.
+ * @param bytes How many bytes the entry writes.
+ * @return The member's offset into the struct.
+ */
+#define SETTINGS_TEXT_OFFSET(blob, member, bytes) \
+    (offsetof(blob, member) + 0 * sizeof(struct { \
+        _Static_assert(sizeof(((blob *)0)->member) == (bytes), \
+            #blob "." #member " has to be " #bytes " bytes, the size its entry writes"); \
         char unused; \
     }))
 
@@ -138,6 +159,30 @@
 #endif
 #ifndef SETTINGS_DEFAULT_WEATHER_WIND_UNIT
 #define SETTINGS_DEFAULT_WEATHER_WIND_UNIT 0
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_STEPS
+#define SETTINGS_DEFAULT_HEALTH_GOAL_STEPS 2
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_DISTANCE
+#define SETTINGS_DEFAULT_HEALTH_GOAL_DISTANCE 2
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_CALORIES
+#define SETTINGS_DEFAULT_HEALTH_GOAL_CALORIES 3
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_ACTIVE
+#define SETTINGS_DEFAULT_HEALTH_GOAL_ACTIVE 1
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_SLEEP
+#define SETTINGS_DEFAULT_HEALTH_GOAL_SLEEP 2
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_HR
+#define SETTINGS_DEFAULT_HEALTH_GOAL_HR 3
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_VIBE
+#define SETTINGS_DEFAULT_HEALTH_GOAL_VIBE ""
+#endif
+#ifndef SETTINGS_DEFAULT_HEALTH_GOAL_VIBE_CUSTOM
+#define SETTINGS_DEFAULT_HEALTH_GOAL_VIBE_CUSTOM ""
 #endif
 /** @endcond */
 
@@ -294,5 +339,112 @@
     { .id = SETTING_WIND_UNIT, .message_key = &MESSAGE_KEY_WEATHER_WIND_UNIT, \
       .type = SETTING_ENUM_U8, .offset = (off), .enum_count = WIND_UNIT_COUNT, \
       .default_num = SETTINGS_DEFAULT(WEATHER_WIND_UNIT) }
+
+/**
+ * @brief Setting definition for the Step Goal, an index into goals_steps.
+ *
+ * The goal tables are the framework's, in `health/goals.h`, and the page's rows are the ones
+ * `goal-rows.ts` builds. The count is the page's, from SETTINGS_COUNT, and the build stops when it
+ * differs from the table, so a choice the page offers always has a goal behind it. Read it with
+ * `goals_steps(settings_u8(SETTING_GOAL_STEPS))`. The other goal entries work the same way.
+ *
+ * @param off Offset into the face's settings struct.
+ */
+#define KNOWN_GOAL_STEPS(off) \
+    { .id = SETTING_GOAL_STEPS, .message_key = &MESSAGE_KEY_HEALTH_GOAL_STEPS, \
+      .type = SETTING_ENUM_U8, .offset = (off), \
+      .enum_count = SETTINGS_COUNT_CHECKED(HEALTH_GOAL_STEPS, GOALS_STEPS_COUNT), \
+      .default_num = SETTINGS_DEFAULT(HEALTH_GOAL_STEPS) }
+
+/**
+ * @brief Setting definition for the Distance Goal, an index into goals_distance_m.
+ * @param off Offset into the face's settings struct.
+ */
+#define KNOWN_GOAL_DISTANCE(off) \
+    { .id = SETTING_GOAL_DISTANCE, .message_key = &MESSAGE_KEY_HEALTH_GOAL_DISTANCE, \
+      .type = SETTING_ENUM_U8, .offset = (off), \
+      .enum_count = SETTINGS_COUNT_CHECKED(HEALTH_GOAL_DISTANCE, GOALS_DISTANCE_COUNT), \
+      .default_num = SETTINGS_DEFAULT(HEALTH_GOAL_DISTANCE) }
+
+/**
+ * @brief Setting definition for the Calorie Goal, an index into goals_calories.
+ * @param off Offset into the face's settings struct.
+ */
+#define KNOWN_GOAL_CALORIES(off) \
+    { .id = SETTING_GOAL_CALORIES, .message_key = &MESSAGE_KEY_HEALTH_GOAL_CALORIES, \
+      .type = SETTING_ENUM_U8, .offset = (off), \
+      .enum_count = SETTINGS_COUNT_CHECKED(HEALTH_GOAL_CALORIES, GOALS_CALORIES_COUNT), \
+      .default_num = SETTINGS_DEFAULT(HEALTH_GOAL_CALORIES) }
+
+/**
+ * @brief Setting definition for the Activity Goal, an index into goals_active_min.
+ * @param off Offset into the face's settings struct.
+ */
+#define KNOWN_GOAL_ACTIVE(off) \
+    { .id = SETTING_GOAL_ACTIVE, .message_key = &MESSAGE_KEY_HEALTH_GOAL_ACTIVE, \
+      .type = SETTING_ENUM_U8, .offset = (off), \
+      .enum_count = SETTINGS_COUNT_CHECKED(HEALTH_GOAL_ACTIVE, GOALS_ACTIVE_COUNT), \
+      .default_num = SETTINGS_DEFAULT(HEALTH_GOAL_ACTIVE) }
+
+/**
+ * @brief Setting definition for the Sleep Goal, an index into goals_sleep_min.
+ * @param off Offset into the face's settings struct.
+ */
+#define KNOWN_GOAL_SLEEP(off) \
+    { .id = SETTING_GOAL_SLEEP, .message_key = &MESSAGE_KEY_HEALTH_GOAL_SLEEP, \
+      .type = SETTING_ENUM_U8, .offset = (off), \
+      .enum_count = SETTINGS_COUNT_CHECKED(HEALTH_GOAL_SLEEP, GOALS_SLEEP_COUNT), \
+      .default_num = SETTINGS_DEFAULT(HEALTH_GOAL_SLEEP) }
+
+/**
+ * @brief Setting definition for the Heart Rate Limit, an index into goals_hr_limit.
+ *
+ * The page only has the Heart Rate Limit row when the face asks for it with `heartRate`, so a face
+ * that places this without the row stops the build with SETTINGS_COUNT_HEALTH_GOAL_HR undeclared.
+ *
+ * @param off Offset into the face's settings struct.
+ */
+#define KNOWN_GOAL_HR(off) \
+    { .id = SETTING_GOAL_HR, .message_key = &MESSAGE_KEY_HEALTH_GOAL_HR, \
+      .type = SETTING_ENUM_U8, .offset = (off), \
+      .enum_count = SETTINGS_COUNT_CHECKED(HEALTH_GOAL_HR, GOALS_HR_COUNT), \
+      .default_num = SETTINGS_DEFAULT(HEALTH_GOAL_HR) }
+
+/**
+ * @brief Setting definition for the Goal Met Vibration, the pick vibe_goal plays.
+ *
+ * The pick is text, empty for None, a letter for a plain pulse or the wearer's own pattern, or a comma
+ * list of milliseconds, as `goal_vibe_pattern.h` reads it. It keeps 64 bytes, room for the longest
+ * option the page offers and its end, and goal-rows.spec.ts checks every option fits. A face keeps
+ * this and KNOWN_GOAL_VIBE_CUSTOM in a schema of their own when its main struct has no room for them.
+ *
+ * It takes the struct and the member rather than an offset, so the build stops on a member that is
+ * not exactly 64 bytes. A shorter one would have the pick written past its end.
+ *
+ * @param blob The face's settings struct.
+ * @param member The `char[64]` member that holds the pick.
+ */
+#define KNOWN_GOAL_VIBE(blob, member) \
+    { .id = SETTING_GOAL_VIBE, .message_key = &MESSAGE_KEY_HEALTH_GOAL_VIBE, \
+      .type = SETTING_CSTRING, .offset = SETTINGS_TEXT_OFFSET(blob, member, 64), .size = 64, \
+      .default_str = SETTINGS_DEFAULT(HEALTH_GOAL_VIBE) }
+
+/**
+ * @brief Setting definition for the Custom Vibration Pattern, which vibe_goal plays when the pick is
+ * Custom.
+ *
+ * It keeps 122 bytes, room for the 120 characters the page's box takes and the end of the text. Only a
+ * face that offers Custom, with `custom` on its goal alert rows, has the box and places this.
+ *
+ * Like KNOWN_GOAL_VIBE, it takes the struct and the member, so the build stops on a member that is
+ * not exactly 122 bytes.
+ *
+ * @param blob The face's settings struct.
+ * @param member The `char[122]` member that holds the pattern.
+ */
+#define KNOWN_GOAL_VIBE_CUSTOM(blob, member) \
+    { .id = SETTING_GOAL_VIBE_CUSTOM, .message_key = &MESSAGE_KEY_HEALTH_GOAL_VIBE_CUSTOM, \
+      .type = SETTING_CSTRING, .offset = SETTINGS_TEXT_OFFSET(blob, member, 122), .size = 122, \
+      .default_str = SETTINGS_DEFAULT(HEALTH_GOAL_VIBE_CUSTOM) }
 
 /** @} */

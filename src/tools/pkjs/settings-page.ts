@@ -271,6 +271,14 @@ export const KNOWN_FIELDS: Readonly<Record<string, KnownField>> = {
   CLOCK_HOURLY_VIBE: { field: 'default_num', count: 4 },
   BATTERY_DISPLAY: { field: 'default_num', count: 3 },
   WEATHER_WIND_UNIT: { field: 'default_num', count: 4 },
+  HEALTH_GOAL_STEPS: { field: 'default_num' },
+  HEALTH_GOAL_DISTANCE: { field: 'default_num' },
+  HEALTH_GOAL_CALORIES: { field: 'default_num' },
+  HEALTH_GOAL_ACTIVE: { field: 'default_num' },
+  HEALTH_GOAL_SLEEP: { field: 'default_num' },
+  HEALTH_GOAL_HR: { field: 'default_num' },
+  HEALTH_GOAL_VIBE: { field: 'default_str', size: 64 },
+  HEALTH_GOAL_VIBE_CUSTOM: { field: 'default_str', size: 122 },
 };
 
 /**
@@ -1185,6 +1193,80 @@ function checkKnownOptions(face: string, controls: PageControl[]): void {
   });
 }
 
+/**
+ * Stops on a choice on a text KNOWN_* key whose option does not fit the entry's buffer with its end.
+ *
+ * The watch cuts text to its buffer as it lands, so a wearer who picks that option gets only its start,
+ * and for a Goal Met Vibration that is a different rhythm.
+ */
+function checkKnownTextOptions(face: string, controls: PageControl[]): void {
+  controls.forEach((control) => {
+    const known = KNOWN_FIELDS[control.key];
+
+    if (!known || known.field !== 'default_str' || !CHOICE_TYPES.includes(control.type)) {
+      return;
+    }
+
+    const stray = control.options.map(String).find((option) => Buffer.byteLength(option, 'utf8') + 1 > known.size);
+
+    if (stray !== undefined) {
+      throw new ToolError(`${face}'s settings page offers ${shown(stray)} for ${control.key}, which is ${Buffer.byteLength(stray, 'utf8')} bytes, but the watch keeps ${control.key} in ${known.size} bytes, room for ${known.size - 1} and the end of the text. A wearer who picks it gets it cut short, so make the option ${known.size - 1} bytes or shorter`);
+    }
+  });
+}
+
+/** The Goal Met Vibration picks the watch reads as a letter rather than as a list of milliseconds. */
+const GOAL_VIBE_LETTERS = ['', 'S', 'L', 'D', 'C'];
+
+/**
+ * How the watch plays a Goal Met Vibration pick written as milliseconds: the most steps it plays, and
+ * the shortest and longest step it holds each one to. They are GOAL_VIBE_PATTERN_MAX,
+ * GOAL_VIBE_PATTERN_MIN_MS, and GOAL_VIBE_PATTERN_MAX_MS in health/goal_vibe_pattern.h, and
+ * settings-page.spec.ts reads that header and checks these against it, so the two cannot drift.
+ */
+export const GOAL_VIBE_LIMITS = { steps: 40, minMs: 10, maxMs: 10000 };
+
+/**
+ * Stops on a Goal Met Vibration option the watch cannot play as written.
+ *
+ * Beside None and the letters, each option is a comma list of milliseconds. The watch reads any other
+ * character as a separator and plays whatever numbers it finds, so a typo plays a rhythm nobody wrote
+ * rather than failing. It also plays at most GOAL_VIBE_LIMITS.steps steps and holds each between the
+ * shortest and longest step, so a list past those plays cut down. A Custom pick plays the pattern the
+ * wearer types into HEALTH_GOAL_VIBE_CUSTOM, so a page offering it without that row on the same watch
+ * gives the wearer a pick that stays quiet.
+ */
+function checkGoalVibePicks(face: string, controls: PageControl[]): void {
+  const { steps: most, minMs, maxMs } = GOAL_VIBE_LIMITS;
+
+  controls.forEach((control) => {
+    if (control.key !== 'HEALTH_GOAL_VIBE' || !CHOICE_TYPES.includes(control.type)) {
+      return;
+    }
+
+    const options = control.options.map(String);
+    const stray = options.find((option) => {
+      if (GOAL_VIBE_LETTERS.includes(option)) {
+        return false;
+      }
+
+      const steps = option.split(',').map(Number);
+
+      return !/^\d+(,\d+)*$/.test(option) || steps.length > most || steps.some((step) => step < minMs || step > maxMs);
+    });
+
+    if (stray !== undefined) {
+      throw new ToolError(`${face}'s settings page offers ${shown(stray)} for HEALTH_GOAL_VIBE, which the watch cannot play as written. Write each pick as up to ${most} whole milliseconds from ${minMs} to ${maxMs}, separated by commas with no spaces, such as "100,80,300"`);
+    }
+
+    const customRow = controls.some((other) => other.key === 'HEALTH_GOAL_VIBE_CUSTOM' && other.platform === control.platform);
+
+    if (options.includes('C') && !customRow) {
+      throw new ToolError(`${face}'s settings page offers Custom for HEALTH_GOAL_VIBE with no HEALTH_GOAL_VIBE_CUSTOM row, so a wearer who picks it gets no buzz. Add the Custom Vibration Pattern row, as goalRows does with custom: true, or take Custom off the page`);
+    }
+  });
+}
+
 /** Stops on a default on a counted key that is not a whole number below the count. */
 function checkDefaultsCounted(face: string, counts: ChoiceCounts, reads: Map<string, ReadDefault[]>): void {
   reads.forEach((found, key) => {
@@ -1244,8 +1326,9 @@ function checkPluginDefaults(face: string, pages: CheckedPage[], reads: Map<stri
  *
  * It refuses a control on a message key the appinfo does not declare, a request key the watch sends
  * that no feature answers, a choice whose default is not one of its options, a key whose controls
- * open on two defaults, a default for a KNOWN_* key that does not fit its field, a default on a
- * counted key past its count, and a plugin source default the face's own picker does not offer or the
+ * open on two defaults, a default for a KNOWN_* key that does not fit its field, an option on a text
+ * KNOWN_* key too long for its buffer, a Goal Met Vibration option the watch cannot play as written, a
+ * default on a counted key past its count, and a plugin source default the face's own picker does not offer or the
  * page does not open on. A face with no settings page has no page to check, so it passes.
  *
  * @param face The face whose page it is, which a refusal names.
@@ -1265,6 +1348,8 @@ export function checkPage(face: string, pages: CheckedPage[], facts: PageFacts, 
   checkOneDefault(face, reads);
   checkKnownFields(face, reads);
   checkKnownOptions(face, facts.controls);
+  checkKnownTextOptions(face, facts.controls);
+  checkGoalVibePicks(face, facts.controls);
   checkDefaultsCounted(face, facts.counts, reads);
   checkPluginDefaults(face, pages, reads, appinfo.textDefines);
 }
