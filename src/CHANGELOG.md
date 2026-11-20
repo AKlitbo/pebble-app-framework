@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** The Date Format now opens on `%a %d %b`, and `KNOWN_DATE_FORMAT` falls back to it for a page with no Date Format. Pass `date.default` to keep another. A face that passes its own `date.options` and no default opens on the first of them. A fresh watch on a face whose page has no Date Format starts on the new format, and a saved one keeps its own.
 - **Breaking:** The Manual Location and Alternate Time Zone searches now hint Tokyo. Pass the new `location.placeholder` and `clock.timeZonePlaceholder` to keep other hints.
 - **Breaking:** The build now stops on an option for a text `KNOWN_*` setting that is too long for its buffer, such as a `date.options` value over 15 bytes, which built before and was cut short on the watch. Keep each date option to 15 bytes.
+- **Breaking:** `KNOWN_DATE_FORMAT` now takes the struct and the member rather than an offset. Pass `KNOWN_DATE_FORMAT(MySettings, date_format)`. The build stops on a member that is not 16 bytes.
 - The theme picker's frames now read `--pf-preview-backing`, `--pf-preview-border`, and `--pf-preview-size`, which a face sets on `:root`. They fall back to the black backing, `#3d434d` border, and 8rem width the picker had.
 
 #### Removed

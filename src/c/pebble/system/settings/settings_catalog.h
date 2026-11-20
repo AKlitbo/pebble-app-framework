@@ -79,22 +79,22 @@
     }))
 
 /**
- * @brief A text member's offset, with a build stop when the member is not the size its entry writes.
+ * @brief A text entry's offset and size, with a build stop when the member is not that size.
  *
  * A text entry writes a fixed number of bytes, so a member any shorter would have the text written
- * over whatever follows it.
+ * over whatever follows it. The size is named once, so the check and the bytes written always agree.
  *
  * @param blob The face's settings struct.
  * @param member The member that holds the text.
  * @param bytes How many bytes the entry writes.
- * @return The member's offset into the struct.
+ * @return The `.offset` and `.size` for the entry.
  */
-#define SETTINGS_TEXT_OFFSET(blob, member, bytes) \
-    (offsetof(blob, member) + 0 * sizeof(struct { \
+#define SETTINGS_TEXT_FIELD(blob, member, bytes) \
+    .offset = (offsetof(blob, member) + 0 * sizeof(struct { \
         _Static_assert(sizeof(((blob *)0)->member) == (bytes), \
             #blob "." #member " has to be " #bytes " bytes, the size its entry writes"); \
         char unused; \
-    }))
+    })), .size = (bytes)
 
 /**
  * @brief The default the settings page opens with on a message key, worked out by the build.
@@ -205,11 +205,15 @@
  * the 16 bytes with its end. It reads the size from KNOWN_FIELDS in tools/pkjs/settings-page.ts,
  * which a spec checks against this file.
  *
- * @param off Offset into the face's settings struct.
+ * It takes the struct and the member rather than an offset, so the build stops on a member that is
+ * not exactly 16 bytes. A shorter one would have the date format written past its end.
+ *
+ * @param blob The face's settings struct.
+ * @param member The `char[16]` member that holds the date format.
  */
-#define KNOWN_DATE_FORMAT(off) \
+#define KNOWN_DATE_FORMAT(blob, member) \
     { .id = SETTING_DATE_FORMAT, .message_key = &MESSAGE_KEY_CLOCK_DATE_FORMAT, \
-      .type = SETTING_CSTRING, .offset = (off), .size = 16, \
+      .type = SETTING_CSTRING, SETTINGS_TEXT_FIELD(blob, member, 16), \
       .default_str = SETTINGS_DEFAULT(CLOCK_DATE_FORMAT), .affects_layout = true }
 
 /**
@@ -408,7 +412,7 @@
  */
 #define KNOWN_GOAL_VIBE(blob, member) \
     { .id = SETTING_GOAL_VIBE, .message_key = &MESSAGE_KEY_HEALTH_GOAL_VIBE, \
-      .type = SETTING_CSTRING, .offset = SETTINGS_TEXT_OFFSET(blob, member, 64), .size = 64, \
+      .type = SETTING_CSTRING, SETTINGS_TEXT_FIELD(blob, member, 64), \
       .default_str = SETTINGS_DEFAULT(HEALTH_GOAL_VIBE) }
 
 /**
@@ -426,7 +430,7 @@
  */
 #define KNOWN_GOAL_VIBE_CUSTOM(blob, member) \
     { .id = SETTING_GOAL_VIBE_CUSTOM, .message_key = &MESSAGE_KEY_HEALTH_GOAL_VIBE_CUSTOM, \
-      .type = SETTING_CSTRING, .offset = SETTINGS_TEXT_OFFSET(blob, member, 122), .size = 122, \
+      .type = SETTING_CSTRING, SETTINGS_TEXT_FIELD(blob, member, 122), \
       .default_str = SETTINGS_DEFAULT(HEALTH_GOAL_VIBE_CUSTOM) }
 
 /** @} */

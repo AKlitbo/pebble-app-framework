@@ -46,6 +46,13 @@ typedef struct
     char custom[122];
 } GoalVibeBlob;
 
+// a face blob holding the date format, laid out the way a face keeps it
+typedef struct
+{
+    uint8_t version;
+    char date_format[16];
+} DateFormatBlob;
+
 uint32_t MESSAGE_KEY_APPEARANCE_THEME = 1;
 uint32_t MESSAGE_KEY_APPEARANCE_HEADER_FONT = 2;
 uint32_t MESSAGE_KEY_WEATHER_WIND_UNIT = 3;
@@ -120,11 +127,22 @@ void test_known_theme_takes_the_page_default(void)
 /** @brief A fresh watch shows the date the page says it does, so the two can never start out different. */
 void test_known_date_format_takes_the_page_default(void)
 {
-    static const SettingField fields[] = { KNOWN_DATE_FORMAT(0) };
+    static const SettingField fields[] = { KNOWN_DATE_FORMAT(DateFormatBlob, date_format) };
 
     const char *result = fields[0].default_str;
 
     TEST_ASSERT_EQUAL_STRING("%b %d", result);
+}
+
+/** @brief The date format lands in its own 16 bytes after the version, not over the version byte. */
+void test_known_date_format_writes_its_own_member(void)
+{
+    static const SettingField fields[] = { KNOWN_DATE_FORMAT(DateFormatBlob, date_format) };
+
+    const SettingField *result = &fields[0];
+
+    TEST_ASSERT_EQUAL_UINT16(1, result->offset);
+    TEST_ASSERT_EQUAL_UINT16(16, result->size);
 }
 
 /** @brief A framework list takes the page's default as well as the framework's count. */
@@ -211,6 +229,7 @@ int main(void)
     RUN_TEST(test_known_wind_unit_keeps_the_four_units_with_kmh_first);
     RUN_TEST(test_known_theme_takes_the_page_default);
     RUN_TEST(test_known_date_format_takes_the_page_default);
+    RUN_TEST(test_known_date_format_writes_its_own_member);
     RUN_TEST(test_known_vibe_takes_the_page_default);
     RUN_TEST(test_known_bluetooth_icon_keeps_its_own_default_off_the_page);
     RUN_TEST(test_known_goal_steps_takes_the_page_count);

@@ -43,7 +43,7 @@ function watchTable(name: string): number[] {
 /** The buffer size a KNOWN_* entry keeps its text in, read from settings_catalog.h as text. */
 function catalogSize(macro: string): number {
   const source = fs.readFileSync(path.join(import.meta.dirname, '../../c/pebble/system/settings/settings_catalog.h'), 'utf8');
-  const match = new RegExp(`#define ${macro}\\([^)]*\\)[^}]*\\.size = (\\d+)`).exec(source);
+  const match = new RegExp(`#define ${macro}\\([^)]*\\)[^}]*SETTINGS_TEXT_FIELD\\(\\w+, \\w+, (\\d+)\\)`).exec(source);
 
   if (!match) {
     throw new Error(`settings_catalog.h has no ${macro} with a size`);

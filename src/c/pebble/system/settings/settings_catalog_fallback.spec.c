@@ -12,6 +12,13 @@
 
 #include "system/settings/settings_catalog.h"
 
+// a face blob holding the date format, laid out the way a face keeps it
+typedef struct
+{
+    uint8_t version;
+    char date_format[16];
+} DateFormatBlob;
+
 uint32_t MESSAGE_KEY_CLOCK_DATE_FORMAT = 1;
 
 void setUp(void) {}
@@ -20,7 +27,7 @@ void tearDown(void) {}
 /** @brief A page with no Date Format starts the watch on the builder's own default, the weekday, day, and month. */
 void test_known_date_format_falls_back_to_the_builder_default(void)
 {
-    static const SettingField fields[] = { KNOWN_DATE_FORMAT(0) };
+    static const SettingField fields[] = { KNOWN_DATE_FORMAT(DateFormatBlob, date_format) };
 
     const char *result = fields[0].default_str;
 

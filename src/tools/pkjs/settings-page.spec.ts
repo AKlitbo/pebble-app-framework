@@ -385,7 +385,7 @@ describe('KNOWN_FIELDS', () => {
     return Object.fromEntries(macros.map((macro) => {
       const key = /&MESSAGE_KEY_(\w+)/.exec(macro)?.[1] as string;
       const field = /\.(default_num|default_str) = SETTINGS_DEFAULT\((\w+)\)/.exec(macro);
-      const size = /\.size = (\d+)/.exec(macro);
+      const size = /SETTINGS_TEXT_FIELD\(\w+, \w+, (\d+)\)/.exec(macro);
       // a count from the page goes through SETTINGS_COUNT_CHECKED, and the page check holds the default to that one
       const count = /\.enum_count = (\d+|[A-Z_]+_COUNT)\b/.exec(macro)?.[1];
 
