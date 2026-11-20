@@ -19,6 +19,7 @@
  */
 
 import { horizonFor, upcomingWindow } from '../calendar/window';
+import { plainDescription } from '../calendar/description';
 import type { CalendarEvent } from '../calendar/ical';
 import { phoneDayNumber, phoneMidnight, phoneOffsetMinutes } from '../pkjs/phone-clock';
 import type { PhoneOffset } from '../pkjs/phone-clock';
@@ -29,8 +30,18 @@ import { createCalendarDriver } from './calendar-driver';
 import type { CalendarPlugins, SourceEnvelope, SourceProperty } from './types';
 import type { ClayConfigItem } from '../clay/types';
 
-/** The properties the calendar subscription asks for, all the mapping reads. */
+/**
+ * The properties the calendar subscription asks for, all the mapping reads apart from `description`.
+ * A face never shows an event's notes, so it does not ask for them.
+ */
 export const CALENDAR_PROPERTIES = ['name', 'location', 'starts_at', 'ends_at', 'all_day', 'calendar'];
+
+/**
+ * The properties a plugin app asks the built-in Calendar plugin for when it serves the events on with
+ * their notes. It is `CALENDAR_PROPERTIES` and `description`, which the built-in sends only to a read
+ * that names it or names no properties at all.
+ */
+export const CALENDAR_PROPERTIES_WITH_DESCRIPTION = [...CALENDAR_PROPERTIES, 'description'];
 
 const HOUR_SECONDS = 60 * 60;
 const DAY_SECONDS = 24 * HOUR_SECONDS;
@@ -69,7 +80,9 @@ function nearestMidnight(epochSeconds: number, offsetAt: PhoneOffset): number {
  *
  * The title, the location, and the calendar's name prefer the `longText`, since the plugin guide sizes
  * a `shortText` at about 7 characters. The strip holds 24 for a title, and a calendar's name is matched
- * on the phone, where a cut one would miss. A timed event with no end, or one that ends at or
+ * on the phone, where a cut one would miss. The notes are read from `description` when the update
+ * carries them, and cleaned as the iCal reader cleans a feed's, since a plugin other than the built-in
+ * can send HTML or more than 300 characters. A timed event with no end, or one that ends at or
  * before its start, gets an hour, as the iCal reader gives one. An all-day event whose end is
  * missing, or rounds to its start or before, gets one day.
  */
@@ -102,9 +115,14 @@ function toEvent(properties: Record<string, SourceProperty | undefined>, offsetA
     location: text(properties.location, 'long') ?? '',
   };
   const calendar = text(properties.calendar, 'long');
+  const description = plainDescription(text(properties.description, 'long'));
 
   if (calendar) {
     event.calendar = calendar;
+  }
+
+  if (description) {
+    event.description = description;
   }
 
   return event;
@@ -184,4 +202,4 @@ export const calendarPlugins: CalendarPlugins = {
   driver: /* @__PURE__ */ createCalendarDriver({ fromUpdate: eventsFromUpdate, properties: CALENDAR_PROPERTIES, texts: CALENDAR_TEXTS, select: CALENDAR_SOURCE_SELECT }),
 };
 
-export default { eventsFromUpdate, CALENDAR_PROPERTIES, CALENDAR_TEXTS, CALENDAR_SOURCE_SELECT, ICAL_VALUE };
+export default { eventsFromUpdate, CALENDAR_PROPERTIES, CALENDAR_PROPERTIES_WITH_DESCRIPTION, CALENDAR_TEXTS, CALENDAR_SOURCE_SELECT, ICAL_VALUE };

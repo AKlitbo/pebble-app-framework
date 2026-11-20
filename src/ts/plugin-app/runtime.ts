@@ -8,7 +8,8 @@
  * a bridge of its own, which page.ts declares itself, since it runs on the page as text.
  *
  * Only the calls the framework's plugin app helpers use, and the ones a plugin's source handler needs
- * for them, are described here. Core's plugin guide has the rest.
+ * for them, are described here. Core's plugin guide has the rest. `failureReason` gives the words for
+ * why a read failed, the same from every helper that reads a source.
  */
 
 import type { SourceEnvelope, SourceInstance } from '../plugin-sources/types';
@@ -62,4 +63,38 @@ export interface PluginPebble {
  */
 export function pluginPebble(): PluginPebble {
   return (globalThis as unknown as { Pebble: PluginPebble }).Pebble;
+}
+
+/** The reason a failed read gives when the runtime named none. */
+export const NO_REASON = 'NO_REASON';
+
+/**
+ * The words for why a read of a source failed, as the plugin runtime gave them, such as
+ * `PERMISSION_DENIED`. It is the text the framework's own reads give, for a plugin app that reads
+ * sources of its own and wants a refusal to read the same.
+ *
+ * The code wins, then the message. A blank one names nothing, and so does a numeric code of 0 or one
+ * that is not a finite number, so the message after it wins. A failure that names neither reads as
+ * `NO_REASON` rather than as the text of an object.
+ *
+ * @param error What the read threw or rejected with, which may be anything.
+ * @return The reason, never empty.
+ */
+export function failureReason(error: unknown): string {
+  const failure = error && typeof error === 'object' ? (error as { code?: unknown; message?: unknown }) : null;
+  const candidates = failure ? [failure.code, failure.message] : [error];
+
+  // the code wins, then the message, each only when it says something, so a blank code never hides a
+  // real message. a code given as a number reads as itself, unless it is 0 or not a real number
+  for (const named of candidates) {
+    if (typeof named === 'string' && named.trim()) {
+      return named.trim();
+    }
+
+    if (typeof named === 'number' && Number.isFinite(named) && named !== 0) {
+      return String(named);
+    }
+  }
+
+  return NO_REASON;
 }

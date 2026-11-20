@@ -28,13 +28,14 @@
  */
 
 import ICAL from './icaljs';
+import { plainDescription } from './description';
 import { horizonFor, upcomingWindow } from './window';
 
 /**
- * One upcoming event. The watch shows its window, all-day flag, title, and place. `uid` and `calendar`
- * stay on the phone and never reach the watch. Every occurrence of a repeating event shares one `uid`,
- * so it is the `uid` and the start together that pick out one meeting, and `calendar` names the
- * calendar the event is from.
+ * One upcoming event. The watch shows its window, all-day flag, title, and place. `uid`, `calendar`,
+ * the notes, and the free, tentative, and declined marks stay on the phone and never reach the watch.
+ * Every occurrence of a repeating event shares one `uid`, so it is the `uid` and the start together
+ * that pick out one meeting, and `calendar` names the calendar the event is from.
  */
 export interface CalendarEvent {
   startEpoch: number;
@@ -46,7 +47,63 @@ export interface CalendarEvent {
   uid?: string;
   /** The name of the calendar the event is from. Only the plugin reader fills it, from the calendar a plugin names. */
   calendar?: string;
+  /**
+   * The event's notes as plain text, up to 300 characters. The iCal reader fills it only when asked
+   * to, and the plugin reader when an update carries one. Left off when there are none.
+   */
+  description?: string;
+  /** True when the feed marks the event's time as free, with `TRANSP:TRANSPARENT`. Only the iCal reader fills it, when asked for marks, and only when true. */
+  free?: boolean;
+  /**
+   * True when the feed marks the event `STATUS:TENTATIVE`, or the wearer answered Maybe by one of the
+   * addresses the iCal reader was given. Only the iCal reader fills it, when asked for marks, and only
+   * when true.
+   */
+  tentative?: boolean;
+  /** True when the wearer declined the event, by one of the addresses the iCal reader was given. Only the iCal reader fills it, when asked for marks, and only when true. */
+  declined?: boolean;
 }
+
+/** What `parseIcal` reads beyond what the agenda needs. */
+export interface IcalOptions {
+  /**
+   * Set to read each event's `DESCRIPTION` into `description`. Left out, no event carries one, so a
+   * reader that never sends the notes on does not hold them.
+   */
+  descriptions?: boolean;
+  /**
+   * Set to mark each event `free`, `tentative`, and `declined` where the feed says so. Left out, no
+   * event carries a mark.
+   */
+  marks?: boolean;
+  /**
+   * The wearer's own email addresses, read with `marks`. An event that lists the wearer among its
+   * attendees by one of them with `PARTSTAT=DECLINED` reads as `declined`, and one with
+   * `PARTSTAT=TENTATIVE`, a Maybe, reads as `tentative`. A `PARTSTAT=ACCEPTED` by any of them wins,
+   * so the event reads as neither, and otherwise a decline wins over a Maybe. Case and spaces at the
+   * ends do not count.
+   */
+  wearerAddresses?: readonly string[];
+}
+
+/** The fields an occurrence takes from its VEVENT beyond its times and text, only the ones set. */
+type EventExtras = Pick<CalendarEvent, 'description' | 'free' | 'tentative' | 'declined'>;
+
+/** What one VEVENT says about itself beyond its times and text. */
+interface BlockDetails {
+  cancelled: boolean;
+  extras: EventExtras;
+  /** Whether one of the VEVENT's own `ATTENDEE` lines is the wearer's. A moved occurrence without one answers as its series did. */
+  listsWearer: boolean;
+  /** The wearer's own answer on its attendee lines, when it is one the marks read. */
+  answer: WearerAnswer | null;
+}
+
+/** The wearer's answers to an invitation that the marks read. */
+type WearerAnswer = 'DECLINED' | 'TENTATIVE';
+
+/** Reads a VEVENT's details, once per VEVENT. */
+type BlockReader = (block: ICAL.Component) => BlockDetails;
 
 const DAY_SECONDS = 24 * 60 * 60;
 const HOUR_SECONDS = 60 * 60;
@@ -94,7 +151,7 @@ function durationOf(event: ICAL.Event): number {
  * than seconds. A day is 23 or 25 hours long when the clocks change, so 24 hours from the start would
  * run into the next day or stop short of the end of this one.
  */
-function toCalendarEvent(event: ICAL.Event, start: ICAL.Time, duration: number): CalendarEvent {
+function toCalendarEvent(event: ICAL.Event, start: ICAL.Time, duration: number, extras: EventExtras): CalendarEvent {
   const startEpoch = toEpoch(start);
   let endEpoch = startEpoch + duration;
 
@@ -111,6 +168,7 @@ function toCalendarEvent(event: ICAL.Event, start: ICAL.Time, duration: number):
     allDay: Boolean(event.startDate.isDate),
     title: event.summary || '(no title)',
     location: event.location || '',
+    ...extras,
   };
 }
 
@@ -128,34 +186,157 @@ function withUid(events: CalendarEvent[], uid: string | null | undefined): Calen
   return events;
 }
 
-/**
- * Whether a VEVENT is marked cancelled. Outlook keeps a cancelled meeting in the feed with this
- * status rather than taking it out, and a single cancelled occurrence of a series can arrive the
- * same way, as an override carrying it.
- */
-function isCancelled(block: ICAL.Component): boolean {
-  const status = block.getFirstPropertyValue('status');
+/** An email address in the one form two of them are compared in, without `mailto:`. */
+function plainAddress(address: string): string {
+  return address
+    .trim()
+    .replace(/^mailto:/i, '')
+    .trim()
+    .toLowerCase();
+}
 
-  return typeof status === 'string' && status.toUpperCase() === 'CANCELLED';
+/**
+ * Whether a list of `ATTENDEE` lines holds one of the wearer's addresses, and the answer the marks
+ * read from them. A feed can list the wearer under two addresses with two answers. An accept on any
+ * of them wins, since the wearer is going, and otherwise a decline wins over a Maybe.
+ */
+function wearerAnswer(attendees: ICAL.Property[], addresses: Set<string>): { listed: boolean; answer: WearerAnswer | null } {
+  const states = new Set<string>();
+  let listed = false;
+
+  if (!addresses.size) {
+    return { listed, answer: null };
+  }
+
+  for (const attendee of attendees) {
+    const address = attendee.getFirstValue();
+
+    if (typeof address !== 'string' || !addresses.has(plainAddress(address))) {
+      continue;
+    }
+
+    const partstat = attendee.getParameter('partstat');
+    const state = Array.isArray(partstat) ? partstat[0] : partstat;
+
+    listed = true;
+    states.add(typeof state === 'string' ? state.toUpperCase() : '');
+  }
+
+  if (states.has('ACCEPTED')) {
+    return { listed, answer: null };
+  }
+
+  return { listed, answer: states.has('DECLINED') ? 'DECLINED' : states.has('TENTATIVE') ? 'TENTATIVE' : null };
+}
+
+/** An answer's mark, set only when it is true. */
+function answerMark(answer: WearerAnswer | null): EventExtras {
+  if (answer === 'DECLINED') {
+    return { declined: true };
+  }
+
+  return answer === 'TENTATIVE' ? { tentative: true } : {};
+}
+
+/**
+ * Reads what one VEVENT says about itself beyond its times and text.
+ *
+ * A cancelled VEVENT is one marked `STATUS:CANCELLED`. Outlook keeps a cancelled meeting in the feed
+ * with this status rather than taking it out, and a single cancelled occurrence of a series can arrive
+ * the same way, as an override carrying it. With `marks`, the same read of the status marks a
+ * tentative one.
+ */
+function readBlock(block: ICAL.Component, descriptions: boolean, marks: boolean, addresses: Set<string>): BlockDetails {
+  const status = block.getFirstPropertyValue('status');
+  const upper = typeof status === 'string' ? status.toUpperCase() : '';
+  const attendees = marks ? block.getAllProperties('attendee') : [];
+  const wearer = marks ? wearerAnswer(attendees, addresses) : { listed: false, answer: null };
+  const extras: EventExtras = {};
+
+  if (descriptions) {
+    const description = block.getFirstPropertyValue('description');
+    const text = typeof description === 'string' ? plainDescription(description) : '';
+
+    if (text) {
+      extras.description = text;
+    }
+  }
+
+  if (marks) {
+    const transparency = block.getFirstPropertyValue('transp');
+
+    if (typeof transparency === 'string' && transparency.toUpperCase() === 'TRANSPARENT') {
+      extras.free = true;
+    }
+
+    if (upper === 'TENTATIVE') {
+      extras.tentative = true;
+    }
+
+    Object.assign(extras, answerMark(wearer.answer));
+  }
+
+  return { cancelled: upper === 'CANCELLED', extras, listsWearer: wearer.listed, answer: wearer.answer };
+}
+
+/**
+ * Makes the reader for one parse, which keeps each VEVENT's details once read. A repeating event with
+ * something moved off it reads its VEVENT on every step of the walk, and a rule set up years ago walks
+ * thousands of steps, so each VEVENT is read once rather than once a step.
+ */
+function blockReader(options: IcalOptions): BlockReader {
+  const read = new Map<ICAL.Component, BlockDetails>();
+  const descriptions = options.descriptions === true;
+  const marks = options.marks === true;
+  const addresses = new Set((options.wearerAddresses || []).map((address) => plainAddress(String(address))).filter((address) => address.length > 0));
+
+  return (block) => {
+    let details = read.get(block);
+
+    if (!details) {
+      details = readBlock(block, descriptions, marks, addresses);
+      read.set(block, details);
+    }
+
+    return details;
+  };
+}
+
+/**
+ * The extras an occurrence carries, from the VEVENT it reads from. A moved occurrence whose own
+ * `ATTENDEE` lines leave the wearer out, or that has none, says nothing about the wearer's answer, so
+ * it keeps the wearer's answer to the series, a decline or a Maybe. One that lists the wearer answers
+ * for itself, so only an answer given on the occurrence overrides the series. The event's own
+ * `STATUS:TENTATIVE` is not an answer, so it never carries across.
+ */
+function occurrenceExtras(item: ICAL.Component, series: ICAL.Component, detailsOf: BlockReader): EventExtras {
+  const own = detailsOf(item);
+  const seriesAnswer = detailsOf(series).answer;
+
+  if (item === series || own.listsWearer || !seriesAnswer) {
+    return own.extras;
+  }
+
+  return { ...own.extras, ...answerMark(seriesAnswer) };
 }
 
 /**
  * One occurrence as the watch sees it, or null when the feed cancelled it.
  *
- * An occurrence the feed moved or renamed reads from its own VEVENT, with that VEVENT's own start
- * and length, rather than from the rule.
+ * An occurrence the feed moved or renamed reads from its own VEVENT, with that VEVENT's own start,
+ * length, notes, and status, rather than from the rule.
  */
-function readOccurrence(event: ICAL.Event, time: ICAL.Time, duration: number): CalendarEvent | null {
+function readOccurrence(event: ICAL.Event, time: ICAL.Time, duration: number, detailsOf: BlockReader): CalendarEvent | null {
   try {
     const details = event.getOccurrenceDetails(time);
 
-    if (isCancelled(details.item.component)) {
+    if (detailsOf(details.item.component).cancelled) {
       return null;
     }
 
-    return toCalendarEvent(details.item, details.startDate, durationOf(details.item));
+    return toCalendarEvent(details.item, details.startDate, durationOf(details.item), occurrenceExtras(details.item.component, event.component, detailsOf));
   } catch (error) {
-    return toCalendarEvent(event, time, duration);
+    return toCalendarEvent(event, time, duration, detailsOf(event.component).extras);
   }
 }
 
@@ -170,11 +351,12 @@ function readOccurrence(event: ICAL.Event, time: ICAL.Time, duration: number): C
  * landed. One moved from the past to later in the week is still to come, and one moved into the
  * week from further out still shows.
  */
-function occurrencesOf(event: ICAL.Event, now: number, horizon: number): CalendarEvent[] {
+function occurrencesOf(event: ICAL.Event, now: number, horizon: number, detailsOf: BlockReader): CalendarEvent[] {
   const duration = durationOf(event);
+  const extras = detailsOf(event.component).extras;
 
   if (!event.isRecurring()) {
-    return [toCalendarEvent(event, event.startDate, duration)];
+    return [toCalendarEvent(event, event.startDate, duration, extras)];
   }
 
   // ical.js types this as a list, but it is keyed by the recurrence id of the occurrence it replaces
@@ -213,7 +395,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
     // with anything moved looks every step up, since ical.js matches a moved occurrence by its own
     // time, by its UTC time, or through a range that moves every later one. checking first would
     // cost the same two time conversions the lookup makes, and could miss a range
-    const occurrence = moved.length ? readOccurrence(event, next, duration) : toCalendarEvent(event, next, duration);
+    const occurrence = moved.length ? readOccurrence(event, next, duration, detailsOf) : toCalendarEvent(event, next, duration, extras);
 
     // cancelled on its own, so the series has a gap here
     if (!occurrence) {
@@ -244,7 +426,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
   // any more, after the rule was edited. parseIcal drops the ones that were not moved in
   moved.forEach((id) => {
     const recurrenceId = exceptions[id].recurrenceId;
-    const occurrence = walked.has(toEpoch(recurrenceId)) ? null : readOccurrence(event, recurrenceId, duration);
+    const occurrence = walked.has(toEpoch(recurrenceId)) ? null : readOccurrence(event, recurrenceId, duration, detailsOf);
 
     if (occurrence) {
       out.push(occurrence);
@@ -263,12 +445,15 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
  * @param days How many days the window holds, today counted, as `horizonFor` takes them. Left out,
  * the window is the week. A rule's walk stops at the same day, so a weekly event past the week
  * still shows in a longer window.
+ * @param options What to read beyond what the agenda needs, the notes and the free, tentative, and
+ * declined marks. Left out or null, the events are exactly what the agenda reads, with no notes or marks.
  * @return The upcoming events in the window, soonest first. An empty list means the feed read clean
  * with nothing coming up. Null means the text was not a calendar at all, such as an error page,
  * which says nothing about what is on.
  */
-function parseIcal(text: string, nowEpoch?: number, days?: number): CalendarEvent[] | null {
+function parseIcal(text: string, nowEpoch?: number, days?: number, options: IcalOptions | null = {}): CalendarEvent[] | null {
   const now = nowEpoch || Math.floor(Date.now() / 1000);
+  const detailsOf = blockReader(options || {});
   // a rule's walk stops at the window's last second, and upcomingWindow is handed the same one
   const horizon = horizonFor(now, { days });
 
@@ -296,7 +481,7 @@ function parseIcal(text: string, nowEpoch?: number, days?: number): CalendarEven
   // its own, so it rides along with the rule it belongs to instead of being read on its own
   const blocks = root.getAllSubcomponents('vevent');
   const masters = blocks.filter((block) => !block.hasProperty('recurrence-id'));
-  const liveMasters = masters.filter((block) => !isCancelled(block));
+  const liveMasters = masters.filter((block) => !detailsOf(block).cancelled);
   const overrides = blocks.filter((block) => block.hasProperty('recurrence-id'));
 
   // the moved occurrences grouped by UID once, so each rule finds its own without walking every
@@ -329,7 +514,7 @@ function parseIcal(text: string, nowEpoch?: number, days?: number): CalendarEven
     try {
       const event = new ICAL.Event(block, { exceptions: own });
 
-      events.push(...withUid(occurrencesOf(event, now, horizon), event.uid));
+      events.push(...withUid(occurrencesOf(event, now, horizon, detailsOf), event.uid));
     } catch (error) {
       console.error('calendar: skipped an event it could not read', error);
     }
@@ -339,14 +524,14 @@ function parseIcal(text: string, nowEpoch?: number, days?: number): CalendarEven
   const knownUids = new Set(masters.map((block) => block.getFirstPropertyValue('uid')));
 
   overrides.forEach((block) => {
-    if (knownUids.has(block.getFirstPropertyValue('uid')) || isCancelled(block)) {
+    if (knownUids.has(block.getFirstPropertyValue('uid')) || detailsOf(block).cancelled) {
       return;
     }
 
     try {
       const event = new ICAL.Event(block);
 
-      events.push(...withUid([toCalendarEvent(event, event.startDate, durationOf(event))], event.uid));
+      events.push(...withUid([toCalendarEvent(event, event.startDate, durationOf(event), detailsOf(block).extras)], event.uid));
     } catch (error) {
       // unreadable, so skip it
     }

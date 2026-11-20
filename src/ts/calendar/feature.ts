@@ -136,6 +136,7 @@ const calendar: Feature = (context) => {
         return;
       }
 
+      // the strip carries no notes or marks, so the events are read without them and lastEvents holds none
       const events = ical.parseIcal(body as string);
 
       if (!events) {

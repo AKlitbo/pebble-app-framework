@@ -13,7 +13,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { eventsFromUpdate } from './calendar';
+import { CALENDAR_PROPERTIES, CALENDAR_PROPERTIES_WITH_DESCRIPTION, eventsFromUpdate } from './calendar';
 import type { SourceEnvelope, SourceProperty } from './types';
 
 const HOUR = 60 * 60;
@@ -364,5 +364,50 @@ describe('eventsFromUpdate twelve hours from UTC', () => {
     const result = eventsFromUpdate(update(holiday), EVENING, offsetAt);
 
     expect(result[0]).toMatchObject({ startEpoch: start, endEpoch: start + 24 * HOUR });
+  });
+});
+
+describe('eventsFromUpdate descriptions', () => {
+  /** A plugin app serving the built-in's events on has to keep their notes, or its own description goes out empty. */
+  test('reads the description an update carries', () => {
+    const noted = { ...event({ start: utc(11, 4, 20), end: utc(11, 4, 21) }), description: { longText: { text: 'Bring the slides' } } };
+
+    const result = eventsFromUpdate(update(noted), NOW);
+
+    expect(result[0].description).toBe('Bring the slides');
+  });
+
+  /** A plugin other than the built-in can send HTML or a long text, which a plugin app would serve on as it came. */
+  test('cleans a description as the iCal reader does', () => {
+    const noted = { ...event({ start: utc(11, 4, 20), end: utc(11, 4, 21) }), description: { longText: { text: ' <p>Bring the slides</p> ' } } };
+
+    const result = eventsFromUpdate(update(noted), NOW);
+
+    expect(result[0].description).toBe('Bring the slides');
+  });
+
+  /** An event with no notes must not carry an empty one. */
+  test('leaves the description off an event without one', () => {
+    const plain = event({ start: utc(11, 4, 20), end: utc(11, 4, 21) });
+
+    const result = eventsFromUpdate(update(plain), NOW);
+
+    expect(result[0]).not.toHaveProperty('description');
+  });
+});
+
+describe('the subscription properties', () => {
+  /** The built-in sends notes only to a read that names them, so a face asking for them would carry text the watch never shows. */
+  test('leaves description out of what a face asks for', () => {
+    const result = CALENDAR_PROPERTIES;
+
+    expect(result).toEqual(['name', 'location', 'starts_at', 'ends_at', 'all_day', 'calendar']);
+  });
+
+  /** A plugin app serving the notes on has to ask for them, or the built-in never sends them. */
+  test('adds description to the list a plugin app serving notes asks for', () => {
+    const result = CALENDAR_PROPERTIES_WITH_DESCRIPTION;
+
+    expect(result).toEqual(['name', 'location', 'starts_at', 'ends_at', 'all_day', 'calendar', 'description']);
   });
 });

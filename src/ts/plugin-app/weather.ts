@@ -7,26 +7,25 @@
  * way, and the Pebble app builds the watch's own Weather app from it. The extras take the names and
  * shapes Weather+ serves where it has them.
  *
- * The places and the wearer's units come from the Pebble app's built-in Preferences plugin, read by
- * its uuid.
+ * The places come from the Pebble app's built-in Preferences plugin, read by its uuid, and the
+ * wearer's units from the same plugin through ts/plugin-app/preferences.ts.
  */
 
 import conditions from '../weather/conditions';
 import { COORD_DECIMALS, roundCoordinate, validCoords } from '../weather/coords';
-import { firstProperties, flag, instancesOf, numeric, propertiesOf, text } from '../plugin-shapes/shapes';
-import { appFahrenheit } from '../plugin-shapes/units';
+import { flag, instancesOf, numeric, propertiesOf, text } from '../plugin-shapes/shapes';
 import { SHORT_TEXT_MAX, shortName } from './short-text';
 import { phoneOffsetMinutes } from '../pkjs/phone-clock';
 import type { PhoneOffset } from '../pkjs/phone-clock';
 import type { ReadingCondition, WeatherReading } from '../weather/reading';
+import { BUILT_IN_PREFERENCES } from './preferences';
+import type { WeatherUnits } from './preferences';
+import { failureReason } from './runtime';
 import type { PluginPebble, SourceRequest } from './runtime';
 import type { SeriesShape, SourceDeclaration, SourceEnvelope, SourceInstance, SourceProperty } from '../plugin-sources/types';
 
 /** The Pebble app's built-in Weather plugin. */
 export const BUILT_IN_WEATHER = '00000000-0000-0000-0001-000000000002';
-
-/** The Pebble app's built-in Preferences plugin, which serves the wearer's places and units. */
-export const BUILT_IN_PREFERENCES = '00000000-0000-0000-0001-000000000009';
 
 /**
  * The `weather/location` source as a plugin app declares it in its appinfo's plugin block.
@@ -100,23 +99,6 @@ export const WEATHER_LOCATION_SOURCE = {
   callerPermissions: ['Location'],
   suggestedRefreshIntervalSec: 900,
 } satisfies SourceDeclaration & { supportsMultiple: boolean; callerPermissions: string[]; suggestedRefreshIntervalSec: number };
-
-/** The units a reading is served in, as the Pebble app's Preferences plugin names them. */
-export interface WeatherUnits {
-  temperature: '°C' | '°F';
-  windSpeed: 'km/h' | 'mph' | 'm/s' | 'knots';
-  pressure: 'hPa' | 'inHg';
-}
-
-/** A plugin's own choice for each unit, where `app` follows the Pebble app's. Left out is `app` too. */
-export interface UnitOverrides {
-  temperature?: 'app' | WeatherUnits['temperature'];
-  windSpeed?: 'app' | WeatherUnits['windSpeed'];
-  pressure?: 'app' | WeatherUnits['pressure'];
-}
-
-/** The units a plugin serves in when the Pebble app gives none. */
-export const DEFAULT_UNITS: WeatherUnits = { temperature: '°C', windSpeed: 'km/h', pressure: 'hPa' };
 
 /** One place in the Pebble app's weather list. */
 export interface WeatherPlace {
@@ -507,43 +489,6 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
 /** The read of the wearer's places from the built-in Preferences plugin. */
 const PLACES_REQUEST: SourceRequest = { category: 'preferences', item: 'weather_location', plugin: BUILT_IN_PREFERENCES };
 
-/** The read of the wearer's units from the built-in Preferences plugin. */
-const UNITS_REQUEST: SourceRequest = { category: 'preferences', item: 'units', plugin: BUILT_IN_PREFERENCES };
-
-/** The reason a failed read gives when the runtime named none. */
-export const NO_REASON = 'NO_REASON';
-
-/**
- * The words for why a read of a source failed, as the plugin runtime gave them, such as
- * `PERMISSION_DENIED`. It is the text the framework's own reads give, for a plugin app that reads
- * sources of its own and wants a refusal to read the same.
- *
- * The code wins, then the message. A blank one names nothing, and so does a numeric code of 0 or one
- * that is not a finite number, so the message after it wins. A failure that names neither reads as
- * `NO_REASON` rather than as the text of an object.
- *
- * @param error What the read threw or rejected with, which may be anything.
- * @return The reason, never empty.
- */
-export function failureReason(error: unknown): string {
-  const failure = error && typeof error === 'object' ? (error as { code?: unknown; message?: unknown }) : null;
-  const candidates = failure ? [failure.code, failure.message] : [error];
-
-  // the code wins, then the message, each only when it says something, so a blank code never hides a
-  // real message. a code given as a number reads as itself, unless it is 0 or not a real number
-  for (const named of candidates) {
-    if (typeof named === 'string' && named.trim()) {
-      return named.trim();
-    }
-
-    if (typeof named === 'number' && Number.isFinite(named) && named !== 0) {
-      return String(named);
-    }
-  }
-
-  return NO_REASON;
-}
-
 /**
  * One place in the Pebble app's weather list as `listWeatherPlaces` reads it. A place with
  * coordinates carries them and has `located` true. One without, such as a current location the phone
@@ -650,94 +595,4 @@ export async function weatherLocations(pebble: PluginPebble): Promise<{ places: 
   const listed = await listWeatherPlaces(pebble, { subscribe: true });
 
   return { ...listed, places: fetchablePlaces(listed.places) };
-}
-
-// each unit as the Pebble app's Preferences plugin names it
-const TEMPERATURE_UNITS = ['°C', '°F'] as const;
-const WIND_UNITS = ['km/h', 'mph', 'm/s', 'knots'] as const;
-const PRESSURE_UNITS = ['hPa', 'inHg'] as const;
-
-/** A unit the Pebble app names, if it is one of the choices given. */
-function oneOf<T extends string>(value: string | undefined, choices: readonly T[]): T | undefined {
-  return choices.find((choice) => choice === value);
-}
-
-/**
- * The units to serve in, from a `preferences/units` update and the plugin's own choices.
- *
- * Each unit is the plugin's choice where it made one, and the Pebble app's where it is `app`, left
- * out, or not one of the Pebble app's own units. A unit the Pebble app does not give, or gives in a
- * form not known here, is the default, °C, km/h, and hPa.
- *
- * @param envelope One update from `preferences/units`, which may be missing or carry anything.
- * @param overrides The plugin's own choice for each unit.
- * @return The units.
- */
-export function unitsFrom(envelope: SourceEnvelope | null | undefined, overrides: UnitOverrides = {}): WeatherUnits {
-  const properties = firstProperties(envelope);
-  const fahrenheit = appFahrenheit(envelope);
-  const app: WeatherUnits = {
-    temperature: fahrenheit === undefined ? DEFAULT_UNITS.temperature : fahrenheit ? '°F' : '°C',
-    windSpeed: oneOf(text(properties?.wind_speed, 'short'), WIND_UNITS) || DEFAULT_UNITS.windSpeed,
-    pressure: oneOf(text(properties?.pressure, 'short'), PRESSURE_UNITS) || DEFAULT_UNITS.pressure,
-  };
-
-  // a choice that is not one of the Pebble app's own units is served as the Pebble app's, since a unit
-  // the Pebble app cannot read makes it drop that run's weather for every place
-  return {
-    temperature: oneOf(overrides.temperature, TEMPERATURE_UNITS) || app.temperature,
-    windSpeed: oneOf(overrides.windSpeed, WIND_UNITS) || app.windSpeed,
-    pressure: oneOf(overrides.pressure, PRESSURE_UNITS) || app.pressure,
-  };
-}
-
-/** The error `readPebbleAppUnits` gives for a reply that names none of the units. */
-export const NO_UNITS = 'NO_UNITS';
-
-/** Whether a `preferences/units` update names any of the units a reading is served in. */
-function namesUnits(envelope: SourceEnvelope | null | undefined): boolean {
-  const properties = firstProperties(envelope);
-
-  return appFahrenheit(envelope) !== undefined || Boolean(oneOf(text(properties?.wind_speed, 'short'), WIND_UNITS)) || Boolean(oneOf(text(properties?.pressure, 'short'), PRESSURE_UNITS));
-}
-
-/**
- * Reads the wearer's units from the Pebble app's built-in Preferences plugin, for a caller that has to
- * tell the Pebble app's own units from the defaults, such as a settings page showing them.
- *
- * A read the Pebble app refuses answers no units and the reason, such as `PERMISSION_DENIED`, or
- * `NO_REASON` when the refusal names none, and a reply that names none of the units answers no units
- * and `NO_UNITS`. Only a reply that names them answers units, with the plugin's own choices over them
- * and the defaults for any it leaves out.
- *
- * @param pebble The plugin runtime's `Pebble`.
- * @param overrides The plugin's own choice for each unit.
- * @return The units, or null and the reason there are none.
- */
-export async function readPebbleAppUnits(pebble: PluginPebble, overrides: UnitOverrides = {}): Promise<{ units: WeatherUnits | null; error?: string }> {
-  let envelope: SourceEnvelope;
-
-  try {
-    envelope = await pebble.readSource(UNITS_REQUEST);
-  } catch (error) {
-    return { units: null, error: failureReason(error) };
-  }
-
-  return namesUnits(envelope) ? { units: unitsFrom(envelope, overrides) } : { units: null, error: NO_UNITS };
-}
-
-/**
- * Reads the wearer's units from the Pebble app's built-in Preferences plugin and puts the plugin's own
- * choices over them, for serving, which has to send some unit. A read the Pebble app refuses, or a
- * reply that names none, leaves the defaults under the choices. A caller that has to tell those apart
- * reads `readPebbleAppUnits`.
- *
- * @param pebble The plugin runtime's `Pebble`.
- * @param overrides The plugin's own choice for each unit.
- * @return The units.
- */
-export async function pebbleAppUnits(pebble: PluginPebble, overrides: UnitOverrides = {}): Promise<WeatherUnits> {
-  const { units } = await readPebbleAppUnits(pebble, overrides);
-
-  return units || unitsFrom(null, overrides);
 }

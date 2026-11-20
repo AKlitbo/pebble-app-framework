@@ -878,6 +878,289 @@ describe('parseIcal awkward recurrences', () => {
   });
 });
 
+describe('parseIcal descriptions', () => {
+  /** A face sends no notes to the watch, so reading them unasked would hold up to 300 characters an event for nothing. */
+  test('leaves the notes off unless asked', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Picnic\r\nDESCRIPTION:Bring a blanket\r\nEND:VEVENT\r\n');
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result[0]).not.toHaveProperty('description');
+  });
+
+  /** Google writes a meeting's notes as HTML, so a plugin serving them on would show the tags as text. */
+  test('reads the notes as plain text when asked', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Picnic\r\nDESCRIPTION:  <b>Bring</b> a blanket\\nand snacks  \r\nEND:VEVENT\r\n');
+
+    const result = ical.parseIcal(source, NOW, undefined, { descriptions: true });
+
+    expect(result[0].description).toBe('Bring a blanket\nand snacks');
+  });
+
+  /** Notes that are only tags or spaces read as none, so a plugin does not send a blank description. */
+  test('leaves blank notes off', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Picnic\r\nDESCRIPTION:<br> \r\nEND:VEVENT\r\n');
+
+    const result = ical.parseIcal(source, NOW, undefined, { descriptions: true });
+
+    expect(result[0]).not.toHaveProperty('description');
+  });
+});
+
+describe('parseIcal status marks', () => {
+  /** A free event shaded as busy tells the wearer they are booked when they are not. */
+  test('marks an event TRANSP:TRANSPARENT as free', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Focus time\r\nTRANSP:TRANSPARENT\r\nEND:VEVENT\r\n');
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true });
+
+    expect(result[0].free).toBe(true);
+  });
+
+  /** A tentative meeting shown as confirmed reads as a firm booking. */
+  test('marks an event STATUS:TENTATIVE as tentative', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Maybe lunch\r\nSTATUS:TENTATIVE\r\nEND:VEVENT\r\n');
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true });
+
+    expect(result[0].tentative).toBe(true);
+  });
+
+  /** An ordinary event carries none of the marks even when they are asked for, so it stays small. */
+  test('leaves the marks off an ordinary event', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Picnic\r\nTRANSP:OPAQUE\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n');
+
+    const result = Object.keys(ical.parseIcal(source, NOW, undefined, { marks: true })[0]);
+
+    expect(result).toEqual(['startEpoch', 'endEpoch', 'allDay', 'title', 'location']);
+  });
+
+  /** A face's own iCal round asks for nothing, and keeping marks it never sends would hold them in every event for nothing. */
+  test('carries no marks when none are asked for', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Maybe\r\nTRANSP:TRANSPARENT\r\nSTATUS:TENTATIVE\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:sam@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = Object.keys(ical.parseIcal(source, NOW, undefined, { wearerAddresses: ['sam@example.com'] })[0]);
+
+    expect(result).toEqual(['startEpoch', 'endEpoch', 'allDay', 'title', 'location']);
+  });
+
+  /** The wearer's address can arrive in any case and with spaces, and a missed match shows a declined meeting as on. */
+  test('marks an event declined by one of the wearer addresses, ignoring case and spaces', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Review\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:boss@example.com\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:MAILTO:Sam@Example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['  sam@example.COM '] });
+
+    expect(result[0].declined).toBe(true);
+  });
+
+  /** Answering Maybe to an invitation leaves the event's own status alone, so only the wearer's attendee line says it. */
+  test('marks an event the wearer answered Maybe as tentative', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Offsite\r\nSTATUS:CONFIRMED\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:boss@example.com\r\n' +
+      'ATTENDEE;PARTSTAT=TENTATIVE:mailto:sam@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    expect([result[0].tentative, result[0].declined]).toEqual([true, undefined]);
+  });
+
+  /** Someone else's Maybe is not the wearer's, so a confirmed meeting stays firm. */
+  test('does not mark an event tentative for someone else answering Maybe', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Offsite\r\n' +
+      'ATTENDEE;PARTSTAT=TENTATIVE:mailto:boss@example.com\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:sam@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    expect(result[0]).not.toHaveProperty('tentative');
+  });
+
+  /** Someone else declining is not the wearer declining, so the meeting stays on. */
+  test('does not mark an event declined by someone else', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Review\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:boss@example.com\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:sam@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    expect(result[0]).not.toHaveProperty('declined');
+  });
+
+  /**
+   * A feed can list the wearer under two addresses, such as a work one that declined and a home one
+   * that accepted. The wearer is going, so a decline under the other address left a meeting they
+   * accepted greyed out as declined.
+   */
+  test('reads an accept under any of the wearer addresses as neither declined nor tentative', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Review\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:sam@work.example.com\r\n' +
+      'ATTENDEE;PARTSTAT=TENTATIVE:mailto:sam@other.example.com\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:sam@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@work.example.com', 'sam@other.example.com', 'sam@example.com'] });
+
+    expect([result[0].declined, result[0].tentative]).toEqual([undefined, undefined]);
+  });
+
+  /** With no accept, a decline under one address and a Maybe under another is still a decline, whichever line comes first. */
+  test('reads a decline over a Maybe across the wearer addresses', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Review\r\n' +
+      'ATTENDEE;PARTSTAT=TENTATIVE:mailto:sam@example.com\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:sam@work.example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com', 'sam@work.example.com'] });
+
+    expect([result[0].declined, result[0].tentative]).toEqual([true, undefined]);
+  });
+
+  /**
+   * One occurrence of a series can say something of its own. The wearer declined only Monday's
+   * standup, and a tentative series had Tuesday's confirmed, so each occurrence reads its own entry.
+   */
+  test('reads a moved occurrence by its own status and attendees', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:standup@example.com\r\nDTSTART:20260710T090000Z\r\nDTEND:20260710T093000Z\r\n' +
+      'RRULE:FREQ=DAILY;COUNT=5\r\nSTATUS:TENTATIVE\r\nSUMMARY:Standup\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:sam@example.com\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:standup@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T090000Z\r\nDTEND:20260713T093000Z\r\nSTATUS:TENTATIVE\r\nSUMMARY:Standup\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:sam@example.com\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:standup@example.com\r\nRECURRENCE-ID:20260714T090000Z\r\n' +
+      'DTSTART:20260714T090000Z\r\nDTEND:20260714T093000Z\r\nSTATUS:CONFIRMED\r\nSUMMARY:Standup\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:sam@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    // the series runs 10 to 14 July, and the 10th is already over at noon
+    expect(result.map((event) => [new Date(event.startEpoch * 1000).getUTCDate(), Boolean(event.tentative), Boolean(event.declined)])).toEqual([
+      [11, true, false],
+      [12, true, false],
+      [13, true, true],
+      [14, false, false],
+    ]);
+  });
+
+  /**
+   * An occurrence moved to another time can list no attendees of its own. Reading it as its own
+   * answer showed a series the wearer declined as on, on the one day it moved.
+   */
+  test('keeps the series declined answer on a moved occurrence with no attendees of its own', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nDTSTART:20260710T090000Z\r\nDTEND:20260710T093000Z\r\n' +
+      'RRULE:FREQ=DAILY;COUNT=5\r\nSUMMARY:Sync\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:sam@example.com\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T150000Z\r\nDTEND:20260713T153000Z\r\nSUMMARY:Sync moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    expect(result.map((event) => [event.title, Boolean(event.declined)])).toEqual([
+      ['Sync', true],
+      ['Sync', true],
+      ['Sync moved', true],
+      ['Sync', true],
+    ]);
+  });
+
+  /**
+   * A moved occurrence with no attendees keeps the wearer's Maybe to the series, but not the series'
+   * own tentative status, which the moved occurrence states for itself.
+   */
+  test('keeps the series Maybe answer but not its status on a moved occurrence with no attendees', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nDTSTART:20260710T090000Z\r\nDTEND:20260710T093000Z\r\n' +
+      'RRULE:FREQ=DAILY;COUNT=5\r\nSUMMARY:Sync\r\n' +
+      'ATTENDEE;PARTSTAT=TENTATIVE:mailto:sam@example.com\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T150000Z\r\nDTEND:20260713T153000Z\r\nSUMMARY:Sync moved\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:held@example.com\r\nDTSTART:20260710T100000Z\r\nDTEND:20260710T103000Z\r\n' +
+      'RRULE:FREQ=DAILY;COUNT=2\r\nSTATUS:TENTATIVE\r\nSUMMARY:Held\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:held@example.com\r\nRECURRENCE-ID:20260711T100000Z\r\n' +
+      'DTSTART:20260711T160000Z\r\nDTEND:20260711T163000Z\r\nSTATUS:CONFIRMED\r\nSUMMARY:Held moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    expect(result.filter((event) => event.title.endsWith('moved')).map((event) => [event.title, Boolean(event.tentative)])).toEqual([
+      ['Held moved', false],
+      ['Sync moved', true],
+    ]);
+  });
+
+  /**
+   * A moved occurrence can list other people and leave the wearer off. Reading those lines as its
+   * own answer showed a series the wearer declined as on, on the day it moved.
+   */
+  test('keeps the series declined answer on a moved occurrence whose attendees leave the wearer out', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nDTSTART:20260710T090000Z\r\nDTEND:20260710T093000Z\r\n' +
+      'RRULE:FREQ=DAILY;COUNT=5\r\nSUMMARY:Sync\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:sam@example.com\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T150000Z\r\nDTEND:20260713T153000Z\r\nSUMMARY:Sync moved\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:boss@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    expect(result.map((event) => [event.title, Boolean(event.declined)])).toEqual([
+      ['Sync', true],
+      ['Sync', true],
+      ['Sync moved', true],
+      ['Sync', true],
+    ]);
+  });
+
+  /** The wearer can accept one occurrence of a series they declined, and that day has to show as on. */
+  test('lets a moved occurrence with attendees of its own accept inside a declined series', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nDTSTART:20260710T090000Z\r\nDTEND:20260710T093000Z\r\n' +
+      'RRULE:FREQ=DAILY;COUNT=5\r\nSUMMARY:Sync\r\n' +
+      'ATTENDEE;PARTSTAT=DECLINED:mailto:sam@example.com\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T150000Z\r\nDTEND:20260713T153000Z\r\nSUMMARY:Sync moved\r\n' +
+      'ATTENDEE;PARTSTAT=ACCEPTED:mailto:sam@example.com\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW, undefined, { marks: true, wearerAddresses: ['sam@example.com'] });
+
+    expect(result.map((event) => [event.title, Boolean(event.declined)])).toEqual([
+      ['Sync', true],
+      ['Sync', true],
+      ['Sync moved', false],
+      ['Sync', true],
+    ]);
+  });
+
+  /** A caller passing null for no options has to get the plain agenda rather than a throw. */
+  test('reads null options as none', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Maybe\r\nSTATUS:TENTATIVE\r\nEND:VEVENT\r\n');
+
+    const result = Object.keys(ical.parseIcal(source, NOW, undefined, null)[0]);
+
+    expect(result).toEqual(['startEpoch', 'endEpoch', 'allDay', 'title', 'location']);
+  });
+});
+
 describe('parseIcal bad input', () => {
   /**
    * A fetch can hand back an error page or a truncated body. That says nothing about the calendar,

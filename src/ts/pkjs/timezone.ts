@@ -9,6 +9,7 @@
 
 import wire from './wire';
 import { readPlace } from './place';
+import { intlUsable } from './intl-usable';
 
 /** A zone's wall clock at one moment, broken into the pieces every caller here wants. */
 export interface ZoneParts {
@@ -23,20 +24,6 @@ export interface ZoneParts {
 // building a formatter resolves locale and zone data, which costs far more than formatting with
 // one, so each zone keeps the formatter it already built
 const formatters: Record<string, Intl.DateTimeFormat> = {};
-
-/**
- * Whether this runtime has the locale data a formatter needs. The emulator's runtime has none, and
- * building an Intl.DateTimeFormat there runs it out of memory and kills the process, which no
- * try/catch can stop. supportedLocalesOf reads the same list without building a formatter, so an
- * empty answer means leave the formatter alone.
- */
-function intlUsable(): boolean {
-  try {
-    return Intl.DateTimeFormat.supportedLocalesOf(['en']).length > 0;
-  } catch (error) {
-    return false;
-  }
-}
 
 /** The formatter for a zone, built once and kept. Throws for a zone the runtime cannot read. */
 function formatterFor(zone: string): Intl.DateTimeFormat {

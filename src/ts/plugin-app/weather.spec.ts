@@ -6,7 +6,8 @@
  * wrong numbers on both with nothing to say why. What is worth pinning is that a reading served and
  * read back shows what a face's own fetch shows, that every instance carries the days the Pebble app
  * insists on, that only what is asked goes out, the condition and unit tables, the naming rule the
- * declaration keeps, and the read of the wearer's places and units.
+ * declaration keeps, and the read of the wearer's places. The units read has its specs beside it in
+ * preferences.spec.ts.
  *
  * The readings come from the providers' real recorded answers. Vitest runs on a Toronto phone, and
  * the fixed moment is 16:00 UTC on 12 November 2026, 11:00 in Toronto, 21:30 in Delhi, and 06:00 in
@@ -16,10 +17,12 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { conditionCode, DEFAULT_UNITS, failureReason, fetchablePlaces, listedPlacesFrom, listWeatherPlaces, locationInstance, NO_REASON, NO_UNITS, pebbleAppUnits, PHRASE_LABELS, placesFrom, readPebbleAppUnits, SHORT_LABELS, unitsFrom, WEATHER_LOCATION_SOURCE, weatherLocations } from './weather';
+import { conditionCode, fetchablePlaces, listedPlacesFrom, listWeatherPlaces, locationInstance, PHRASE_LABELS, placesFrom, SHORT_LABELS, WEATHER_LOCATION_SOURCE, weatherLocations } from './weather';
+import { DEFAULT_UNITS } from './preferences';
+import { NO_REASON } from './runtime';
 import { SHORT_TEXT_MAX } from './short-text';
 import conditions from '../weather/conditions';
-import type { WeatherUnits } from './weather';
+import type { WeatherUnits } from './preferences';
 import { fetchReading as fetchOpenMeteoReading } from '../weather/providers/openmeteo';
 import owm from '../weather/providers/owm';
 import weatherApi from '../weather/providers/weatherapi';
@@ -600,20 +603,6 @@ describe('listedPlacesFrom', () => {
   });
 });
 
-describe('failureReason', () => {
-  /** A plugin reading sources of its own has to show a refusal in the same words the framework's reads use, or one page reads two ways. */
-  test.each([
-    [Object.assign(new Error('refused'), { code: 'PERMISSION_DENIED' }), 'PERMISSION_DENIED'],
-    [{ code: 0, message: 'Location is off' }, 'Location is off'],
-    [{ code: '', message: '' }, NO_REASON],
-    [null, NO_REASON],
-  ])('reads %o as %s', (error, expected) => {
-    const result = failureReason(error);
-
-    expect(result).toBe(expected);
-  });
-});
-
 describe('fetchablePlaces', () => {
   /** A place with no fix handed to a provider has it refuse the whole batch, and a place out of order puts the wrong city first. */
   test('keeps only the places with coordinates, in order, without the located mark', () => {
@@ -629,94 +618,5 @@ describe('fetchablePlaces', () => {
       { key: 'c', name: 'Honolulu', lat: HONOLULU.lat, lon: HONOLULU.lon, current: false },
       { key: 'a', name: 'Delhi', lat: DELHI.lat, lon: DELHI.lon, current: false },
     ]);
-  });
-});
-
-describe('unitsFrom', () => {
-  /** The Pebble app's preferences as its Preferences plugin serves them. */
-  const PREFERENCES = { instances: [{ instanceId: 'units', properties: { temperature: { shortText: { text: '°F' } }, wind_speed: { shortText: { text: 'm/s' } }, pressure: { shortText: { text: 'inHg' } } } }] };
-
-  /** A plugin's own unit setting has to win where it made one, and the Pebble app's where it follows. */
-  test('follows the Pebble app where the plugin says app, and takes the plugin choice otherwise', () => {
-    const result = unitsFrom(PREFERENCES, { temperature: 'app', windSpeed: 'knots' });
-
-    expect(result).toEqual({ temperature: '°F', windSpeed: 'knots', pressure: 'inHg' });
-  });
-
-  /** A unit the Pebble app cannot read, such as kph, made it drop the run's weather for every place, and F served Celsius under a Fahrenheit name. */
-  test('follows the Pebble app for a choice that is not one of its units', () => {
-    const result = unitsFrom(PREFERENCES, { temperature: 'F', windSpeed: 'kph', pressure: 'mb' } as never);
-
-    expect(result).toEqual({ temperature: '°F', windSpeed: 'm/s', pressure: 'inHg' });
-  });
-
-  /** A Pebble app that gives no units, or a read it refused, must not leave the plugin with no unit to serve in. */
-  test('falls back to °C, km/h, and hPa when the Pebble app gives nothing', () => {
-    const result = unitsFrom(null);
-
-    expect(result).toEqual(DEFAULT_UNITS);
-  });
-});
-
-describe('readPebbleAppUnits', () => {
-  /** A runtime whose Preferences plugin answers the units with one update or refuses with what it is given. */
-  function unitsPebble(answer: SourceEnvelope | Error | object): PluginPebble {
-    return {
-      readSource: async () => {
-        if (answer instanceof Error || !('instances' in answer)) {
-          throw answer;
-        }
-
-        return answer;
-      },
-    } as unknown as PluginPebble;
-  }
-
-  /** The Pebble app's units as its Preferences plugin serves them, in °C. */
-  const CELSIUS = { instances: [{ instanceId: 'units', properties: { temperature: { shortText: { text: '°C' } }, wind_speed: { shortText: { text: 'km/h' } }, pressure: { shortText: { text: 'hPa' } } } }] };
-
-  /** A refused read answered as °C showed a wearer on °F the wrong unit as the Pebble app's own. */
-  test('reports a refused read rather than answering the defaults', async () => {
-    const result = await readPebbleAppUnits(unitsPebble(Object.assign(new Error('refused'), { code: 'PERMISSION_DENIED' })));
-
-    expect(result).toEqual({ units: null, error: 'PERMISSION_DENIED' });
-  });
-
-  /** An Error with an empty code and message read as `Error`, its own name, which tells the wearer nothing. */
-  test('gives NO_REASON for an Error that names nothing', async () => {
-    const result = await readPebbleAppUnits(unitsPebble(Object.assign(new Error(''), { code: '' })));
-
-    expect(result).toEqual({ units: null, error: NO_REASON });
-  });
-
-  /** A plain refusal with an empty code and message showed the wearer `[object Object]` beside Pebble App. */
-  test('gives NO_REASON for a plain refusal that names nothing', async () => {
-    const result = await readPebbleAppUnits(unitsPebble({ code: '', message: '' }));
-
-    expect(result).toEqual({ units: null, error: NO_REASON });
-  });
-
-  /** A reply with no units in it says nothing about the wearer's, so it must not read as °C either. */
-  test.each([
-    ['no instances', { instances: [] }],
-    ['an instance with no units', { instances: [{ instanceId: 'units', properties: { locale: { shortText: { text: 'en-CA' } } } }] }],
-  ])('reports a reply with %s', async (_label, envelope) => {
-    const result = await readPebbleAppUnits(unitsPebble(envelope));
-
-    expect(result).toEqual({ units: null, error: NO_UNITS });
-  });
-
-  /** A wearer really on °C has to read as the Pebble app's own units, told apart from a refusal. */
-  test('answers a real °C as units', async () => {
-    const result = await readPebbleAppUnits(unitsPebble(CELSIUS));
-
-    expect(result).toEqual({ units: { temperature: '°C', windSpeed: 'km/h', pressure: 'hPa' } });
-  });
-
-  /** Serving has to send some unit, so a refusal there still serves the defaults under the plugin's own choices. */
-  test('keeps pebbleAppUnits serving the defaults on a refusal', async () => {
-    const result = await pebbleAppUnits(unitsPebble(new Error('refused')), { windSpeed: 'knots' });
-
-    expect(result).toEqual({ ...DEFAULT_UNITS, windSpeed: 'knots' });
   });
 });
