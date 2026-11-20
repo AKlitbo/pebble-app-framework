@@ -37,7 +37,7 @@ return (year + year / 4 - year / 100 + year / 400) % 7;   // 0 Sunday to 6 Satur
 
 ## Counting Days
 
-`date_day_of_year` counts the 1st of January as day 1, one more than `tm_yday`, and `date_days_left_in_year` counts what is left after today, so the 31st of December reads 0. Leap years follow the full rule, so 1900 was not one and 2000 was.
+`date_day_of_year` counts the 1st of January as day 1, one more than `tm_yday`, and `date_days_left_in_year` counts what is left after today, so the 31st of December reads 0. `date_weeks_left_in_year` is those days in whole weeks, rounded down, so the last six days of December read 0 as well. Leap years follow the full rule, so 1900 was not one and 2000 was.
 
 **A Month Grid.** `date_days_in_month` gives a month's length, with February's leap day, and 0 for a month number that does not exist rather than reading past the end of its table. `date_first_wday` gives the weekday of the 1st by walking back from today's weekday, so a face needs nothing more than its clock to lay out the month:
 

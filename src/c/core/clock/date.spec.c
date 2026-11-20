@@ -162,6 +162,44 @@ void test_days_left_leap_jan1_is_365(void)
     TEST_ASSERT_EQUAL_INT(365, result);
 }
 
+/** @brief December 31st must read 0 weeks left or the countdown never reaches the end. */
+void test_weeks_left_dec31_is_0(void)
+{
+    // 2026-12-31 is yday 364
+    int result = date_weeks_left_in_year(2026, 364);
+
+    TEST_ASSERT_EQUAL_INT(0, result);
+}
+
+/** @brief January 1st of a plain year has 364 days left, exactly 52 weeks. */
+void test_weeks_left_jan1_is_52(void)
+{
+    int result = date_weeks_left_in_year(2026, 0);
+
+    TEST_ASSERT_EQUAL_INT(52, result);
+}
+
+/**
+ * @brief A leap year's January 2nd still has 52 weeks left.
+ *
+ * It has 364 days left where a plain year's has 363, so a missed leap day reads 51 a day early.
+ */
+void test_weeks_left_leap_jan2_is_52(void)
+{
+    int result = date_weeks_left_in_year(2024, 1);
+
+    TEST_ASSERT_EQUAL_INT(52, result);
+}
+
+/** @brief Thirteen days left reads 1 week, rounded down rather than to the nearest 2. */
+void test_weeks_left_rounds_13_days_down_to_1(void)
+{
+    // 2026-12-18 is yday 351, with 13 days left
+    int result = date_weeks_left_in_year(2026, 351);
+
+    TEST_ASSERT_EQUAL_INT(1, result);
+}
+
 /** @brief A leap February must get its 29th or the month grid drops a day. */
 void test_days_in_month_leap_february(void)
 {
@@ -238,6 +276,10 @@ int main(void)
     RUN_TEST(test_day_of_year_jan1_is_1);
     RUN_TEST(test_days_left_dec31_is_0);
     RUN_TEST(test_days_left_leap_jan1_is_365);
+    RUN_TEST(test_weeks_left_dec31_is_0);
+    RUN_TEST(test_weeks_left_jan1_is_52);
+    RUN_TEST(test_weeks_left_leap_jan2_is_52);
+    RUN_TEST(test_weeks_left_rounds_13_days_down_to_1);
     RUN_TEST(test_days_in_month_leap_february);
     RUN_TEST(test_days_in_month_plain_february);
     RUN_TEST(test_days_in_month_century_february_is_28);

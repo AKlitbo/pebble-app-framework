@@ -96,6 +96,11 @@ int date_days_left_in_year(int year, int yday)
     return (is_leap(year) ? 366 : 365) - date_day_of_year(yday);
 }
 
+int date_weeks_left_in_year(int year, int yday)
+{
+    return date_days_left_in_year(year, yday) / 7;
+}
+
 int date_days_in_month(int year, int mon0)
 {
     static const unsigned char days[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};

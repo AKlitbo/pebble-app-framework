@@ -70,6 +70,16 @@ int date_day_of_year(int yday);
 int date_days_left_in_year(int year, int yday);
 
 /**
+ * @brief How many whole weeks are left before the year ends. It is the days left divided by 7 and
+ * rounded down, so the last seven days of December, the 25th to the 31st, read 0.
+ *
+ * @param year The full year (2026, not 126).
+ * @param yday The day of the year counting January 1st as 0 (like tm_yday).
+ * @return The weeks remaining from 0 to 52.
+ */
+int date_weeks_left_in_year(int year, int yday);
+
+/**
  * @brief How many days a month has, with February getting its leap day.
  *
  * @param year The full year (2026, not 126).
