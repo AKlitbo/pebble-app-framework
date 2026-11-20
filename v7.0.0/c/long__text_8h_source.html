@@ -1,0 +1,251 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/pebble/io/long_text.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v7.0.0" selected>v7.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('long__text_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">long_text.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="long__text_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;stddef.h&gt;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga342e9f4df8f2a749f12bfd1dba4a05b3">   29</a></span><span class="preprocessor">#define LONG_TEXT_CAP_MAX 1024</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga0f8e59f3f412d280af3f7e20dff33fd1">   38</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#ga0f8e59f3f412d280af3f7e20dff33fd1">LongTextReceiver</a>)(<span class="keyword">const</span> <span class="keywordtype">char</span> *text);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga9b2a1b8b90fa7cf1728ca359af72042c">   47</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#ga9b2a1b8b90fa7cf1728ca359af72042c">LongTextProvider</a>)(<span class="keywordtype">char</span> *out, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span></div>
+<div class="foldopen" id="foldopen00054" data-start="{" data-end="};">
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structLongText.html">   54</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>{</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="structLongText.html#a8d99ef64df01d6a26dbda5ef9ea308b3">   56</a></span>    uint32_t <a class="code hl_variable" href="structLongText.html#a8d99ef64df01d6a26dbda5ef9ea308b3">key</a>;               </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structLongText.html#a55b8504dbcb0559adbd4e276b0d49111">   57</a></span>    uint16_t <a class="code hl_variable" href="structLongText.html#a55b8504dbcb0559adbd4e276b0d49111">cap</a>;               </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structLongText.html#aa86043ffc653ec3868c881a619fbf30a">   58</a></span>    <a class="code hl_typedef" href="group__lib__io.html#ga9b2a1b8b90fa7cf1728ca359af72042c">LongTextProvider</a> <a class="code hl_variable" href="structLongText.html#aa86043ffc653ec3868c881a619fbf30a">provider</a>;  </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structLongText.html#a3ebf30e2f834b405a95d18a57ae32f10">   59</a></span>    <a class="code hl_typedef" href="group__lib__io.html#ga0f8e59f3f412d280af3f7e20dff33fd1">LongTextReceiver</a> <a class="code hl_variable" href="structLongText.html#a3ebf30e2f834b405a95d18a57ae32f10">receiver</a>;  </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>} <a class="code hl_struct" href="structLongText.html">LongText</a>;</div>
+</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__io.html#ga0cb475e40797328cd99e356a3412e8c5">long_text_set</a>(<a class="code hl_struct" href="structLongText.html">LongText</a> *slot, uint32_t key, uint16_t cap, <a class="code hl_typedef" href="group__lib__io.html#ga9b2a1b8b90fa7cf1728ca359af72042c">LongTextProvider</a> provider,</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                   <a class="code hl_typedef" href="group__lib__io.html#ga0f8e59f3f412d280af3f7e20dff33fd1">LongTextReceiver</a> receiver, <span class="keywordtype">bool</span> opened);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__io.html#ga8d4c5f00c23e024894270391fb1f75aa">long_text_fits</a>(uint32_t text_bytes, uint32_t reply_bytes, uint32_t outbox_max, uint32_t inbox_room);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span></div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gafe9a63bc1dca334c9b7e8a191ad638d9">long_text_held</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structLongText.html">LongText</a> *slot, <span class="keywordtype">char</span> *out);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__io.html#gae41cbb38ef15413be76eead3aa97d4f5">long_text_arrived</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structLongText.html">LongText</a> *slot, <span class="keyword">const</span> <span class="keywordtype">char</span> *text);</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span></div>
+<div class="ttc" id="agroup__lib__io_html_ga0cb475e40797328cd99e356a3412e8c5"><div class="ttname"><a href="group__lib__io.html#ga0cb475e40797328cd99e356a3412e8c5">long_text_set</a></div><div class="ttdeci">bool long_text_set(LongText *slot, uint32_t key, uint16_t cap, LongTextProvider provider, LongTextReceiver receiver, bool opened)</div><div class="ttdoc">Sets up the face&#39;s long text setting, replacing one set before.</div><div class="ttdef"><b>Definition</b> long_text.c:13</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga0f8e59f3f412d280af3f7e20dff33fd1"><div class="ttname"><a href="group__lib__io.html#ga0f8e59f3f412d280af3f7e20dff33fd1">LongTextReceiver</a></div><div class="ttdeci">void(*) LongTextReceiver(const char *text)</div><div class="ttdoc">Called with a long text setting the phone sent, for the face to store.</div><div class="ttdef"><b>Definition</b> long_text.h:38</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga8d4c5f00c23e024894270391fb1f75aa"><div class="ttname"><a href="group__lib__io.html#ga8d4c5f00c23e024894270391fb1f75aa">long_text_fits</a></div><div class="ttdeci">bool long_text_fits(uint32_t text_bytes, uint32_t reply_bytes, uint32_t outbox_max, uint32_t inbox_room)</div><div class="ttdoc">Whether the text at its cap fits both buffers: the outbox beside the rest of the settings reply,...</div><div class="ttdef"><b>Definition</b> long_text.c:44</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga9b2a1b8b90fa7cf1728ca359af72042c"><div class="ttname"><a href="group__lib__io.html#ga9b2a1b8b90fa7cf1728ca359af72042c">LongTextProvider</a></div><div class="ttdeci">void(*) LongTextProvider(char *out, size_t size)</div><div class="ttdoc">Called to write the long text setting the face holds, for the settings reply and to tell a save that ...</div><div class="ttdef"><b>Definition</b> long_text.h:47</div></div>
+<div class="ttc" id="agroup__lib__io_html_gae41cbb38ef15413be76eead3aa97d4f5"><div class="ttname"><a href="group__lib__io.html#gae41cbb38ef15413be76eead3aa97d4f5">long_text_arrived</a></div><div class="ttdeci">bool long_text_arrived(const LongText *slot, const char *text)</div><div class="ttdoc">Hands a text that arrived to the receiver when it differs from the one the face holds.</div><div class="ttdef"><b>Definition</b> long_text.c:58</div></div>
+<div class="ttc" id="agroup__lib__io_html_gafe9a63bc1dca334c9b7e8a191ad638d9"><div class="ttname"><a href="group__lib__io.html#gafe9a63bc1dca334c9b7e8a191ad638d9">long_text_held</a></div><div class="ttdeci">void long_text_held(const LongText *slot, char *out)</div><div class="ttdoc">Writes the text the face holds, as its provider writes it, ended inside the cap.</div><div class="ttdef"><b>Definition</b> long_text.c:49</div></div>
+<div class="ttc" id="astructLongText_html"><div class="ttname"><a href="structLongText.html">LongText</a></div><div class="ttdoc">The face&#39;s long text setting: its key, its cap, and the provider and receiver.</div><div class="ttdef"><b>Definition</b> long_text.h:55</div></div>
+<div class="ttc" id="astructLongText_html_a3ebf30e2f834b405a95d18a57ae32f10"><div class="ttname"><a href="structLongText.html#a3ebf30e2f834b405a95d18a57ae32f10">LongText::receiver</a></div><div class="ttdeci">LongTextReceiver receiver</div><div class="ttdoc">Stores a text that arrived.</div><div class="ttdef"><b>Definition</b> long_text.h:59</div></div>
+<div class="ttc" id="astructLongText_html_a55b8504dbcb0559adbd4e276b0d49111"><div class="ttname"><a href="structLongText.html#a55b8504dbcb0559adbd4e276b0d49111">LongText::cap</a></div><div class="ttdeci">uint16_t cap</div><div class="ttdoc">The most bytes the text takes, its end included. 0 means no setting.</div><div class="ttdef"><b>Definition</b> long_text.h:57</div></div>
+<div class="ttc" id="astructLongText_html_a8d99ef64df01d6a26dbda5ef9ea308b3"><div class="ttname"><a href="structLongText.html#a8d99ef64df01d6a26dbda5ef9ea308b3">LongText::key</a></div><div class="ttdeci">uint32_t key</div><div class="ttdoc">The MESSAGE_KEY_* value the text rides on.</div><div class="ttdef"><b>Definition</b> long_text.h:56</div></div>
+<div class="ttc" id="astructLongText_html_aa86043ffc653ec3868c881a619fbf30a"><div class="ttname"><a href="structLongText.html#aa86043ffc653ec3868c881a619fbf30a">LongText::provider</a></div><div class="ttdeci">LongTextProvider provider</div><div class="ttdoc">Writes the text the face holds.</div><div class="ttdef"><b>Definition</b> long_text.h:58</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><a href="long__text_8h.html">long_text.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
