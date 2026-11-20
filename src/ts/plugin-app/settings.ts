@@ -26,6 +26,9 @@ export const SAVE_MESSAGE = 'paf-settings-save';
 /** Where the settings that are not secret are kept in `localStorage`, as one JSON value. */
 export const SETTINGS_KEY = 'paf-plugin-settings';
 
+/** How long a save's `onSaved` hook, and the refresh after it, get before the page hears the save as kept anyway. */
+export const SAVE_HOOK_LIMIT_MS = 4000;
+
 /** What a plugin app tells the settings helpers about its own settings. */
 export interface SettingsOptions {
   /** The keys kept in `Pebble.secureStorage` rather than `localStorage`, such as an iCal link. */
@@ -55,13 +58,29 @@ export interface SettingsHooks {
    * what was saved and leaves out every secret key, so a key that was saved in plain storage before the
    * plugin made it secret is left out too.
    *
-   * The page hears the save as kept first, so a slow hook never makes the page give up on a save that
-   * was kept. The Pebble app is asked to read the sources again once the hook returns or its promise
-   * settles, so a run it starts sees what the hook did. The hooks run one at a time in the order the
-   * saves came in, and each hears the settings as its own save left them. A hook that throws or
-   * rejects is logged.
+   * The hook runs, and its promise settles, before the page hears the save as kept, since the Pebble app
+   * ends the plugin's run as soon as the page is answered and a hook still running then may never
+   * finish. The Pebble app is asked to read the sources again after the hook, so a run it starts sees
+   * what the hook did. The page gives up on a save after about five seconds, so the page hears the save
+   * as kept once `SAVE_HOOK_LIMIT_MS`, 4 seconds, has passed, whether or not the hook has finished, and
+   * the wait is logged. Keep the hook's work well inside that. The hooks run one at a time in the order
+   * the saves came in, and each hears the settings as its own save left them. A hook that throws or
+   * rejects is logged, and the page still hears the save as kept.
    */
   onSaved?: (before: Record<string, unknown>, after: Record<string, unknown>) => void | Promise<void>;
+}
+
+/** Settles true once the work settles, or false once the limit passes first. */
+function settlesWithin(work: Promise<unknown>, limitMs: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(false), limitMs);
+    const done = () => {
+      clearTimeout(timer);
+      resolve(true);
+    };
+
+    work.then(done, done);
+  });
 }
 
 /** The `type` a message from the settings page carries, or undefined for anything that is not an object. */
@@ -257,11 +276,10 @@ export function handleSettings(options: SettingsOptions = {}, pebble: PluginPebb
           return;
         }
 
-        // the page gives up on a save after a few seconds, so it hears the save as kept before the
-        // hook runs, and the refresh waits for the hook so a run it starts sees what the hook did
-        respond({ ok: true });
-
-        const heard = hearing.then(async () => {
+        // the hook runs before the answer, since the Pebble app ends the run once the page is answered
+        // and a hook left running, such as one deleting pins, would be cut off. the refresh waits for
+        // the hook so a run it starts sees what the hook did
+        const ran = hearing.then(async () => {
           try {
             await onSaved(before, after);
           } catch (error) {
@@ -275,8 +293,22 @@ export function handleSettings(options: SettingsOptions = {}, pebble: PluginPebb
           }
         });
 
+        // the page hears the save as kept once 4 seconds have passed since it was kept, whether or not
+        // the hook and the refresh have finished. a hook still going then can be cut off when the run
+        // ends, and a save tapped behind a stuck one can have its own hook start late. that is worth it
+        // since the page gives up after five seconds, and a wait with no cap shows a kept save as failed
+        // and holds back every save chained behind it. 4 leaves the answer a second to reach the page.
+        // the cap counts from the save being kept, not from its hook starting, so a save queued behind
+        // another still answers in time
+        const heard = settlesWithin(ran, SAVE_HOOK_LIMIT_MS).then((finished) => {
+          if (!finished) {
+            console.log(`plugin settings: the save hook ran past ${SAVE_HOOK_LIMIT_MS} ms, so the page hears the save as kept without it`);
+          }
+        });
+
         hearing = heard;
         await heard;
+        respond({ ok: true });
         return;
       }
 

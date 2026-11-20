@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** The Manual Location and Alternate Time Zone searches now hint Tokyo. Pass the new `location.placeholder` and `clock.timeZonePlaceholder` to keep other hints.
 - **Breaking:** The build now stops on an option for a text `KNOWN_*` setting that is too long for its buffer, such as a `date.options` value over 15 bytes, which built before and was cut short on the watch. Keep each date option to 15 bytes.
 - **Breaking:** `KNOWN_DATE_FORMAT` now takes the struct and the member rather than an offset. Pass `KNOWN_DATE_FORMAT(MySettings, date_format)`. The build stops on a member that is not 16 bytes.
+- `handleSettings` now finishes the `onSaved` hook, and the refresh after it, before answering the page. The Pebble app ends the plugin's run once the page is answered, so a hook still running, such as one deleting pins, could be cut off. The page gives up on a save after about five seconds, so it hears the save as kept after `SAVE_HOOK_LIMIT_MS`, 4 seconds, even when the hook has not finished. Keep the hook short.
 - The theme picker's frames now read `--pf-preview-backing`, `--pf-preview-border`, and `--pf-preview-size`, which a face sets on `:root`. They fall back to the black backing, `#3d434d` border, and 8rem width the picker had.
 
 #### Removed

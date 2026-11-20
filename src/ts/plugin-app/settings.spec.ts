@@ -7,8 +7,8 @@
  * hears back, since a save that fails without saying so loses the wearer's change.
  */
 
-import { describe, test, expect, vi } from 'vitest';
-import { handleSettings, LOAD_MESSAGE, readSettings, SAVE_MESSAGE, SETTINGS_KEY } from './settings';
+import { afterEach, beforeEach, describe, test, expect, vi } from 'vitest';
+import { handleSettings, LOAD_MESSAGE, readSettings, SAVE_HOOK_LIMIT_MS, SAVE_MESSAGE, SETTINGS_KEY } from './settings';
 import type { PluginPebble } from './runtime';
 
 /** A plugin runtime with its secure storage and config handler kept where a spec can reach them. */
@@ -290,11 +290,11 @@ describe('the hooks', () => {
   });
 
   /**
-   * The page gives up on a save after five seconds. Answering only once a slow hook finished made a kept
-   * save look failed there, so the page hears it kept first, and the refresh waits for the hook so a run
-   * it starts sees what the hook did.
+   * The Pebble app ends the plugin's run as soon as the page is answered, so a hook still running then,
+   * such as one deleting pins once the wearer turns them off, was cut off partway. The hook and the
+   * refresh after it finish before the page hears the save as kept.
    */
-  test('answers the save as kept before onSaved runs, and refreshes once it settles', async () => {
+  test('finishes onSaved and the refresh before answering the save as kept', async () => {
     const runtime = fakeRuntime();
     const order: string[] = [];
     let finish: () => void = () => undefined;
@@ -329,14 +329,15 @@ describe('the hooks', () => {
     const result = [whileRunning, order];
 
     expect(result).toEqual([
-      ['reply {"ok":true}', 'hook started'],
-      ['reply {"ok":true}', 'hook started', 'hook done', 'refresh'],
+      ['hook started'],
+      ['hook started', 'hook done', 'refresh', 'reply {"ok":true}'],
     ]);
   });
 
   /**
    * A second tap while the first save's hook was still running ran a second hook at once, alongside the
    * first. Each hook runs only after the one before it, and hears the settings its own save changed.
+   * Neither save is answered while the first hook runs, since each answer waits for its own hook.
    */
   test('runs the hooks of two quick saves one at a time, each with its own before and after', async () => {
     const runtime = fakeRuntime();
@@ -365,14 +366,15 @@ describe('the hooks', () => {
     finishFirst();
     await Promise.all([first, second]);
 
-    const result = [whileFirstRuns, heard];
+    const result = [whileFirstRuns, heard, replies.length];
 
     expect(result).toEqual([
-      [2, 1],
+      [0, 1],
       [
         ['30', '15'],
         ['15', '60'],
       ],
+      2,
     ]);
   });
 
@@ -403,5 +405,71 @@ describe('the hooks', () => {
     const result = await runtime.send({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } });
 
     expect(result).toEqual({ ok: true });
+  });
+});
+
+describe('the save hook limit', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  /**
+   * A hook that never settles held the answer past the page's five second wait, so a save that was kept
+   * showed as failed. The page hears it kept once the limit passes, and the wait is logged.
+   */
+  test('answers the save as kept once a stuck onSaved passes the limit', async () => {
+    const runtime = fakeRuntime();
+    const replies: unknown[] = [];
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    let handler: ((message: unknown, respond: (reply: unknown) => void) => Promise<void>) | null = null;
+    const pebble = { ...runtime.pebble, registerConfigHandler: (registered: typeof handler) => void (handler = registered) } as unknown as PluginPebble;
+
+    handleSettings({}, pebble, fakeStorage(), { onSaved: () => new Promise<void>(() => undefined) });
+    void handler!({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } }, (reply) => void replies.push(reply));
+    await vi.advanceTimersByTimeAsync(SAVE_HOOK_LIMIT_MS - 1);
+    const beforeLimit = replies.length;
+
+    await vi.advanceTimersByTimeAsync(1);
+
+    const result = [beforeLimit, replies, log.mock.calls.length];
+
+    expect(result).toEqual([0, [{ ok: true }], 1]);
+  });
+
+  /**
+   * A save tapped behind a stuck hook waited on it with no end, so it never heard back either. It is
+   * answered within the limit of being kept, and its own hook still runs once the stuck one's wait ends.
+   */
+  test('answers a save queued behind a stuck onSaved within the limit, and still runs its hook', async () => {
+    const runtime = fakeRuntime();
+    const replies: unknown[] = [];
+    const heard: string[] = [];
+    let handler: ((message: unknown, respond: (reply: unknown) => void) => Promise<void>) | null = null;
+    const pebble = { ...runtime.pebble, registerConfigHandler: (registered: typeof handler) => void (handler = registered) } as unknown as PluginPebble;
+
+    vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    handleSettings({ defaults: { REFRESH: '30' } }, pebble, fakeStorage(), {
+      onSaved: (before, after) => {
+        heard.push(String(after.REFRESH));
+
+        return heard.length === 1 ? new Promise<void>(() => undefined) : undefined;
+      },
+    });
+    void handler!({ type: SAVE_MESSAGE, settings: { REFRESH: '15' } }, (reply) => void replies.push(`first ${JSON.stringify(reply)}`));
+    await vi.advanceTimersByTimeAsync(1000);
+    void handler!({ type: SAVE_MESSAGE, settings: { REFRESH: '60' } }, (reply) => void replies.push(`second ${JSON.stringify(reply)}`));
+    await vi.advanceTimersByTimeAsync(SAVE_HOOK_LIMIT_MS);
+
+    const result = [replies, heard];
+
+    expect(result).toEqual([
+      ['first {"ok":true}', 'second {"ok":true}'],
+      ['15', '60'],
+    ]);
   });
 });
