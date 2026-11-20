@@ -449,6 +449,7 @@ export function createSourceSubscription(options: SubscriptionOptions): SourceSu
         item,
         properties,
         ...(options.iconPixelSize ? { iconPixelSize: { w: options.iconPixelSize.w, h: options.iconPixelSize.h } } : {}),
+        ...(options.limit !== undefined ? { limit: options.limit } : {}),
         onData: (envelope: unknown) => {
           if (mine === generation) {
             received(envelope);

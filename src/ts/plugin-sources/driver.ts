@@ -71,6 +71,8 @@ export interface ChoiceOptions {
   properties: string[];
   /** The size the kind wants images at, which asks the plugin for them. Left out, none. */
   iconPixelSize?: ImageSize;
+  /** The most instances the kind wants back, from 1 to 200. Left out, the phone gives its own number. */
+  limit?: number;
   /** Whether the plugin is the face's only source, so it is picked whatever is saved. */
   only: boolean;
   /** Whether some settings pick the plugin. */
@@ -206,6 +208,7 @@ export function followPluginChoice(options: ChoiceOptions): PluginChoice {
     item,
     properties: options.properties,
     iconPixelSize: options.iconPixelSize,
+    limit: options.limit,
     onUpdate(envelope) {
       // a choice that moved off the plugin with no save after it can leave the subscription running,
       // and its reading must not cover the one the fetch sends

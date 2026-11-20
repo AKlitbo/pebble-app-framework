@@ -88,6 +88,24 @@ describe('start', () => {
     expect(result.plugin).toBeUndefined();
   });
 
+  /** A feature that names a limit gets that many instances back, where the phone's own number can be too few. */
+  test('passes the limit the feature names', () => {
+    const { subscription } = calendarSubscription({ limit: 18 });
+
+    const result = requestFrom(subscription);
+
+    expect(result.limit).toBe(18);
+  });
+
+  /** A limit nobody asked for would cap a source at a number the feature never chose. */
+  test('sends no limit when the feature names none', () => {
+    const { subscription } = weatherSubscription();
+
+    const result = requestFrom(subscription);
+
+    expect(result).not.toHaveProperty('limit');
+  });
+
   /** A second ready in one session must not leave two subscriptions sending the same weather twice. */
   test('leaves one live subscription after a second start', () => {
     const { subscription } = weatherSubscription();

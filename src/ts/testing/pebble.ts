@@ -35,6 +35,7 @@ export interface SourceRequest {
   plugin?: string;
   properties?: string[];
   iconPixelSize?: { w: number; h: number };
+  limit?: number;
   onData?: (envelope: unknown) => void;
   onError?: (error: unknown) => void;
 }

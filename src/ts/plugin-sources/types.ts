@@ -171,6 +171,12 @@ export interface SubscriptionOptions {
    * for none, and a plugin draws none, since a bitmap costs it far more than text.
    */
   iconPixelSize?: ImageSize;
+  /**
+   * The most instances the feature wants back, from 1 to 200. Left out, the request carries none, and
+   * the phone gives its own number for the item, such as the next 10 calendar events. A Pebble app from
+   * before 2.0.0 reads no limit and leaves it alone.
+   */
+  limit?: number;
   /** Gets each update the plugin sends. */
   onUpdate(envelope: SourceEnvelope): void;
   /** Gets each error, and `noPlugin` on every start that finds nothing serving the item, but once across the retries after it. */

@@ -189,6 +189,19 @@ describe('calendar plugin mode', () => {
     expect(pebble.live()).toHaveLength(1);
   });
 
+  /**
+   * The Pebble app gives the next 10 events unless asked for more, and the ones that end before the
+   * plugin's next update drop off a resend, so the agenda's six slots can run short without a margin.
+   */
+  test('asks the calendar plugin for 18 events', () => {
+    saveSettings({ CALENDAR_SOURCE: 'plugin' });
+    startFace({ ready: true });
+
+    const result = pebble.live()[0].request.limit;
+
+    expect(result).toBe(18);
+  });
+
   /** A wearer on the phone's calendars whose hidden iCal link still fetched would see that feed's events instead. */
   test('subscribes rather than fetching on ready while the plugin is picked', () => {
     saveSettings({ CALENDAR_SOURCE: 'plugin', CALENDAR_ICS_URL: FEED_URL });

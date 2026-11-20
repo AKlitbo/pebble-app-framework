@@ -21,6 +21,7 @@ import panelComponent from './panel-component';
 import kindsComponent from './kinds-component';
 import type { CalendarDriver, CalendarPlugins, SourceEnvelope } from './types';
 import { getConfig, readText, readValue, watchSettings } from '../pkjs/settings-store';
+import { WIRE_CAPS } from '../pkjs/wire';
 import type { FeatureHooks } from '../pkjs/feature';
 import type { CalendarEvent } from '../calendar/ical';
 import type { ClayConfigItem } from '../clay/types';
@@ -43,6 +44,16 @@ const FEED_KEYS = ['CALENDAR_ICS_URL'];
  * for longer, and no timeout at all can leave it with none for the whole session.
  */
 export const AGENDA_HOLD_MS = 15000;
+
+/**
+ * How many events the subscription asks the calendar plugin for, three agendas' worth.
+ *
+ * The Pebble app gives the next 10 events unless asked for more. The driver drops each event that has
+ * ended by the time it sends, and a watch ask resends the last update as of then, so a run of short
+ * meetings ending before the plugin's next update can leave fewer than the agenda holds. Three times
+ * the agenda keeps it full through a busy morning without asking for every event in the week.
+ */
+export const CALENDAR_PLUGIN_LIMIT = WIRE_CAPS.CALENDAR_SLOTS_MAX * 3;
 
 /** What the calendar mapping hands its driver. */
 export interface CalendarMapping {
@@ -151,6 +162,7 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
       category: 'calendar',
       item: 'event',
       properties: mapping.properties,
+      limit: CALENDAR_PLUGIN_LIMIT,
       only,
       pickedIn,
       shutOut: controls.shutOut,
